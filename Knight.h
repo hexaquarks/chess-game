@@ -1,4 +1,4 @@
-#include "Knight.h"
+#include "Piece.h"
 
 // class pawn, implements the methods from piece (abstract ? )
 class Knight : public Piece {

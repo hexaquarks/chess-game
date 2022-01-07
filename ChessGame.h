@@ -11,7 +11,9 @@ class ChessGame {
     ChessGame(); //constructor
     ~ChessGame(); //destructor 
 
-    Piece* board[8][8];
+    Piece* getBoardPiece(int row, int col);
+
+    Piece* _board[8][8];
 
     Pawn* pw1;
     Pawn* pw2;

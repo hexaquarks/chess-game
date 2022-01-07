@@ -1,6 +1,7 @@
 #pragma once
 
-class Thread {
+class GameThread {
     public: 
-    static void startGame();
+        static void startGame();
+
 };
