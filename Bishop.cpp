@@ -1,7 +1,5 @@
 #include "Bishop.h"
-#include <iostream>
 
-Bishop::Bishop(Team team, std::pair<int,int> pos) : Piece(team, pos, BISHOP) {
-    Piece::_filename = team == BLACK ? "./assets/bb.png" : "./assets/bw.png";
-    
-};
+Bishop::Bishop(Team team, int x, int y): Piece(team, x, y, PieceType::BISHOP, "b") {}
+
+void Bishop::calcPossibleMoves(Piece* board[8][8]) const {}

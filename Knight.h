@@ -1,10 +1,9 @@
+#pragma once
 #include "Piece.h"
 
-// class pawn, implements the methods from piece (abstract ? )
-class Knight : public Piece {
-    public:
-    Knight(Team team, std::pair<int, int> pos); //constructor
 
-    void calcPossibleMoves(Piece* board[8][8]); 
-
+// Represents a knight
+struct Knight : public Piece {
+    Knight(Team, int, int); // Constructor
+    void calcPossibleMoves(Piece*[8][8]) const override;
 };
