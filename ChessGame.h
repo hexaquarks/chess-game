@@ -1,3 +1,4 @@
+#pragma once
 #include "Piece.h"
 #include "Pawn.h"
 #include "Rook.h"
@@ -11,7 +12,7 @@ class ChessGame {
     ChessGame(); //constructor
     ~ChessGame(); //destructor 
 
-    Piece* getBoardPiece(int row, int col);
+    Piece* getBoardTile(int row, int col);
 
     Piece* _board[8][8];
 
