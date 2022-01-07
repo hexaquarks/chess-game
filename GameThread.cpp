@@ -14,7 +14,6 @@ void GameThread::startGame() {
                         "Chess Game");  // RenderWindow inherits Window class
     window.setVerticalSyncEnabled(
         true);  // prevent tearing, forces app to run at same FPS as monitor.
-    Event event;
 
     // parameters to handle a piece being dragged
     bool pieceIsMoving;
@@ -28,13 +27,15 @@ void GameThread::startGame() {
         window.clear(sf::Color::Black);
         //  we use a while loop for the pending events in case there were
         //  multiple events occured
+
+        Event event;
+
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
 
             if (event.type == sf::Event::MouseButtonPressed) {
-
                 if (event.mouseButton.button == sf::Mouse::Left) {
                     // get the tile of the click
                     xPos = event.mouseButton.x;
@@ -42,21 +43,23 @@ void GameThread::startGame() {
 
                     if (game->getBoardTile(xPos / 80, yPos / 80) != nullptr) {
                         std::cout << "Succesfully clicked a piece" << std::endl;
-                        selectedPiece = game->getBoardTile(xPos, yPos);
+                        selectedPiece =
+                            game->getBoardTile(xPos / 80, yPos / 80);
                         pieceIsMoving = true;
 
-                        // set the tile on the board where the piece is selected, to
-                        // null and draw the dragged piece explicitly
+                        // set the tile on the board where the piece is
+                        // selected, to null and draw the dragged piece
+                        // explicitly
                         game->_board[xPos / 80][yPos / 80] = nullptr;
                     }
-
                 }
             }
 
             if (event.type == sf::Event::MouseMoved && pieceIsMoving) {
                 // update the position of the piece that is being moved
-                xPos = event.mouseButton.x;
-                yPos = event.mouseButton.y;
+                sf::Vector2i MousePosition = sf::Mouse::getPosition(window);
+                xPos = MousePosition.x;
+                yPos = MousePosition.y;
             }
             if (event.type == sf::Event::MouseButtonReleased) {
                 if (event.mouseButton.button == sf::Mouse::Left) {
@@ -73,6 +76,7 @@ void GameThread::startGame() {
                 }
             }
         }
+
         // initializing the board
 
         for (int i = 0; i < 8; ++i) {
@@ -100,20 +104,18 @@ void GameThread::startGame() {
 
                     window.draw(tt);
                 }
-
-                // draw the piece that is being dragged
-                if (pieceIsMoving) {
-                    Texture t;
-                    t.loadFromFile(selectedPiece->_filename);
-                    Sprite tt(t);
-                    tt.setScale(0.6, 0.6);
-                    tt.setPosition(xPos, yPos);
-                    window.draw(tt);
-
-                    std::cout << "Succesfully drawed the new piece"
-                              << std::endl;
-                }
             }
+        }
+        
+        // draw the piece that is being dragged
+        if (pieceIsMoving) {
+            Texture t;
+            t.loadFromFile(selectedPiece->_filename);
+            Sprite tt(t);
+            tt.setScale(0.6, 0.6);
+
+            tt.setPosition(xPos, yPos);
+            window.draw(tt);
         }
 
         window.display();
