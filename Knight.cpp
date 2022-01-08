@@ -2,4 +2,4 @@
 
 Knight::Knight(Team team, int x, int y): Piece(team, x, y, PieceType::KNIGHT, "n") {}
 
-void Knight::calcPossibleMoves(Piece* board[8][8]) const {}
+vector<tuple<pair<int, int> , MoveType>> Knight::calcPossibleMoves(Piece* board[8][8]) const {}
