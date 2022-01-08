@@ -29,7 +29,7 @@ void GameThread::startGame() {
             if (event.type == Event::Closed)
                 window.close();
 
-            else if (event.type == Event::MouseButtonPressed) {
+            if (event.type == Event::MouseButtonPressed) {
                 if (event.mouseButton.button == Mouse::Left) {
                     // Get the tile of the click
                     xPos = event.mouseButton.x;
@@ -39,23 +39,23 @@ void GameThread::startGame() {
                         selectedPiece = game.getBoardTile(xPos/80, yPos/80);
                         pieceIsMoving = true;
 
-                        // set the tile on the board where the piece is selected, to null and draw the dragged piece explicitly
+                        // Set the tile on the board where the piece is selected, to null and draw the dragged piece explicitly
                         game.setBoardTile(xPos/80, yPos/80, nullptr);
                     }
                 }
             }
 
-            else if (event.type == Event::MouseMoved && pieceIsMoving) {
+            if (event.type == Event::MouseMoved && pieceIsMoving) {
                 // Update the position of the piece that is being moved
                 Vector2i MousePosition = Mouse::getPosition(window);
                 xPos = MousePosition.x;
                 yPos = MousePosition.y;
             }
 
-            else if (event.type == Event::MouseButtonReleased) {
+            if (event.type == Event::MouseButtonReleased) {
                 if (event.mouseButton.button == Mouse::Left) {
                     if (game.getBoardTile(xPos/80, yPos/80) == nullptr) {
-                        // drop a piece to the tile only if is empty (for testing)
+                        // Drop a piece to the tile only if is empty (for testing)
                         game.setBoardTile(xPos/80, yPos/80, selectedPiece);
                     }
 
