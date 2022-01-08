@@ -15,11 +15,11 @@ vector<tuple<pair<int, int> , MoveType>> Knight::calcPossibleMoves(Piece* board[
         int y = Knight::yPos + Y[i];
 
         if(x >= 0 && y >= 0 && x < 8 && y < 8) {
-            if(board[xs][ys] == nullptr) {
-                moves.push_back(make_tuple(make_pair(xs,ys), MoveType::NORMAL));
+            if(board[x][y] == nullptr) {
+                moves.push_back(make_tuple(make_pair(x,y), MoveType::NORMAL));
             } else {
-                if(board[xs][ys]->getTeam() != Knight::getTeam())
-                    moves.push_back(make_tuple(make_pair(xs,ys), MoveType::CAPTURE));
+                if(board[x][y]->getTeam() != Knight::getTeam())
+                    moves.push_back(make_tuple(make_pair(x,y), MoveType::CAPTURE));
             }
         }
     }
