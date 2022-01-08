@@ -1,4 +1,5 @@
 #include "ChessGame.h"
+#include <algorithm>
 
 // Helper function to remove a piece from a list of pieces.
 inline void removeFrom(vector<Piece*> pieces, Piece* piece) {
