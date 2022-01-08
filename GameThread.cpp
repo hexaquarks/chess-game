@@ -4,16 +4,17 @@
 #include "ChessGame.h"
 using namespace sf;
 
-// Hello Mihail :)
-
 
 void GameThread::startGame() {
     ChessGame game;
+    RenderWindow window(VideoMode(640, 640), "Chess Game", Style::Titlebar | Style::Close);
 
-    RenderWindow window(VideoMode(640, 640), "Chess Game", Style::Titlebar | Style::Close); // RenderWindow inherits Window class
-    // window.setVerticalSyncEnabled(true); // Prevent tearing, forces app to run at same FPS as monitor.
-
-    // parameters to handle a piece being dragged
+    // Setting window icon
+    Image icon;
+    icon.loadFromFile("./assets/nw.png");
+    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+    
+    // Parameters to handle a piece being dragged
     bool pieceIsMoving;
     Piece* selectedPiece;
     int xPos = 0, yPos = 0;
