@@ -1,7 +1,5 @@
 #include "Queen.h"
 
-Queen::Queen(Team team, std::pair<int,int> pos) : Piece(team, pos, QUEEN) {
+Queen::Queen(Team team, int x, int y): Piece(team, x, y, PieceType::QUEEN, "q") {}
 
-    Piece::_filename = team == BLACK ? "./assets/qb.png" : "./assets/qw.png";
-    
-};
+void Queen::calcPossibleMoves(Piece*s[8][8]) const {}

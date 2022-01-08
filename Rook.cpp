@@ -1,6 +1,5 @@
 #include "Rook.h"
-Rook::Rook(Team team, std::pair<int,int> pos) : Piece(team, pos, ROOK) {
 
-    Piece::_filename = team == BLACK ? "./assets/rb.png" : "./assets/rw.png";
-    
-};
+Rook::Rook(Team team, int x, int y): Piece(team, x, y, PieceType::ROOK, "r") {}
+
+void Rook::calcPossibleMoves(Piece*[8][8]) const {}

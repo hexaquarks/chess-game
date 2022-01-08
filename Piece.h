@@ -3,29 +3,26 @@
 #include <vector>
 #include <tuple>
 #include <iostream>
+using namespace std;
 
-class King;
+
+enum class Team { WHITE, BLACK, NONE };
+enum class PieceType { PAWN, ROOK, KNIGHT, BISHOP, KING, QUEEN, EMPTY };
+enum class MoveType { NORMAL, CASTLE, ENPASSANT, NEWPIECE, INIT };
+
 
 class Piece {
+    string filename; // the filename for this piece
+    Team team; // the team this piece plays for
+    PieceType type; // Returns the type of this piece
+    MoveType moveType; // Returns the move type of this piece
+    int xPos; int yPos; // X and Y positions
+
     public:
-        enum Team { WHITE, BLACK, NONE }; 
-        enum PieceType { PAWN, ROOK, KNIGHT, BISHOP, KING, QUEEN, EMPTY }; 
-        enum MoveType { NORMAL, CASTLE, ENPASSANT, NEWPIECE, INIT }; 
-        
-
-        Team getTeam() { return _team; };
-
-        // Constructor
-        Piece(Team team, std::pair<int,int> pos, PieceType type);
-
-        // Destructor
-        ~Piece();
-
-    public: 
-        std::string _filename;  // the filename for this piece
-        Team _team; // the team this piece plays for
-        PieceType _type; // Returns the type of this piece
-        MoveType _moveType; // Returns the move type of this piece
-        std::pair<int, int> _pos; // The position of this piece
-        std::vector<std::tuple <int, int, Piece::MoveType>> _possibleMoves; // list of all possible moves for this piece
+    Piece(Team, int, int, PieceType, string); // Constructor
+    virtual ~Piece() {} // Virtual destructor
+    Team getTeam() const { return team; };
+    string getFileName() const { return filename; }
+    virtual void calcPossibleMoves(Piece*[8][8]) const {} // Virtual function
+    void move(int x, int y) { xPos = x; yPos = y; }
 };

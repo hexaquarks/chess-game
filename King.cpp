@@ -1,6 +1,5 @@
 #include "King.h"
 
-King::King(Team team, std::pair<int,int> pos) : Piece(team, pos, KING) {
-    Piece::_filename = team == BLACK ? "./assets/kb.png" : "./assets/kw.png";
-    
-};
+King::King(Team team, int x, int y): Piece(team, x, y, PieceType::KING, "k") {}
+
+void King::calcPossibleMoves(Piece* board[8][8]) const {}

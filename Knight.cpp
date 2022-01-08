@@ -1,6 +1,5 @@
 #include "Knight.h"
 
-Knight::Knight(Team team, std::pair<int,int> pos) : Piece(team, pos, KNIGHT) {
-    Piece::_filename = team == BLACK ? "./assets/nb.png" : "./assets/nw.png";
-    
-};
+Knight::Knight(Team team, int x, int y): Piece(team, x, y, PieceType::KNIGHT, "n") {}
+
+void Knight::calcPossibleMoves(Piece* board[8][8]) const {}
