@@ -39,8 +39,11 @@ void GameThread::startGame() {
                         selectedPiece = game.getBoardTile(xPos/80, yPos/80);
                         pieceIsMoving = true;
 
-                        // Set the tile on the board where the piece is selected, to null and draw the dragged piece explicitly
+                        // set the tile on the board where the piece is selected, to null and draw the dragged piece explicitly
                         game.setBoardTile(xPos/80, yPos/80, nullptr);
+
+                        // generate the available moves for the piece being dragged
+                        // selectedPiece->calcPossibleMoves();
                     }
                 }
             }
@@ -55,7 +58,7 @@ void GameThread::startGame() {
             if (event.type == Event::MouseButtonReleased) {
                 if (event.mouseButton.button == Mouse::Left) {
                     if (game.getBoardTile(xPos/80, yPos/80) == nullptr) {
-                        // Drop a piece to the tile only if is empty (for testing)
+                        // drop a piece to the tile only if is empty (for testing)
                         game.setBoardTile(xPos/80, yPos/80, selectedPiece);
                     }
 
