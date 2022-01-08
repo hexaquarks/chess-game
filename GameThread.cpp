@@ -10,8 +10,8 @@ using namespace sf;
 void GameThread::startGame() {
     ChessGame game;
 
-    RenderWindow window(VideoMode(640, 640), "Chess Game"); // RenderWindow inherits Window class
-    window.setVerticalSyncEnabled(true); // Prevent tearing, forces app to run at same FPS as monitor.
+    RenderWindow window(VideoMode(640, 640), "Chess Game", Style::Titlebar | Style::Close); // RenderWindow inherits Window class
+    // window.setVerticalSyncEnabled(true); // Prevent tearing, forces app to run at same FPS as monitor.
 
     // parameters to handle a piece being dragged
     bool pieceIsMoving;
