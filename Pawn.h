@@ -6,4 +6,5 @@
 struct Pawn : public Piece {
     Pawn(Team, int, int); // Constructor
     void calcPossibleMoves(Piece*[8][8]) const override;
+    bool hasMoved;
 };
