@@ -15,18 +15,18 @@ vector<tuple<pair<int, int> , MoveType>> Pawn::calcPossibleMoves(Piece* board[8]
     /* Capture
      * Need to do each side explicitly
      * 1. taking rightwards
-     */ 
+     */
     if(x + 1 <= 7 && (y + dir <=7 && y + dir >= 0)) {
-        if(board[x+1][y+dir]->getTeam() != Pawn::getTeam()) {
+        if(board[x+1][y+dir] != nullptr && board[x+1][y+dir]->getTeam() != Pawn::getTeam()) {
             moves.push_back(make_tuple(make_pair(xPos+1, yPos+dir), MoveType::CAPTURE));
         }        
-    } 
+    }
 
     // 2. taking leftwards
     if (x - 1 >=0 && (y + dir <=7 && y + dir >= 0)) {
-        if(board[x-1][y+dir]->getTeam() != Pawn::getTeam()) {
+        if(board[x-1][y+dir] != nullptr && board[x-1][y+dir]->getTeam() != Pawn::getTeam()) {
             moves.push_back(make_tuple(make_pair(xPos-1, yPos+dir), MoveType::CAPTURE));
-        }        
+        }
     }
 
     // normal one tile move 
