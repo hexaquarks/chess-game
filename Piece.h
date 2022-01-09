@@ -6,7 +6,7 @@
 using namespace std;
 
 
-enum class Team { WHITE, BLACK, NONE };
+enum class Team { WHITE, BLACK };
 enum class PieceType { PAWN, ROOK, KNIGHT, BISHOP, KING, QUEEN, EMPTY };
 enum class MoveType { NORMAL, CASTLE, ENPASSANT, NEWPIECE, CAPTURE };
 
