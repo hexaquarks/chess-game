@@ -38,11 +38,11 @@ void GameThread::startGame() {
                 xPos = event.mouseButton.x;
                 yPos = event.mouseButton.y;
 
-                if (game.getBoardTile(xPos / 80, yPos / 80) != nullptr) {
+                if (game.getBoardTile(xPos/80, yPos/80) != nullptr) {
                     // check if the selected piece's color corresponds to
                     // the player's turn color
-                    if (game.getBoardTile(xPos / 80, yPos / 80)->getTeam() == game.getTurn()) {
-                        selectedPiece = game.getBoardTile(xPos / 80, yPos / 80);
+                    if (game.getBoardTile(xPos/80, yPos/80)->getTeam() == game.getTurn()) {
+                        selectedPiece = game.getBoardTile(xPos/80, yPos/80);
                         pieceIsMoving = true;
 
                         // set the tile on the board where the piece is
@@ -107,7 +107,7 @@ void GameThread::startGame() {
                 RectangleShape square(Vector2f(80, 80));
 
                 square.setFillColor(((i+j) % 2 == 0)? Color(181, 136, 99): Color(240, 217, 181));
-                square.setPosition(i * 80, j * 80);
+                square.setPosition(i*80, j*80);
                 window.draw(square);
 
                 // Drawing the Piece if there is one
@@ -116,7 +116,7 @@ void GameThread::startGame() {
                     t.loadFromFile(game.getBoardTile(i, j)->getFileName());
                     Sprite tt(t);
                     tt.setScale(0.6, 0.6);
-                    tt.setPosition(i * 80, j * 80);
+                    tt.setPosition(i*80, j*80);
                     window.draw(tt);
                 }
             }

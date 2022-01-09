@@ -21,12 +21,12 @@ moveTypes Rook::calcPossibleMoves(Piece* board[8][8]) const {
 
         // in horizontal direction
         for (int j = 0; j < abs(dx); ++j){
-            if (dx >= 0 && board[xPos - j][yPos] != nullptr) {
+            if (dx >= 0 && board[xPos-j][yPos] != nullptr) {
                 // to the left of the rook 
                 horizontalPieceInterference = true;
                 break;
             }
-            if (dx < 0 && board[xPos + j][yPos] != nullptr) {
+            if (dx < 0 && board[xPos+j][yPos] != nullptr) {
                 // to the right of the rook
                 horizontalPieceInterference = true;
                 break;
@@ -35,12 +35,12 @@ moveTypes Rook::calcPossibleMoves(Piece* board[8][8]) const {
 
         // in vertical direction
         for (int j = 0; j < abs(dy); ++j) {
-            if (dx >= 0 && board[xPos][yPos - j] != nullptr) {
+            if (dx >= 0 && board[xPos][yPos-j] != nullptr) {
                 // upwards to the rook 
                 verticalPieceInterference = true;
                 break;
             }
-            if (dx < 0 && board[xPos][yPos + j] != nullptr) {
+            if (dx < 0 && board[xPos][yPos+j] != nullptr) {
                 // downwards to the rook
                 verticalPieceInterference = true;
                 break;
@@ -49,13 +49,13 @@ moveTypes Rook::calcPossibleMoves(Piece* board[8][8]) const {
 
         // adding the moves to the list
         if (!horizontalPieceInterference) {
-            if (board[i][yPos]->getTeam() != Rook::getTeam()) 
+            if (board[i][yPos] != nullptr && board[i][yPos]->getTeam() != getTeam()) 
                 moves.push_back(make_tuple(make_pair(i, yPos), MoveType::CAPTURE));
             else 
                 moves.push_back(make_tuple(make_pair(i, yPos), MoveType::NORMAL));
         }
         if (!verticalPieceInterference) {
-            if (board[xPos][i]->getTeam() != Rook::getTeam()) 
+            if (board[i][yPos] != nullptr && board[xPos][i]->getTeam() != getTeam()) 
                 moves.push_back(make_tuple(make_pair(xPos, i), MoveType::CAPTURE));
             else 
                 moves.push_back(make_tuple(make_pair(xPos, i), MoveType::NORMAL));
