@@ -22,5 +22,7 @@ vector<tuple<pair<int, int> , MoveType>> Knight::calcPossibleMoves(Piece* board[
                     moves.push_back(make_tuple(make_pair(x,y), MoveType::CAPTURE));
             }
         }
+
     }
-}
+        return moves;
+};

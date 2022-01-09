@@ -8,10 +8,10 @@ vector<tuple<pair<int, int> , MoveType>> Rook::calcPossibleMoves(Piece* board[8]
     int xPos = Rook::xPos;
     int yPos = Rook::yPos;
 
-    // horizontal movement
+    // horizontal and vertical movement
     for(int i = 0 ; i < 8; ++i){
         //rook can't move to it's own square
-        if(xPos == i || yPos == i) continue;
+        if(xPos == i || yPos == i) continue; // possible bug here actually
 
         // distance between the rook and the target square
         int dx = xPos - i;
@@ -65,4 +65,6 @@ vector<tuple<pair<int, int> , MoveType>> Rook::calcPossibleMoves(Piece* board[8]
 
 
     }
+
+    return moves;
 };

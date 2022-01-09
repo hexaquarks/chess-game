@@ -23,6 +23,6 @@ class Piece {
     virtual ~Piece() {} // Virtual destructor
     Team getTeam() const { return team; };
     string getFileName() const { return filename; }
-    virtual void calcPossibleMoves(Piece*[8][8]) const {} // Virtual function
+    virtual vector<tuple<pair<int, int> , MoveType>> calcPossibleMoves(Piece*[8][8]) const = 0; // Virtual function
     void move(int x, int y) { xPos = x; yPos = y; }
 };
