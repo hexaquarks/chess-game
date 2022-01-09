@@ -11,6 +11,10 @@ enum class PieceType { PAWN, ROOK, KNIGHT, BISHOP, KING, QUEEN, EMPTY };
 enum class MoveType { NORMAL, CASTLE, ENPASSANT, NEWPIECE, CAPTURE };
 
 
+typedef tuple<pair<int, int>, MoveType> moveType;
+typedef vector<moveType> moveTypes;
+
+
 class Piece {
     string filename; // the filename for this piece
     Team team; // the team this piece plays for
@@ -23,6 +27,6 @@ class Piece {
     virtual ~Piece() {} // Virtual destructor
     Team getTeam() const { return team; };
     string getFileName() const { return filename; }
-    virtual vector<tuple<pair<int, int> , MoveType>> calcPossibleMoves(Piece*[8][8]) const = 0; // Virtual function
+    virtual moveTypes calcPossibleMoves(Piece*[8][8]) const = 0; // Virtual function
     void move(int x, int y) { xPos = x; yPos = y; }
 };

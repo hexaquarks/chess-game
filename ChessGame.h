@@ -8,6 +8,8 @@
 #include "Queen.h"
 
 class ChessGame {
+    Piece* board[8][8];
+    Team turn; // which player's turn
     vector<Piece*> whitePieces;
     vector<Piece*> blackPieces;
     King* whiteKing;
@@ -15,13 +17,13 @@ class ChessGame {
     void freeMemory();
 
     public:
-    Piece* board[8][8];
-    ChessGame() { reset(); } // Constructor
+    ChessGame(): turn(Team::WHITE) { reset(); } // Constructor
     ~ChessGame() { freeMemory(); } // Destructor
-    
-    Team turn; // which player's turn
+
     void reset(); // Resets the board
-    Piece* getBoardTile(int x, int y) { return board[x][y]; }
+    Piece* getBoardTile(int x, int y) const { return board[x][y]; }
     void setBoardTile(int, int, Piece*);
-    Team getTurn() { return turn; }
+    Team getTurn() const { return turn; }
+    void switchTurn() { turn = (turn == Team::WHITE)? Team::BLACK: Team::WHITE; }
+    moveTypes possibleMovesFor(Piece* piece) { return piece->calcPossibleMoves(board); }
 };

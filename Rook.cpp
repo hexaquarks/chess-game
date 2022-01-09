@@ -3,15 +3,13 @@
 
 Rook::Rook(Team team, int x, int y): Piece(team, x, y, PieceType::ROOK, "r") {}
 
-vector<tuple<pair<int, int> , MoveType>> Rook::calcPossibleMoves(Piece* board[8][8]) const {
-    vector<tuple<pair<int, int> , MoveType>> moves;
-    int xPos = Rook::xPos;
-    int yPos = Rook::yPos;
-
+moveTypes Rook::calcPossibleMoves(Piece* board[8][8]) const {
+    moveTypes moves;
+    
     // horizontal and vertical movement
-    for(int i = 0 ; i < 8; ++i){
+    for (int i = 0; i < 8; ++i) {
         //rook can't move to it's own square
-        if(xPos == i || yPos == i) continue; // possible bug here actually
+        if (xPos == i || yPos == i) continue; // possible bug here actually
 
         // distance between the rook and the target square
         int dx = xPos - i;
@@ -22,13 +20,13 @@ vector<tuple<pair<int, int> , MoveType>> Rook::calcPossibleMoves(Piece* board[8]
         bool verticalPieceInterference;
 
         // in horizontal direction
-        for(int j = 0 ; j < std::abs(dx) ; ++j){
-            if(dx >= 0 && board[xPos - j][yPos] != nullptr) {
+        for (int j = 0; j < abs(dx); ++j){
+            if (dx >= 0 && board[xPos - j][yPos] != nullptr) {
                 // to the left of the rook 
                 horizontalPieceInterference = true;
                 break;
             }
-            if(dx < 0 && board[xPos + j][yPos] != nullptr) {
+            if (dx < 0 && board[xPos + j][yPos] != nullptr) {
                 // to the right of the rook
                 horizontalPieceInterference = true;
                 break;
@@ -36,13 +34,13 @@ vector<tuple<pair<int, int> , MoveType>> Rook::calcPossibleMoves(Piece* board[8]
         }
 
         // in vertical direction
-        for(int j = 0 ; j < std::abs(dy) ; ++j){
-            if(dx >= 0 && board[xPos][yPos - j] != nullptr) {
+        for (int j = 0; j < abs(dy); ++j) {
+            if (dx >= 0 && board[xPos][yPos - j] != nullptr) {
                 // upwards to the rook 
                 verticalPieceInterference = true;
                 break;
             }
-            if(dx < 0 && board[xPos][yPos + j] != nullptr) {
+            if (dx < 0 && board[xPos][yPos + j] != nullptr) {
                 // downwards to the rook
                 verticalPieceInterference = true;
                 break;
@@ -50,20 +48,18 @@ vector<tuple<pair<int, int> , MoveType>> Rook::calcPossibleMoves(Piece* board[8]
         }
 
         // adding the moves to the list
-        if(!horizontalPieceInterference) {
-            if(board[i][yPos]->getTeam() != Rook::getTeam()) 
-                moves.push_back(make_tuple(make_pair(i,yPos), MoveType::CAPTURE));
+        if (!horizontalPieceInterference) {
+            if (board[i][yPos]->getTeam() != Rook::getTeam()) 
+                moves.push_back(make_tuple(make_pair(i, yPos), MoveType::CAPTURE));
             else 
-                moves.push_back(make_tuple(make_pair(i,yPos), MoveType::NORMAL));
+                moves.push_back(make_tuple(make_pair(i, yPos), MoveType::NORMAL));
         }
-        if(!verticalPieceInterference) {
-            if(board[xPos][i]->getTeam() != Rook::getTeam()) 
-                moves.push_back(make_tuple(make_pair(xPos,i), MoveType::CAPTURE));
+        if (!verticalPieceInterference) {
+            if (board[xPos][i]->getTeam() != Rook::getTeam()) 
+                moves.push_back(make_tuple(make_pair(xPos, i), MoveType::CAPTURE));
             else 
-                moves.push_back(make_tuple(make_pair(xPos,i), MoveType::NORMAL));
+                moves.push_back(make_tuple(make_pair(xPos, i), MoveType::NORMAL));
         }
-
-
     }
 
     return moves;

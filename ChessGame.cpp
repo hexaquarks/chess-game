@@ -1,11 +1,6 @@
 #include "ChessGame.h"
 #include <algorithm>
 
-// Helper function to remove a piece from a list of pieces.
-inline void removeFrom(vector<Piece*> pieces, Piece* piece) {
-    pieces.erase(remove(pieces.begin(), pieces.end(), piece), pieces.end());
-}
-
 void ChessGame::freeMemory() {
     for (int i = 0; i < 8; ++i)
         for (int j = 0; j < 8; ++j)

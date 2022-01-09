@@ -3,7 +3,10 @@
 
 
 // Represents a king
-struct King : public Piece {
+class King : public Piece {
+    bool hasMoved = false; // Useful for castling
+
+    public:
     King(Team, int, int); // Constructor
-    vector<tuple<pair<int, int> , MoveType>> calcPossibleMoves(Piece*[8][8]) const override; 
+    moveTypes calcPossibleMoves(Piece*[8][8]) const override; 
 };

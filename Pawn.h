@@ -4,8 +4,10 @@
 
 
 // Represents a pawns
-struct Pawn : public Piece {
+class Pawn : public Piece {
+    bool hasMoved = false; // First move can eventually 2
+
+    public:
     Pawn(Team, int, int); // Constructor
-    vector<tuple<pair<int, int> , MoveType>> calcPossibleMoves(Piece*[8][8]) const override;
-    bool hasMoved;
+    moveTypes calcPossibleMoves(Piece*[8][8]) const override;
 };
