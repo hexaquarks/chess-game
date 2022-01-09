@@ -5,8 +5,10 @@
 #include "ChessGame.h"
 using namespace sf;
 
-constexpr unsigned int WINDOW_SIZE = 1280;
+constexpr unsigned int WINDOW_SIZE = 640;
 constexpr unsigned int CELL_SIZE = WINDOW_SIZE / 8;
+constexpr float SPRITE_SCALE = 0.6;
+constexpr float SPRITE_SIZE = 128;
 
 
 void GameThread::startGame() {
@@ -114,7 +116,7 @@ void GameThread::startGame() {
                 Texture t;
                 t.loadFromFile(game.getBoardTile(i, j)->getFileName());
                 Sprite tt(t);
-                tt.setScale(1.2, 1.2);
+                tt.setScale(SPRITE_SCALE, SPRITE_SCALE);
                 tt.setPosition(i*CELL_SIZE, j*CELL_SIZE);
                 window.draw(tt);
             }
@@ -126,9 +128,9 @@ void GameThread::startGame() {
             Texture t;
             t.loadFromFile(selectedPiece->getFileName());
             Sprite tt(t);
-            tt.setScale(1.2, 1.2);
+            tt.setScale(SPRITE_SCALE, SPRITE_SCALE);
             tt.setPosition(xPos, yPos);
-            tt.setOrigin(64, 64);
+            tt.setOrigin(SPRITE_SIZE/2, SPRITE_SIZE/2);
             window.draw(tt);
         }
 
