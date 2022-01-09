@@ -5,9 +5,13 @@
 #include "ChessGame.h"
 using namespace sf;
 
+constexpr unsigned int WINDOW_SIZE = 640;
+constexpr unsigned int CELL_SIZE = WINDOW_SIZE / 8;
+
+
 void GameThread::startGame() {
     ChessGame game;
-    RenderWindow window(VideoMode(640, 640), "Chess Game", Style::Titlebar | Style::Close);
+    RenderWindow window(VideoMode(WINDOW_SIZE, WINDOW_SIZE), "Chess Game", Style::Titlebar | Style::Close);
 
     // Setting window icon
     Image icon;
@@ -16,11 +20,11 @@ void GameThread::startGame() {
 
     // Parameters to handle a piece being dragged
     bool pieceIsMoving;
-    Piece* selectedPiece;
-    int xPos = 0, yPos = 0;
+    Piece* selectedPiece = nullptr;
+    int xPos = 0, yPos = 0; // Mouse position
+    int lastXPos = 0, lastYPos = 0; // Last position of the piece before being dragged
 
-    // This is the main loop (a.k.a game loop) this ensures that the program
-    // does not terminate until we exit.
+    // This is the main loop (a.k.a game loop) this ensures that the program does not terminate until we exit
     Event event;
     while (window.isOpen()) {
         window.clear(Color::Black);
@@ -37,19 +41,14 @@ void GameThread::startGame() {
                 // Get the tile of the click
                 xPos = event.mouseButton.x;
                 yPos = event.mouseButton.y;
+                Piece* piece = game.getBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE);
 
-                if (game.getBoardTile(xPos/80, yPos/80) != nullptr) {
-                    // check if the selected piece's color corresponds to
-                    // the player's turn color
-                    if (game.getBoardTile(xPos/80, yPos/80)->getTeam() == game.getTurn()) {
-                        selectedPiece = game.getBoardTile(xPos/80, yPos/80);
-                        pieceIsMoving = true;
-
-                        // set the tile on the board where the piece is
-                        // selected, to null and draw the dragged piece
-                        // explicitly
-                        game.setBoardTile(xPos / 80, yPos / 80, nullptr);
-                    }
+                // If piece is not null and has the right color
+                if (piece != nullptr && piece->getTeam() == game.getTurn()) {
+                    selectedPiece = piece;
+                    pieceIsMoving = true;
+                    lastXPos = xPos/CELL_SIZE; lastYPos = yPos/CELL_SIZE;
+                    game.setBoardTile(lastXPos, lastYPos, nullptr); // Set the tile on the board where the piece is selected to null
                 }
             }
 
@@ -64,63 +63,63 @@ void GameThread::startGame() {
             // Mouse button released
             if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && selectedPiece != nullptr) {
                 moveTypes possibleMoves = game.possibleMovesFor(selectedPiece);
-                moveType selectedMove;
+                moveType* selectedMove = nullptr;
 
-                for (const auto& move: possibleMoves) 
-                    if (get<0>(move).first == xPos/80 && get<0>(move).second == yPos/80) 
-                        selectedMove = move;
-
-                // Apply the move
-                switch (get<1>(selectedMove)) {
-                    case MoveType::NORMAL :
-                        game.setBoardTile(xPos/80, yPos/80, selectedPiece);
+                // Try to match moves
+                for (moveType& move: possibleMoves) {
+                    if (get<0>(move).first == xPos/CELL_SIZE && get<0>(move).second == yPos/CELL_SIZE) {
+                        selectedMove = &move;
                         break;
-                    case MoveType::CAPTURE :
-                        game.setBoardTile(xPos/80, yPos/80, selectedPiece);
-                        break;
-                    case MoveType::ENPASSANT :
-                        break;
-                    case MoveType::NEWPIECE :
-                        break;
-                    case MoveType::CASTLE :
-                        break;
+                    }
                 }
 
-                // if (game.getBoardTile(xPos / 80, yPos / 80) == nullptr) {
-                //     // drop a piece to the tile only if is empty (for
-                //     // testing)
-                //     game.setBoardTile(xPos / 80, yPos / 80, selectedPiece);
-                // }
+                // If move is not allowed, place piece back, else apply the move
+                if (selectedMove == nullptr) {
+                    game.setBoardTile(lastXPos, lastYPos, selectedPiece);
+                } else {
+                    switch (get<1>(*selectedMove)) {
+                        case MoveType::NORMAL:
+                            game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
+                            break;
+                        case MoveType::CAPTURE:
+                            game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
+                            break;
+                        case MoveType::ENPASSANT:
+                            break;
+                        case MoveType::NEWPIECE:
+                            break;
+                        case MoveType::CASTLE:
+                            break;
+                    }
+                    game.switchTurn();
+                }
 
-                xPos = -1;
-                yPos = -1;
+                xPos = 0; yPos = 0;
                 selectedPiece = nullptr;
                 pieceIsMoving = false;
-                game.switchTurn();
         }
     }
 
     // Initializing the board
     for (int i = 0; i < 8; ++i) {
-            for (int j = 0; j < 8; ++j) {
-                // Drawing the colored square
-                RectangleShape square(Vector2f(80, 80));
+        for (int j = 0; j < 8; ++j) {
+            // Drawing the colored square
+            RectangleShape square(Vector2f(CELL_SIZE, CELL_SIZE));
+            square.setFillColor(((i+j) % 2 == 0)? Color(181, 136, 99): Color(240, 217, 181));
+            square.setPosition(i*CELL_SIZE, j*CELL_SIZE);
+            window.draw(square);
 
-                square.setFillColor(((i+j) % 2 == 0)? Color(181, 136, 99): Color(240, 217, 181));
-                square.setPosition(i*80, j*80);
-                window.draw(square);
-
-                // Drawing the Piece if there is one
-                if (game.getBoardTile(i, j) != nullptr) {
-                    Texture t;
-                    t.loadFromFile(game.getBoardTile(i, j)->getFileName());
-                    Sprite tt(t);
-                    tt.setScale(0.6, 0.6);
-                    tt.setPosition(i*80, j*80);
-                    window.draw(tt);
-                }
+            // Drawing the Piece if there is one
+            if (game.getBoardTile(i, j) != nullptr) {
+                Texture t;
+                t.loadFromFile(game.getBoardTile(i, j)->getFileName());
+                Sprite tt(t);
+                tt.setScale(0.6, 0.6);
+                tt.setPosition(i*CELL_SIZE, j*CELL_SIZE);
+                window.draw(tt);
             }
         }
+    }
 
         // Draw the piece that is being dragged
         if (pieceIsMoving) {

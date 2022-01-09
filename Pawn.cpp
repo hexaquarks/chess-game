@@ -31,7 +31,7 @@ moveTypes Pawn::calcPossibleMoves(Piece* board[8][8]) const {
     // double square initial move
     if ((y == 1 || y == 6) && !Pawn::hasMoved && board[x][y+2*dir] == nullptr)
         moves.push_back(make_tuple(make_pair(xPos, yPos+2*dir), MoveType::NORMAL));
-
+    
     // En passant &TODO
     return moves;
 };
