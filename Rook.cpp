@@ -55,7 +55,7 @@ moveTypes Rook::calcPossibleMoves(Piece* board[8][8]) const {
                 moves.push_back(make_tuple(make_pair(i, yPos), MoveType::NORMAL));
         }
         if (!verticalPieceInterference) {
-            if (board[i][yPos] != nullptr && board[xPos][i]->getTeam() != getTeam()) 
+            if (board[xPos][i] != nullptr && board[xPos][i]->getTeam() != getTeam()) 
                 moves.push_back(make_tuple(make_pair(xPos, i), MoveType::CAPTURE));
             else 
                 moves.push_back(make_tuple(make_pair(xPos, i), MoveType::NORMAL));
