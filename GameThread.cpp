@@ -111,7 +111,7 @@ void GameThread::startGame() {
             square.setPosition(i*CELL_SIZE, j*CELL_SIZE);
             window.draw(square);
 
-            // Drawing the Piece if there is one
+            // Drawing the piece if there is one
             if (game.getBoardTile(i, j) != nullptr) {
                 Texture t;
                 t.loadFromFile(game.getBoardTile(i, j)->getFileName());
