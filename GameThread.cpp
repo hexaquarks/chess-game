@@ -92,6 +92,9 @@ void GameThread::startGame() {
                             break;
                         case MoveType::CASTLE:
                             break;
+                        case MoveType::INIT_SPECIAL:
+                            game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
+                            break;
                     }
                     game.switchTurn();
                 }

@@ -5,6 +5,7 @@ Rook::Rook(Team team, int x, int y): Piece(team, x, y, PieceType::ROOK, "r") {}
 
 moveTypes Rook::calcPossibleMoves(Piece* board[8][8]) const {
     moveTypes moves;
+    int xPos = getX(), yPos = getY();
     
     // horizontal and vertical movement
     for (int i = 0; i < 8; ++i) {

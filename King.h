@@ -3,10 +3,7 @@
 
 
 // Represents a king
-class King : public Piece {
-    bool hasMoved = false; // Useful for castling
-
-    public:
+struct King : public Piece {
     King(Team, int, int); // Constructor
     moveTypes calcPossibleMoves(Piece*[8][8]) const override; 
 };

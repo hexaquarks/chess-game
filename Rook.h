@@ -3,10 +3,7 @@
 
 
 // Represents a rook
-class Rook : public Piece {
-    bool hasMoved = false; // Useful for castling
-
-    public:
+struct Rook : public Piece {
     Rook(Team, int, int); // Constructor
     moveTypes calcPossibleMoves(Piece*[8][8]) const override;
 };
