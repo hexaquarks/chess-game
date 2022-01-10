@@ -142,53 +142,20 @@ void GameThread::startGame() {
             for (moveType& move: possibleMoves) {
                 int j = get<0>(move).first;
                 int i = get<0>(move).second;
-
                 int jx = j*CELL_SIZE;
                 int ix = i*CELL_SIZE;
 
-                if(game.getBoardTile(i,j) == nullptr) {
-                    Texture circleTexture;
-                    circleTexture.loadFromFile("./assets/circle.png");
-                    Sprite circle(circleTexture);
-                    circle.setScale(SPRITE_SCALE, SPRITE_SCALE);
-                    circle.setPosition(i*CELL_SIZE, j*CELL_SIZE);
-                    window.draw(circle);
-                } else {
-                    vector<ConvexShape> shapes;
-                    ConvexShape topLeft, topRight, botLeft, botRight;
-                    shapes.push_back(topLeft);
-                    shapes.push_back(topRight);
-                    shapes.push_back(botLeft);
-                    shapes.push_back(botRight);
+                bool isEmpty = game.getBoardTile(i, j) == nullptr;
+                Texture circleTexture;
+                circleTexture.loadFromFile(isEmpty? "./assets/circle.png": "./assets/empty_circle.png");
 
-                    for(std::size_t i = 0; i < shapes.size(); ++i) {
-                        shapes[i].setPosition(ix,jx);
-                        shapes[i].setPointCount(3); 
-                        shapes[i].setPoint(0, Vector2f(0, 0));
-                        shapes[i].setPoint(1, Vector2f((1/3)*CELL_SIZE, 20));
-                        shapes[i].setPoint(2, Vector2f(20, (1/3)*CELL_SIZE));
-                        shapes[i].setFillColor(Color(105,105,105));
-                        shapes[i].rotate(90*i);
-
-                        if(i==1) {
-                            shapes[i].setPosition(ix+CELL_SIZE,jx);
-                            shapes[i].setOrigin((1/6)*CELL_SIZE,(1/6)*CELL_SIZE);
-                            shapes[i].move(-(1/3)*CELL_SIZE,0);
-                        } else if (i==2) {
-                            shapes[i].setPosition(ix+CELL_SIZE, jx+CELL_SIZE);
-                            shapes[i].setOrigin((1/6)*CELL_SIZE,(1/6)*CELL_SIZE);
-                            shapes[i].move(-(1/3)*CELL_SIZE,-(1/3)*CELL_SIZE);
-                        } else if (i ==3) {
-                            shapes[i].setPosition(ix, jx+CELL_SIZE);
-                            shapes[i].setOrigin((1/6)*CELL_SIZE,(1/6)*CELL_SIZE);
-                            shapes[i].move(0,-(1/3)*CELL_SIZE);
-                        }
-                        window.draw(shapes[i]);
-                    }
-                }
+                Sprite circle(circleTexture);
+                if (isEmpty) circle.setScale(SPRITE_SCALE, SPRITE_SCALE);
+                circle.setPosition(i*CELL_SIZE, j*CELL_SIZE);
+                window.draw(circle);
             }
         }
-        
+
         // Drawing the pieces
         for (int i = 0; i < 8; ++i) {
             for (int j = 0; j < 8; ++j) {
