@@ -26,4 +26,5 @@ class ChessGame {
     Team getTurn() const { return turn; }
     void switchTurn() { turn = (turn == Team::WHITE)? Team::BLACK: Team::WHITE; }
     moveTypes possibleMovesFor(Piece* piece) { return piece->calcPossibleMoves(board); }
+    void addPiece(Piece* piece) { (piece->getTeam() == Team::WHITE)? whitePieces.push_back(piece): blackPieces.push_back(piece); }
 };

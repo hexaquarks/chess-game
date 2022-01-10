@@ -3,7 +3,7 @@
 #include <vector>
 
 
-// Represents a pawns
+// Represents a pawn
 struct Pawn : public Piece {
     Pawn(Team, int, int); // Constructor
     moveTypes calcPossibleMoves(Piece*[8][8]) const override;

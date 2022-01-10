@@ -89,12 +89,17 @@ void GameThread::startGame() {
                             break;
                         case MoveType::ENPASSANT:
                             break;
-                        case MoveType::NEWPIECE:
+                        case MoveType::CASTLE_KINGSIDE:
                             break;
-                        case MoveType::CASTLE:
+                        case MoveType::CASTLE_QUEENSIDE:
                             break;
                         case MoveType::INIT_SPECIAL:
                             game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
+                            break;
+                        case MoveType::NEWPIECE:
+                            Queen* queen = new Queen(game.getTurn(), yPos/CELL_SIZE, xPos/CELL_SIZE);
+                            game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, queen);
+                            game.addPiece(queen);
                             break;
                     }
                     game.switchTurn();
