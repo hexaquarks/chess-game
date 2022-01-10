@@ -97,6 +97,7 @@ void GameThread::startGame() {
                             game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
                             break;
                         case MoveType::NEWPIECE:
+                            selectedPiece->move(-1, -1); // Deleted
                             Queen* queen = new Queen(game.getTurn(), yPos/CELL_SIZE, xPos/CELL_SIZE);
                             game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, queen);
                             game.addPiece(queen);

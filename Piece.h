@@ -28,6 +28,7 @@ class Piece {
     virtual ~Piece() {} // Virtual destructor
 
     Team getTeam() const { return team; };
+    PieceType getType() const { return type; }
     string getFileName() const { return filename; }
     bool hasMoved() const { return moved; }
     int getX() const { return xPos; }
