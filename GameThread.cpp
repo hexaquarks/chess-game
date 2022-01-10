@@ -116,8 +116,8 @@ void GameThread::startGame() {
 
                 }
 
-                if(event.mouseButton.button == Mouse::Right && selectedPiece != nullptr) {
-                    // reset the piece back
+                if (event.mouseButton.button == Mouse::Right && selectedPiece != nullptr) {
+                    // Reset the piece back
                     game.setBoardTile(lastXPos, lastYPos, selectedPiece);
                     selectedPiece = nullptr;
                     xPos = 0; yPos=0; 
