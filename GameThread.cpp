@@ -25,7 +25,8 @@ void GameThread::startGame() {
     Piece* selectedPiece = nullptr;
     int xPos = 0, yPos = 0; // Mouse position
     int lastXPos = 0, lastYPos = 0; // Last position of the piece before being dragged
-
+    moveTypes possibleMoves;
+    
     // This is the main loop (a.k.a game loop) this ensures that the program does not terminate until we exit
     Event event;
     while (window.isOpen()) {
@@ -48,6 +49,7 @@ void GameThread::startGame() {
                 // If piece is not null and has the right color
                 if (piece != nullptr && piece->getTeam() == game.getTurn()) {
                     selectedPiece = piece;
+                    possibleMoves = game.possibleMovesFor(selectedPiece);
                     pieceIsMoving = true;
                     lastXPos = xPos/CELL_SIZE; lastYPos = yPos/CELL_SIZE;
                     game.setBoardTile(lastXPos, lastYPos, nullptr); // Set the tile on the board where the piece is selected to null
@@ -64,7 +66,6 @@ void GameThread::startGame() {
 
             // Mouse button released
             if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && selectedPiece != nullptr) {
-                moveTypes possibleMoves = game.possibleMovesFor(selectedPiece);
                 moveType* selectedMove = nullptr;
 
                 // Try to match moves
@@ -113,8 +114,26 @@ void GameThread::startGame() {
             square.setFillColor(((i+j) % 2 == 0)? Color(181, 136, 99): Color(240, 217, 181));
             square.setPosition(i*CELL_SIZE, j*CELL_SIZE);
             window.draw(square);
+        }
+    }
 
-            // Drawing the piece if there is one
+    // Drawing the circles
+    if (pieceIsMoving) {
+        for (moveType& move: possibleMoves) {
+            int j = get<0>(move).first;
+            int i = get<0>(move).second;
+            Texture circleTexture;
+            circleTexture.loadFromFile((game.getBoardTile(i, j) == nullptr)? "./assets/circle.png": "./assets/empty_circle.png");
+            Sprite circle(circleTexture);
+            circle.setScale(SPRITE_SCALE, SPRITE_SCALE);
+            circle.setPosition(i*CELL_SIZE, j*CELL_SIZE);
+            window.draw(circle);
+        }
+    }
+    
+    // Drawing the pieces
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 8; ++j) {
             if (game.getBoardTile(i, j) != nullptr) {
                 Texture t;
                 t.loadFromFile(game.getBoardTile(i, j)->getFileName());
