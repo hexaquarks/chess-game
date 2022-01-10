@@ -142,8 +142,6 @@ void GameThread::startGame() {
             for (moveType& move: possibleMoves) {
                 int j = get<0>(move).first;
                 int i = get<0>(move).second;
-                int jx = j*CELL_SIZE;
-                int ix = i*CELL_SIZE;
 
                 bool isEmpty = game.getBoardTile(i, j) == nullptr;
                 Texture circleTexture;
