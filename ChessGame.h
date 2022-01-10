@@ -21,7 +21,7 @@ class ChessGame {
     ~ChessGame() { freeMemory(); } // Destructor
 
     void reset(); // Resets the board
-    Piece* getBoardTile(int x, int y) const { return board[x][y]; }
+    Piece* getBoardTile(int x, int y) const { return board[y][x]; }
     void setBoardTile(int, int, Piece*);
     Team getTurn() const { return turn; }
     void switchTurn() { turn = (turn == Team::WHITE)? Team::BLACK: Team::WHITE; }

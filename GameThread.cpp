@@ -69,7 +69,7 @@ void GameThread::startGame() {
 
                 // Try to match moves
                 for (moveType& move: possibleMoves) {
-                    if (get<0>(move).first == xPos/CELL_SIZE && get<0>(move).second == yPos/CELL_SIZE) {
+                    if (get<0>(move).first == yPos/CELL_SIZE && get<0>(move).second == xPos/CELL_SIZE) {
                         selectedMove = &move;
                         break;
                     }

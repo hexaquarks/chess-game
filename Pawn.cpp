@@ -9,14 +9,14 @@ moveTypes Pawn::calcPossibleMoves(Piece* board[8][8]) const {
     int xPos = getX(), yPos = getY();
 
     // Taking piece on the right
-    if (xPos+1 < 8 && (yPos+dir < 8 && yPos+dir >= 0))
-        if (board[xPos+1][yPos+dir] != nullptr && board[xPos+1][yPos+dir]->getTeam() != getTeam())
-            moves.push_back(make_tuple(make_pair(xPos+1, yPos+dir), MoveType::CAPTURE));
+    if (yPos+1 < 8 && (xPos+dir < 8 && xPos+dir >= 0))
+        if (board[xPos+dir][yPos+1] != nullptr && board[xPos+dir][yPos+1]->getTeam() != getTeam())
+            moves.push_back(make_tuple(make_pair(xPos+dir, yPos+1), MoveType::CAPTURE));
 
     // Taking piece on the left
-    if (xPos-1 >= 0 && (yPos+dir < 8 && yPos+dir >= 0))
-        if (board[xPos-1][yPos+dir] != nullptr && board[xPos-1][yPos+dir]->getTeam() != getTeam())
-            moves.push_back(make_tuple(make_pair(xPos-1, yPos+dir), MoveType::CAPTURE));
+    if (yPos-1 >= 0 && (xPos+dir < 8 && xPos+dir >= 0))
+        if (board[xPos+dir][yPos-1] != nullptr && board[xPos+dir][yPos-1]->getTeam() != getTeam())
+            moves.push_back(make_tuple(make_pair(xPos+dir, yPos-1), MoveType::CAPTURE));
 
     // Forward move
     if ((xPos+dir == 0 || xPos+dir == 7) && board[xPos+dir][yPos] == nullptr)
