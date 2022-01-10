@@ -34,5 +34,5 @@ class Piece {
     int getY() const { return yPos; }
 
     virtual moveTypes calcPossibleMoves(Piece*[8][8]) const = 0; // Virtual function
-    void move(int x, int y) { xPos = x; yPos = y; if (xPos != x || yPos != y) moved = true; }
+    void move(int x, int y) { if (xPos != x || yPos != y) { moved = true; xPos = x; yPos = y; } }
 };
