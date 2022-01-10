@@ -21,12 +21,12 @@ moveTypes Pawn::calcPossibleMoves(Piece* board[8][8]) const {
     // Forward move
     if ((xPos+dir == 0 || xPos+dir == 7) && board[xPos+dir][yPos] == nullptr)
         moves.push_back(make_tuple(make_pair(xPos+dir, yPos), MoveType::NEWPIECE));
-    else if (board[xPos+dir][yPos] == nullptr) 
+    else if (board[xPos+dir][yPos] == nullptr)  {
         moves.push_back(make_tuple(make_pair(xPos+dir, yPos), MoveType::NORMAL));
-
-    // Double square initial move
-    if ((xPos == 1 || xPos == 6) && !hasMoved() && board[xPos+2*dir][yPos] == nullptr)
-        moves.push_back(make_tuple(make_pair(xPos+2*dir, yPos), MoveType::INIT_SPECIAL));
+        // Double square initial move
+        if (!hasMoved() && board[xPos+2*dir][yPos] == nullptr)
+            moves.push_back(make_tuple(make_pair(xPos+2*dir, yPos), MoveType::INIT_SPECIAL));
+    }
 
     // En passant &TODO
     return moves;
