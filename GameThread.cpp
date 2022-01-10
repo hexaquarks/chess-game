@@ -65,91 +65,94 @@ void GameThread::startGame() {
             }
 
             // Mouse button released
-            if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && selectedPiece != nullptr) {
-                moveType* selectedMove = nullptr;
+            if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left) {
+                // Should always be true by design
+                if (selectedPiece != nullptr) {
+                    moveType* selectedMove = nullptr;
 
-                // Try to match moves
-                for (moveType& move: possibleMoves) {
-                    if (get<0>(move).first == yPos/CELL_SIZE && get<0>(move).second == xPos/CELL_SIZE) {
-                        selectedMove = &move;
-                        break;
+                    // Try to match moves
+                    for (moveType& move: possibleMoves) {
+                        if (get<0>(move).first == yPos/CELL_SIZE && get<0>(move).second == xPos/CELL_SIZE) {
+                            selectedMove = &move;
+                            break;
+                        }
                     }
-                }
 
-                // If move is not allowed, place piece back, else apply the move
-                if (selectedMove == nullptr) {
-                    game.setBoardTile(lastXPos, lastYPos, selectedPiece);
-                } else {
-                    switch (get<1>(*selectedMove)) {
-                        case MoveType::NORMAL:
-                            game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
-                            break;
-                        case MoveType::CAPTURE:
-                            game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
-                            break;
-                        case MoveType::ENPASSANT:
-                            break;
-                        case MoveType::CASTLE_KINGSIDE:
-                            break;
-                        case MoveType::CASTLE_QUEENSIDE:
-                            break;
-                        case MoveType::INIT_SPECIAL:
-                            game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
-                            break;
-                        case MoveType::NEWPIECE:
-                            selectedPiece->move(-1, -1); // Deleted
-                            Queen* queen = new Queen(game.getTurn(), yPos/CELL_SIZE, xPos/CELL_SIZE);
-                            game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, queen);
-                            game.addPiece(queen);
-                            break;
+                    // If move is not allowed, place piece back, else apply the move
+                    if (selectedMove == nullptr) {
+                        game.setBoardTile(lastXPos, lastYPos, selectedPiece);
+                    } else {
+                        switch (get<1>(*selectedMove)) {
+                            case MoveType::NORMAL:
+                                game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
+                                break;
+                            case MoveType::CAPTURE:
+                                game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
+                                break;
+                            case MoveType::ENPASSANT:
+                                break;
+                            case MoveType::CASTLE_KINGSIDE:
+                                break;
+                            case MoveType::CASTLE_QUEENSIDE:
+                                break;
+                            case MoveType::INIT_SPECIAL:
+                                game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
+                                break;
+                            case MoveType::NEWPIECE:
+                                selectedPiece->move(-1, -1); // Deleted
+                                Queen* queen = new Queen(game.getTurn(), yPos/CELL_SIZE, xPos/CELL_SIZE);
+                                game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, queen);
+                                game.addPiece(queen);
+                                break;
+                        }
+                        game.switchTurn();
                     }
-                    game.switchTurn();
+
+                    xPos = 0; yPos = 0;
+                    selectedPiece = nullptr;
+                    pieceIsMoving = false;
                 }
-
-                xPos = 0; yPos = 0;
-                selectedPiece = nullptr;
-                pieceIsMoving = false;
-        }
-    }
-
-    // Initializing the board
-    for (int i = 0; i < 8; ++i) {
-        for (int j = 0; j < 8; ++j) {
-            // Drawing the colored square
-            RectangleShape square(Vector2f(CELL_SIZE, CELL_SIZE));
-            square.setFillColor(((i+j) % 2 == 0)? Color(181, 136, 99): Color(240, 217, 181));
-            square.setPosition(i*CELL_SIZE, j*CELL_SIZE);
-            window.draw(square);
-        }
-    }
-
-    // Drawing the circles
-    if (pieceIsMoving) {
-        for (moveType& move: possibleMoves) {
-            int j = get<0>(move).first;
-            int i = get<0>(move).second;
-            Texture circleTexture;
-            circleTexture.loadFromFile((game.getBoardTile(i, j) == nullptr)? "./assets/circle.png": "./assets/empty_circle.png");
-            Sprite circle(circleTexture);
-            circle.setScale(SPRITE_SCALE, SPRITE_SCALE);
-            circle.setPosition(i*CELL_SIZE, j*CELL_SIZE);
-            window.draw(circle);
-        }
-    }
-    
-    // Drawing the pieces
-    for (int i = 0; i < 8; ++i) {
-        for (int j = 0; j < 8; ++j) {
-            if (game.getBoardTile(i, j) != nullptr) {
-                Texture t;
-                t.loadFromFile(game.getBoardTile(i, j)->getFileName());
-                Sprite tt(t);
-                tt.setScale(SPRITE_SCALE, SPRITE_SCALE);
-                tt.setPosition(i*CELL_SIZE, j*CELL_SIZE);
-                window.draw(tt);
             }
         }
-    }
+
+        // Initializing the board
+        for (int i = 0; i < 8; ++i) {
+            for (int j = 0; j < 8; ++j) {
+                // Drawing the colored square
+                RectangleShape square(Vector2f(CELL_SIZE, CELL_SIZE));
+                square.setFillColor(((i+j) % 2 == 0)? Color(181, 136, 99): Color(240, 217, 181));
+                square.setPosition(i*CELL_SIZE, j*CELL_SIZE);
+                window.draw(square);
+            }
+        }
+
+        // Drawing the circles
+        if (pieceIsMoving) {
+            for (moveType& move: possibleMoves) {
+                int j = get<0>(move).first;
+                int i = get<0>(move).second;
+                Texture circleTexture;
+                circleTexture.loadFromFile((game.getBoardTile(i, j) == nullptr)? "./assets/circle.png": "./assets/empty_circle.png");
+                Sprite circle(circleTexture);
+                circle.setScale(SPRITE_SCALE, SPRITE_SCALE);
+                circle.setPosition(i*CELL_SIZE, j*CELL_SIZE);
+                window.draw(circle);
+            }
+        }
+        
+        // Drawing the pieces
+        for (int i = 0; i < 8; ++i) {
+            for (int j = 0; j < 8; ++j) {
+                if (game.getBoardTile(i, j) != nullptr) {
+                    Texture t;
+                    t.loadFromFile(game.getBoardTile(i, j)->getFileName());
+                    Sprite tt(t);
+                    tt.setScale(SPRITE_SCALE, SPRITE_SCALE);
+                    tt.setPosition(i*CELL_SIZE, j*CELL_SIZE);
+                    window.draw(tt);
+                }
+            }
+        }
 
         // Draw the piece that is being dragged
         if (pieceIsMoving) {
