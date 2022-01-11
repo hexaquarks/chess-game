@@ -28,7 +28,7 @@ void GameThread::startGame() {
     moveTypes possibleMoves;
 
     // Additional board state variables
-     moveType lastMove;
+    Piece* lastMove;
     
     // This is the main loop (a.k.a game loop) this ensures that the program does not terminate until we exit
     Event event;
@@ -52,6 +52,11 @@ void GameThread::startGame() {
                 // If piece is not null and has the right color
                 if (piece != nullptr && piece->getTeam() == game.getTurn()) {
                     selectedPiece = piece;
+                    // for en passant
+                    if(piece->getType() == PieceType::PAWN) {
+                        ((Pawn *) piece)->setLastPawn((Pawn *) lastMove);
+                    }
+
                     possibleMoves = game.possibleMovesFor(selectedPiece);
                     pieceIsMoving = true;
                     lastXPos = xPos/CELL_SIZE; lastYPos = yPos/CELL_SIZE;
@@ -94,10 +99,8 @@ void GameThread::startGame() {
                                     game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
                                     break;
                                 case MoveType::ENPASSANT:
-                                    if(get<1>(lastMove) == MoveType::INIT_SPECIAL) {
-                                        game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
-                                        game.setBoardTile(get<0>(lastMove).first, get<0>(lastMove).second, nullptr);
-                                    }
+                                    game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
+                                    game.setBoardTile(lastMove->getY(), lastMove->getX(), nullptr);
                                     break;
                                 case MoveType::CASTLE_KINGSIDE:
                                     break;
@@ -113,7 +116,7 @@ void GameThread::startGame() {
                                     game.addPiece(queen);
                                     break;
                             }
-                            lastMove = make_tuple(make_pair(xPos/CELL_SIZE, yPos/CELL_SIZE), get<1>(*selectedMove));
+                            lastMove = selectedPiece;
 
                             game.switchTurn();
                         }
@@ -149,6 +152,8 @@ void GameThread::startGame() {
         // Drawing the circles
         if (pieceIsMoving) {
             for (moveType& move: possibleMoves) {
+                
+
                 int j = get<0>(move).first;
                 int i = get<0>(move).second;
 
