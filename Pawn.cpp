@@ -8,28 +8,28 @@ moveTypes Pawn::calcPossibleMoves(Piece* board[8][8]) const {
     int dir = (getTeam() == Team::WHITE)? -1: 1;
     int xPos = getX(), yPos = getY();
 
-    generateCaptureMoves(*this, moves, board, dir);
-    generateForwardMoves(*this, moves, board, dir);
+    generateCaptureMoves(moves, board, dir);
+    generateForwardMoves(moves, board, dir);
     generateEnPassantMoves(*this, moves, board);
 
     return moves;
 };
 
-void Pawn::generateCaptureMoves(Pawn p, moveTypes &moves, Piece* board[8][8], int dir) const {
-    int xPos = p.getX(); int yPos = p.getY();
+void Pawn::generateCaptureMoves(moveTypes &moves, Piece* board[8][8], int dir) const {
+    int xPos =getX(); int yPos = getY();
      // Taking piece on the right
     if (yPos+1 < 8 && (xPos+dir < 8 && xPos+dir >= 0))
-        if (board[xPos+dir][yPos+1] != nullptr && board[xPos+dir][yPos+1]->getTeam() != p.getTeam())
+        if (board[xPos+dir][yPos+1] != nullptr && board[xPos+dir][yPos+1]->getTeam() != getTeam())
             moves.push_back(make_tuple(make_pair(xPos+dir, yPos+1), MoveType::CAPTURE));
 
     // Taking piece on the left
     if (yPos-1 >= 0 && (xPos+dir < 8 && xPos+dir >= 0))
-        if (board[xPos+dir][yPos-1] != nullptr && board[xPos+dir][yPos-1]->getTeam() != p.getTeam())
+        if (board[xPos+dir][yPos-1] != nullptr && board[xPos+dir][yPos-1]->getTeam() != getTeam())
             moves.push_back(make_tuple(make_pair(xPos+dir, yPos-1), MoveType::CAPTURE));
 }
 
-void Pawn::generateForwardMoves(Pawn p, moveTypes &moves, Piece* board[8][8], int dir) const {
-    int xPos = p.getX(); int yPos = p.getY();
+void Pawn::generateForwardMoves(moveTypes &moves, Piece* board[8][8], int dir) const {
+    int xPos =getX(); int yPos = getY();
 
     // Forward move
     if ((xPos+dir == 0 || xPos+dir == 7) && board[xPos+dir][yPos] == nullptr)
@@ -37,14 +37,15 @@ void Pawn::generateForwardMoves(Pawn p, moveTypes &moves, Piece* board[8][8], in
     else if (board[xPos+dir][yPos] == nullptr)  {
         moves.push_back(make_tuple(make_pair(xPos+dir, yPos), MoveType::NORMAL));
         // Double square initial move
-        if (!p.hasMoved() && board[xPos+2*dir][yPos] == nullptr)
+        if (!hasMoved() && board[xPos+2*dir][yPos] == nullptr)
             moves.push_back(make_tuple(make_pair(xPos+2*dir, yPos), MoveType::INIT_SPECIAL));
     }
 
 }
 
-void Pawn::generateEnPassantMoves(Pawn p, moveTypes &moves, Piece* board[8][8])  const {
-    int xPos = p.getX(); int yPos = p.getY();
+void Pawn::generateEnPassantMoves(Pawn p,moveTypes &moves, Piece* board[8][8])  const {
+    int xPos =getX(); int yPos = getY();
+
 
     // forward en passant
     if (xPos == 3){
