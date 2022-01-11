@@ -102,6 +102,7 @@ void GameThread::startGame() {
                                     break;
                                 case MoveType::ENPASSANT:
                                     game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
+                                    ((Pawn *)selectedPiece)->setLastPawn(nullptr);
                                     game.setBoardTile(lastMove->getY(), lastMove->getX(), nullptr);
                                     break;
                                 case MoveType::CASTLE_KINGSIDE:
