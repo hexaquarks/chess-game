@@ -26,6 +26,9 @@ void GameThread::startGame() {
     int xPos = 0, yPos = 0; // Mouse position
     int lastXPos = 0, lastYPos = 0; // Last position of the piece before being dragged
     moveTypes possibleMoves;
+
+    // Additional board state variables
+     moveType lastMove;
     
     // This is the main loop (a.k.a game loop) this ensures that the program does not terminate until we exit
     Event event;
@@ -91,6 +94,10 @@ void GameThread::startGame() {
                                     game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
                                     break;
                                 case MoveType::ENPASSANT:
+                                    if(get<1>(lastMove) == MoveType::INIT_SPECIAL) {
+                                        game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
+                                        game.setBoardTile(get<0>(lastMove).first, get<0>(lastMove).second, nullptr);
+                                    }
                                     break;
                                 case MoveType::CASTLE_KINGSIDE:
                                     break;
@@ -106,6 +113,8 @@ void GameThread::startGame() {
                                     game.addPiece(queen);
                                     break;
                             }
+                            lastMove = make_tuple(make_pair(xPos/CELL_SIZE, yPos/CELL_SIZE), get<1>(*selectedMove));
+
                             game.switchTurn();
                         }
 

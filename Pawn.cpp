@@ -29,5 +29,39 @@ moveTypes Pawn::calcPossibleMoves(Piece* board[8][8]) const {
     }
 
     // En passant &TODO
+    // forward en passant
+    if (xPos == 3){
+        if(board[xPos][yPos-1] != nullptr) {
+            if(yPos > 0 && board[xPos][yPos-1]->getType() == getType() && board[xPos][yPos-1]->getTeam() != getTeam()){
+                // can potentially perform en passant to the left
+                moves.push_back(make_tuple(make_pair(xPos-1, yPos-1), MoveType::ENPASSANT));
+            }
+        }
+        if(board[xPos][yPos+1] != nullptr) {
+            if(board[xPos][yPos+1]->getType() == getType() && board[xPos][yPos+1]->getTeam() != getTeam()){
+                // can potentially perform en passant to the right
+                moves.push_back(make_tuple(make_pair(xPos-1, yPos+1), MoveType::ENPASSANT));
+            }
+        }
+    }
+
+    // downward en passant
+    if (xPos == 4){
+        if(board[xPos][yPos-1] != nullptr) {
+            if(yPos > 0 && board[xPos][yPos-1]->getType() == getType() && board[xPos][yPos-1]->getTeam() != getTeam()){
+                // can potentially perform en passant to the left
+                moves.push_back(make_tuple(make_pair(xPos+1, yPos-1), MoveType::ENPASSANT));
+            }
+        }
+        if(board[xPos][yPos+1] != nullptr) {
+            if(yPos < 7 &&  board[xPos][yPos+1]->getType() == getType() && board[xPos][yPos+1]->getTeam() != getTeam()){
+                // can potentially perform en passant to the right
+                moves.push_back(make_tuple(make_pair(xPos+1, yPos+1), MoveType::ENPASSANT));
+            }
+        }
+    }
+
+    
+    
     return moves;
 };
