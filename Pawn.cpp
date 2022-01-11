@@ -8,15 +8,28 @@ moveTypes Pawn::calcPossibleMoves(Piece* board[8][8]) const {
     int dir = (getTeam() == Team::WHITE)? -1: 1;
     int xPos = getX(), yPos = getY();
 
-    // Taking piece on the right
+    generateCaptureMoves(*this, moves, board, dir);
+    generateForwardMoves(*this, moves, board, dir);
+    generateEnPassantMoves(*this, moves, board);
+
+    return moves;
+};
+
+void Pawn::generateCaptureMoves(Pawn p, moveTypes moves, Piece* board[8][8], int dir) {
+    int xPos = p.getX(); int yPos = p.getY();
+     // Taking piece on the right
     if (yPos+1 < 8 && (xPos+dir < 8 && xPos+dir >= 0))
-        if (board[xPos+dir][yPos+1] != nullptr && board[xPos+dir][yPos+1]->getTeam() != getTeam())
+        if (board[xPos+dir][yPos+1] != nullptr && board[xPos+dir][yPos+1]->getTeam() != p.getTeam())
             moves.push_back(make_tuple(make_pair(xPos+dir, yPos+1), MoveType::CAPTURE));
 
     // Taking piece on the left
     if (yPos-1 >= 0 && (xPos+dir < 8 && xPos+dir >= 0))
-        if (board[xPos+dir][yPos-1] != nullptr && board[xPos+dir][yPos-1]->getTeam() != getTeam())
+        if (board[xPos+dir][yPos-1] != nullptr && board[xPos+dir][yPos-1]->getTeam() != p.getTeam())
             moves.push_back(make_tuple(make_pair(xPos+dir, yPos-1), MoveType::CAPTURE));
+}
+
+void Pawn::generateForwardMoves(Pawn p, moveTypes moves, Piece* board[8][8], int dir){
+    int xPos = p.getX(); int yPos = p.getY();
 
     // Forward move
     if ((xPos+dir == 0 || xPos+dir == 7) && board[xPos+dir][yPos] == nullptr)
@@ -24,21 +37,25 @@ moveTypes Pawn::calcPossibleMoves(Piece* board[8][8]) const {
     else if (board[xPos+dir][yPos] == nullptr)  {
         moves.push_back(make_tuple(make_pair(xPos+dir, yPos), MoveType::NORMAL));
         // Double square initial move
-        if (!hasMoved() && board[xPos+2*dir][yPos] == nullptr)
+        if (!p.hasMoved() && board[xPos+2*dir][yPos] == nullptr)
             moves.push_back(make_tuple(make_pair(xPos+2*dir, yPos), MoveType::INIT_SPECIAL));
     }
 
-    // En passant &TODO
+}
+
+void Pawn::generateEnPassantMoves(Pawn p, moveTypes moves, Piece* board[8][8]){
+    int xPos = p.getX(); int yPos = p.getY();
+
     // forward en passant
     if (xPos == 3){
         if(board[xPos][yPos-1] != nullptr) {
-            if(yPos > 0 && board[xPos][yPos-1]->getType() == getType() && board[xPos][yPos-1]->getTeam() != getTeam()){
+            if(yPos > 0 && board[xPos][yPos-1]->getType() == p.getType() && board[xPos][yPos-1]->getTeam() != p.getTeam()){
                 // can potentially perform en passant to the left
                 moves.push_back(make_tuple(make_pair(xPos-1, yPos-1), MoveType::ENPASSANT));
             }
         }
         if(board[xPos][yPos+1] != nullptr) {
-            if(board[xPos][yPos+1]->getType() == getType() && board[xPos][yPos+1]->getTeam() != getTeam()){
+            if(board[xPos][yPos+1]->getType() == p.getType() && board[xPos][yPos+1]->getTeam() != p.getTeam()){
                 // can potentially perform en passant to the right
                 moves.push_back(make_tuple(make_pair(xPos-1, yPos+1), MoveType::ENPASSANT));
             }
@@ -48,20 +65,16 @@ moveTypes Pawn::calcPossibleMoves(Piece* board[8][8]) const {
     // downward en passant
     if (xPos == 4){
         if(board[xPos][yPos-1] != nullptr) {
-            if(yPos > 0 && board[xPos][yPos-1]->getType() == getType() && board[xPos][yPos-1]->getTeam() != getTeam()){
+            if(yPos > 0 && board[xPos][yPos-1]->getType() == p.getType() && board[xPos][yPos-1]->getTeam() != p.getTeam()){
                 // can potentially perform en passant to the left
                 moves.push_back(make_tuple(make_pair(xPos+1, yPos-1), MoveType::ENPASSANT));
             }
         }
         if(board[xPos][yPos+1] != nullptr) {
-            if(yPos < 7 &&  board[xPos][yPos+1]->getType() == getType() && board[xPos][yPos+1]->getTeam() != getTeam()){
+            if(yPos < 7 &&  board[xPos][yPos+1]->getType() == p.getType() && board[xPos][yPos+1]->getTeam() != p.getTeam()){
                 // can potentially perform en passant to the right
                 moves.push_back(make_tuple(make_pair(xPos+1, yPos+1), MoveType::ENPASSANT));
             }
         }
     }
-
-    
-    
-    return moves;
-};
+}
