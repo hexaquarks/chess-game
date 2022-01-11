@@ -15,7 +15,7 @@ moveTypes Pawn::calcPossibleMoves(Piece* board[8][8]) const {
     return moves;
 };
 
-void Pawn::generateCaptureMoves(Pawn p, moveTypes moves, Piece* board[8][8], int dir) {
+void Pawn::generateCaptureMoves(Pawn p, moveTypes &moves, Piece* board[8][8], int dir) const {
     int xPos = p.getX(); int yPos = p.getY();
      // Taking piece on the right
     if (yPos+1 < 8 && (xPos+dir < 8 && xPos+dir >= 0))
@@ -28,7 +28,7 @@ void Pawn::generateCaptureMoves(Pawn p, moveTypes moves, Piece* board[8][8], int
             moves.push_back(make_tuple(make_pair(xPos+dir, yPos-1), MoveType::CAPTURE));
 }
 
-void Pawn::generateForwardMoves(Pawn p, moveTypes moves, Piece* board[8][8], int dir){
+void Pawn::generateForwardMoves(Pawn p, moveTypes &moves, Piece* board[8][8], int dir) const {
     int xPos = p.getX(); int yPos = p.getY();
 
     // Forward move
@@ -43,7 +43,7 @@ void Pawn::generateForwardMoves(Pawn p, moveTypes moves, Piece* board[8][8], int
 
 }
 
-void Pawn::generateEnPassantMoves(Pawn p, moveTypes moves, Piece* board[8][8]){
+void Pawn::generateEnPassantMoves(Pawn p, moveTypes &moves, Piece* board[8][8])  const {
     int xPos = p.getX(); int yPos = p.getY();
 
     // forward en passant
