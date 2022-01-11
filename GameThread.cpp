@@ -19,6 +19,7 @@ void GameThread::startGame() {
     Image icon;
     icon.loadFromFile("./assets/nw.png");
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+    window.setPosition(Vector2i(300,300));
 
     // Parameters to handle a piece being dragged
     bool pieceIsMoving;
@@ -52,6 +53,7 @@ void GameThread::startGame() {
                 // If piece is not null and has the right color
                 if (piece != nullptr && piece->getTeam() == game.getTurn()) {
                     selectedPiece = piece;
+
                     // for en passant
                     if(piece->getType() == PieceType::PAWN) {
                         ((Pawn *) piece)->setLastPawn((Pawn *) lastMove);
