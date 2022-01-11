@@ -10,7 +10,7 @@ moveTypes Pawn::calcPossibleMoves(Piece* board[8][8]) const {
 
     generateCaptureMoves(moves, board, dir);
     generateForwardMoves(moves, board, dir);
-    generateEnPassantMoves(*this, moves, board);
+    generateEnPassantMoves(moves, board);
 
     return moves;
 };
@@ -43,26 +43,26 @@ void Pawn::generateForwardMoves(moveTypes &moves, Piece* board[8][8], int dir) c
 
 }
 
-void Pawn::generateEnPassantMoves(Pawn p,moveTypes &moves, Piece* board[8][8])  const {
+void Pawn::generateEnPassantMoves(moveTypes &moves, Piece* board[8][8])  const {
     int xPos =getX(); int yPos = getY();
 
 
     // forward en passant
     if (xPos == 3){
-        if(board[xPos][yPos-1] == p.getLastPawn() && getTeam() != p.getLastPawn()->getTeam()) {
+        if(board[xPos][yPos-1] == getLastPawn() && getTeam() != getLastPawn()->getTeam()) {
             if (yPos > 0) moves.push_back(make_tuple(make_pair(xPos-1, yPos-1), MoveType::ENPASSANT));
         } 
-        if(board[xPos][yPos+1] == p.getLastPawn() && getTeam() != p.getLastPawn()->getTeam()) {
+        if(board[xPos][yPos+1] == getLastPawn() && getTeam() != getLastPawn()->getTeam()) {
             if (yPos < 7) moves.push_back(make_tuple(make_pair(xPos-1, yPos+1), MoveType::ENPASSANT));
         }
     }
 
     // downward en passant
     if (xPos == 4){
-        if(board[xPos][yPos-1] == p.getLastPawn() && getTeam() != p.getLastPawn()->getTeam()) {
+        if(board[xPos][yPos-1] == getLastPawn() && getTeam() != getLastPawn()->getTeam()) {
             if (yPos > 0) moves.push_back(make_tuple(make_pair(xPos+1, yPos-1), MoveType::ENPASSANT));
         } 
-        if(board[xPos][yPos+1] == p.getLastPawn() && getTeam() != p.getLastPawn()->getTeam()) {
+        if(board[xPos][yPos+1] == getLastPawn() && getTeam() != getLastPawn()->getTeam()) {
             if (yPos < 7) moves.push_back(make_tuple(make_pair(xPos+1, yPos+1), MoveType::ENPASSANT));
         }
     }
