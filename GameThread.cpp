@@ -88,8 +88,8 @@ void GameThread::startGame() {
                             }
                         }
 
-                        // If move is not allowed, place piece back, else apply the move
-                        if (selectedMove == nullptr) {
+                        // If move is not allowed or king is checked, place piece back, else apply the move
+                        if ((game.kingIsChecked() && selectedPiece->getType() != PieceType::KING) || selectedMove == nullptr) {
                             game.setBoardTile(lastXPos, lastYPos, selectedPiece);
                         } else {
                             switch (get<1>(*selectedMove)) {

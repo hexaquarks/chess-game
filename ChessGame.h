@@ -23,8 +23,12 @@ class ChessGame {
     void reset(); // Resets the board
     Piece* getBoardTile(int x, int y) const { return board[y][x]; }
     void setBoardTile(int, int, Piece*);
+
     Team getTurn() const { return turn; }
     void switchTurn() { turn = (turn == Team::WHITE)? Team::BLACK: Team::WHITE; }
+
+    bool kingIsChecked() { return (turn == Team::WHITE)? whiteKing->isChecked(board): blackKing->isChecked(board); }
     moveTypes possibleMovesFor(Piece* piece) { return piece->calcPossibleMoves(board); }
+
     void addPiece(Piece* piece) { (piece->getTeam() == Team::WHITE)? whitePieces.push_back(piece): blackPieces.push_back(piece); }
 };

@@ -56,8 +56,6 @@ void ChessGame::reset() {
 }
 
 void ChessGame::setBoardTile(int x, int y, Piece* piece) {
-    Piece* initial = getBoardTile(x, y);
-
     // Set up the piece
     board[y][x] = piece;
     if (piece != nullptr) piece->move(y, x); 
