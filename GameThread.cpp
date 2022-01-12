@@ -30,7 +30,7 @@ void GameThread::startGame() {
     moveTypes possibleMoves;
 
     // Additional board state variables
-    Piece* lastMove;
+    Piece* lastMove = nullptr;
 
     // Sounds for piece movement
     SoundBuffer bufferMove;
