@@ -1,5 +1,6 @@
 #include "GameThread.h"
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <iostream>
 #include <vector>
 #include "ChessGame.h"
@@ -30,6 +31,18 @@ void GameThread::startGame() {
 
     // Additional board state variables
     Piece* lastMove;
+
+    // Sounds for piece movement
+    SoundBuffer bufferMove;
+    // if (!bufferMove.loadFromFile("./assets/sounds/move.wav")) return;
+    Sound soundMove;
+    soundMove.setBuffer(bufferMove);
+
+    SoundBuffer bufferCapture;
+    // if (!bufferCapture.loadFromFile("./assets/sounds/captures.wav")) return;
+    Sound soundCapture;
+    soundCapture.setBuffer(bufferCapture);
+    
     
     // This is the main loop (a.k.a game loop) this ensures that the program does not terminate until we exit
     Event event;
@@ -95,9 +108,11 @@ void GameThread::startGame() {
                             switch (get<1>(*selectedMove)) {
                                 case MoveType::NORMAL:
                                     game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
+                                    soundMove.play();
                                     break;
                                 case MoveType::CAPTURE:
                                     game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
+                                    soundCapture.play();
                                     break;
                                 case MoveType::ENPASSANT:
                                     game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
