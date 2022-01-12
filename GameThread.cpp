@@ -101,6 +101,8 @@ void GameThread::startGame() {
                             }
                         }
 
+                        const int castleRow = (game.getTurn() == Team::WHITE)? 7: 0;
+
                         // If move is not allowed or king is checked, place piece back, else apply the move
                         if ((game.kingIsChecked() && selectedPiece->getType() != PieceType::KING) || selectedMove == nullptr) {
                             game.setBoardTile(lastXPos, lastYPos, selectedPiece);
@@ -120,8 +122,14 @@ void GameThread::startGame() {
                                     game.setBoardTile(lastMove->getY(), lastMove->getX(), nullptr);
                                     break;
                                 case MoveType::CASTLE_KINGSIDE:
+                                    game.setBoardTile(5, castleRow, game.getBoardTile(7, castleRow));
+                                    game.setBoardTile(7, castleRow, nullptr);
+                                    game.setBoardTile(6, castleRow, selectedPiece);
                                     break;
                                 case MoveType::CASTLE_QUEENSIDE:
+                                    game.setBoardTile(3, castleRow, game.getBoardTile(0, castleRow));
+                                    game.setBoardTile(0, castleRow, nullptr);
+                                    game.setBoardTile(2, castleRow, selectedPiece);
                                     break;
                                 case MoveType::INIT_SPECIAL:
                                     game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
@@ -134,7 +142,6 @@ void GameThread::startGame() {
                                     break;
                             }
                             lastMove = selectedPiece;
-
                             game.switchTurn();
                         }
 
