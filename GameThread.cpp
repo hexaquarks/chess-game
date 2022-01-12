@@ -17,7 +17,7 @@ void GameThread::startGame() {
 
     // Setting window icon
     Image icon;
-    icon.loadFromFile("./assets/nw.png");
+    icon.loadFromFile("./assets/icons/nw.png");
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     window.setPosition(Vector2i(300,300));
 
@@ -161,7 +161,7 @@ void GameThread::startGame() {
 
                 bool isEmpty = game.getBoardTile(i, j) == nullptr;
                 Texture circleTexture;
-                circleTexture.loadFromFile(isEmpty? "./assets/circle.png": "./assets/empty_circle.png");
+                circleTexture.loadFromFile(isEmpty? "./assets/icons/circle.png": "./assets/icons/empty_circle.png");
 
                 Sprite circle(circleTexture);
                 if (isEmpty) circle.setScale(SPRITE_SCALE, SPRITE_SCALE);
