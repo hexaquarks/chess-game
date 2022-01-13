@@ -42,8 +42,7 @@ void GameThread::startGame() {
     // if (!bufferCapture.loadFromFile("./assets/sounds/captures.wav")) return;
     Sound soundCapture;
     soundCapture.setBuffer(bufferCapture);
-    
-    
+
     // This is the main loop (a.k.a game loop) this ensures that the program does not terminate until we exit
     Event event;
     while (window.isOpen()) {
