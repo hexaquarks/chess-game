@@ -23,7 +23,7 @@ void GameThread::startGame() {
     window.setPosition(Vector2i(300,300));
 
     // Parameters to handle a piece being dragged
-    bool pieceIsMoving;
+    bool pieceIsMoving = false;
     Piece* selectedPiece = nullptr;
     int xPos = 0, yPos = 0; // Mouse position
     int lastXPos = 0, lastYPos = 0; // Last position of the piece before being dragged
@@ -42,7 +42,8 @@ void GameThread::startGame() {
     // if (!bufferCapture.loadFromFile("./assets/sounds/captures.wav")) return;
     Sound soundCapture;
     soundCapture.setBuffer(bufferCapture);
-
+    
+    
     // This is the main loop (a.k.a game loop) this ensures that the program does not terminate until we exit
     Event event;
     while (window.isOpen()) {
