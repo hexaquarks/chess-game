@@ -23,7 +23,7 @@ void GameThread::startGame() {
     window.setPosition(Vector2i(300,300));
 
     // Parameters to handle a piece being dragged
-    bool pieceIsMoving;
+    bool pieceIsMoving = false;
     Piece* selectedPiece = nullptr;
     int xPos = 0, yPos = 0; // Mouse position
     int lastXPos = 0, lastYPos = 0; // Last position of the piece before being dragged
@@ -34,12 +34,12 @@ void GameThread::startGame() {
 
     // Sounds for piece movement
     SoundBuffer bufferMove;
-    // if (!bufferMove.loadFromFile("./assets/sounds/move.wav")) return;
+    if (!bufferMove.loadFromFile("./assets/sounds/move.wav")) return;
     Sound soundMove;
     soundMove.setBuffer(bufferMove);
 
     SoundBuffer bufferCapture;
-    // if (!bufferCapture.loadFromFile("./assets/sounds/captures.wav")) return;
+    if (!bufferCapture.loadFromFile("./assets/sounds/captures.wav")) return;
     Sound soundCapture;
     soundCapture.setBuffer(bufferCapture);
 
