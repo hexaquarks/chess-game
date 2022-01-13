@@ -144,8 +144,8 @@ void GameThread::startGame() {
                                     break;
                             }
                             lastMove = selectedPiece;
-                            lastMoveInitialXPos = lastXPos;
-                            lastMoveInitialYPos = lastYPos;
+                            // lastMoveInitialXPos = lastXPos;
+                            // lastMoveInitialYPos = lastYPos;
                             game.switchTurn();
                         }
 
@@ -167,7 +167,7 @@ void GameThread::startGame() {
         }
 
         initializeBoard(window);
-        highlightLastMove(lastMove, window, lastMoveInitialXPos, lastMoveInitialYPos);
+        highlightLastMove(lastMove, window, lastXPos, lastYPos);
         drawPieces(window, game);
 
         if (pieceIsMoving) {
