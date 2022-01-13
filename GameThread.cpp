@@ -68,8 +68,10 @@ void GameThread::startGame() {
                     selectedPiece = piece;
 
                     // for en passant
-                    if(piece->getType() == PieceType::PAWN)
-                        Pawn::setLastPawn((Pawn*) lastMove);
+                    if(piece->getType() == PieceType::PAWN && lastMove != nullptr){
+                        if(lastMove->getType() == PieceType::PAWN)
+                            Pawn::setLastPawn((Pawn*) lastMove);
+                    }
 
                     possibleMoves = game.possibleMovesFor(selectedPiece);
                     pieceIsMoving = true;
@@ -110,11 +112,11 @@ void GameThread::startGame() {
                             switch (get<1>(*selectedMove)) {
                                 case MoveType::NORMAL:
                                     game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
-                                    soundMove.play();
+                                    // soundMove.play();
                                     break;
                                 case MoveType::CAPTURE:
                                     game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
-                                    soundCapture.play();
+                                    // soundCapture.play();
                                     break;
                                 case MoveType::ENPASSANT:
                                     game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
