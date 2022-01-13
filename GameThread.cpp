@@ -144,6 +144,8 @@ void GameThread::startGame() {
                                     break;
                             }
                             lastMove = selectedPiece;
+                            lastMoveInitialXPos = lastXPos;
+                            lastMoveInitialYPos = lastYPos;
                             game.switchTurn();
                         }
 
@@ -165,6 +167,7 @@ void GameThread::startGame() {
         }
 
         initializeBoard(window);
+        highlightLastMove(lastMove, window, lastMoveInitialXPos, lastMoveInitialYPos);
         drawPieces(window, game);
 
         if (pieceIsMoving) {
@@ -227,5 +230,22 @@ void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow &window, in
     tt.setPosition(xPos, yPos);
     tt.setOrigin(SPRITE_SIZE/2, SPRITE_SIZE/2);
     window.draw(tt);
+}
+
+void GameThread::highlightLastMove(Piece* lastMove,RenderWindow &window, int lastXPos, int lastYPos) const {  
+    if(lastMove != nullptr) {
+        RectangleShape squareBefore(Vector2f(CELL_SIZE, CELL_SIZE));
+        RectangleShape squareAfter(Vector2f(CELL_SIZE, CELL_SIZE));
+        squareBefore.setFillColor(((lastXPos + lastYPos) % 2 == 0)? Color(205, 210, 106): Color(170, 162, 58));
+        squareAfter.setFillColor(((lastMove->getX() + lastMove->getY()) % 2 == 0)? Color(205, 210, 106): Color(170, 162, 58));
+
+        squareBefore.setPosition(lastXPos*CELL_SIZE, lastYPos*CELL_SIZE);
+        squareAfter.setPosition(lastMove->getY()*CELL_SIZE, lastMove->getX()*CELL_SIZE);
+
+        window.draw(squareBefore);
+        window.draw(squareAfter);
+
+    }
+
 }
 
