@@ -3,7 +3,6 @@
 
 
 int main() {
-    GameThread thread;
-    thread.startGame();
+    GameThread::startGame();
     return 0;
 }

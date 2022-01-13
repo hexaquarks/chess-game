@@ -1,18 +1,17 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Piece.h"
 #include "ChessGame.h"
+using namespace sf;
 
 
-class GameThread {
+class GameThread {    
+    static void initializeBoard(RenderWindow&);
+    static void drawCaptureCircles(RenderWindow&, moveTypes&, ChessGame&);
+    static void drawPieces(RenderWindow&, ChessGame&);
+    static void drawDraggedPiece(Piece*, RenderWindow&, int, int);
+    static void highlightLastMove(Piece*, RenderWindow&, int, int);
+
     public:
-    void startGame();
-    
-    void initializeBoard(sf::RenderWindow& window) const;
-    void drawCaptureCircles(sf::RenderWindow &window, moveTypes &possibleMoves, ChessGame &game) const;
-    void drawPieces(sf::RenderWindow &window, ChessGame &game) const;
-    void drawDraggedPiece(Piece* selectedPiece, sf::RenderWindow &window, int xPos, int yPos) const;
-    void highlightLastMove(Piece* lastMove, sf::RenderWindow &window, int lastXPos, int lastYPos) const;
-    
-
+    GameThread() = delete; // Delete constructor
+    static void startGame();
 };

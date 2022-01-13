@@ -1,9 +1,7 @@
 #include "GameThread.h"
-#include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <iostream>
 #include <vector>
-#include "ChessGame.h"
 using namespace sf;
 
 constexpr unsigned int WINDOW_SIZE = 640;
@@ -179,7 +177,7 @@ void GameThread::startGame() {
     }
 }
 
-void GameThread::initializeBoard(RenderWindow &window) const {
+void GameThread::initializeBoard(RenderWindow &window) {
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {
             // Drawing the colored square
@@ -191,7 +189,7 @@ void GameThread::initializeBoard(RenderWindow &window) const {
     }
 }
 
-void GameThread::drawCaptureCircles(RenderWindow &window, moveTypes &possibleMoves, ChessGame &game) const {
+void GameThread::drawCaptureCircles(RenderWindow &window, moveTypes &possibleMoves, ChessGame &game) {
     for (moveType& move: possibleMoves) {
         int j = get<0>(move).first;
         int i = get<0>(move).second;
@@ -207,7 +205,7 @@ void GameThread::drawCaptureCircles(RenderWindow &window, moveTypes &possibleMov
     }
 }
 
-void GameThread::drawPieces(RenderWindow &window, ChessGame &game) const {
+void GameThread::drawPieces(RenderWindow &window, ChessGame &game) {
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {
             if (game.getBoardTile(i, j) != nullptr) {
@@ -222,7 +220,7 @@ void GameThread::drawPieces(RenderWindow &window, ChessGame &game) const {
     }
 }
 
-void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow &window, int xPos, int yPos) const {
+void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow &window, int xPos, int yPos) {
     Texture t;
     t.loadFromFile(selectedPiece->getFileName());
     Sprite tt(t);
@@ -232,7 +230,7 @@ void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow &window, in
     window.draw(tt);
 }
 
-void GameThread::highlightLastMove(Piece* lastMove,RenderWindow &window, int lastXPos, int lastYPos) const {  
+void GameThread::highlightLastMove(Piece* lastMove,RenderWindow &window, int lastXPos, int lastYPos) {  
     if(lastMove != nullptr) {
         RectangleShape squareBefore(Vector2f(CELL_SIZE, CELL_SIZE));
         RectangleShape squareAfter(Vector2f(CELL_SIZE, CELL_SIZE));
@@ -248,4 +246,3 @@ void GameThread::highlightLastMove(Piece* lastMove,RenderWindow &window, int las
     }
 
 }
-
