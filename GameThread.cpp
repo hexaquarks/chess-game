@@ -164,61 +164,68 @@ void GameThread::startGame() {
             }
         }
 
-        // Initializing the board
-        for (int i = 0; i < 8; ++i) {
-            for (int j = 0; j < 8; ++j) {
-                // Drawing the colored square
-                RectangleShape square(Vector2f(CELL_SIZE, CELL_SIZE));
-                square.setFillColor(((i+j) % 2 == 0)? Color(181, 136, 99): Color(240, 217, 181));
-                square.setPosition(i*CELL_SIZE, j*CELL_SIZE);
-                window.draw(square);
-            }
-        }
+        initializeBoard(window);
+        drawPieces(window, game);
 
-        // Drawing the circles
         if (pieceIsMoving) {
-            for (moveType& move: possibleMoves) {
-                
-
-                int j = get<0>(move).first;
-                int i = get<0>(move).second;
-
-                bool isEmpty = game.getBoardTile(i, j) == nullptr;
-                Texture circleTexture;
-                circleTexture.loadFromFile(isEmpty? "./assets/icons/circle.png": "./assets/icons/empty_circle.png");
-
-                Sprite circle(circleTexture);
-                if (isEmpty) circle.setScale(SPRITE_SCALE, SPRITE_SCALE);
-                circle.setPosition(i*CELL_SIZE, j*CELL_SIZE);
-                window.draw(circle);
-            }
-        }
-
-        // Drawing the pieces
-        for (int i = 0; i < 8; ++i) {
-            for (int j = 0; j < 8; ++j) {
-                if (game.getBoardTile(i, j) != nullptr) {
-                    Texture t;
-                    t.loadFromFile(game.getBoardTile(i, j)->getFileName());
-                    Sprite tt(t);
-                    tt.setScale(SPRITE_SCALE, SPRITE_SCALE);
-                    tt.setPosition(i*CELL_SIZE, j*CELL_SIZE);
-                    window.draw(tt);
-                }
-            }
-        }
-
-        // Draw the piece that is being dragged
-        if (pieceIsMoving) {
-            Texture t;
-            t.loadFromFile(selectedPiece->getFileName());
-            Sprite tt(t);
-            tt.setScale(SPRITE_SCALE, SPRITE_SCALE);
-            tt.setPosition(xPos, yPos);
-            tt.setOrigin(SPRITE_SIZE/2, SPRITE_SIZE/2);
-            window.draw(tt);
+            drawCaptureCircles(window, possibleMoves, game);
+            drawDraggedPiece(selectedPiece,window,xPos, yPos);
         }
 
         window.display();
     }
 }
+
+void GameThread::initializeBoard(RenderWindow &window) const {
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 8; ++j) {
+            // Drawing the colored square
+            RectangleShape square(Vector2f(CELL_SIZE, CELL_SIZE));
+            square.setFillColor(((i+j) % 2 == 0)? Color(181, 136, 99): Color(240, 217, 181));
+            square.setPosition(i*CELL_SIZE, j*CELL_SIZE);
+            window.draw(square);
+        }
+    }
+}
+
+void GameThread::drawCaptureCircles(RenderWindow &window, moveTypes &possibleMoves, ChessGame &game) const {
+    for (moveType& move: possibleMoves) {
+        int j = get<0>(move).first;
+        int i = get<0>(move).second;
+
+        bool isEmpty = game.getBoardTile(i, j) == nullptr;
+        Texture circleTexture;
+        circleTexture.loadFromFile(isEmpty? "./assets/icons/circle.png": "./assets/icons/empty_circle.png");
+
+        Sprite circle(circleTexture);
+        if (isEmpty) circle.setScale(SPRITE_SCALE, SPRITE_SCALE);
+        circle.setPosition(i*CELL_SIZE, j*CELL_SIZE);
+        window.draw(circle);
+    }
+}
+
+void GameThread::drawPieces(RenderWindow &window, ChessGame &game) const {
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 8; ++j) {
+            if (game.getBoardTile(i, j) != nullptr) {
+                Texture t;
+                t.loadFromFile(game.getBoardTile(i, j)->getFileName());
+                Sprite tt(t);
+                tt.setScale(SPRITE_SCALE, SPRITE_SCALE);
+                tt.setPosition(i*CELL_SIZE, j*CELL_SIZE);
+                window.draw(tt);
+            }
+        }
+    }
+}
+
+void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow &window, int xPos, int yPos) const {
+    Texture t;
+    t.loadFromFile(selectedPiece->getFileName());
+    Sprite tt(t);
+    tt.setScale(SPRITE_SCALE, SPRITE_SCALE);
+    tt.setPosition(xPos, yPos);
+    tt.setOrigin(SPRITE_SIZE/2, SPRITE_SIZE/2);
+    window.draw(tt);
+}
+
