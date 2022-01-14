@@ -30,6 +30,7 @@ class ChessGame {
     bool kingIsChecked() { 
         return (turn == Team::WHITE)? whiteKing->isChecked(board): blackKing->isChecked(board); 
     }
+
     moveTypes possibleMovesFor(Piece* piece) { return piece->calcPossibleMoves(board); }
 
     void addPiece(Piece* piece) { 
