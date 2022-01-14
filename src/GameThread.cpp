@@ -91,7 +91,7 @@ void GameThread::startGame() {
                                 // move is illegal due to ongoing check
                                 it = possibleMoves.erase(it);
                             } else ++it;
-                            
+
                             game.setBoardTile(xPos/CELL_SIZE,yPos/CELL_SIZE,selectedPiece);
                             game.setBoardTile(x,y, temp); 
                         }
@@ -125,19 +125,9 @@ void GameThread::startGame() {
                                 break;
                             }
                         }
-   
-                        // perform move -> if king.isChecked after move -> revert move 
-
-                        if(game.kingIsChecked()) {
-                            // applyMove()
-                            // if king.isChecked()
-                            // revertMove()
-                            
-                        }
-
 
                         // If move is not allowed or king is checked, place piece back, else apply the move
-                        if ((game.kingIsChecked() && selectedPiece->getType() != PieceType::KING) || selectedMove == nullptr) {
+                        if (selectedMove == nullptr) {
                             game.setBoardTile(lastXPos, lastYPos, selectedPiece); // cancel the move
                         } else {
                             game.applyMove(selectedMove,xPos, yPos,selectedPiece, lastMove, CELL_SIZE);
