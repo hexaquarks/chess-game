@@ -64,18 +64,10 @@ void GameThread::startGame() {
                 // If piece is not null and has the right color
                 if (piece != nullptr && piece->getTeam() == game.getTurn()) {
                     selectedPiece = piece;
-
-                    // for en passant
-                    if(piece->getType() == PieceType::PAWN && lastMove != nullptr){
-                        if(lastMove->getType() == PieceType::PAWN)
-                            Pawn::setLastPawn((Pawn*) lastMove);
-                    }
-
                     possibleMoves = game.possibleMovesFor(selectedPiece);
 
-                    // trim the illegal moves if in check
+                    // Trim the illegal moves if in check
                     // check for absolute pin
-
                     vector<moveType>::iterator it = possibleMoves.begin();
                     while (it != possibleMoves.end()) {
                         int y = get<0>(*it).first;
@@ -84,19 +76,19 @@ void GameThread::startGame() {
                         // store piece occupied by target square
                         Piece* temp = game.getBoardTile(x,y);
 
-                        game.setBoardTile(x,y, selectedPiece); // move this piece to target square
-                        game.setBoardTile(xPos/CELL_SIZE,yPos/CELL_SIZE, nullptr); // set null to selected piece's square
+                        game.setBoardTile(x, y, selectedPiece, false); // move this piece to target square
+                        game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, nullptr, false); // set null to selected piece's square
 
                         if (game.kingIsChecked()) it = possibleMoves.erase(it);
                         else ++it;
 
-                        game.setBoardTile(xPos/CELL_SIZE,yPos/CELL_SIZE,selectedPiece);
-                        game.setBoardTile(x,y, temp); 
+                        game.setBoardTile(xPos/CELL_SIZE,yPos/CELL_SIZE,selectedPiece, false);
+                        game.setBoardTile(x,y, temp, false); 
                     }
 
                     pieceIsMoving = true;
                     lastXPos = xPos/CELL_SIZE; lastYPos = yPos/CELL_SIZE;
-                    game.setBoardTile(lastXPos, lastYPos, nullptr); // Set the tile on the board where the piece is selected to null
+                    game.setBoardTile(lastXPos, lastYPos, nullptr, false); // Set the tile on the board where the piece is selected to null
                 }
             }
 
@@ -125,10 +117,12 @@ void GameThread::startGame() {
 
                         // If move is not allowed or king is checked, place piece back, else apply the move
                         if (selectedMove == nullptr) {
-                            game.setBoardTile(lastXPos, lastYPos, selectedPiece); // cancel the move
+                            game.setBoardTile(lastXPos, lastYPos, selectedPiece, false); // cancel the move
                         } else {
                             game.applyMove(selectedMove,xPos, yPos,selectedPiece, lastMove, CELL_SIZE);
                             lastMove = selectedPiece;
+                            lastMove->setLastMove(get<1>(*selectedMove));
+                            Piece::setLastMovedPiece(lastMove);
                             game.switchTurn();
                         }
 
@@ -141,7 +135,7 @@ void GameThread::startGame() {
 
                 if (event.mouseButton.button == Mouse::Right && selectedPiece != nullptr) {
                     // Reset the piece back
-                    game.setBoardTile(lastXPos, lastYPos, selectedPiece);
+                    game.setBoardTile(lastXPos, lastYPos, selectedPiece, false);
                     selectedPiece = nullptr;
                     xPos = 0; yPos=0; 
                     pieceIsMoving = false;
@@ -215,7 +209,7 @@ void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow &window, in
     window.draw(tt);
 }
 
-void GameThread::highlightLastMove(Piece* lastMove,RenderWindow &window, int lastXPos, int lastYPos) {  
+void GameThread::highlightLastMove(Piece* lastMove, RenderWindow &window, int lastXPos, int lastYPos) {  
     if(lastMove != nullptr) {
         RectangleShape squareBefore(Vector2f(CELL_SIZE, CELL_SIZE));
         RectangleShape squareAfter(Vector2f(CELL_SIZE, CELL_SIZE));

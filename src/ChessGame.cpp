@@ -55,10 +55,10 @@ void ChessGame::reset() {
             whitePieces.push_back(board[row][col]);
 }
 
-void ChessGame::setBoardTile(int x, int y, Piece* piece) {
+void ChessGame::setBoardTile(int x, int y, Piece* piece, bool record = true) {
     // Set up the piece
     board[y][x] = piece;
-    if (piece != nullptr) piece->move(y, x); 
+    if (piece != nullptr && record) piece->move(y, x); 
 }
 
 void ChessGame::applyMove(moveType* selectedMove, int xPos, int yPos, Piece* selectedPiece, Piece* lastMove, int CELL_SIZE) {
@@ -75,7 +75,6 @@ void ChessGame::applyMove(moveType* selectedMove, int xPos, int yPos, Piece* sel
             break;
         case MoveType::ENPASSANT:
             setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
-            Pawn::setLastPawn(nullptr);
             setBoardTile(lastMove->getY(), lastMove->getX(), nullptr);
             break;
         case MoveType::CASTLE_KINGSIDE:
@@ -99,6 +98,3 @@ void ChessGame::applyMove(moveType* selectedMove, int xPos, int yPos, Piece* sel
             break;
     }
 }
-
-
-

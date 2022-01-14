@@ -43,27 +43,29 @@ void Pawn::generateForwardMoves(moveTypes &moves, Piece* board[8][8], int dir) c
 }
 
 void Pawn::generateEnPassantMoves(moveTypes &moves, Piece* board[8][8])  const {
-    int xPos =getX(); int yPos = getY();
+    int xPos = getX(); int yPos = getY();
     int dir = (getTeam() == Team::WHITE)? -1: 1;
 
+    // Edge case, should not happen
+    if (xPos+dir < 0 || xPos+dir > 7) return;
 
-    // forward en passant
-    if (xPos == 3 && dir == -1){
-        if(board[xPos][yPos-1] == getLastPawn() && getTeam() != getLastPawn()->getTeam()) {
-            if (yPos > 0) moves.push_back(make_tuple(make_pair(xPos-1, yPos-1), MoveType::ENPASSANT));
-        } 
-        if(board[xPos][yPos+1] == getLastPawn() && getTeam() != getLastPawn()->getTeam()) {
-            if (yPos < 7) moves.push_back(make_tuple(make_pair(xPos-1, yPos+1), MoveType::ENPASSANT));
+    // Left En Passant
+    if (yPos > 0) {
+        Piece* leftPiece = board[xPos][yPos-1];
+        if (leftPiece != nullptr && leftPiece->getType() == PieceType::PAWN && leftPiece->getTeam() != getTeam()) {
+            if (getLastMovedPiece() == leftPiece && leftPiece->getLastMove() == MoveType::INIT_SPECIAL) {
+                moves.push_back(make_tuple(make_pair(xPos+dir, yPos-1), MoveType::ENPASSANT));
+            }
         }
     }
 
-    // downward en passant
-    if (xPos == 4 && dir == 1){
-        if(board[xPos][yPos-1] == getLastPawn() && getTeam() != getLastPawn()->getTeam()) {
-            if (yPos > 0) moves.push_back(make_tuple(make_pair(xPos+1, yPos-1), MoveType::ENPASSANT));
-        } 
-        if(board[xPos][yPos+1] == getLastPawn() && getTeam() != getLastPawn()->getTeam()) {
-            if (yPos < 7) moves.push_back(make_tuple(make_pair(xPos+1, yPos+1), MoveType::ENPASSANT));
+    // Right En Passant
+    if (yPos < 7) {
+        Piece* rightPiece = board[xPos][yPos+1];
+        if (rightPiece != nullptr && rightPiece->getType() == PieceType::PAWN && rightPiece->getTeam() != getTeam()) {
+            if (getLastMovedPiece() == rightPiece && rightPiece->getLastMove() == MoveType::INIT_SPECIAL) {
+                moves.push_back(make_tuple(make_pair(xPos+dir, yPos+1), MoveType::ENPASSANT));
+            }
         }
     }
 }
