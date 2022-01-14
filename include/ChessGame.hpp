@@ -27,8 +27,15 @@ class ChessGame {
     Team getTurn() const { return turn; }
     void switchTurn() { turn = (turn == Team::WHITE)? Team::BLACK: Team::WHITE; }
 
-    bool kingIsChecked() { return (turn == Team::WHITE)? whiteKing->isChecked(board): blackKing->isChecked(board); }
+    bool kingIsChecked() { 
+        return (turn == Team::WHITE)? whiteKing->isChecked(board): blackKing->isChecked(board); 
+    }
     moveTypes possibleMovesFor(Piece* piece) { return piece->calcPossibleMoves(board); }
 
-    void addPiece(Piece* piece) { (piece->getTeam() == Team::WHITE)? whitePieces.push_back(piece): blackPieces.push_back(piece); }
+    void addPiece(Piece* piece) { 
+        (piece->getTeam() == Team::WHITE) ? whitePieces.push_back(piece) : blackPieces.push_back(piece); 
+    }
+
+    void applyMove(moveType* selectedMove, int xPos, int yPos, Piece* selectedPiece, Piece* lastMove, int CELL_SIZE) ;
+    void revertMove() const;
 };
