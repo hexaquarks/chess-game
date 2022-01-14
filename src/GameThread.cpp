@@ -75,27 +75,27 @@ void GameThread::startGame() {
                     
                     // trim the illegal moves if in check
                     // check for absolute pin
-                    if(game.kingIsChecked()){
-                        vector<moveType>::iterator it = possibleMoves.begin();
-                        while(it != possibleMoves.end()) {
-                            int y = get<0>(*it).first;
-                            int x = get<0>(*it).second; 
+                   
+                    vector<moveType>::iterator it = possibleMoves.begin();
+                    while(it != possibleMoves.end()) {
+                        int y = get<0>(*it).first;
+                        int x = get<0>(*it).second; 
 
-                            // store piece occupied by target square
-                            Piece* temp = game.getBoardTile(x,y) == nullptr ? nullptr : game.getBoardTile(x,y);
-                            
-                            game.setBoardTile(x,y, selectedPiece); // move this piece to target square
-                            game.setBoardTile(xPos/CELL_SIZE,yPos/CELL_SIZE, nullptr); // set null to selected piece's square
+                        // store piece occupied by target square
+                        Piece* temp = game.getBoardTile(x,y) == nullptr ? nullptr : game.getBoardTile(x,y);
+                        
+                        game.setBoardTile(x,y, selectedPiece); // move this piece to target square
+                        game.setBoardTile(xPos/CELL_SIZE,yPos/CELL_SIZE, nullptr); // set null to selected piece's square
 
-                            if(game.kingIsChecked()) {
-                                // move is illegal due to ongoing check
-                                it = possibleMoves.erase(it);
-                            } else ++it;
+                        if(game.kingIsChecked()) {
+                            // move is illegal due to ongoing check
+                            it = possibleMoves.erase(it);
+                        } else ++it;
 
-                            game.setBoardTile(xPos/CELL_SIZE,yPos/CELL_SIZE,selectedPiece);
-                            game.setBoardTile(x,y, temp); 
-                        }
+                        game.setBoardTile(xPos/CELL_SIZE,yPos/CELL_SIZE,selectedPiece);
+                        game.setBoardTile(x,y, temp); 
                     }
+                    
 
                     pieceIsMoving = true;
                     lastXPos = xPos/CELL_SIZE; lastYPos = yPos/CELL_SIZE;
