@@ -22,7 +22,7 @@ class ChessGame {
 
     void reset(); // Resets the board
     Piece* getBoardTile(int x, int y) const { return board[y][x]; }
-    void setBoardTile(int, int, Piece*);
+    void setBoardTile(int, int, Piece*, bool);
 
     Team getTurn() const { return turn; }
     void switchTurn() { turn = (turn == Team::WHITE)? Team::BLACK: Team::WHITE; }
@@ -37,6 +37,5 @@ class ChessGame {
         (piece->getTeam() == Team::WHITE) ? whitePieces.push_back(piece) : blackPieces.push_back(piece); 
     }
 
-    void applyMove(moveType* selectedMove, int xPos, int yPos, Piece* selectedPiece, Piece* lastMove, int CELL_SIZE) ;
-    void revertMove() const;
+    void applyMove(moveType*, int, int, Piece*, Piece*, int);
 };
