@@ -7,19 +7,16 @@ moveTypes Pawn::calcPossibleMoves(Piece* board[8][8]) const {
     moveTypes moves;
     int dir = (getTeam() == Team::WHITE)? -1: 1;
     int xPos = getX(), yPos = getY();
-
-    
-
     generateCaptureMoves(moves, board, dir);
     generateForwardMoves(moves, board, dir);
     generateEnPassantMoves(moves, board);
 
     // check for absolute pin
-    for(auto const &move: moves) {
-        board[get<0>(move).first][get<0>(move).second] = (Piece*)this;
-        board[xPos][yPos] = nullptr;
+    //for(auto const &move: moves) {
+    //    board[get<0>(move).first][get<0>(move).second] = (Piece*)this;
+    //    board[xPos][yPos] = nullptr;
         // if king is checkes,  revert the move, and discard this move from moves
-    }
+    //}
     return moves;
 };
 
