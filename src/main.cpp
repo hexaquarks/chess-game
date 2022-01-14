@@ -1,4 +1,4 @@
-#include "../include/GameThread.h"
+#include "../include/GameThread.hpp"
 #include <iostream>
 
 

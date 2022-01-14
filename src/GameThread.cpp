@@ -1,4 +1,4 @@
-#include "../include/GameThread.h"
+#include "../include/GameThread.hpp"
 #include <SFML/Audio.hpp>
 #include <iostream>
 #include <vector>

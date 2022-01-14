@@ -1,4 +1,4 @@
-#include "../include/Piece.h"
+#include "../include/Piece.hpp"
 #include <iostream>
 
 Piece::Piece(Team team, int x, int y, PieceType type, string fileName): team(team), xPos(x), yPos(y), type(type) {

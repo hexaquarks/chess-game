@@ -1,4 +1,4 @@
-#include "../include/ChessGame.h"
+#include "../include/ChessGame.hpp"
 #include <algorithm>
 
 void ChessGame::freeMemory() {
