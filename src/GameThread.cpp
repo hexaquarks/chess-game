@@ -72,6 +72,7 @@ void GameThread::startGame() {
                     }
 
                     possibleMoves = game.possibleMovesFor(selectedPiece);
+                    
                     pieceIsMoving = true;
                     lastXPos = xPos/CELL_SIZE; lastYPos = yPos/CELL_SIZE;
                     game.setBoardTile(lastXPos, lastYPos, nullptr); // Set the tile on the board where the piece is selected to null
@@ -100,50 +101,23 @@ void GameThread::startGame() {
                                 break;
                             }
                         }
+   
+                        // perform move -> if king.isChecked after move -> revert move 
 
-                        const int castleRow = (game.getTurn() == Team::WHITE)? 7: 0;
+                        if(game.kingIsChecked()) {
+                            // applyMove()
+                            // if king.isChecked()
+                            // revertMove()
+                            
+                        }
+
 
                         // If move is not allowed or king is checked, place piece back, else apply the move
                         if ((game.kingIsChecked() && selectedPiece->getType() != PieceType::KING) || selectedMove == nullptr) {
-                            game.setBoardTile(lastXPos, lastYPos, selectedPiece);
+                            game.setBoardTile(lastXPos, lastYPos, selectedPiece); // cancel the move
                         } else {
-                            switch (get<1>(*selectedMove)) {
-                                case MoveType::NORMAL:
-                                    game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
-                                    // soundMove.play();
-                                    break;
-                                case MoveType::CAPTURE:
-                                    game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
-                                    // soundCapture.play();
-                                    break;
-                                case MoveType::ENPASSANT:
-                                    game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
-                                    Pawn::setLastPawn(nullptr);
-                                    game.setBoardTile(lastMove->getY(), lastMove->getX(), nullptr);
-                                    break;
-                                case MoveType::CASTLE_KINGSIDE:
-                                    game.setBoardTile(5, castleRow, game.getBoardTile(7, castleRow));
-                                    game.setBoardTile(7, castleRow, nullptr);
-                                    game.setBoardTile(6, castleRow, selectedPiece);
-                                    break;
-                                case MoveType::CASTLE_QUEENSIDE:
-                                    game.setBoardTile(3, castleRow, game.getBoardTile(0, castleRow));
-                                    game.setBoardTile(0, castleRow, nullptr);
-                                    game.setBoardTile(2, castleRow, selectedPiece);
-                                    break;
-                                case MoveType::INIT_SPECIAL:
-                                    game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
-                                    break;
-                                case MoveType::NEWPIECE:
-                                    selectedPiece->move(-1, -1); // Deleted
-                                    Queen* queen = new Queen(game.getTurn(), yPos/CELL_SIZE, xPos/CELL_SIZE);
-                                    game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, queen);
-                                    game.addPiece(queen);
-                                    break;
-                            }
+                            game.applyMove(selectedMove,xPos, yPos,selectedPiece, lastMove, CELL_SIZE);
                             lastMove = selectedPiece;
-                            // lastMoveInitialXPos = lastXPos;
-                            // lastMoveInitialYPos = lastYPos;
                             game.switchTurn();
                         }
 

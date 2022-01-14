@@ -60,3 +60,45 @@ void ChessGame::setBoardTile(int x, int y, Piece* piece) {
     board[y][x] = piece;
     if (piece != nullptr) piece->move(y, x); 
 }
+
+void ChessGame::applyMove(moveType* selectedMove, int xPos, int yPos, Piece* selectedPiece, Piece* lastMove, int CELL_SIZE) {
+    const int castleRow = (getTurn() == Team::WHITE)? 7: 0;     
+
+    switch (get<1>(*selectedMove)) {
+        case MoveType::NORMAL:
+            setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
+            // soundMove.play();
+            break;
+        case MoveType::CAPTURE:
+            setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
+            // soundCapture.play();
+            break;
+        case MoveType::ENPASSANT:
+            setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
+            Pawn::setLastPawn(nullptr);
+            setBoardTile(lastMove->getY(), lastMove->getX(), nullptr);
+            break;
+        case MoveType::CASTLE_KINGSIDE:
+            setBoardTile(5, castleRow, getBoardTile(7, castleRow));
+            setBoardTile(7, castleRow, nullptr);
+            setBoardTile(6, castleRow, selectedPiece);
+            break;
+        case MoveType::CASTLE_QUEENSIDE:
+            setBoardTile(3, castleRow, getBoardTile(0, castleRow));
+            setBoardTile(0, castleRow, nullptr);
+            setBoardTile(2, castleRow, selectedPiece);
+            break;
+        case MoveType::INIT_SPECIAL:
+            setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
+            break;
+        case MoveType::NEWPIECE:
+            selectedPiece->move(-1, -1); // Deleted
+            Queen* queen = new Queen(getTurn(), yPos/CELL_SIZE, xPos/CELL_SIZE);
+            setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, queen);
+            addPiece(queen);
+            break;
+    }
+}
+
+
+
