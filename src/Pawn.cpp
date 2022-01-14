@@ -11,12 +11,6 @@ moveTypes Pawn::calcPossibleMoves(Piece* board[8][8]) const {
     generateForwardMoves(moves, board, dir);
     generateEnPassantMoves(moves, board);
 
-    // check for absolute pin
-    //for(auto const &move: moves) {
-    //    board[get<0>(move).first][get<0>(move).second] = (Piece*)this;
-    //    board[xPos][yPos] = nullptr;
-        // if king is checkes,  revert the move, and discard this move from moves
-    //}
     return moves;
 };
 
@@ -50,10 +44,11 @@ void Pawn::generateForwardMoves(moveTypes &moves, Piece* board[8][8], int dir) c
 
 void Pawn::generateEnPassantMoves(moveTypes &moves, Piece* board[8][8])  const {
     int xPos =getX(); int yPos = getY();
+    int dir = (getTeam() == Team::WHITE)? -1: 1;
 
 
     // forward en passant
-    if (xPos == 3){
+    if (xPos == 3 && dir == -1){
         if(board[xPos][yPos-1] == getLastPawn() && getTeam() != getLastPawn()->getTeam()) {
             if (yPos > 0) moves.push_back(make_tuple(make_pair(xPos-1, yPos-1), MoveType::ENPASSANT));
         } 
@@ -63,7 +58,7 @@ void Pawn::generateEnPassantMoves(moveTypes &moves, Piece* board[8][8])  const {
     }
 
     // downward en passant
-    if (xPos == 4){
+    if (xPos == 4 && dir == 1){
         if(board[xPos][yPos-1] == getLastPawn() && getTeam() != getLastPawn()->getTeam()) {
             if (yPos > 0) moves.push_back(make_tuple(make_pair(xPos+1, yPos-1), MoveType::ENPASSANT));
         } 
