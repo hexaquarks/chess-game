@@ -1,4 +1,4 @@
-#include "GameThread.h"
+#include "../include/GameThread.h"
 #include <SFML/Audio.hpp>
 #include <iostream>
 #include <vector>
@@ -14,9 +14,9 @@ void GameThread::startGame() {
     ChessGame game;
     RenderWindow window(VideoMode(WINDOW_SIZE, WINDOW_SIZE), "Chess Game", Style::Titlebar | Style::Close);
 
-    // Setting window icon
+    // Setting window icong
     Image icon;
-    icon.loadFromFile("./assets/icons/nw.png");
+    icon.loadFromFile("../assets/icons/nw.png");
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     window.setPosition(Vector2i(300,300));
 
@@ -32,12 +32,12 @@ void GameThread::startGame() {
 
     // Sounds for piece movement
     SoundBuffer bufferMove;
-    if (!bufferMove.loadFromFile("./assets/sounds/move.wav")) return;
+    if (!bufferMove.loadFromFile("../assets/sounds/move.wav")) return;
     Sound soundMove;
     soundMove.setBuffer(bufferMove);
 
     SoundBuffer bufferCapture;
-    if (!bufferCapture.loadFromFile("./assets/sounds/captures.wav")) return;
+    if (!bufferCapture.loadFromFile("../assets/sounds/captures.wav")) return;
     Sound soundCapture;
     soundCapture.setBuffer(bufferCapture);
     
@@ -196,7 +196,7 @@ void GameThread::drawCaptureCircles(RenderWindow &window, moveTypes &possibleMov
 
         bool isEmpty = game.getBoardTile(i, j) == nullptr;
         Texture circleTexture;
-        circleTexture.loadFromFile(isEmpty? "./assets/icons/circle.png": "./assets/icons/empty_circle.png");
+        circleTexture.loadFromFile(isEmpty? "../assets/icons/circle.png": "../assets/icons/empty_circle.png");
 
         Sprite circle(circleTexture);
         if (isEmpty) circle.setScale(SPRITE_SCALE, SPRITE_SCALE);

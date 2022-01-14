@@ -1,10 +1,11 @@
-#include "King.h"
+#include "../include/King.h"
 
 King::King(Team team, int x, int y): Piece(team, x, y, PieceType::KING, "k") {}
 
 moveTypes King::calcPossibleMoves(Piece* board[8][8]) const {
     moveTypes moves;
-    int x = getX(), y = getY();
+    int x = getX();
+    int y = getY();
 
     // Checking castling
     if (canCastleKingSide(board))
@@ -37,7 +38,8 @@ moveTypes King::calcPossibleMoves(Piece* board[8][8]) const {
 
 moveTypes King::possibleMovesNoCheck(Piece* board[8][8]) const {
     moveTypes moves;
-    int x = getX(), y = getY();
+    int x = getX();
+    int y = getY();
 
     for (int i = max(0, x-1); i <= min(7, x+1); ++i) {
         for (int j = max(0, y-1); j <= min(7, y+1); ++j) {

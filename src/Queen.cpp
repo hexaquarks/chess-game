@@ -1,4 +1,4 @@
-#include "Queen.h"
+#include "../include/Queen.h"
 #include <vector>
 
 Queen::Queen(Team team, int x, int y): Piece(team, x, y, PieceType::QUEEN, "q") {}

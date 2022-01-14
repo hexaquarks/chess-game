@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "*.html": "html",
-        "tuple": "cpp"
+        "tuple": "cpp",
+        "iostream": "cpp"
     }
 }
