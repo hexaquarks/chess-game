@@ -148,7 +148,7 @@ void GameThread::startGame() {
         drawPieces(window, game);
 
         if (pieceIsMoving) {
-            drawCaptureCircles(window, possibleMoves, game, event);
+            drawCaptureCircles(window, possibleMoves, game);
             highlightHoveredSquare(window, possibleMoves,xPos,yPos);
             drawDraggedPiece(selectedPiece,window,xPos, yPos);
         }
@@ -184,7 +184,7 @@ void GameThread::highlightHoveredSquare(RenderWindow &window, moveTypes &possibl
 
 };
 
-void GameThread::drawCaptureCircles(RenderWindow &window, moveTypes &possibleMoves, ChessGame &game, Event event) {
+void GameThread::drawCaptureCircles(RenderWindow &window, moveTypes &possibleMoves, ChessGame &game) {
 
     for (moveType& move: possibleMoves) {
         int j = get<0>(move).first;
