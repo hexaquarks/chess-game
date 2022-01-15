@@ -148,7 +148,8 @@ void GameThread::startGame() {
         drawPieces(window, game);
 
         if (pieceIsMoving) {
-            drawCaptureCircles(window, possibleMoves, game);
+            drawCaptureCircles(window, possibleMoves, game, event);
+            highlightHoveredSquare(window, possibleMoves,xPos,yPos);
             drawDraggedPiece(selectedPiece,window,xPos, yPos);
         }
 
@@ -167,8 +168,24 @@ void GameThread::initializeBoard(RenderWindow &window) {
         }
     }
 }
+void GameThread::highlightHoveredSquare(RenderWindow &window, moveTypes &possibleMoves,int xPos, int yPos) {
 
-void GameThread::drawCaptureCircles(RenderWindow &window, moveTypes &possibleMoves, ChessGame &game) {
+    for(moveType& move: possibleMoves){
+        int i = get<0>(move).second;
+        int j = get<0>(move).first;
+        if(i == xPos/CELL_SIZE && j == yPos/CELL_SIZE) {
+            // currently hovering a square where the piece can move 
+            RectangleShape square(Vector2f(CELL_SIZE, CELL_SIZE));
+            square.setFillColor((i + j) % 2 == 0 ? Color(100, 111, 64) : Color(173,176,134));
+            square.setPosition(i * CELL_SIZE, j * CELL_SIZE);
+            window.draw(square);
+        }
+    }
+
+};
+
+void GameThread::drawCaptureCircles(RenderWindow &window, moveTypes &possibleMoves, ChessGame &game, Event event) {
+
     for (moveType& move: possibleMoves) {
         int j = get<0>(move).first;
         int i = get<0>(move).second;
@@ -180,7 +197,8 @@ void GameThread::drawCaptureCircles(RenderWindow &window, moveTypes &possibleMov
         Sprite circle(circleTexture);
         if (isEmpty) circle.setScale(SPRITE_SCALE, SPRITE_SCALE);
         circle.setPosition(i*CELL_SIZE, j*CELL_SIZE);
-        window.draw(circle);
+
+         window.draw(circle);
     }
 }
 
