@@ -58,7 +58,7 @@ void ChessGame::reset() {
 void ChessGame::setBoardTile(int x, int y, Piece* piece, bool record = true) {
     // Set up the piece
     board[y][x] = piece;
-    if (piece != nullptr && record) piece->move(y, x); 
+    if (piece != nullptr) piece->move(y, x, record); 
 }
 
 void ChessGame::applyMove(moveType* selectedMove, int xPos, int yPos, Piece* selectedPiece, Piece* lastMove, int CELL_SIZE) {
