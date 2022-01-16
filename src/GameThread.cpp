@@ -13,6 +13,7 @@ constexpr float SPRITE_SIZE = 128;
 void GameThread::startGame() {
     ChessGame game;
     RenderWindow window(VideoMode(WINDOW_SIZE, WINDOW_SIZE), "Chess Game", Style::Titlebar | Style::Close);
+    
 
     // Setting window icong
     Image icon;
@@ -140,11 +141,11 @@ void GameThread::startGame() {
                     xPos = 0; yPos=0; 
                     pieceIsMoving = false;
                 }
-                highlightLastMove(lastMove, window, lastXPos, lastYPos);
             }
         }
 
         initializeBoard(window);
+        highlightLastMove(lastMove, window, lastXPos, lastYPos);
         drawPieces(window, game);
 
         if (pieceIsMoving) {
