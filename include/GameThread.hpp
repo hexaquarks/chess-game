@@ -11,6 +11,7 @@ class GameThread {
     static void drawPieces(RenderWindow&, ChessGame&);
     static void drawDraggedPiece(Piece*, RenderWindow&, int, int);
     static void highlightLastMove(Piece*, RenderWindow&, int, int);
+    static void removeIllegalMoves(ChessGame&, moveTypes&, Piece*, int,int);
 
     public:
     GameThread() = delete; // Delete constructor
