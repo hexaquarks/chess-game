@@ -1,8 +1,8 @@
 #include "../include/Piece.hpp"
 #include <iostream>
 
-Piece::Piece(Team team, int x, int y, PieceType type, string fileName): team(team), xPos(x), yPos(y), type(type) {
-    filename = string("../assets/icons/") + fileName + string(team == Team::BLACK? "b": "w") + string(".png");
+Piece::Piece(Team team, int x, int y, PieceType type, string fileName): m_team(team), m_xPos(x), m_yPos(y), m_type(type) {
+    m_filename = string("../assets/icons/") + fileName + string(team == Team::BLACK? "b": "w") + string(".png");
 }
 
 moveTypes Piece::getHorizontalAndVerticalMovements(Piece* board[8][8]) const {

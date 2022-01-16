@@ -140,11 +140,11 @@ void GameThread::startGame() {
                     xPos = 0; yPos=0; 
                     pieceIsMoving = false;
                 }
+                highlightLastMove(lastMove, window, lastXPos, lastYPos);
             }
         }
 
         initializeBoard(window);
-        highlightLastMove(lastMove, window, lastXPos, lastYPos);
         drawPieces(window, game);
 
         if (pieceIsMoving) {
