@@ -69,23 +69,7 @@ void GameThread::startGame() {
 
                     // Trim the illegal moves if in check
                     // check for absolute pin
-                    vector<moveType>::iterator it = possibleMoves.begin();
-                    while (it != possibleMoves.end()) {
-                        int y = get<0>(*it).first;
-                        int x = get<0>(*it).second; 
-
-                        // store piece occupied by target square
-                        Piece* temp = game.getBoardTile(x,y);
-
-                        game.setBoardTile(x, y, selectedPiece, false); // move this piece to target square
-                        game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, nullptr, false); // set null to selected piece's square
-
-                        if (game.kingIsChecked()) it = possibleMoves.erase(it);
-                        else ++it;
-
-                        game.setBoardTile(xPos/CELL_SIZE,yPos/CELL_SIZE,selectedPiece, false);
-                        game.setBoardTile(x,y, temp, false); 
-                    }
+                    removeIllegalMoves(game, possibleMoves, selectedPiece,xPos, yPos);
 
                     pieceIsMoving = true;
                     lastXPos = xPos/CELL_SIZE; lastYPos = yPos/CELL_SIZE;
@@ -155,6 +139,26 @@ void GameThread::startGame() {
         }
 
         window.display();
+    }
+}
+
+void GameThread::removeIllegalMoves(ChessGame &game, moveTypes &possibleMoves, Piece* selectedPiece, int xPos, int yPos) {
+    vector<moveType>::iterator it = possibleMoves.begin();
+    while (it != possibleMoves.end()) {
+        int y = get<0>(*it).first;
+        int x = get<0>(*it).second; 
+
+        // store piece occupied by target square
+        Piece* temp = game.getBoardTile(x,y);
+
+        game.setBoardTile(x, y, selectedPiece, false); // move this piece to target square
+        game.setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, nullptr, false); // set null to selected piece's square
+
+        if (game.kingIsChecked()) it = possibleMoves.erase(it);
+        else ++it;
+
+        game.setBoardTile(xPos/CELL_SIZE,yPos/CELL_SIZE,selectedPiece, false);
+        game.setBoardTile(x,y, temp, false); 
     }
 }
 
