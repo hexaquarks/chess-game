@@ -1,4 +1,5 @@
 #include "../include/GameThread.hpp"
+#include "../include/MoveList.hpp"
 #include <SFML/Audio.hpp>
 #include <iostream>
 #include <vector>
@@ -124,6 +125,15 @@ void GameThread::startGame() {
                     selectedPiece = nullptr;
                     xPos = 0; yPos=0; 
                     pieceIsMoving = false;
+                }
+
+                if (event.KeyPressed)  {
+                    if (event.key.code == Keyboard::Left) {
+                        
+                    } 
+                    if (event.key.code == Keyboard::Left) {
+
+                    } 
                 }
             }
         }
