@@ -8,33 +8,33 @@
 #include "Queen.hpp"
 
 class ChessGame {
-    Piece* board[8][8];
-    Team turn; // which player's turn
-    vector<Piece*> whitePieces;
-    vector<Piece*> blackPieces;
-    King* whiteKing;
-    King* blackKing;
+    Piece* m_board[8][8];
+    Team m_turn; // which player's turn
+    vector<Piece*> m_whitePieces;
+    vector<Piece*> m_blackPieces;
+    King* m_whiteKing;
+    King* m_blackKing;
     void freeMemory();
 
     public:
-    ChessGame(): turn(Team::WHITE) { reset(); } // Constructor
+    ChessGame(): m_turn(Team::WHITE) { reset(); } // Constructor
     ~ChessGame() { freeMemory(); } // Destructor
 
     void reset(); // Resets the board
-    Piece* getBoardTile(int x, int y) const { return board[y][x]; }
+    Piece* getBoardTile(int x, int y) const { return m_board[y][x]; }
     void setBoardTile(int, int, Piece*, bool);
 
-    Team getTurn() const { return turn; }
-    void switchTurn() { turn = (turn == Team::WHITE)? Team::BLACK: Team::WHITE; }
+    Team getTurn() const { return m_turn; }
+    void switchTurn() { m_turn = (m_turn == Team::WHITE)? Team::BLACK: Team::WHITE; }
 
     bool kingIsChecked() { 
-        return (turn == Team::WHITE)? whiteKing->isChecked(board): blackKing->isChecked(board); 
+        return (m_turn == Team::WHITE)? m_whiteKing->isChecked(m_board): m_blackKing->isChecked(m_board); 
     }
 
-    moveTypes possibleMovesFor(Piece* piece) { return piece->calcPossibleMoves(board); }
+    moveTypes possibleMovesFor(Piece* piece) { return piece->calcPossibleMoves(m_board); }
 
     void addPiece(Piece* piece) { 
-        (piece->getTeam() == Team::WHITE) ? whitePieces.push_back(piece) : blackPieces.push_back(piece); 
+        (piece->getTeam() == Team::WHITE) ? m_whitePieces.push_back(piece) : m_blackPieces.push_back(piece); 
     }
 
     void applyMove(moveType*, int, int, Piece*, Piece*, int);
