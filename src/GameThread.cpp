@@ -153,7 +153,7 @@ void GameThread::startGame() {
 }
 
 void GameThread::removeIllegalMoves(ChessGame &game, moveTypes &possibleMoves, Piece* selectedPiece, int xPos, int yPos) {
-    vector<moveType>::iterator it = possibleMoves.begin();
+    moveTypes::iterator it = possibleMoves.begin();
     while (it != possibleMoves.end()) {
         int y = get<0>(*it).first;
         int x = get<0>(*it).second; 
