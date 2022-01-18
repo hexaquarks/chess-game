@@ -1,3 +1,4 @@
+#pragma once
 #include "Piece.hpp"
 
 typedef tuple<pair<int, int>, pair<int, int>> moveFullCoords;
@@ -8,12 +9,12 @@ class Move {
     moveFullCoords m_secondPieceCoords; // the last move 
     Piece* m_selectedPiece; // the piece that is being selected
     Piece* m_takenOrMovedPiece; // the captured piece, the moved rook in castling, or taken pawn in en passant
-    moveType* m_moveType; 
+    MoveType m_MoveType; 
 
     public:
-    Move(int,int, Piece*, moveType*); // Constructor for NORMAL and INIT SPECIAL
-    Move(int,int, Piece*, Piece*, moveType*); // Constructor for CAPTURE
-    Move(int,int, Piece*, Piece*, moveType*, moveFullCoords); // Constructor EN PASSANT and CASTLE
+    Move(int,int, Piece*, MoveType); // Constructor for NORMAL, INIT SPECIAL and CASTLE
+    Move(int,int, Piece*, Piece*, MoveType); // Constructor for CAPTURE, EN PASSANT
+    MoveType getMoveType() { return m_MoveType; };
     
 
     moveFullCoords getMoveCoords() const;

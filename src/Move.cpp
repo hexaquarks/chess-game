@@ -1,21 +1,21 @@
 #include "../include/Move.hpp"
 
 
-// for NORMAL and INIT SPECIAL 
-Move::Move(int x, int y, Piece* selectedPiece, moveType* moveType)
+// for NORMAL, INIT SPECIAL and CASTLE
+Move::Move(int x, int y, Piece* selectedPiece, MoveType moveType)
     : m_xTarget(x),
       m_yTarget(y),
       m_selectedPiece(selectedPiece),
-      m_moveType(moveType) {};
+      m_MoveType(moveType) {};
 
-// for CAPTURE, ENPASSANT, CASTLE
-Move::Move(int x, int y, Piece* selectedPiece, Piece* secondPiece, moveType* moveType, moveFullCoords secondPieceCoords)
+// for CAPTURE and ENPASSANT
+Move::Move(int x, int y, Piece* selectedPiece, Piece* secondPiece, MoveType moveType)
     : m_xTarget(x),
       m_yTarget(y),
       m_selectedPiece(selectedPiece),
-      m_takenOrMovedPiece(secondPiece),
-      m_moveType(moveType),
-      m_secondPieceCoords(secondPieceCoords) {};
+      m_capturedPiece(secondPiece),
+      m_MoveType(moveType) {};
+
 
 moveFullCoords Move::getMoveCoords() const {
      return make_tuple(
