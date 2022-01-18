@@ -61,40 +61,64 @@ void ChessGame::setBoardTile(int x, int y, Piece* piece, bool record = true) {
     if (piece != nullptr) piece->move(y, x, record); 
 }
 
-void ChessGame::applyMove(moveType* selectedMove, int xPos, int yPos, Piece* selectedPiece, Piece* lastMove, int CELL_SIZE) {
-    const int castleRow = (getTurn() == Team::WHITE)? 7: 0;     
+void ChessGame::applyMove(moveType* selectedMove, int xPos, int yPos, Piece* selectedPiece, Piece* lastMove, int CELL_SIZE, list<Move> moveSequence) {
+    const int castleRow = (getTurn() == Team::WHITE)? 7: 0;    
+    int x = xPos/CELL_SIZE;
+    int y = yPos/CELL_SIZE; 
+    Piece* oldPiece = nullptr;
 
     switch (get<1>(*selectedMove)) {
         case MoveType::NORMAL:
-            setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
+            setBoardTile(x, y, selectedPiece);
+
+            moveSequence.emplace_front(Move(x, y,selectedPiece, selectedMove));
             // soundMove.play();
             break;
         case MoveType::CAPTURE:
-            setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
+            oldPiece = getBoardTile(x, y); // possible bug here ? 
+            setBoardTile(x, y, selectedPiece);
+
+            moveSequence.emplace_front(Move(x, y,selectedPiece, oldPiece, selectedMove));
             // soundCapture.play();
             break;
         case MoveType::ENPASSANT:
-            setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
+            oldPiece = getBoardTile(lastMove->getY(),lastMove->getX()); // the position of the captured pawn
+            setBoardTile(x, y, selectedPiece);
             setBoardTile(lastMove->getY(), lastMove->getX(), nullptr);
+
+            moveSequence.emplace_front(Move(x, y,selectedPiece, oldPiece, selectedMove));
             break;
         case MoveType::CASTLE_KINGSIDE:
             setBoardTile(5, castleRow, getBoardTile(7, castleRow));
             setBoardTile(7, castleRow, nullptr);
             setBoardTile(6, castleRow, selectedPiece);
+
+            moveSequence.emplace_front(Move(6, castleRow, selectedPiece, selectedMove));
             break;
         case MoveType::CASTLE_QUEENSIDE:
             setBoardTile(3, castleRow, getBoardTile(0, castleRow));
             setBoardTile(0, castleRow, nullptr);
             setBoardTile(2, castleRow, selectedPiece);
+
+            moveSequence.emplace_front(Move(2, castleRow, selectedPiece, selectedMove));
             break;
         case MoveType::INIT_SPECIAL:
-            setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, selectedPiece);
+            setBoardTile(x, y, selectedPiece);
+
+            moveSequence.emplace_front(Move(x, y,selectedPiece, selectedMove));
             break;
         case MoveType::NEWPIECE:
             selectedPiece->move(-1, -1); // Deleted
-            Queen* queen = new Queen(getTurn(), yPos/CELL_SIZE, xPos/CELL_SIZE);
-            setBoardTile(xPos/CELL_SIZE, yPos/CELL_SIZE, queen);
+            Queen* queen = new Queen(getTurn(), y, x);
+            setBoardTile(x, y, queen);
             addPiece(queen);
+
+            // moveSequence TODO
             break;
     }
+}
+
+void undoMove(list<Move> moveSequence) {
+
+
 }

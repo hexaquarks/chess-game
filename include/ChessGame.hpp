@@ -1,4 +1,5 @@
 #pragma once
+#include <list>
 #include "Piece.hpp"
 #include "Pawn.hpp"
 #include "Rook.hpp"
@@ -6,6 +7,7 @@
 #include "Bishop.hpp"
 #include "King.hpp"
 #include "Queen.hpp"
+#include "Move.hpp"
 
 class ChessGame {
     Piece* m_board[8][8];
@@ -37,5 +39,6 @@ class ChessGame {
         (piece->getTeam() == Team::WHITE) ? m_whitePieces.push_back(piece) : m_blackPieces.push_back(piece); 
     }
 
-    void applyMove(moveType*, int, int, Piece*, Piece*, int);
+    void applyMove(moveType*, int, int, Piece*, Piece*, int, list<Move>);
+    void undoMove(list<Move>);
 };
