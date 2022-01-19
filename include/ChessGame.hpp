@@ -40,5 +40,5 @@ class ChessGame {
     }
 
     void applyMove(moveType*, int, int, Piece*, Piece*, int, list<Move>);
-    void undoMove(list<Move>);
+    void undoMove(list<Move>::iterator);
 };

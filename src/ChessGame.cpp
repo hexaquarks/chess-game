@@ -71,14 +71,14 @@ void ChessGame::applyMove(moveType* selectedMove, int xPos, int yPos, Piece* sel
         case MoveType::NORMAL:
             setBoardTile(x, y, selectedPiece);
 
-            moveSequence.emplace_front(Move(x, y,selectedPiece, selectedMove));
+            moveSequence.emplace_front(Move(x, y,selectedPiece, MoveType::NORMAL));
             // soundMove.play();
             break;
         case MoveType::CAPTURE:
             oldPiece = getBoardTile(x, y); // possible bug here ? 
             setBoardTile(x, y, selectedPiece);
 
-            moveSequence.emplace_front(Move(x, y,selectedPiece, oldPiece, selectedMove));
+            moveSequence.emplace_front(Move(x, y,selectedPiece, oldPiece, MoveType::CAPTURE));
             // soundCapture.play();
             break;
         case MoveType::ENPASSANT:
@@ -86,26 +86,28 @@ void ChessGame::applyMove(moveType* selectedMove, int xPos, int yPos, Piece* sel
             setBoardTile(x, y, selectedPiece);
             setBoardTile(lastMove->getY(), lastMove->getX(), nullptr);
 
-            moveSequence.emplace_front(Move(x, y,selectedPiece, oldPiece, selectedMove));
+            moveSequence.emplace_front(Move(x, y,selectedPiece, oldPiece, MoveType::ENPASSANT));
             break;
         case MoveType::CASTLE_KINGSIDE:
+            oldPiece = getBoardTile(7, castleRow);
             setBoardTile(5, castleRow, getBoardTile(7, castleRow));
             setBoardTile(7, castleRow, nullptr);
             setBoardTile(6, castleRow, selectedPiece);
 
-            moveSequence.emplace_front(Move(6, castleRow, selectedPiece, selectedMove));
+            moveSequence.emplace_front(Move(6, castleRow, selectedPiece, oldPiece, MoveType::CASTLE_KINGSIDE));
             break;
         case MoveType::CASTLE_QUEENSIDE:
+            oldPiece = getBoardTile(7, castleRow);
             setBoardTile(3, castleRow, getBoardTile(0, castleRow));
             setBoardTile(0, castleRow, nullptr);
             setBoardTile(2, castleRow, selectedPiece);
 
-            moveSequence.emplace_front(Move(2, castleRow, selectedPiece, selectedMove));
+            moveSequence.emplace_front(Move(2, castleRow, selectedPiece, oldPiece, MoveType::CASTLE_QUEENSIDE));
             break;
         case MoveType::INIT_SPECIAL:
             setBoardTile(x, y, selectedPiece);
 
-            moveSequence.emplace_front(Move(x, y,selectedPiece, selectedMove));
+            moveSequence.emplace_front(Move(x, y,selectedPiece, MoveType::INIT_SPECIAL));
             break;
         case MoveType::NEWPIECE:
             selectedPiece->move(-1, -1); // Deleted
@@ -118,7 +120,36 @@ void ChessGame::applyMove(moveType* selectedMove, int xPos, int yPos, Piece* sel
     }
 }
 
-void undoMove(list<Move> moveSequence) {
+void ChessGame::undoMove(list<Move>::iterator it) {
 
+    setBoardTile((*it).m_xInit, (*it).m_yInit, (*it).getSelectedPiece()); // set the moved piece back
 
+    switch((*it).getMoveType()){
+        case MoveType::NORMAL:
+            setBoardTile((*it).m_xTarget, (*it).m_yTarget, nullptr); 
+            break;
+        case MoveType::CAPTURE:
+            setBoardTile((*it).m_xTarget, (*it).m_yTarget, (*it).getCapturedPiece()); 
+            break;
+        case MoveType::ENPASSANT:
+            setBoardTile((*it).m_xTarget, (*it).m_yTarget, nullptr);            
+            setBoardTile((*it).getCapturedPiece()->getY(), (*it).getCapturedPiece()->getX(), (*it).getCapturedPiece());
+            break;
+        case MoveType::CASTLE_KINGSIDE:
+            int castleRow = ((*it).getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0; 
+
+            setBoardTile(7, castleRow, (*it).getCapturedPiece());
+            break;
+        case MoveType::CASTLE_QUEENSIDE:
+            int castleRow = ((*it).getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0; 
+            
+            setBoardTile(0, castleRow, (*it).getCapturedPiece());
+            break;
+        case MoveType::INIT_SPECIAL:
+            setBoardTile((*it).m_xTarget, (*it).m_yTarget, nullptr); 
+            break;
+        case MoveType::NEWPIECE:
+            // TODO
+            break;
+    }
 }
