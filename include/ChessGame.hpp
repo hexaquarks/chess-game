@@ -39,6 +39,6 @@ class ChessGame {
         (piece->getTeam() == Team::WHITE) ? m_whitePieces.push_back(piece) : m_blackPieces.push_back(piece); 
     }
 
-    void applyMove(moveType*, int, int, Piece*, Piece*, int, list<Move>);
-    void undoMove(list<Move>::iterator);
+    void applyMove(moveType*, int, int, int,int, Piece*, Piece*, int, list<Move>&);
+    void undoMove(list<Move>::iterator&);
 };

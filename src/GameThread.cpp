@@ -32,7 +32,7 @@ void GameThread::startGame() {
 
     // Additional board state variables
     Piece* lastMove = nullptr;
-    list<Move> moveSequence;
+    list<Move> moveSequence = {};
     list<Move>::iterator moveIterator = moveSequence.begin(); 
 
     // Sounds for piece movement
@@ -108,7 +108,8 @@ void GameThread::startGame() {
                         if (selectedMove == nullptr) {
                             game.setBoardTile(lastXPos, lastYPos, selectedPiece, false); // cancel the move
                         } else {
-                            game.applyMove(selectedMove,xPos, yPos,selectedPiece, lastMove, CELL_SIZE, moveSequence);
+                            game.applyMove(selectedMove,xPos, yPos,lastXPos, lastYPos, selectedPiece, lastMove, CELL_SIZE, moveSequence);
+                            cout<< "size is now : "<<moveSequence.size()<<endl;
                             lastMove = selectedPiece;
                             lastMove->setLastMove(get<1>(*selectedMove));
                             Piece::setLastMovedPiece(lastMove);
@@ -156,14 +157,14 @@ void GameThread::startGame() {
     }
 }
 
-void GameThread::goToPreviousMove(ChessGame& game, list<Move> moveSequence, list<Move>::iterator moveIterator) {
+void GameThread::goToPreviousMove(ChessGame& game, list<Move>& moveSequence, list<Move>::iterator& moveIterator) {
     if(moveIterator == --moveSequence.end()) return; // not reached the end yet (first move)
 
     ++moveIterator; // go to previous move
-    
+    game.undoMove(moveIterator);
 
  };
-void GameThread::goToNextMove(ChessGame&, list<Move> moveSequence, list<Move>::iterator moveIterator) { 
+void GameThread::goToNextMove(ChessGame&, list<Move>& moveSequence, list<Move>::iterator& moveIterator) { 
 
 };
 

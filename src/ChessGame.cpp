@@ -61,24 +61,24 @@ void ChessGame::setBoardTile(int x, int y, Piece* piece, bool record = true) {
     if (piece != nullptr) piece->move(y, x, record); 
 }
 
-void ChessGame::applyMove(moveType* selectedMove, int xPos, int yPos, Piece* selectedPiece, Piece* lastMove, int CELL_SIZE, list<Move> moveSequence) {
+void ChessGame::applyMove(moveType* selectedMove, int x, int y,int prevX, int prevY, Piece* selectedPiece, Piece* lastMove, int CELL_SIZE, list<Move>& moveSequence) {
     const int castleRow = (getTurn() == Team::WHITE)? 7: 0;    
-    int x = xPos/CELL_SIZE;
-    int y = yPos/CELL_SIZE; 
+    x /= CELL_SIZE;
+    y /= CELL_SIZE; 
     Piece* oldPiece = nullptr;
 
     switch (get<1>(*selectedMove)) {
         case MoveType::NORMAL:
             setBoardTile(x, y, selectedPiece);
 
-            moveSequence.emplace_front(Move(x, y,selectedPiece, MoveType::NORMAL));
+            moveSequence.emplace_front(Move(x, y, prevX, prevY, selectedPiece, MoveType::NORMAL));
             // soundMove.play();
             break;
         case MoveType::CAPTURE:
             oldPiece = getBoardTile(x, y); // possible bug here ? 
             setBoardTile(x, y, selectedPiece);
 
-            moveSequence.emplace_front(Move(x, y,selectedPiece, oldPiece, MoveType::CAPTURE));
+            moveSequence.emplace_front(Move(x, y,prevX, prevY, selectedPiece, oldPiece, MoveType::CAPTURE));
             // soundCapture.play();
             break;
         case MoveType::ENPASSANT:
@@ -86,7 +86,7 @@ void ChessGame::applyMove(moveType* selectedMove, int xPos, int yPos, Piece* sel
             setBoardTile(x, y, selectedPiece);
             setBoardTile(lastMove->getY(), lastMove->getX(), nullptr);
 
-            moveSequence.emplace_front(Move(x, y,selectedPiece, oldPiece, MoveType::ENPASSANT));
+            moveSequence.emplace_front(Move(x, y,prevX, prevY, selectedPiece, oldPiece, MoveType::ENPASSANT));
             break;
         case MoveType::CASTLE_KINGSIDE:
             oldPiece = getBoardTile(7, castleRow);
@@ -94,7 +94,7 @@ void ChessGame::applyMove(moveType* selectedMove, int xPos, int yPos, Piece* sel
             setBoardTile(7, castleRow, nullptr);
             setBoardTile(6, castleRow, selectedPiece);
 
-            moveSequence.emplace_front(Move(6, castleRow, selectedPiece, oldPiece, MoveType::CASTLE_KINGSIDE));
+            moveSequence.emplace_front(Move(6, castleRow,prevX, prevY,  selectedPiece, oldPiece, MoveType::CASTLE_KINGSIDE));
             break;
         case MoveType::CASTLE_QUEENSIDE:
             oldPiece = getBoardTile(7, castleRow);
@@ -102,12 +102,14 @@ void ChessGame::applyMove(moveType* selectedMove, int xPos, int yPos, Piece* sel
             setBoardTile(0, castleRow, nullptr);
             setBoardTile(2, castleRow, selectedPiece);
 
-            moveSequence.emplace_front(Move(2, castleRow, selectedPiece, oldPiece, MoveType::CASTLE_QUEENSIDE));
+            moveSequence.emplace_front(Move(2, castleRow,prevX, prevY,  selectedPiece, oldPiece, MoveType::CASTLE_QUEENSIDE));
             break;
         case MoveType::INIT_SPECIAL:
             setBoardTile(x, y, selectedPiece);
 
-            moveSequence.emplace_front(Move(x, y,selectedPiece, MoveType::INIT_SPECIAL));
+            moveSequence.emplace_front(Move(x, y,prevX, prevY, selectedPiece, MoveType::INIT_SPECIAL));
+            cout << "pushed coordinates init are -> " << "(m_xInit, m_yInit) : " <<selectedPiece->getX()<<","<<selectedPiece->getY()<<endl;
+            cout << "pushed coordinates target are -> " << "(m_xTarget, m_yTarget) : " <<x<<","<<y<<endl;
             break;
         case MoveType::NEWPIECE:
             selectedPiece->move(-1, -1); // Deleted
@@ -120,9 +122,10 @@ void ChessGame::applyMove(moveType* selectedMove, int xPos, int yPos, Piece* sel
     }
 }
 
-void ChessGame::undoMove(list<Move>::iterator it) {
-
+void ChessGame::undoMove(list<Move>::iterator& it) {
+    
     setBoardTile((*it).m_xInit, (*it).m_yInit, (*it).getSelectedPiece()); // set the moved piece back
+    int castleRow = ((*it).getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0; 
 
     switch((*it).getMoveType()){
         case MoveType::NORMAL:
@@ -136,16 +139,15 @@ void ChessGame::undoMove(list<Move>::iterator it) {
             setBoardTile((*it).getCapturedPiece()->getY(), (*it).getCapturedPiece()->getX(), (*it).getCapturedPiece());
             break;
         case MoveType::CASTLE_KINGSIDE:
-            int castleRow = ((*it).getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0; 
-
             setBoardTile(7, castleRow, (*it).getCapturedPiece());
             break;
         case MoveType::CASTLE_QUEENSIDE:
-            int castleRow = ((*it).getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0; 
-            
             setBoardTile(0, castleRow, (*it).getCapturedPiece());
             break;
         case MoveType::INIT_SPECIAL:
+            cout << "in the init special" <<endl;
+            cout << "coordinates init are -> " << "(m_xInit, m_yInit) : " <<(*it).m_xInit<<","<<(*it).m_yInit<<endl;
+            cout << "coordinates target are -> " << "(m_xTarget, m_yTarget) : " <<(*it).m_xTarget<<","<<(*it).m_yTarget<<endl;
             setBoardTile((*it).m_xTarget, (*it).m_yTarget, nullptr); 
             break;
         case MoveType::NEWPIECE:

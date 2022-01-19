@@ -12,8 +12,8 @@ class GameThread {
     static void drawDraggedPiece(Piece*, RenderWindow&, int, int);
     static void highlightLastMove(Piece*, RenderWindow&, int, int);
     static void removeIllegalMoves(ChessGame&, moveTypes&, Piece*, int,int);
-    static void goToPreviousMove(ChessGame&,list<Move>, list<Move>::iterator);
-    static void goToNextMove(ChessGame&, list<Move>, list<Move>::iterator);
+    static void goToPreviousMove(ChessGame&,list<Move>&, list<Move>::iterator&);
+    static void goToNextMove(ChessGame&, list<Move>&, list<Move>::iterator&);
 
     public:
     GameThread() = delete; // Delete constructor
