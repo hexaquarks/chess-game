@@ -1,8 +1,9 @@
 #include "../include/GameThread.hpp"
-#include "../include/MoveList.hpp"
+#include "../include/Move.hpp"
 #include <SFML/Audio.hpp>
 #include <iostream>
 #include <vector>
+#include <list>
 using namespace sf;
 
 constexpr unsigned int WINDOW_SIZE = 640;
@@ -31,6 +32,8 @@ void GameThread::startGame() {
 
     // Additional board state variables
     Piece* lastMove = nullptr;
+    list<Move> moveSequence;
+    list<Move>::iterator moveIterator = moveSequence.begin(); 
 
     // Sounds for piece movement
     SoundBuffer bufferMove;
@@ -105,7 +108,7 @@ void GameThread::startGame() {
                         if (selectedMove == nullptr) {
                             game.setBoardTile(lastXPos, lastYPos, selectedPiece, false); // cancel the move
                         } else {
-                            game.applyMove(selectedMove,xPos, yPos,selectedPiece, lastMove, CELL_SIZE);
+                            game.applyMove(selectedMove,xPos, yPos,selectedPiece, lastMove, CELL_SIZE, moveSequence);
                             lastMove = selectedPiece;
                             lastMove->setLastMove(get<1>(*selectedMove));
                             Piece::setLastMovedPiece(lastMove);
@@ -127,15 +130,16 @@ void GameThread::startGame() {
                     pieceIsMoving = false;
                 }
 
-                if (event.KeyPressed)  {
-                    if (event.key.code == Keyboard::Left) {
-                        
-                    } 
-                    if (event.key.code == Keyboard::Left) {
-
-                    } 
-                }
             }
+              if (event.KeyPressed && sizeof(moveSequence) >= 1)  {
+                if (event.key.code == Keyboard::Left ) {
+                    goToPreviousMove(game, moveSequence, moveIterator);
+                } 
+                if (event.key.code == Keyboard::Right) {
+                    goToNextMove(game, moveSequence, moveIterator);
+                } 
+            }
+           
         }
 
         initializeBoard(window);
@@ -151,6 +155,17 @@ void GameThread::startGame() {
         window.display();
     }
 }
+
+void GameThread::goToPreviousMove(ChessGame& game, list<Move> moveSequence, list<Move>::iterator moveIterator) {
+    if(moveIterator == --moveSequence.end()) return; // not reached the end yet (first move)
+
+    ++moveIterator; // go to previous move
+    
+
+ };
+void GameThread::goToNextMove(ChessGame&, list<Move> moveSequence, list<Move>::iterator moveIterator) { 
+
+};
 
 void GameThread::removeIllegalMoves(ChessGame &game, moveTypes &possibleMoves, Piece* selectedPiece, int xPos, int yPos) {
     moveTypes::iterator it = possibleMoves.begin();
