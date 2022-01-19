@@ -11,8 +11,8 @@ class Move {
     MoveType m_MoveType; 
 
     public:
-    Move(int,int, Piece*, MoveType); // Constructor for NORMAL, INIT SPECIAL and CASTLE
-    Move(int,int, Piece*, Piece*, MoveType); // Constructor for CAPTURE, EN PASSANT
+    Move(int,int,int,int, Piece*, MoveType); // Constructor for NORMAL, INIT SPECIAL and CASTLE
+    Move(int,int,int,int, Piece*, Piece*, MoveType); // Constructor for CAPTURE, EN PASSANT
     int m_xTarget; int m_yTarget; // the destination square of the piece that is being moved
     int m_xInit; int m_yInit; // the initial square of the piece moved
     MoveType getMoveType() { return m_MoveType; };
