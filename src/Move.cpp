@@ -6,7 +6,10 @@ Move::Move(int x, int y, Piece* selectedPiece, MoveType moveType)
     : m_xTarget(x),
       m_yTarget(y),
       m_selectedPiece(selectedPiece),
-      m_MoveType(moveType) {};
+      m_MoveType(moveType) {
+        m_xInit = selectedPiece->getX();
+        m_yInit = selectedPiece->getY();
+      };
 
 // for CAPTURE and ENPASSANT
 Move::Move(int x, int y, Piece* selectedPiece, Piece* secondPiece, MoveType moveType)
@@ -14,7 +17,10 @@ Move::Move(int x, int y, Piece* selectedPiece, Piece* secondPiece, MoveType move
       m_yTarget(y),
       m_selectedPiece(selectedPiece),
       m_capturedPiece(secondPiece),
-      m_MoveType(moveType) {};
+      m_MoveType(moveType) {
+        m_xInit = selectedPiece->getX();
+        m_yInit = selectedPiece->getY();
+      };
 
 
 moveFullCoords Move::getMoveCoords() const {
