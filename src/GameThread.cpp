@@ -109,7 +109,8 @@ void GameThread::startGame() {
                             game.setBoardTile(lastXPos, lastYPos, selectedPiece, false); // cancel the move
                         } else {
                             game.applyMove(selectedMove,xPos, yPos,lastXPos, lastYPos, selectedPiece, lastMove, CELL_SIZE, moveSequence);
-                            cout<< "size is now : "<<moveSequence.size()<<endl;
+                            moveIterator = moveSequence.begin(); // reset the iterator to the current move
+
                             lastMove = selectedPiece;
                             lastMove->setLastMove(get<1>(*selectedMove));
                             Piece::setLastMovedPiece(lastMove);
@@ -132,7 +133,8 @@ void GameThread::startGame() {
                 }
 
             }
-              if (event.KeyPressed && sizeof(moveSequence) >= 1)  {
+            
+            if ((event.type == Event::KeyPressed) && moveSequence.size() >= 1)  {
                 if (event.key.code == Keyboard::Left ) {
                     goToPreviousMove(game, moveSequence, moveIterator);
                 } 
@@ -158,10 +160,11 @@ void GameThread::startGame() {
 }
 
 void GameThread::goToPreviousMove(ChessGame& game, list<Move>& moveSequence, list<Move>::iterator& moveIterator) {
+    cout << "in goToPreviousMove()" <<endl;
     if(moveIterator == --moveSequence.end()) return; // not reached the end yet (first move)
 
-    ++moveIterator; // go to previous move
     game.undoMove(moveIterator);
+    ++moveIterator; // go to previous move
 
  };
 void GameThread::goToNextMove(ChessGame&, list<Move>& moveSequence, list<Move>::iterator& moveIterator) { 
