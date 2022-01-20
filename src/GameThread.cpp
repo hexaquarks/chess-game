@@ -150,7 +150,8 @@ void GameThread::startGame() {
         }
 
         initializeBoard(window);
-        highlightLastMove(lastMove, window, lastXPos, lastYPos);
+        // highlightLastMove(lastMove, window, lastXPos, lastYPos);
+        highlightLastMove(window, moveIterator);
         drawPieces(window, game);
 
         if (pieceIsMoving) {
@@ -176,7 +177,7 @@ void GameThread::goToNextMove(Board& game, list<Move>& moveSequence, list<Move>:
     if(moveIterator == moveSequence.begin()) return; // can't move in the future
 
     --moveIterator; // go to previous move
-    
+
     game.applyMove((*moveIterator).getMoveType(),
         (*moveIterator).m_xTarget*CELL_SIZE, 
         (*moveIterator).m_yTarget*CELL_SIZE,
@@ -277,15 +278,23 @@ void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow &window, in
     window.draw(tt);
 }
 
-void GameThread::highlightLastMove(Piece* lastMove, RenderWindow &window, int lastXPos, int lastYPos) {  
-    if(lastMove != nullptr) {
+void GameThread::highlightLastMove(RenderWindow &window, list<Move>::iterator& moveIterator) {  
+    
+    if((*moveIterator).getCapturedPiece() != nullptr) {
         RectangleShape squareBefore(Vector2f(CELL_SIZE, CELL_SIZE));
         RectangleShape squareAfter(Vector2f(CELL_SIZE, CELL_SIZE));
-        squareBefore.setFillColor(((lastXPos + lastYPos) % 2 == 0)? Color(205, 210, 106): Color(170, 162, 58));
-        squareAfter.setFillColor(((lastMove->getX() + lastMove->getY()) % 2 == 0)? Color(205, 210, 106): Color(170, 162, 58));
-
-        squareBefore.setPosition(lastXPos*CELL_SIZE, lastYPos*CELL_SIZE);
-        squareAfter.setPosition(lastMove->getY()*CELL_SIZE, lastMove->getX()*CELL_SIZE);
+        squareBefore.setFillColor(
+            (((*moveIterator).m_xInit + (*moveIterator).m_yInit) % 2 == 0) 
+                ? Color(205, 210, 106)
+                : Color(170, 162, 58)
+        );
+        squareAfter.setFillColor((
+            ((*moveIterator).m_xInit + (*moveIterator).m_yInit) % 2 == 0)
+                ? Color(205, 210, 106)
+                : Color(170, 162, 58)
+        );
+        squareBefore.setPosition((*moveIterator).m_xInit*CELL_SIZE, (*moveIterator).m_yInit*CELL_SIZE);
+        squareAfter.setPosition((*moveIterator).m_xTarget*CELL_SIZE, (*moveIterator).m_yTarget*CELL_SIZE);
 
         window.draw(squareBefore);
         window.draw(squareAfter);

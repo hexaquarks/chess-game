@@ -10,7 +10,7 @@ class GameThread {
     static void highlightHoveredSquare(RenderWindow&, moveTypes&, int,int);
     static void drawPieces(RenderWindow&, Board&);
     static void drawDraggedPiece(Piece*, RenderWindow&, int, int);
-    static void highlightLastMove(Piece*, RenderWindow&, int, int);
+    static void highlightLastMove(RenderWindow&, list<Move>::iterator&);
     static void removeIllegalMoves(Board&, moveTypes&, Piece*, int,int);
     static void goToPreviousMove(Board&,list<Move>&, list<Move>::iterator&);
     static void goToNextMove(Board&, list<Move>&, list<Move>::iterator&);
