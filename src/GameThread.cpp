@@ -13,7 +13,7 @@ constexpr float SPRITE_SIZE = 128;
 
 
 void GameThread::startGame() {
-    ChessGame game;
+    Board game;
     RenderWindow window(VideoMode(WINDOW_SIZE, WINDOW_SIZE), "Chess Game", Style::Titlebar | Style::Close);
     
 
@@ -163,7 +163,7 @@ void GameThread::startGame() {
     }
 }
 
-void GameThread::goToPreviousMove(ChessGame& game, list<Move>& moveSequence, list<Move>::iterator& moveIterator) {
+void GameThread::goToPreviousMove(Board& game, list<Move>& moveSequence, list<Move>::iterator& moveIterator) {
     cout << "in goToPreviousMove()" <<endl;
     if(moveIterator == --moveSequence.end()) return; // not reached the end yet (first move)
 
@@ -171,11 +171,11 @@ void GameThread::goToPreviousMove(ChessGame& game, list<Move>& moveSequence, lis
     ++moveIterator; // go to previous move
 
  };
-void GameThread::goToNextMove(ChessGame&, list<Move>& moveSequence, list<Move>::iterator& moveIterator) { 
+void GameThread::goToNextMove(Board&, list<Move>& moveSequence, list<Move>::iterator& moveIterator) { 
     cout << "in goToNextMove()" << endl;
 };
 
-void GameThread::removeIllegalMoves(ChessGame &game, moveTypes &possibleMoves, Piece* selectedPiece, int xPos, int yPos) {
+void GameThread::removeIllegalMoves(Board &game, moveTypes &possibleMoves, Piece* selectedPiece, int xPos, int yPos) {
     moveTypes::iterator it = possibleMoves.begin();
     while (it != possibleMoves.end()) {
         int y = get<0>(*it).first;
@@ -222,7 +222,7 @@ void GameThread::highlightHoveredSquare(RenderWindow &window, moveTypes &possibl
 
 };
 
-void GameThread::drawCaptureCircles(RenderWindow &window, moveTypes &possibleMoves, ChessGame &game) {
+void GameThread::drawCaptureCircles(RenderWindow &window, moveTypes &possibleMoves, Board &game) {
 
     for (moveType& move: possibleMoves) {
         int j = get<0>(move).first;
@@ -240,7 +240,7 @@ void GameThread::drawCaptureCircles(RenderWindow &window, moveTypes &possibleMov
     }
 }
 
-void GameThread::drawPieces(RenderWindow &window, ChessGame &game) {
+void GameThread::drawPieces(RenderWindow &window, Board &game) {
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {
             if (game.getBoardTile(i, j) != nullptr) {

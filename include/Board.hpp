@@ -9,7 +9,7 @@
 #include "Queen.hpp"
 #include "Move.hpp"
 
-class ChessGame {
+class Board {
     Piece* m_board[8][8];
     Team m_turn; // which player's turn
     vector<Piece*> m_whitePieces;
@@ -19,8 +19,8 @@ class ChessGame {
     void freeMemory();
 
     public:
-    ChessGame(): m_turn(Team::WHITE) { reset(); } // Constructor
-    ~ChessGame() { freeMemory(); } // Destructor
+    Board(): m_turn(Team::WHITE) { reset(); } // Constructor
+    ~Board() { freeMemory(); } // Destructor
 
     void reset(); // Resets the board
     Piece* getBoardTile(int x, int y) const { return m_board[y][x]; }

@@ -1,7 +1,7 @@
-#include "../include/ChessGame.hpp"
+#include "../include/Board.hpp"
 #include <algorithm>
 
-void ChessGame::freeMemory() {
+void Board::freeMemory() {
     for (int i = 0; i < 8; ++i)
         for (int j = 0; j < 8; ++j)
             m_board[i][j] = nullptr;
@@ -11,7 +11,7 @@ void ChessGame::freeMemory() {
     m_blackPieces.clear();
 }
 
-void ChessGame::reset() {
+void Board::reset() {
     freeMemory(); // Free up memory
 
     // Set the kings
@@ -55,13 +55,13 @@ void ChessGame::reset() {
             m_whitePieces.push_back(m_board[row][col]);
 }
 
-void ChessGame::setBoardTile(int x, int y, Piece* piece, bool record = true) {
+void Board::setBoardTile(int x, int y, Piece* piece, bool record = true) {
     // Set up the piece
     m_board[y][x] = piece;
     if (piece != nullptr) piece->move(y, x, record); 
 }
 
-void ChessGame::applyMove(moveType* selectedMove, int x, int y,int prevX, int prevY, Piece* selectedPiece, Piece* lastMove, int CELL_SIZE, list<Move>& moveSequence) {
+void Board::applyMove(moveType* selectedMove, int x, int y,int prevX, int prevY, Piece* selectedPiece, Piece* lastMove, int CELL_SIZE, list<Move>& moveSequence) {
     const int castleRow = (getTurn() == Team::WHITE)? 7: 0;    
     x /= CELL_SIZE;
     y /= CELL_SIZE; 
@@ -108,7 +108,7 @@ void ChessGame::applyMove(moveType* selectedMove, int x, int y,int prevX, int pr
             setBoardTile(x, y, selectedPiece);
 
             moveSequence.emplace_front(Move(x, y,prevX, prevY, selectedPiece, MoveType::INIT_SPECIAL));
-            cout << "pushed coordinates init are -> " << "(m_xInit, m_yInit) : " <<selectedPiece->getX()<<","<<selectedPiece->getY()<<endl;
+            cout << "pushed coordinates init are -> " << "(m_xInit, m_yInit) : " <<selectedPiece->getY()<<","<<selectedPiece->getX()<<endl;
             cout << "pushed coordinates target are -> " << "(m_xTarget, m_yTarget) : " <<x<<","<<y<<endl;
             break;
         case MoveType::NEWPIECE:
@@ -122,7 +122,7 @@ void ChessGame::applyMove(moveType* selectedMove, int x, int y,int prevX, int pr
     }
 }
 
-void ChessGame::undoMove(list<Move>::iterator& it) {
+void Board::undoMove(list<Move>::iterator& it) {
     
     setBoardTile((*it).m_xInit, (*it).m_yInit, (*it).getSelectedPiece()); // set the moved piece back
     int castleRow = ((*it).getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0; 
@@ -140,6 +140,8 @@ void ChessGame::undoMove(list<Move>::iterator& it) {
             break;
         case MoveType::CASTLE_KINGSIDE:
             setBoardTile(7, castleRow, (*it).getCapturedPiece());
+
+            //
             break;
         case MoveType::CASTLE_QUEENSIDE:
             setBoardTile(0, castleRow, (*it).getCapturedPiece());
