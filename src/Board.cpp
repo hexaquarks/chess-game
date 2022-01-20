@@ -61,13 +61,17 @@ void Board::setBoardTile(int x, int y, Piece* piece, bool record = true) {
     if (piece != nullptr) piece->move(y, x, record); 
 }
 
-void Board::applyMove(moveType* selectedMove, int x, int y,int prevX, int prevY, Piece* selectedPiece, Piece* lastMove, int CELL_SIZE, list<Move>& moveSequence) {
+void Board::applyMove(MoveType selectedMove, int x, int y,int prevX, int prevY, Piece* selectedPiece, Piece* lastMove, int CELL_SIZE, list<Move>& moveSequence) {
     const int castleRow = (getTurn() == Team::WHITE)? 7: 0;    
     x /= CELL_SIZE;
     y /= CELL_SIZE; 
+    
     Piece* oldPiece = nullptr;
 
-    switch (get<1>(*selectedMove)) {
+    // set the current tile of the piece null. Necessary for navigating back to current move through goToNextMove()
+    setBoardTile(prevX, prevY, nullptr); 
+
+    switch (selectedMove) {
         case MoveType::NORMAL:
             setBoardTile(x, y, selectedPiece);
 
