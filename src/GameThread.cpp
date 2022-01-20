@@ -112,7 +112,7 @@ void GameThread::startGame() {
                         if (selectedMove == nullptr) {
                             game.setBoardTile(lastXPos, lastYPos, selectedPiece, false); // cancel the move
                         } else {
-                            game.applyMove(selectedMove,xPos, yPos,lastXPos, lastYPos, selectedPiece, lastMove, CELL_SIZE, moveSequence);
+                            game.applyMove(get<1>(*selectedMove),xPos, yPos,lastXPos, lastYPos, selectedPiece, lastMove, CELL_SIZE, moveSequence);
                             moveIterator = moveSequence.begin(); // reset the iterator to the current move
 
                             lastMove = selectedPiece;
@@ -164,15 +164,27 @@ void GameThread::startGame() {
 }
 
 void GameThread::goToPreviousMove(Board& game, list<Move>& moveSequence, list<Move>::iterator& moveIterator) {
-    cout << "in goToPreviousMove()" <<endl;
-    if(moveIterator == --moveSequence.end()) return; // not reached the end yet (first move)
+    
+    if(moveIterator == moveSequence.end()) return; // not reached the end yet (first move)
 
     game.undoMove(moveIterator);
     ++moveIterator; // go to previous move
 
  };
-void GameThread::goToNextMove(Board&, list<Move>& moveSequence, list<Move>::iterator& moveIterator) { 
-    cout << "in goToNextMove()" << endl;
+void GameThread::goToNextMove(Board& game, list<Move>& moveSequence, list<Move>::iterator& moveIterator) { 
+    
+    if(moveIterator == moveSequence.begin()) return; // can't move in the future
+
+    --moveIterator; // go to previous move
+    
+    game.applyMove((*moveIterator).getMoveType(),
+        (*moveIterator).m_xTarget*CELL_SIZE, 
+        (*moveIterator).m_yTarget*CELL_SIZE,
+        (*moveIterator).m_xInit,
+        (*moveIterator).m_yInit,
+        (*moveIterator).getSelectedPiece(),
+        (*moveIterator).getCapturedPiece(),
+         CELL_SIZE, moveSequence);
 };
 
 void GameThread::removeIllegalMoves(Board &game, moveTypes &possibleMoves, Piece* selectedPiece, int xPos, int yPos) {
