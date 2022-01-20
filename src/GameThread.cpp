@@ -61,6 +61,10 @@ void GameThread::startGame() {
 
             // Clicking on a piece
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+
+                // allow user to make moves only if they're at the current position, not looking at the previous played moves
+                if(moveIterator != moveSequence.begin()) continue;
+
                 // Get the tile of the click
                 xPos = event.mouseButton.x;
                 yPos = event.mouseButton.y;
@@ -134,11 +138,11 @@ void GameThread::startGame() {
 
             }
             
-            if ((event.type == Event::KeyPressed) && moveSequence.size() >= 1)  {
-                if (event.key.code == Keyboard::Left ) {
+            if ((event.type == Event::KeyPressed))  {
+                if (event.key.code == Keyboard::Left && moveSequence.size() >= 1) {
                     goToPreviousMove(game, moveSequence, moveIterator);
                 } 
-                if (event.key.code == Keyboard::Right) {
+                if (event.key.code == Keyboard::Right && moveIterator != moveSequence.begin()) {
                     goToNextMove(game, moveSequence, moveIterator);
                 } 
             }
@@ -168,7 +172,7 @@ void GameThread::goToPreviousMove(ChessGame& game, list<Move>& moveSequence, lis
 
  };
 void GameThread::goToNextMove(ChessGame&, list<Move>& moveSequence, list<Move>::iterator& moveIterator) { 
-
+    cout << "in goToNextMove()" << endl;
 };
 
 void GameThread::removeIllegalMoves(ChessGame &game, moveTypes &possibleMoves, Piece* selectedPiece, int xPos, int yPos) {
