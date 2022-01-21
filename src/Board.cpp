@@ -65,7 +65,7 @@ void Board::applyMove(MoveType selectedMove, int x, int y,int prevX, int prevY, 
     const int castleRow = (getTurn() == Team::WHITE)? 7: 0;    
     x /= CELL_SIZE;
     y /= CELL_SIZE; 
-    
+
     Piece* oldPiece = nullptr;
 
     // set the current tile of the piece null. Necessary for navigating back to current move through goToNextMove()
@@ -112,8 +112,6 @@ void Board::applyMove(MoveType selectedMove, int x, int y,int prevX, int prevY, 
             setBoardTile(x, y, selectedPiece);
 
             moveSequence.emplace_front(Move(x, y,prevX, prevY, selectedPiece, MoveType::INIT_SPECIAL));
-            cout << "pushed coordinates init are -> " << "(m_xInit, m_yInit) : " <<selectedPiece->getY()<<","<<selectedPiece->getX()<<endl;
-            cout << "pushed coordinates target are -> " << "(m_xTarget, m_yTarget) : " <<x<<","<<y<<endl;
             break;
         case MoveType::NEWPIECE:
             selectedPiece->move(-1, -1); // Deleted
@@ -144,16 +142,16 @@ void Board::undoMove(list<Move>::iterator& it) {
             break;
         case MoveType::CASTLE_KINGSIDE:
             setBoardTile(7, castleRow, (*it).getCapturedPiece());
+            setBoardTile(6, castleRow, nullptr);
+            setBoardTile(5, castleRow, nullptr);
 
-            //
             break;
         case MoveType::CASTLE_QUEENSIDE:
             setBoardTile(0, castleRow, (*it).getCapturedPiece());
+            setBoardTile(2, castleRow, nullptr);
+            setBoardTile(3, castleRow, nullptr);
             break;
         case MoveType::INIT_SPECIAL:
-            cout << "in the init special" <<endl;
-            cout << "coordinates init are -> " << "(m_xInit, m_yInit) : " <<(*it).m_xInit<<","<<(*it).m_yInit<<endl;
-            cout << "coordinates target are -> " << "(m_xTarget, m_yTarget) : " <<(*it).m_xTarget<<","<<(*it).m_yTarget<<endl;
             setBoardTile((*it).m_xTarget, (*it).m_yTarget, nullptr); 
             break;
         case MoveType::NEWPIECE:
