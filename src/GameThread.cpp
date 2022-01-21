@@ -8,6 +8,7 @@ using namespace sf;
 
 constexpr unsigned int WINDOW_SIZE = 640;
 constexpr unsigned int CELL_SIZE = WINDOW_SIZE / 8;
+constexpr unsigned int MENUBAR_HEIGHT = 60;
 constexpr float SPRITE_SCALE = 0.6;
 constexpr float SPRITE_SIZE = 128;
 
@@ -15,7 +16,10 @@ constexpr float SPRITE_SIZE = 128;
 void GameThread::startGame() {
     Board game;
     RenderWindow window(VideoMode(WINDOW_SIZE, WINDOW_SIZE), "Chess Game", Style::Titlebar | Style::Close);
-    
+    // View view(FloatRect(0, 0, WINDOW_SIZE, WINDOW_SIZE+MENUBAR_HEIGHT));
+    // view.move(0.f, -60.f);
+    // window.setView(view);
+
 
     // Setting window icong
     Image icon;
@@ -143,6 +147,8 @@ void GameThread::startGame() {
                     goToPreviousMove(game, moveSequence, moveIterator);
                 } 
                 if (event.key.code == Keyboard::Right && moveIterator != moveSequence.begin()) {
+                    cout<< " in press right " << endl;
+                    cout << moveSequence.begin()->getSelectedPiece()->getY() << endl;
                     goToNextMove(game, moveSequence, moveIterator);
                 } 
             }
@@ -150,7 +156,6 @@ void GameThread::startGame() {
         }
 
         initializeBoard(window);
-        // highlightLastMove(lastMove, window, lastXPos, lastYPos);
         highlightLastMove(window, moveIterator);
         drawPieces(window, game);
 
@@ -175,7 +180,7 @@ void GameThread::goToPreviousMove(Board& game, list<Move>& moveSequence, list<Mo
 void GameThread::goToNextMove(Board& game, list<Move>& moveSequence, list<Move>::iterator& moveIterator) { 
     
     if(moveIterator == moveSequence.begin()) return; // can't move in the future
-
+    
     --moveIterator; // go to previous move
 
     game.applyMove((*moveIterator).getMoveType(),
@@ -213,7 +218,7 @@ void GameThread::initializeBoard(RenderWindow &window) {
         for (int j = 0; j < 8; ++j) {
             // Drawing the colored square
             RectangleShape square(Vector2f(CELL_SIZE, CELL_SIZE));
-            square.setFillColor(((i+j) % 2 == 0)? Color(181, 136, 99): Color(240, 217, 181));
+            square.setFillColor(((i+j) % 2 != 0)? Color(181, 136, 99): Color(240, 217, 181));
             square.setPosition(i*CELL_SIZE, j*CELL_SIZE);
             window.draw(square);
         }
@@ -227,7 +232,7 @@ void GameThread::highlightHoveredSquare(RenderWindow &window, moveTypes &possibl
         if(i == xPos/CELL_SIZE && j == yPos/CELL_SIZE) {
             // currently hovering a square where the piece can move 
             RectangleShape square(Vector2f(CELL_SIZE, CELL_SIZE));
-            square.setFillColor((i + j) % 2 == 0 ? Color(100, 111, 64) : Color(173,176,134));
+            square.setFillColor((i + j) % 2 != 0 ? Color(100, 111, 64) : Color(173,176,134));
             square.setPosition(i * CELL_SIZE, j * CELL_SIZE);
             window.draw(square);
         }
