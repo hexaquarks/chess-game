@@ -3,8 +3,6 @@
 #include "Board.hpp"
 using namespace sf;
 
-typedef pair<int, int> coor2d;
-
 class GameThread {    
     static void initializeBoard(RenderWindow&, Board&);
     static void drawCaptureCircles(RenderWindow&, moveTypes&, Board&);
