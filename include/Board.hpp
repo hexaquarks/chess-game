@@ -12,6 +12,7 @@
 class Board {
     Piece* m_board[8][8];
     Team m_turn; // which player's turn
+    bool m_isFlipped = false;
     vector<Piece*> m_whitePieces;
     vector<Piece*> m_blackPieces;
     King* m_whiteKing;
@@ -26,6 +27,9 @@ class Board {
     Piece* getBoardTile(int x, int y) const { return m_board[y][x]; }
     void setBoardTile(int, int, Piece*, bool);
 
+    bool isFlipped() { return m_isFlipped; };
+    
+
     Team getTurn() const { return m_turn; }
     void switchTurn() { m_turn = (m_turn == Team::WHITE)? Team::BLACK: Team::WHITE; }
 
@@ -38,6 +42,7 @@ class Board {
     void addPiece(Piece* piece) { 
         (piece->getTeam() == Team::WHITE) ? m_whitePieces.push_back(piece) : m_blackPieces.push_back(piece); 
     }
+    void flipBoard();
 
     void applyMove(MoveType, int, int, int,int, Piece*, Piece*, int, list<Move>&);
     void undoMove(list<Move>::iterator&);

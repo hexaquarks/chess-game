@@ -147,21 +147,23 @@ void GameThread::startGame() {
                     goToPreviousMove(game, moveSequence, moveIterator);
                 } 
                 if (event.key.code == Keyboard::Right && moveIterator != moveSequence.begin()) {
-                    cout<< " in press right " << endl;
                     cout << moveSequence.begin()->getSelectedPiece()->getY() << endl;
                     goToNextMove(game, moveSequence, moveIterator);
                 } 
+                if(Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::F)) {
+                    game.flipBoard();
+                }
             }
            
         }
 
-        initializeBoard(window);
+        initializeBoard(window, game);
         highlightLastMove(window, moveIterator);
         drawPieces(window, game);
 
         if (pieceIsMoving) {
             drawCaptureCircles(window, possibleMoves, game);
-            highlightHoveredSquare(window, possibleMoves,xPos,yPos);
+            highlightHoveredSquare(window, game, possibleMoves,xPos,yPos);
             drawDraggedPiece(selectedPiece,window,xPos, yPos);
         }
 
@@ -213,18 +215,20 @@ void GameThread::removeIllegalMoves(Board &game, moveTypes &possibleMoves, Piece
     }
 }
 
-void GameThread::initializeBoard(RenderWindow &window) {
+void GameThread::initializeBoard(RenderWindow &window, Board &game) {
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {
             // Drawing the colored square
             RectangleShape square(Vector2f(CELL_SIZE, CELL_SIZE));
-            square.setFillColor(((i+j) % 2 != 0)? Color(181, 136, 99): Color(240, 217, 181));
+            square.setFillColor(((i+j) % 2 != 0)
+                ? game.isFlipped() ? Color(240, 217, 181) : Color(181, 136, 99) 
+                : game.isFlipped() ? Color(181, 136, 99) : Color(240, 217, 181));
             square.setPosition(i*CELL_SIZE, j*CELL_SIZE);
             window.draw(square);
         }
     }
 }
-void GameThread::highlightHoveredSquare(RenderWindow &window, moveTypes &possibleMoves,int xPos, int yPos) {
+void GameThread::highlightHoveredSquare(RenderWindow &window, Board &game, moveTypes &possibleMoves,int xPos, int yPos) {
 
     for(moveType& move: possibleMoves){
         int i = get<0>(move).second;
@@ -232,7 +236,9 @@ void GameThread::highlightHoveredSquare(RenderWindow &window, moveTypes &possibl
         if(i == xPos/CELL_SIZE && j == yPos/CELL_SIZE) {
             // currently hovering a square where the piece can move 
             RectangleShape square(Vector2f(CELL_SIZE, CELL_SIZE));
-            square.setFillColor((i + j) % 2 != 0 ? Color(100, 111, 64) : Color(173,176,134));
+            square.setFillColor((i + j) % 2 != 0 
+                ? game.isFlipped() ? Color(173,176,134) : Color(100, 111, 64) 
+                : game.isFlipped() ? Color(100, 111, 64)  : Color(173,176,134));
             square.setPosition(i * CELL_SIZE, j * CELL_SIZE);
             window.draw(square);
         }

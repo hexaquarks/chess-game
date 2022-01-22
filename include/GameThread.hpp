@@ -5,9 +5,9 @@ using namespace sf;
 
 
 class GameThread {    
-    static void initializeBoard(RenderWindow&);
+    static void initializeBoard(RenderWindow&, Board&);
     static void drawCaptureCircles(RenderWindow&, moveTypes&, Board&);
-    static void highlightHoveredSquare(RenderWindow&, moveTypes&, int,int);
+    static void highlightHoveredSquare(RenderWindow&,Board&, moveTypes&, int,int);
     static void drawPieces(RenderWindow&, Board&);
     static void drawDraggedPiece(Piece*, RenderWindow&, int, int);
     static void highlightLastMove(RenderWindow&, list<Move>::iterator&);

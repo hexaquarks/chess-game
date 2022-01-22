@@ -1,4 +1,5 @@
 #include "../include/Board.hpp"
+#include "../include/King.hpp"
 #include <algorithm>
 
 void Board::freeMemory() {
@@ -59,6 +60,15 @@ void Board::setBoardTile(int x, int y, Piece* piece, bool record = true) {
     // Set up the piece
     m_board[y][x] = piece;
     if (piece != nullptr) piece->move(y, x, record); 
+}
+
+void Board::flipBoard() {
+    for(int i = 0 ; i < 4 ; ++i) {
+        for(int j = 0; j < 8 ; ++j) {
+            King::swapPieces(m_board, i,j,7-i,j);
+        }
+    }
+    m_isFlipped = !m_isFlipped;
 }
 
 void Board::applyMove(MoveType selectedMove, int x, int y,int prevX, int prevY, Piece* selectedPiece, Piece* lastMove, int CELL_SIZE, list<Move>& moveSequence) {
