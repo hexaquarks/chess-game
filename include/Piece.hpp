@@ -25,7 +25,7 @@ class Piece {
     int m_xPos; int m_yPos; // X and Y positions
     bool m_moved = false; // Whether piece has moved or not
 
-public:
+    public:
     /* constructors */
     Piece(Team, int, int, PieceType, string); // Constructor
     virtual ~Piece() {} // Virtual destructor

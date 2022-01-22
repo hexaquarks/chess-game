@@ -9,6 +9,9 @@
 #include "Queen.hpp"
 #include "Move.hpp"
 
+constexpr uint32_t WINDOW_SIZE = 640;
+constexpr uint32_t CELL_SIZE = WINDOW_SIZE / 8;
+
 class Board {
     Piece* m_board[8][8];
     Team m_turn; // which player's turn
@@ -25,10 +28,9 @@ class Board {
 
     void reset(); // Resets the board
     Piece* getBoardTile(int x, int y) const { return m_board[y][x]; }
-    void setBoardTile(int, int, Piece*, bool);
+    void setBoardTile(int, int, Piece*, bool record = true);
 
     bool isFlipped() { return m_isFlipped; };
-    
 
     Team getTurn() const { return m_turn; }
     void switchTurn() { m_turn = (m_turn == Team::WHITE)? Team::BLACK: Team::WHITE; }
@@ -43,7 +45,4 @@ class Board {
         (piece->getTeam() == Team::WHITE) ? m_whitePieces.push_back(piece) : m_blackPieces.push_back(piece); 
     }
     void flipBoard();
-
-    void applyMove(MoveType, int, int, int,int, Piece*, Piece*, int, list<Move>&);
-    void undoMove(list<Move>::iterator&);
 };
