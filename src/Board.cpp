@@ -56,7 +56,7 @@ void Board::reset() {
             m_whitePieces.push_back(m_board[row][col]);
 }
 
-void Board::setBoardTile(int x, int y, Piece* piece, bool record = true) {
+void Board::setBoardTile(int x, int y, Piece* piece, bool record) {
     // Set up the piece
     m_board[y][x] = piece;
     if (piece != nullptr) piece->move(y, x, record); 
@@ -69,103 +69,4 @@ void Board::flipBoard() {
         }
     }
     m_isFlipped = !m_isFlipped;
-}
-
-void Board::applyMove(MoveType selectedMove, int x, int y,int prevX, int prevY, Piece* selectedPiece, Piece* lastMove, int CELL_SIZE, list<Move>& moveSequence) {
-    const int castleRow = (getTurn() == Team::WHITE)? 7: 0;    
-    x /= CELL_SIZE;
-    y /= CELL_SIZE; 
-
-    Piece* oldPiece = nullptr;
-
-    // set the current tile of the piece null. Necessary for navigating back to current move through goToNextMove()
-    setBoardTile(prevX, prevY, nullptr); 
-
-    switch (selectedMove) {
-        case MoveType::NORMAL:
-            setBoardTile(x, y, selectedPiece);
-
-            moveSequence.emplace_front(Move(x, y, prevX, prevY, selectedPiece, MoveType::NORMAL));
-            // soundMove.play();
-            break;
-        case MoveType::CAPTURE:
-            oldPiece = getBoardTile(x, y); // possible bug here ? 
-            setBoardTile(x, y, selectedPiece);
-
-            moveSequence.emplace_front(Move(x, y,prevX, prevY, selectedPiece, oldPiece, MoveType::CAPTURE));
-            // soundCapture.play();
-            break;
-        case MoveType::ENPASSANT:
-            oldPiece = getBoardTile(lastMove->getY(),lastMove->getX()); // the position of the captured pawn
-            setBoardTile(x, y, selectedPiece);
-            setBoardTile(lastMove->getY(), lastMove->getX(), nullptr);
-
-            moveSequence.emplace_front(Move(x, y,prevX, prevY, selectedPiece, oldPiece, MoveType::ENPASSANT));
-            break;
-        case MoveType::CASTLE_KINGSIDE:
-            oldPiece = getBoardTile(7, castleRow);
-            setBoardTile(5, castleRow, getBoardTile(7, castleRow));
-            setBoardTile(7, castleRow, nullptr);
-            setBoardTile(6, castleRow, selectedPiece);
-
-            moveSequence.emplace_front(Move(6, castleRow,prevX, prevY,  selectedPiece, oldPiece, MoveType::CASTLE_KINGSIDE));
-            break;
-        case MoveType::CASTLE_QUEENSIDE:
-            oldPiece = getBoardTile(7, castleRow);
-            setBoardTile(3, castleRow, getBoardTile(0, castleRow));
-            setBoardTile(0, castleRow, nullptr);
-            setBoardTile(2, castleRow, selectedPiece);
-
-            moveSequence.emplace_front(Move(2, castleRow,prevX, prevY,  selectedPiece, oldPiece, MoveType::CASTLE_QUEENSIDE));
-            break;
-        case MoveType::INIT_SPECIAL:
-            setBoardTile(x, y, selectedPiece);
-
-            moveSequence.emplace_front(Move(x, y,prevX, prevY, selectedPiece, MoveType::INIT_SPECIAL));
-            break;
-        case MoveType::NEWPIECE:
-            selectedPiece->move(-1, -1); // Deleted
-            Queen* queen = new Queen(getTurn(), y, x);
-            setBoardTile(x, y, queen);
-            addPiece(queen);
-
-            // moveSequence TODO
-            break;
-    }
-}
-
-void Board::undoMove(list<Move>::iterator& it) {
-    
-    setBoardTile((*it).m_xInit, (*it).m_yInit, (*it).getSelectedPiece()); // set the moved piece back
-    int castleRow = ((*it).getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0; 
-
-    switch((*it).getMoveType()){
-        case MoveType::NORMAL:
-            setBoardTile((*it).m_xTarget, (*it).m_yTarget, nullptr); 
-            break;
-        case MoveType::CAPTURE:
-            setBoardTile((*it).m_xTarget, (*it).m_yTarget, (*it).getCapturedPiece()); 
-            break;
-        case MoveType::ENPASSANT:
-            setBoardTile((*it).m_xTarget, (*it).m_yTarget, nullptr);            
-            setBoardTile((*it).getCapturedPiece()->getY(), (*it).getCapturedPiece()->getX(), (*it).getCapturedPiece());
-            break;
-        case MoveType::CASTLE_KINGSIDE:
-            setBoardTile(7, castleRow, (*it).getCapturedPiece());
-            setBoardTile(6, castleRow, nullptr);
-            setBoardTile(5, castleRow, nullptr);
-
-            break;
-        case MoveType::CASTLE_QUEENSIDE:
-            setBoardTile(0, castleRow, (*it).getCapturedPiece());
-            setBoardTile(2, castleRow, nullptr);
-            setBoardTile(3, castleRow, nullptr);
-            break;
-        case MoveType::INIT_SPECIAL:
-            setBoardTile((*it).m_xTarget, (*it).m_yTarget, nullptr); 
-            break;
-        case MoveType::NEWPIECE:
-            // TODO
-            break;
-    }
 }
