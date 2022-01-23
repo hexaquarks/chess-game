@@ -8,7 +8,7 @@ using namespace sf;
 
 void GameThread::startGame() {
     Board game;
-    RenderWindow window(VideoMode(WINDOW_SIZE, WINDOW_SIZE), WINDOW_TITLE, Style::Titlebar | Style::Close);
+    RenderWindow window(VideoMode(WINDOW_SIZE, WINDOW_SIZE + MENUBAR_HEIGHT), WINDOW_TITLE, Style::Titlebar | Style::Close);
 
     // Setting window icon
     Image icon;
@@ -58,22 +58,25 @@ void GameThread::startGame() {
 
                 // Get the tile of the click
                 mousePos = {event.mouseButton.x, event.mouseButton.y};
-                Piece* piece = game.getBoardTile(getTileXPos(mousePos), getTileYPos(mousePos));
+                int yPos = getTileYPos(mousePos);
+                if (yPos >= 0) {
+                    Piece* piece = game.getBoardTile(getTileXPos(mousePos), yPos);
 
-                // If piece is not null and has the right color
-                if (piece != nullptr && piece->getTeam() == game.getTurn()) {
-                    selectedPiece = piece;
-                    possibleMoves = game.possibleMovesFor(selectedPiece);
+                    // If piece is not null and has the right color
+                    if (piece != nullptr && piece->getTeam() == game.getTurn()) {
+                        selectedPiece = piece;
+                        possibleMoves = game.possibleMovesFor(selectedPiece);
 
-                    // Trim the illegal moves if in check
-                    // check for absolute pin
-                    removeIllegalMoves(game, possibleMoves, selectedPiece, mousePos);
+                        // Trim the illegal moves if in check
+                        // check for absolute pin
+                        removeIllegalMoves(game, possibleMoves, selectedPiece, mousePos);
 
-                    pieceIsMoving = true;
-                    lastXPos = getTileXPos(mousePos); lastYPos = getTileYPos(mousePos);
-                    
-                    // Set the tile on the board where the piece is selected to null
-                    game.setBoardTile(lastXPos, lastYPos, nullptr, false); 
+                        pieceIsMoving = true;
+                        lastXPos = getTileXPos(mousePos); lastYPos = yPos;
+                        
+                        // Set the tile on the board where the piece is selected to null
+                        game.setBoardTile(lastXPos, lastYPos, nullptr, false); 
+                    }
                 }
             }
 
