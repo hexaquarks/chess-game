@@ -9,9 +9,6 @@
 #include "Queen.hpp"
 #include "Move.hpp"
 
-constexpr uint32_t WINDOW_SIZE = 640;
-constexpr uint32_t CELL_SIZE = WINDOW_SIZE / 8;
-
 class Board {
     Piece* m_board[8][8];
     Team m_turn; // which player's turn

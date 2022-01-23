@@ -3,19 +3,33 @@
 #include "Board.hpp"
 using namespace sf;
 
-class GameThread {    
+// Constants
+constexpr uint32_t WINDOW_SIZE = 640;
+constexpr uint32_t CELL_SIZE = WINDOW_SIZE / 8;
+constexpr uint32_t MENUBAR_HEIGHT = 60;
+constexpr float SPRITE_SCALE = 0.6;
+constexpr float SPRITE_SIZE = 128;
+
+class GameThread {
+    inline const static string iconsPath = "../assets/icons/";
+    inline const static string audioPath = "../assets/sounds/";
+
     static void initializeBoard(RenderWindow&, Board&);
     static void drawCaptureCircles(RenderWindow&, moveTypes&, Board&);
-    static void highlightHoveredSquare(RenderWindow&, Board&, moveTypes&, int, int);
+    static void highlightHoveredSquare(RenderWindow&, Board&, moveTypes&, coor2d&);
     static void drawPieces(RenderWindow&, Board&);
-    static void drawDraggedPiece(Piece*, RenderWindow&, int, int);
+    static void drawDraggedPiece(Piece*, RenderWindow&, coor2d&);
     static void removeIllegalMoves(Board&, moveTypes&, Piece*, coor2d&);
 
     public:
     GameThread() = delete; // Delete constructor
     static void startGame();
-    static int getTileXPos(coor2d& pos) { return getTileXPos(pos.first); }
-    static int getTileXPos(int xMousePos) { return xMousePos / CELL_SIZE; }
-    static int getTileYPos(coor2d& pos) { return getTileYPos(pos.second); }
-    static int getTileYPos(int yMousePos) { return yMousePos / CELL_SIZE; }
+
+    static int getTileXPos(coor2d& pos) { return pos.first / CELL_SIZE; }
+    static int getTileYPos(coor2d& pos) { return pos.second / CELL_SIZE; }
+    static int getWindowXPos(int i) { return i * CELL_SIZE; }
+    static int getWindowYPos(int j) { return j * CELL_SIZE; }
+
+    static string getIconPath(string filename) { return iconsPath + filename; }
+    static string getAudioPath(string filename) { return audioPath + filename; }
 };

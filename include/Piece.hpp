@@ -16,8 +16,11 @@ typedef vector<moveType> moveTypes;
 
 
 class Piece {
-    /* members */
+    /* Static members */
+    inline const static string fileExt = ".png"; // Pieces file extension
     inline static Piece* m_lastPiece = nullptr; // Last moved piece
+
+    /* Class members */
     string m_filename; // the filename for this piece
     Team m_team; // the team this piece plays for
     PieceType m_type; // Returns the type of this piece
@@ -26,11 +29,10 @@ class Piece {
     bool m_moved = false; // Whether piece has moved or not
 
     public:
-    /* constructors */
     Piece(Team, int, int, PieceType, string); // Constructor
     virtual ~Piece() {} // Virtual destructor
 
-    /* getters */
+    /* Getters */
     Team getTeam() const { return m_team; };
     PieceType getType() const { return m_type; }
     string getFileName() const { return m_filename; }
@@ -42,11 +44,11 @@ class Piece {
     moveTypes getHorizontalAndVerticalMovements(Piece*[8][8]) const;
     moveTypes getDiagonalMovements(Piece*[8][8]) const;
 
-    /* setters */
+    /* Setters */
     void setLastMove(MoveType newMove) { m_lastMove = newMove; }
     static void setLastMovedPiece(Piece* piece) { m_lastPiece = piece; }
 
-    /* utility functions */
+    /* Utility functions */
     virtual moveTypes calcPossibleMoves(Piece*[8][8]) const = 0; // Pure virtual function
     void move(int x, int y, bool record = true) {
         if (record && (m_xPos != x || m_yPos != y)) m_moved = true;

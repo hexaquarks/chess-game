@@ -1,7 +1,8 @@
 #pragma once
 #include <list>
-#include "Board.hpp"
 #include <SFML/Graphics.hpp>
+#include "Board.hpp"
+#include "GameThread.hpp"
 #include "Move.hpp"
 using namespace sf;
 
