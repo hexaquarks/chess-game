@@ -4,6 +4,7 @@
 using namespace sf;
 
 // Constants
+const string WINDOW_TITLE = "Chess Game";
 constexpr uint32_t WINDOW_SIZE = 640;
 constexpr uint32_t CELL_SIZE = WINDOW_SIZE / 8;
 constexpr uint32_t MENUBAR_HEIGHT = 60;
