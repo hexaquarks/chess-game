@@ -27,9 +27,12 @@ class GameThread {
     static void startGame();
 
     static int getTileXPos(coor2d& pos) { return pos.first / CELL_SIZE; }
-    static int getTileYPos(coor2d& pos) { return pos.second / CELL_SIZE; }
+    static int getTileYPos(coor2d& pos) {
+        if (pos.second < MENUBAR_HEIGHT) return -1;
+        return (pos.second - MENUBAR_HEIGHT) / CELL_SIZE;
+    }
     static int getWindowXPos(int i) { return i * CELL_SIZE; }
-    static int getWindowYPos(int j) { return j * CELL_SIZE; }
+    static int getWindowYPos(int j) { return j * CELL_SIZE + MENUBAR_HEIGHT; }
 
     static string getIconPath(string filename) { return iconsPath + filename; }
     static string getAudioPath(string filename) { return audioPath + filename; }
