@@ -81,7 +81,9 @@ void GameThread::startGame() {
 
                     pieceIsMoving = true;
                     lastXPos = getTileXPos(mousePos); lastYPos = getTileYPos(mousePos);
-                    game.setBoardTile(lastXPos, lastYPos, nullptr, false); // Set the tile on the board where the piece is selected to null
+                    
+                    // Set the tile on the board where the piece is selected to null
+                    game.setBoardTile(lastXPos, lastYPos, nullptr, false); 
                 }
             }
 
@@ -111,7 +113,8 @@ void GameThread::startGame() {
                         if (selectedMove == nullptr) {
                             game.setBoardTile(lastXPos, lastYPos, selectedPiece, false); // cancel the move
                         } else {
-                            moveList.addMove(get<1>(*selectedMove), getTileXPos(mousePos.first), getTileYPos(mousePos.second), lastXPos, lastYPos, selectedPiece, lastMove);
+                            moveList.addMove(get<1>(*selectedMove), getTileXPos(mousePos.first), 
+                                getTileYPos(mousePos.second), lastXPos, lastYPos, selectedPiece, lastMove);
                             lastMove = selectedPiece;
                             lastMove->setLastMove(get<1>(*selectedMove));
                             Piece::setLastMovedPiece(lastMove);

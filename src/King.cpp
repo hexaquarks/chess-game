@@ -64,7 +64,8 @@ bool King::isChecked(Piece* board[8][8], int i, int j) const {
 
             // If piece has opposite colour, it is a potential danger
             if (p != nullptr && p->getTeam() != getTeam()) {
-                moveTypes positions = (p->getType() == PieceType::KING)? ((King*) p)->possibleMovesNoCheck(board): p->calcPossibleMoves(board);
+                moveTypes positions = (p->getType() == PieceType::KING)
+                    ? ((King*) p)->possibleMovesNoCheck(board): p->calcPossibleMoves(board);
 
                 // Loop through every possible move to see if king is in danger or not
                 for (auto& move: positions)

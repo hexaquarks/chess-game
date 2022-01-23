@@ -12,7 +12,9 @@ Move::Move(int x, int y, int xs, int ys, Piece* selectedPiece, MoveType moveType
   m_MoveType(moveType) {}
 
 // For CAPTURE and ENPASSANT
-Move::Move(int x, int y,int xs, int ys, Piece* selectedPiece, Piece* secondPiece, MoveType moveType):
+Move::Move(int x, int y,int xs, int ys, 
+  Piece* selectedPiece, Piece* secondPiece, MoveType moveType):
+  
   m_xTarget(x),
   m_yTarget(y),
   m_xInit(xs),
