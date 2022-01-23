@@ -1,29 +1,20 @@
 #include "../include/GameThread.hpp"
 #include "../include/MoveList.hpp"
-#include <SFML/Audio.hpp>
 #include <iostream>
 #include <vector>
 #include <list>
+#include <SFML/Audio.hpp>
 using namespace sf;
-
-constexpr uint32_t MENUBAR_HEIGHT = 60;
-constexpr float SPRITE_SCALE = 0.6;
-constexpr float SPRITE_SIZE = 128;
-
 
 void GameThread::startGame() {
     Board game;
     RenderWindow window(VideoMode(WINDOW_SIZE, WINDOW_SIZE), "Chess Game", Style::Titlebar | Style::Close);
-    // View view(FloatRect(0, 0, WINDOW_SIZE, WINDOW_SIZE+MENUBAR_HEIGHT));
-    // view.move(0.f, -60.f);
-    // window.setView(view);
 
-
-    // Setting window icong
+    // Setting window icon
     Image icon;
-    icon.loadFromFile("../assets/icons/nw.png");
+    icon.loadFromFile(getIconPath("nw.png"));
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
-    window.setPosition(Vector2i(300,300));
+    window.setPosition(Vector2i(300, 300));
 
     // Parameters to handle a piece being dragged
     bool pieceIsMoving = false;
@@ -38,16 +29,15 @@ void GameThread::startGame() {
 
     // Sounds for piece movement
     SoundBuffer bufferMove;
-    if (!bufferMove.loadFromFile("../assets/sounds/move.wav")) return;
+    if (!bufferMove.loadFromFile(getAudioPath("move.wav"))) return;
     Sound soundMove;
     soundMove.setBuffer(bufferMove);
 
     SoundBuffer bufferCapture;
-    if (!bufferCapture.loadFromFile("../assets/sounds/captures.wav")) return;
+    if (!bufferCapture.loadFromFile(getAudioPath("captures.wav"))) return;
     Sound soundCapture;
     soundCapture.setBuffer(bufferCapture);
-    
-    
+
     // This is the main loop (a.k.a game loop) this ensures that the program does not terminate until we exit
     Event event;
     while (window.isOpen()) {
@@ -111,10 +101,12 @@ void GameThread::startGame() {
 
                         // If move is not allowed or king is checked, place piece back, else apply the move
                         if (selectedMove == nullptr) {
-                            game.setBoardTile(lastXPos, lastYPos, selectedPiece, false); // cancel the move
+                            game.setBoardTile(lastXPos, lastYPos, selectedPiece, false); // Cancel the move
                         } else {
-                            moveList.addMove(get<1>(*selectedMove), getTileXPos(mousePos.first), 
-                                getTileYPos(mousePos.second), lastXPos, lastYPos, selectedPiece, lastMove);
+                            moveList.addMove(
+                                get<1>(*selectedMove), getTileXPos(mousePos), getTileYPos(mousePos),
+                                lastXPos, lastYPos, selectedPiece, lastMove
+                            );
                             lastMove = selectedPiece;
                             lastMove->setLastMove(get<1>(*selectedMove));
                             Piece::setLastMovedPiece(lastMove);
@@ -151,15 +143,13 @@ void GameThread::startGame() {
 
         if (pieceIsMoving) {
             drawCaptureCircles(window, possibleMoves, game);
-            highlightHoveredSquare(window, game, possibleMoves, mousePos.first, mousePos.second);
-            drawDraggedPiece(selectedPiece,window, mousePos.first, mousePos.second);
+            highlightHoveredSquare(window, game, possibleMoves, mousePos);
+            drawDraggedPiece(selectedPiece,window, mousePos);
         }
 
         window.display();
     }
 }
-
-
 
 void GameThread::removeIllegalMoves(Board& game, moveTypes& possibleMoves, Piece* selectedPiece, coor2d& mousePos) {
     moveTypes::iterator it = possibleMoves.begin();
@@ -170,8 +160,8 @@ void GameThread::removeIllegalMoves(Board& game, moveTypes& possibleMoves, Piece
         // Store piece occupied by target square
         Piece* temp = game.getBoardTile(x,y);
 
-        game.setBoardTile(x, y, selectedPiece, false); // move this piece to target square
-        game.setBoardTile(getTileXPos(mousePos), getTileYPos(mousePos), nullptr, false); // set null to selected piece's square
+        game.setBoardTile(x, y, selectedPiece, false); // Move this piece to target square
+        game.setBoardTile(getTileXPos(mousePos), getTileYPos(mousePos), nullptr, false); // Set null to selected piece's square
 
         if (game.kingIsChecked()) it = possibleMoves.erase(it);
         else ++it;
@@ -189,27 +179,28 @@ void GameThread::initializeBoard(RenderWindow& window, Board& game) {
             square.setFillColor(((i+j) % 2 != 0)
                 ? game.isFlipped() ? Color(240, 217, 181) : Color(181, 136, 99) 
                 : game.isFlipped() ? Color(181, 136, 99) : Color(240, 217, 181));
-            square.setPosition(i*CELL_SIZE, j*CELL_SIZE);
+            square.setPosition(getWindowXPos(i), getWindowYPos(j));
             window.draw(square);
         }
     }
 }
-void GameThread::highlightHoveredSquare(RenderWindow& window, Board& game, moveTypes& possibleMoves, int xPos, int yPos) {
+
+void GameThread::highlightHoveredSquare(RenderWindow& window, Board& game, moveTypes& possibleMoves, coor2d& mousePos) {
     for (moveType& move: possibleMoves){
-        int i = get<0>(move).second;
-        int j = get<0>(move).first;
-        if (i == xPos/CELL_SIZE && j == yPos/CELL_SIZE) {
+        int i = get<0>(move).second, j = get<0>(move).first;
+        int xPos = getTileXPos(mousePos), yPos = getTileYPos(mousePos);
+        if (i == xPos && j == yPos) {
             // Currently hovering a square where the piece can move 
             RectangleShape square(Vector2f(CELL_SIZE, CELL_SIZE));
             square.setFillColor((i + j) % 2 != 0 
                 ? game.isFlipped() ? Color(173,176,134) : Color(100, 111, 64) 
                 : game.isFlipped() ? Color(100, 111, 64)  : Color(173,176,134));
-            square.setPosition(i * CELL_SIZE, j * CELL_SIZE);
+            square.setPosition(getWindowXPos(i), getWindowYPos(j));
             window.draw(square);
         }
     }
 
-};
+}
 
 void GameThread::drawCaptureCircles(RenderWindow& window, moveTypes& possibleMoves, Board& game) {
     for (moveType& move: possibleMoves) {
@@ -218,11 +209,11 @@ void GameThread::drawCaptureCircles(RenderWindow& window, moveTypes& possibleMov
 
         bool isEmpty = game.getBoardTile(i, j) == nullptr;
         Texture circleTexture;
-        circleTexture.loadFromFile(isEmpty? "../assets/icons/circle.png": "../assets/icons/empty_circle.png");
+        circleTexture.loadFromFile(getIconPath(isEmpty? "circle.png": "empty_circle.png"));
 
         Sprite circle(circleTexture);
         if (isEmpty) circle.setScale(SPRITE_SCALE, SPRITE_SCALE);
-        circle.setPosition(i*CELL_SIZE, j*CELL_SIZE);
+        circle.setPosition(getWindowXPos(i), getWindowYPos(j));
 
         window.draw(circle);
     }
@@ -236,19 +227,19 @@ void GameThread::drawPieces(RenderWindow& window, Board& game) {
                 t.loadFromFile(game.getBoardTile(i, j)->getFileName());
                 Sprite tt(t);
                 tt.setScale(SPRITE_SCALE, SPRITE_SCALE);
-                tt.setPosition(i*CELL_SIZE, j*CELL_SIZE);
+                tt.setPosition(getWindowXPos(i), getWindowYPos(j));
                 window.draw(tt);
             }
         }
     }
 }
 
-void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, int xPos, int yPos) {
+void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, coor2d& mousePos) {
     Texture t;
     t.loadFromFile(selectedPiece->getFileName());
     Sprite tt(t);
     tt.setScale(SPRITE_SCALE, SPRITE_SCALE);
-    tt.setPosition(xPos, yPos);
+    tt.setPosition(mousePos.first, mousePos.second);
     tt.setOrigin(SPRITE_SIZE/2, SPRITE_SIZE/2);
     window.draw(tt);
 }

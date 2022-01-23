@@ -14,8 +14,8 @@ void MoveList::highlightLastMove(RenderWindow& window) const {
     squareBefore.setFillColor(color);
     squareAfter.setFillColor(color);
 
-    squareBefore.setPosition(move.getXInit()*CELL_SIZE, move.getYInit()*CELL_SIZE);
-    squareAfter.setPosition(move.getXTarget()*CELL_SIZE, move.getYTarget()*CELL_SIZE);
+    squareBefore.setPosition(GameThread::getWindowXPos(move.getXInit()), GameThread::getWindowYPos(move.getYInit()));
+    squareAfter.setPosition(GameThread::getWindowXPos(move.getXTarget()), GameThread::getWindowYPos(move.getYTarget()));
 
     window.draw(squareBefore);
     window.draw(squareAfter);
