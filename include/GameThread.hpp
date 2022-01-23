@@ -34,6 +34,6 @@ class GameThread {
     static int getWindowXPos(int i) { return i * CELL_SIZE; }
     static int getWindowYPos(int j) { return j * CELL_SIZE + MENUBAR_HEIGHT; }
 
-    static string getIconPath(string filename) { return iconsPath + filename; }
-    static string getAudioPath(string filename) { return audioPath + filename; }
+    static string getIconPath(const string& filename) { return iconsPath + filename; }
+    static string getAudioPath(const string& filename) { return audioPath + filename; }
 };
