@@ -2,9 +2,9 @@
 #include "../include/GameThread.hpp"
 #include <iostream>
 
-Piece::Piece(Team team, int x, int y, PieceType type, string fileName)
+Piece::Piece(Team team, int x, int y, PieceType type, string pieceType)
     : m_team(team), m_xPos(x), m_yPos(y), m_type(type) {
-    m_filename = GameThread::getIconPath(fileName) + string(team == Team::BLACK? "b": "w") + fileExt;
+    m_filename = GameThread::getIconPath(pieceType + getColorCode() + fileExt);
 }
 
 moveTypes Piece::getHorizontalAndVerticalMovements(Piece* board[8][8]) const {

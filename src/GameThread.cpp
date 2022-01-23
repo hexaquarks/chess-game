@@ -8,7 +8,7 @@ using namespace sf;
 
 void GameThread::startGame() {
     Board game;
-    RenderWindow window(VideoMode(WINDOW_SIZE, WINDOW_SIZE), "Chess Game", Style::Titlebar | Style::Close);
+    RenderWindow window(VideoMode(WINDOW_SIZE, WINDOW_SIZE), WINDOW_TITLE, Style::Titlebar | Style::Close);
 
     // Setting window icon
     Image icon;
