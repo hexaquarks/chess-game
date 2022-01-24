@@ -11,7 +11,7 @@ class MoveList {
     list<Move>::iterator moveIterator = moves.begin();
     Board& game;
 
-    void applyMove(MoveType, int, int, int, int, Piece*, Piece*);
+    void applyMove(MoveType, int, int, int, int, Piece*, Piece*, bool);
     void applyMove();
     void undoMove();
 
