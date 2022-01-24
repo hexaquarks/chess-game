@@ -130,7 +130,7 @@ void GameThread::startGame() {
                 }
             }
 
-            if (event.type == Event::KeyPressed)  {
+            if (event.type == Event::KeyPressed) {
                 if (event.key.code == Keyboard::Left)
                     moveList.goToPreviousMove();
                 else if (event.key.code == Keyboard::Right)
