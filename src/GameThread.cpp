@@ -18,6 +18,7 @@ void GameThread::startGame() {
 
     // Parameters to handle a piece being dragged
     bool pieceIsMoving = false;
+    bool pieceIsClicked = false;
     Piece* selectedPiece = nullptr;
     coor2d mousePos = {0, 0};
     int lastXPos = 0, lastYPos = 0; // Last position of the piece before being dragged
@@ -92,6 +93,12 @@ void GameThread::startGame() {
                 if(event.mouseButton.button == Mouse::Left) {
                     // Should always be true by design
                     if (selectedPiece != nullptr) {
+
+                        // if clicked and mouse remained on the same square
+                        if(getTileXPos(mousePos) == selectedPiece->getY() && getTileYPos(mousePos) == selectedPiece->getX()) {
+                            pieceIsClicked = true;
+                            return;
+                        }
                         moveType* selectedMove = nullptr;
 
                         // Try to match moves
@@ -99,7 +106,7 @@ void GameThread::startGame() {
                             if (get<0>(move).first == getTileYPos(mousePos) && get<0>(move).second == getTileXPos(mousePos)) {
                                 selectedMove = &move;
                                 break;
-                            }
+                            } 
                         }
 
                         // If move is not allowed or king is checked, place piece back, else apply the move
@@ -144,8 +151,12 @@ void GameThread::startGame() {
         moveList.highlightLastMove(window);
         drawPieces(window, game);
 
+        drawCaptureCircles(window, possibleMoves, game);
+        if(pieceIsClicked){
+            coor2d mousePosTemp = {Mouse::getPosition(window).x, Mouse::getPosition(window).y};
+            highlightHoveredSquare(window, game, possibleMoves, mousePosTemp);
+        }
         if (pieceIsMoving) {
-            drawCaptureCircles(window, possibleMoves, game);
             highlightHoveredSquare(window, game, possibleMoves, mousePos);
             drawDraggedPiece(selectedPiece,window, mousePos);
         }
