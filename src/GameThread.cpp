@@ -55,7 +55,7 @@ void GameThread::startGame() {
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
 
                 // Allow user to make moves only if they're at the current position, not looking at the previous played moves
-                if (moveList.hasMovesAfter()) continue;
+                if (moveList.hasMovesAfter() || pieceIsClicked) continue;
 
                 // Get the tile of the click
                 mousePos = {event.mouseButton.x, event.mouseButton.y};
@@ -82,7 +82,7 @@ void GameThread::startGame() {
             }
 
             // Dragging a piece around
-            if (event.type == Event::MouseMoved && pieceIsMoving) {
+            if (event.type == Event::MouseMoved && (pieceIsMoving || pieceIsClicked)) {
                 // Update the position of the piece that is being moved
                 Vector2i MousePosition = Mouse::getPosition(window);
                 mousePos = {MousePosition.x, MousePosition.y};
@@ -93,11 +93,14 @@ void GameThread::startGame() {
                 if(event.mouseButton.button == Mouse::Left) {
                     // Should always be true by design
                     if (selectedPiece != nullptr) {
-
                         // if clicked and mouse remained on the same square
                         if(getTileXPos(mousePos) == selectedPiece->getY() && getTileYPos(mousePos) == selectedPiece->getX()) {
-                            pieceIsClicked = true;
-                            return;
+                            if(!pieceIsClicked) {
+                                pieceIsMoving = false;
+                                game.setBoardTile(lastXPos, lastYPos, selectedPiece, false); 
+                            }
+                            pieceIsClicked = !pieceIsClicked;
+                            continue;
                         }
                         moveType* selectedMove = nullptr;
 
@@ -122,14 +125,14 @@ void GameThread::startGame() {
                             Piece::setLastMovedPiece(lastMove);
                             game.switchTurn();
                         }
-
-                        mousePos = {0, 0};
                         selectedPiece = nullptr;
                         pieceIsMoving = false;
+                        pieceIsClicked = false;
+                        mousePos = {0, 0};
                     }
                 }
 
-                if (event.mouseButton.button == Mouse::Right && selectedPiece != nullptr) {
+                if (event.mouseButton.button == Mouse::Right && selectedPiece != nullptr && pieceIsMoving) {
                     // Reset the piece back
                     game.setBoardTile(lastXPos, lastYPos, selectedPiece, false);
                     selectedPiece = nullptr;
@@ -151,12 +154,13 @@ void GameThread::startGame() {
         moveList.highlightLastMove(window);
         drawPieces(window, game);
 
-        drawCaptureCircles(window, possibleMoves, game);
         if(pieceIsClicked){
             coor2d mousePosTemp = {Mouse::getPosition(window).x, Mouse::getPosition(window).y};
+            drawCaptureCircles(window, possibleMoves, game);
             highlightHoveredSquare(window, game, possibleMoves, mousePosTemp);
         }
         if (pieceIsMoving) {
+            drawCaptureCircles(window, possibleMoves, game);
             highlightHoveredSquare(window, game, possibleMoves, mousePos);
             drawDraggedPiece(selectedPiece,window, mousePos);
         }
