@@ -55,7 +55,14 @@ void GameThread::startGame() {
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
 
                 // Allow user to make moves only if they're at the current position, not looking at the previous played moves
-                if (moveList.hasMovesAfter() || pieceIsClicked) continue;
+                if (moveList.hasMovesAfter()) continue;
+
+                if(pieceIsClicked) {
+                    pieceIsMoving = true;
+                    pieceIsClicked = false;
+                    game.setBoardTile(lastXPos, lastYPos, nullptr, false); 
+                    continue;
+                }
 
                 // Get the tile of the click
                 mousePos = {event.mouseButton.x, event.mouseButton.y};
@@ -96,8 +103,8 @@ void GameThread::startGame() {
                         // if clicked and mouse remained on the same square
                         if(getTileXPos(mousePos) == selectedPiece->getY() && getTileYPos(mousePos) == selectedPiece->getX()) {
                             if(!pieceIsClicked) {
-                                pieceIsMoving = false;
                                 game.setBoardTile(lastXPos, lastYPos, selectedPiece, false); 
+                                pieceIsMoving = false;
                             }
                             pieceIsClicked = !pieceIsClicked;
                             continue;
