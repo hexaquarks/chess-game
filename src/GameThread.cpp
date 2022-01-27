@@ -177,7 +177,7 @@ void GameThread::startGame() {
 
 void GameThread::drawMenuBar(RenderWindow& window, Board& game) {
     constexpr uint16_t menuOptions = 3;
-    const String iconFiles[menuOptions] = {"dropDown.png", "reset.png", "flip.png"};
+    const string iconFiles[menuOptions] = {"dropDown.png", "reset.png", "flip.png"};
 
     for (uint16_t i = 0; i < menuOptions; ++i) {
         Texture menuIcon;
