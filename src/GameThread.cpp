@@ -4,6 +4,7 @@
 #include <vector>
 #include <list>
 #include <SFML/Audio.hpp>
+#include <SFML/Graphics.hpp>
 using namespace sf;
 
 void GameThread::startGame() {
@@ -176,11 +177,16 @@ void GameThread::startGame() {
 }
 
 void GameThread::drawMenuBar(RenderWindow& window, Board& game) {
+    
     constexpr uint32_t BUTTON_POS = WINDOW_SIZE / NUMBER_BUTTONS;
     constexpr uint16_t menuOptions = 3;
     const string iconFiles[menuOptions] = {"dropDown.png", "reset.png", "flip.png"};
+    const string menuNames[menuOptions] = {"Menu", "Reset", "Flip"};
+    
+    Font font;
+    if(!font.loadFromFile("../assets/fonts/Arial.ttf")) return;
 
-    for (uint16_t i = 0; i < menuOptions; ++i) {
+    for (size_t i = 0; i < menuOptions; ++i) {
         Texture menuIcon;
         menuIcon.loadFromFile(getIconPath(iconFiles[i]));
 
@@ -194,11 +200,20 @@ void GameThread::drawMenuBar(RenderWindow& window, Board& game) {
 
         // Icons
         Sprite s(menuIcon);
-        s.setOrigin(BUTTON_SIZE/2, BUTTON_SIZE/2);
+        s.setOrigin(BUTTON_SIZE/2 + (BUTTON_POS / 2), BUTTON_SIZE/2);
         s.setPosition(BUTTON_POS*i + BUTTON_POS/2, MENUBAR_HEIGHT/2);
+        s.setScale(SPRITE_SCALE, SPRITE_SCALE);
+
+        // Texts
+        Text menuText(menuNames[i], font, 14);
+        menuText.setStyle(Text::Bold);
+        menuText.setFillColor(Color::Black);
+        menuText.setOrigin(BUTTON_SIZE/2 - (BUTTON_POS / 3), BUTTON_SIZE/(1.75));
+        menuText.setPosition(BUTTON_POS*i + BUTTON_POS/3 , MENUBAR_HEIGHT);
 
         window.draw(menuBarElem);
         window.draw(s);
+        window.draw(menuText);
     }
 }
 
