@@ -180,13 +180,27 @@ void GameThread::startGame() {
 void GameThread::drawMenuBar(RenderWindow& window, Board& game) {
     const uint16_t menuOptions = 3;
     RectangleShape menuBar[menuOptions];
+    Texture menuIcons[3];
+    Sprite menuIconsSprite[3];
+    menuIcons[0].loadFromFile(getIconPath("dropDown.png"));
+    menuIcons[1].loadFromFile(getIconPath("reset.png"));
+    menuIcons[2].loadFromFile(getIconPath("flip.png"));
+
     for (size_t i=0; i<menuOptions; ++i){
+        // rectangles
         menuBar[i].setPosition(i*(WINDOW_SIZE/6), 0);
         menuBar[i].setSize(Vector2f(WINDOW_SIZE/6, MENUBAR_HEIGHT));
         menuBar[i].setFillColor(Color(218,224,241));
         menuBar[i].setOutlineThickness(2.0f);
         menuBar[i].setOutlineColor(Color(239,242,249));
+
+        // icons
+        menuIconsSprite[i] = Sprite(menuIcons[i]);
+        menuIconsSprite[i].setPosition(menuBar[i].getPosition().x+5, menuBar[i].getPosition().y+2);
+        menuIconsSprite[i].setScale(SPRITE_SCALE,SPRITE_SCALE);
+
         window.draw(menuBar[i]);
+        window.draw(menuIconsSprite[i]);
     }
 }
 void GameThread::removeIllegalMoves(Board& game, moveTypes& possibleMoves, Piece* selectedPiece, coor2d& mousePos) {
