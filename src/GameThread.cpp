@@ -42,7 +42,7 @@ void GameThread::startGame() {
     // This is the main loop (a.k.a game loop) this ensures that the program does not terminate until we exit
     Event event;
     while (window.isOpen()) {
-        window.clear(Color::Black);
+        window.clear(Color(218,224,241));
 
         // We use a while loop for the pending events in case there were multiple events occured
         while (window.pollEvent(event)) {
@@ -157,6 +157,7 @@ void GameThread::startGame() {
             }
         }
 
+        drawMenuBar(window, game);
         initializeBoard(window, game);
         moveList.highlightLastMove(window);
         drawPieces(window, game);
@@ -176,6 +177,18 @@ void GameThread::startGame() {
     }
 }
 
+void GameThread::drawMenuBar(RenderWindow& window, Board& game) {
+    const uint16_t menuOptions = 3;
+    RectangleShape menuBar[menuOptions];
+    for (size_t i=0; i<menuOptions; ++i){
+        menuBar[i].setPosition(i*(WINDOW_SIZE/6), 0);
+        menuBar[i].setSize(Vector2f(WINDOW_SIZE/6, MENUBAR_HEIGHT));
+        menuBar[i].setFillColor(Color(218,224,241));
+        menuBar[i].setOutlineThickness(2.0f);
+        menuBar[i].setOutlineColor(Color(239,242,249));
+        window.draw(menuBar[i]);
+    }
+}
 void GameThread::removeIllegalMoves(Board& game, moveTypes& possibleMoves, Piece* selectedPiece, coor2d& mousePos) {
     moveTypes::iterator it = possibleMoves.begin();
     while (it != possibleMoves.end()) {

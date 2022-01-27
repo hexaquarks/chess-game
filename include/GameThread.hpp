@@ -7,7 +7,7 @@ using namespace sf;
 const string WINDOW_TITLE = "Chess Game";
 constexpr uint32_t WINDOW_SIZE = 640;
 constexpr uint32_t CELL_SIZE = WINDOW_SIZE / 8;
-constexpr uint32_t MENUBAR_HEIGHT = 60;
+constexpr uint32_t MENUBAR_HEIGHT = 25;
 constexpr float SPRITE_SCALE = 0.6;
 constexpr float SPRITE_SIZE = 128;
 
@@ -18,6 +18,7 @@ class GameThread {
     static void initializeBoard(RenderWindow&, Board&);
     static void drawCaptureCircles(RenderWindow&, moveTypes&, Board&);
     static void highlightHoveredSquare(RenderWindow&, Board&, moveTypes&, coor2d&);
+    static void drawMenuBar(RenderWindow& window, Board& game);
     static void drawPieces(RenderWindow&, Board&);
     static void drawDraggedPiece(Piece*, RenderWindow&, coor2d&);
     static void removeIllegalMoves(Board&, moveTypes&, Piece*, coor2d&);
