@@ -7,7 +7,7 @@ using namespace sf;
 const string WINDOW_TITLE = "Chess Game";
 constexpr uint32_t WINDOW_SIZE = 640;
 constexpr uint32_t CELL_SIZE = WINDOW_SIZE / 8;
-constexpr uint32_t MENUBAR_HEIGHT = 60;
+constexpr uint32_t MENUBAR_HEIGHT = 30;
 constexpr uint32_t NUMBER_BUTTONS = 6;
 constexpr float SPRITE_SCALE = 0.6;
 constexpr float SPRITE_SIZE = 128;
