@@ -176,6 +176,7 @@ void GameThread::startGame() {
 }
 
 void GameThread::drawMenuBar(RenderWindow& window, Board& game) {
+    constexpr uint32_t BUTTON_POS = WINDOW_SIZE / NUMBER_BUTTONS;
     constexpr uint16_t menuOptions = 3;
     const string iconFiles[menuOptions] = {"dropDown.png", "reset.png", "flip.png"};
 
@@ -185,16 +186,16 @@ void GameThread::drawMenuBar(RenderWindow& window, Board& game) {
 
         // Rectangles
         RectangleShape menuBarElem;
-        menuBarElem.setPosition((WINDOW_SIZE/6) * i, 0);
-        menuBarElem.setSize({WINDOW_SIZE/6, MENUBAR_HEIGHT});
+        menuBarElem.setPosition(BUTTON_POS*i, 0);
+        menuBarElem.setSize({BUTTON_POS, MENUBAR_HEIGHT});
         menuBarElem.setFillColor({218, 224, 241});
         menuBarElem.setOutlineThickness(2.f);
         menuBarElem.setOutlineColor({239, 242, 249});
 
         // Icons
         Sprite s(menuIcon);
-        s.setPosition(menuBarElem.getPosition().x+5, menuBarElem.getPosition().y+2);
-        s.setScale(SPRITE_SCALE, SPRITE_SCALE);
+        s.setOrigin(BUTTON_SIZE/2, BUTTON_SIZE/2);
+        s.setPosition(BUTTON_POS*i + BUTTON_POS/2, MENUBAR_HEIGHT/2);
 
         window.draw(menuBarElem);
         window.draw(s);
