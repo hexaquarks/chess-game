@@ -3,8 +3,8 @@
 #include <algorithm>
 
 void Board::freeMemory() {
-    for (int i = 0; i < 8; ++i)
-        for (int j = 0; j < 8; ++j)
+    for (uint8_t i = 0; i < 8; ++i)
+        for (uint8_t j = 0; j < 8; ++j)
             m_board[i][j] = nullptr;
     for (Piece* piece: m_whitePieces) delete piece;
     for (Piece* piece: m_blackPieces) delete piece;
@@ -40,19 +40,19 @@ void Board::reset() {
     m_board[7][7] = new Rook(Team::WHITE, 7, 7);
 
     // Fill in white and black pawns
-    for (int col = 0; col < 8; ++col) {
+    for (uint8_t col = 0; col < 8; ++col) {
         m_board[1][col] = new Pawn(Team::BLACK, 1, col); // Black pawn on row 1
         m_board[6][col] = new Pawn(Team::WHITE, 6, col); // White pawn on row 6
     }
 
     // Add every black piece to the list of black pieces
-    for (int row = 0; row < 2; ++row)
-        for (int col = 0; col < 8; ++col)
+    for (uint8_t row = 0; row < 2; ++row)
+        for (uint8_t col = 0; col < 8; ++col)
             m_blackPieces.push_back(m_board[row][col]);
     
     // Add every white piece to the list of white pieces
-    for (int row = 6; row < 8; ++row)
-        for (int col = 0; col < 8; ++col)
+    for (uint8_t row = 6; row < 8; ++row)
+        for (uint8_t col = 0; col < 8; ++col)
             m_whitePieces.push_back(m_board[row][col]);
 }
 
@@ -63,8 +63,8 @@ void Board::setBoardTile(int x, int y, Piece* piece, bool record) {
 }
 
 void Board::flipBoard() {
-    for(int i = 0 ; i < 4 ; ++i) {
-        for(int j = 0; j < 8 ; ++j) {
+    for(uint8_t i = 0 ; i < 4 ; ++i) {
+        for(uint8_t j = 0; j < 8 ; ++j) {
             King::swapPieces(m_board, i,j,7-i,j);
         }
     }

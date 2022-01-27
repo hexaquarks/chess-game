@@ -58,8 +58,8 @@ moveTypes King::possibleMovesNoCheck(Piece* board[8][8]) const {
 
 bool King::isChecked(Piece* board[8][8], int i, int j) const {
     // Looping through every piece
-    for (int row = 0; row < 8; ++row) {
-        for (int col = 0; col < 8; ++col) {
+    for (uint8_t row = 0; row < 8; ++row) {
+        for (uint8_t col = 0; col < 8; ++col) {
             Piece* p = board[row][col];
 
             // If piece has opposite colour, it is a potential danger

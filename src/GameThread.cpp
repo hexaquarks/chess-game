@@ -186,7 +186,7 @@ void GameThread::drawMenuBar(RenderWindow& window, Board& game) {
     Font font;
     if(!font.loadFromFile("../assets/fonts/Arial.ttf")) return;
 
-    for (size_t i = 0; i < menuOptions; ++i) {
+    for (uint8_t i = 0; i < menuOptions; ++i) {
         Texture menuIcon;
         menuIcon.loadFromFile(getIconPath(iconFiles[i]));
 
@@ -240,8 +240,8 @@ void GameThread::removeIllegalMoves(Board& game, moveTypes& possibleMoves, Piece
 void GameThread::initializeBoard(RenderWindow& window, Board& game) {
     const Color colours[2] = {{240, 217, 181}, {181, 136, 99}};
 
-    for (int i = 0; i < 8; ++i) {
-        for (int j = 0; j < 8; ++j) {
+    for (uint8_t i = 0; i < 8; ++i) {
+        for (uint8_t j = 0; j < 8; ++j) {
             // Drawing the colored square
             RectangleShape square(Vector2f(CELL_SIZE, CELL_SIZE));
             square.setFillColor(colours[(i+j)%2 ^ game.isFlipped()]);
@@ -285,8 +285,8 @@ void GameThread::drawCaptureCircles(RenderWindow& window, moveTypes& possibleMov
 }
 
 void GameThread::drawPieces(RenderWindow& window, Board& game) {
-    for (int i = 0; i < 8; ++i) {
-        for (int j = 0; j < 8; ++j) {
+    for (uint8_t i = 0; i < 8; ++i) {
+        for (uint8_t j = 0; j < 8; ++j) {
             if (game.getBoardTile(i, j) != nullptr) {
                 Texture t;
                 t.loadFromFile(game.getBoardTile(i, j)->getFileName());
