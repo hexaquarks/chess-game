@@ -5,12 +5,12 @@
 
 Font font; 
 
-MenuButton::MenuButton(uint8_t index, bool isRotatable,const std::string& name) : index(index) , isRotatable(isRotatable) {
+MenuButton::MenuButton(uint8_t index, bool isRotatable,const std::string& name) : m_index(index) , m_isRotatable(isRotatable) {
     if (!font.loadFromFile("../assets/fonts/Arial.ttf")) return;
 
-    text.setString(name);
-    text.setFont(font);
-    text.setCharacterSize(14);
+    m_text.setString(name);
+    m_text.setFont(font);
+    m_text.setCharacterSize(14);
 
     handleRectangle(index);
     handleSprite(index);
@@ -18,27 +18,27 @@ MenuButton::MenuButton(uint8_t index, bool isRotatable,const std::string& name) 
 }
 
 void MenuButton::handleRectangle(uint8_t i) {
-    rectangle.setPosition(BUTTON_POS*i, 0);
-    rectangle.setSize({BUTTON_POS, MENUBAR_HEIGHT});
-    rectangle.setFillColor({218, 224, 241});
-    rectangle.setOutlineThickness(2.f);
-    rectangle.setOutlineColor({239, 242, 249});
+    m_rectangle.setPosition(BUTTON_POS*i, 0);
+    m_rectangle.setSize({BUTTON_POS, MENUBAR_HEIGHT});
+    m_rectangle.setFillColor({218, 224, 241});
+    m_rectangle.setOutlineThickness(2.f);
+    m_rectangle.setOutlineColor({239, 242, 249});
 }
 void MenuButton::handleSprite(uint8_t i) {
-    sprite.setOrigin(BUTTON_SIZE/2 + (BUTTON_POS / 2), BUTTON_SIZE/2);
-    sprite.setPosition(BUTTON_POS*i + BUTTON_POS/2, MENUBAR_HEIGHT/2);
-    sprite.setScale(SPRITE_SCALE, SPRITE_SCALE);
+    m_sprite.setOrigin(BUTTON_SIZE/2 + (BUTTON_POS / 2), BUTTON_SIZE/2);
+    m_sprite.setPosition(BUTTON_POS*i + BUTTON_POS/2, MENUBAR_HEIGHT/2);
+    m_sprite.setScale(SPRITE_SCALE, SPRITE_SCALE);
 }
 void MenuButton::handleText(uint8_t i) {
-    text.setStyle(Text::Bold);
-    text.setFillColor(Color::Black);
-    text.setOrigin(BUTTON_SIZE/2 - (BUTTON_POS / 3), BUTTON_SIZE/(1.75));
-    text.setPosition(BUTTON_POS*i + BUTTON_POS/3 , MENUBAR_HEIGHT);
+    m_text.setStyle(Text::Bold);
+    m_text.setFillColor(Color::Black);
+    m_text.setOrigin(BUTTON_SIZE/2 - (BUTTON_POS / 3), BUTTON_SIZE/(1.75));
+    m_text.setPosition(BUTTON_POS*i + BUTTON_POS/3 , MENUBAR_HEIGHT);
 }
 
 void MenuButton::drawMenuButton(RenderWindow& window) {
-    window.draw(rectangle);
-    window.draw(sprite);
-    window.draw(text);
+    window.draw(m_rectangle);
+    window.draw(m_sprite);
+    window.draw(m_text);
 }
 

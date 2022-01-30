@@ -7,8 +7,8 @@
 using namespace sf;
 
 class MoveList {
-    list<Move> moves;
-    list<Move>::iterator moveIterator = moves.begin();
+    list<Move> m_moves;
+    list<Move>::iterator m_moveIterator = m_moves.begin();
     Board& game;
 
     void applyMove(MoveType, int, int, int, int, Piece*, Piece*, bool);
@@ -21,6 +21,6 @@ class MoveList {
     void goToPreviousMove();
     void goToNextMove();
     void addMove(MoveType, int, int, int, int, Piece*, Piece*);
-    bool hasMovesBefore() const { return moveIterator != moves.end(); }
-    bool hasMovesAfter() const { return moveIterator != moves.begin(); }
+    bool hasMovesBefore() const { return m_moveIterator != m_moves.end(); }
+    bool hasMovesAfter() const { return m_moveIterator != m_moves.begin(); }
 };

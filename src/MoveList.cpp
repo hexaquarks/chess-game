@@ -3,7 +3,7 @@
 MoveList::MoveList(Board& board): game(board) {}
 
 void MoveList::highlightLastMove(RenderWindow& window) const {
-    Move& move = *moveIterator;
+    Move& move = *m_moveIterator;
     if (move.getCapturedPiece() == nullptr) return;
 
     RectangleShape squareBefore(Vector2f(CELL_SIZE, CELL_SIZE));
@@ -25,14 +25,14 @@ void MoveList::goToPreviousMove() {
     if (hasMovesBefore()) {
         cout<< "has moves before"  << endl;
         undoMove();
-        ++moveIterator; // Go to previous move
+        ++m_moveIterator; // Go to previous move
     }
 }
 
 void MoveList::goToNextMove() { 
     if (hasMovesAfter()) {
         cout<< "has moves after"  << endl;
-        --moveIterator; // Go to previous move
+        --m_moveIterator; // Go to previous move
         applyMove();
     }
 }
@@ -40,7 +40,7 @@ void MoveList::goToNextMove() {
 void MoveList::addMove( MoveType moveType, int x, int y, int prevX, int prevY,
     Piece* selectedPiece, Piece* lastMove) {
     applyMove(moveType, x, y, prevX, prevY, selectedPiece, lastMove, true);
-    moveIterator = moves.begin();
+    m_moveIterator = m_moves.begin();
 }
 
 void MoveList::applyMove(MoveType moveType, int x, int y, int prevX, int prevY,
@@ -54,20 +54,20 @@ void MoveList::applyMove(MoveType moveType, int x, int y, int prevX, int prevY,
     switch (moveType) {
         case MoveType::NORMAL:
             game.setBoardTile(x, y, selectedPiece);
-            if(addToList) moves.emplace_front(Move(x, y, prevX, prevY, selectedPiece, MoveType::NORMAL));
+            if(addToList) m_moves.emplace_front(Move(x, y, prevX, prevY, selectedPiece, MoveType::NORMAL));
             // soundMove.play();
             break;
         case MoveType::CAPTURE:
             oldPiece = game.getBoardTile(x, y);
             game.setBoardTile(x, y, selectedPiece);
-            if(addToList) moves.emplace_front(Move(x, y, prevX, prevY, selectedPiece, oldPiece, MoveType::CAPTURE));
+            if(addToList) m_moves.emplace_front(Move(x, y, prevX, prevY, selectedPiece, oldPiece, MoveType::CAPTURE));
             // soundCapture.play();
             break;
         case MoveType::ENPASSANT:
             oldPiece = game.getBoardTile(lastMove->getY(),lastMove->getX()); // the position of the captured pawn
             game.setBoardTile(x, y, selectedPiece);
             game.setBoardTile(lastMove->getY(), lastMove->getX(), nullptr);
-            if(addToList) moves.emplace_front(Move(x, y, prevX, prevY, 
+            if(addToList) m_moves.emplace_front(Move(x, y, prevX, prevY, 
                 selectedPiece, oldPiece, MoveType::ENPASSANT));
             break;
         case MoveType::CASTLE_KINGSIDE:
@@ -75,7 +75,7 @@ void MoveList::applyMove(MoveType moveType, int x, int y, int prevX, int prevY,
             game.setBoardTile(5, castleRow, game.getBoardTile(7, castleRow));
             game.setBoardTile(7, castleRow, nullptr);
             game.setBoardTile(6, castleRow, selectedPiece);
-            if(addToList) moves.emplace_front(Move(6, castleRow, prevX, prevY, 
+            if(addToList) m_moves.emplace_front(Move(6, castleRow, prevX, prevY, 
                 selectedPiece, oldPiece, MoveType::CASTLE_KINGSIDE));
             break;
         case MoveType::CASTLE_QUEENSIDE:
@@ -83,12 +83,12 @@ void MoveList::applyMove(MoveType moveType, int x, int y, int prevX, int prevY,
             game.setBoardTile(3, castleRow, game.getBoardTile(0, castleRow));
             game.setBoardTile(0, castleRow, nullptr);
             game.setBoardTile(2, castleRow, selectedPiece);
-            if(addToList) moves.emplace_front(Move(2, castleRow, prevX, prevY, 
+            if(addToList) m_moves.emplace_front(Move(2, castleRow, prevX, prevY, 
                 selectedPiece, oldPiece, MoveType::CASTLE_QUEENSIDE));
             break;
         case MoveType::INIT_SPECIAL:
             game.setBoardTile(x, y, selectedPiece);
-            if(addToList) moves.emplace_front(Move(x, y,prevX, prevY, 
+            if(addToList) m_moves.emplace_front(Move(x, y,prevX, prevY, 
                 selectedPiece, MoveType::INIT_SPECIAL));
             break;
         case MoveType::NEWPIECE:
@@ -101,14 +101,14 @@ void MoveList::applyMove(MoveType moveType, int x, int y, int prevX, int prevY,
 }
 
 void MoveList::applyMove() {
-    Move& m = *moveIterator;
+    Move& m = *m_moveIterator;
     applyMove(m.getMoveType(), m.getXTarget(),
          m.getYTarget(), m.getXInit(), m.getYInit(), 
          m.getSelectedPiece(), m.getCapturedPiece(), false);
 }
 
 void MoveList::undoMove() {
-    Move& m = *moveIterator;
+    Move& m = *m_moveIterator;
     game.setBoardTile(m.getXInit(), m.getYInit(), m.getSelectedPiece()); // Set the moved piece back
     int castleRow = (m.getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0; 
 
