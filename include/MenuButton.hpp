@@ -10,10 +10,10 @@ constexpr uint32_t BUTTON_POS = 640 / 6;
 
 class MenuButton {
     int index;
-    Texture texture;
-    Sprite sprite;
-    RectangleShape rectangle;
-    Text text;
+    Texture texture{};
+    Sprite sprite{};
+    RectangleShape rectangle{};
+    Text text{};
     std::string string;
     bool isRotatable;
 
@@ -22,7 +22,7 @@ class MenuButton {
     void handleText(uint8_t);
 
     public: 
-    MenuButton(uint8_t, bool, const std::string&, const std::string&);
+    MenuButton(uint8_t, bool,Font&, const std::string&, const std::string&);
     RectangleShape getRectangle() { return rectangle; }; 
     Sprite getSprite() { return sprite; };
     Text getText() { return text; };

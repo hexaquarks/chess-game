@@ -3,18 +3,13 @@
 
 Font font;
 
-MenuButton::MenuButton(uint8_t index, bool isRotatable, const std::string& name,const std::string& path) : index(index) , isRotatable(isRotatable) {
-        if(!font.loadFromFile("../assets/fonts/Arial.ttf")) return;
+MenuButton::MenuButton(uint8_t index, bool isRotatable, Font& font, const std::string& name,const std::string& path) : index(index) , isRotatable(isRotatable) {
+        texture.loadFromFile(GameThread::getIconPath(path));
 
-        Texture text;
-        text.loadFromFile(GameThread::getIconPath(path));
-        Sprite s(texture);
-        Text t(name,font,14);
-        RectangleShape r;
-
-        texture = text;
-        rectangle = r;
-        sprite = s;
+        sprite.setTexture(texture);
+        text.setString(name);
+        text.setFont(font);
+        text.setCharacterSize(14);
 
         handleRectangle(index);
         handleSprite(index);
