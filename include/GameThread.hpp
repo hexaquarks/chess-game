@@ -14,6 +14,7 @@ constexpr uint32_t WINDOW_SIZE = 640;
 constexpr uint32_t CELL_SIZE = WINDOW_SIZE / 8;
 constexpr uint32_t MENUBAR_HEIGHT = 30;
 constexpr uint32_t NUMBER_BUTTONS = 6;
+constexpr uint32_t BUTTON_POS = WINDOW_SIZE / NUMBER_BUTTONS;
 constexpr float SPRITE_SCALE = 0.6;
 constexpr float SPRITE_SIZE = 128;
 constexpr float BUTTON_SIZE = 40;

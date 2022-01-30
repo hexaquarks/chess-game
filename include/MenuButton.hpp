@@ -1,12 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "GameThread.hpp"
 #include <string> 
 using namespace sf;
-
-class GameThread; // forward declaration to avoid cyclic dependency 
-
-constexpr uint32_t BUTTON_POS = 640 / 6;
 
 class MenuButton {
     int m_index;
