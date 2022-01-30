@@ -4,8 +4,6 @@
 #include "MenuButton.hpp"
 #include <vector>
 
-class MenuButton; // forward declaration to avoid cyclic dependency 
-
 using namespace sf;
 
 // Constants
