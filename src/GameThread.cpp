@@ -1,5 +1,6 @@
 #include "../include/GameThread.hpp"
 #include "../include/MoveList.hpp"
+#include "../include/MenuButton.hpp"
 #include <iostream>
 #include <vector>
 #include <list>
@@ -16,6 +17,10 @@ void GameThread::startGame() {
     icon.loadFromFile(getIconPath("nw.png"));
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     window.setPosition({300, 300});
+
+    // Window parameters
+    vector<MenuButton> menuBar; 
+    initializeMenuBar(menuBar);
 
     // Parameters to handle a piece being dragged
     bool pieceIsMoving = false;
@@ -55,20 +60,23 @@ void GameThread::startGame() {
             // Clicking on a piece
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
 
-                // Allow user to make moves only if they're at the current position, not looking at the previous played moves
-                if (moveList.hasMovesAfter()) continue;
-
-                if (pieceIsClicked) {
-                    pieceIsMoving = true;
-                    pieceIsClicked = false;
-                    game.setBoardTile(lastXPos, lastYPos, nullptr, false); 
-                    continue;
-                }
-
                 // Get the tile of the click
                 mousePos = {event.mouseButton.x, event.mouseButton.y};
                 int yPos = getTileYPos(mousePos);
                 if (yPos >= 0) {
+                    if (event.mouseButton.y <= MENUBAR_HEIGHT) {
+                        lastXPos = event.mouseButton.x; 
+                        lastYPos = event.mouseButton.y; 
+                    }
+                    // Allow user to make moves only if they're at the current position, not looking at the previous played moves
+                    if (moveList.hasMovesAfter()) continue;
+
+                    if (pieceIsClicked) {
+                        pieceIsMoving = true;
+                        pieceIsClicked = false;
+                        game.setBoardTile(lastXPos, lastYPos, nullptr, false); 
+                        continue;
+                    }
                     Piece* piece = game.getBoardTile(getTileXPos(mousePos), yPos);
 
                     // If piece is not null and has the right color
@@ -86,7 +94,7 @@ void GameThread::startGame() {
                         // Set the tile on the board where the piece is selected to null
                         game.setBoardTile(lastXPos, lastYPos, nullptr, false); 
                     }
-                }
+                } 
             }
 
             // Dragging a piece around
@@ -98,7 +106,12 @@ void GameThread::startGame() {
 
             // Mouse button released
             if (event.type == Event::MouseButtonReleased) {
-                if (event.mouseButton.button == Mouse::Left && selectedPiece != nullptr) {
+                if (event.mouseButton.button == Mouse::Left ) {
+                    // if (mousePos.first == lastX && mousePos.second) {
+                        
+                    // }
+                    if (selectedPiece == nullptr) return; 
+
                     // If clicked and mouse remained on the same square
                     if (getTileXPos(mousePos) == selectedPiece->getY() && getTileYPos(mousePos) == selectedPiece->getX()) {
                         if (!pieceIsClicked) {
@@ -156,7 +169,7 @@ void GameThread::startGame() {
             }
         }
 
-        drawMenuBar(window, game);
+        drawMenuBar(window, menuBar);
         initializeBoard(window, game);
         moveList.highlightLastMove(window);
         drawPieces(window, game);
@@ -175,46 +188,22 @@ void GameThread::startGame() {
         window.display();
     }
 }
-
-void GameThread::drawMenuBar(RenderWindow& window, Board& game) {
-    
-    constexpr uint32_t BUTTON_POS = WINDOW_SIZE / NUMBER_BUTTONS;
+void GameThread::initializeMenuBar(vector<MenuButton>& menuBar) {
     constexpr uint16_t menuOptions = 3;
     const string iconFiles[menuOptions] = {"dropDown.png", "reset.png", "flip.png"};
     const string menuNames[menuOptions] = {"Menu", "Reset", "Flip"};
-    
-    Font font;
-    if(!font.loadFromFile("../assets/fonts/Arial.ttf")) return;
 
-    for (uint8_t i = 0; i < menuOptions; ++i) {
-        Texture menuIcon;
-        menuIcon.loadFromFile(getIconPath(iconFiles[i]));
-
-        // Rectangles
-        RectangleShape menuBarElem;
-        menuBarElem.setPosition(BUTTON_POS*i, 0);
-        menuBarElem.setSize({BUTTON_POS, MENUBAR_HEIGHT});
-        menuBarElem.setFillColor({218, 224, 241});
-        menuBarElem.setOutlineThickness(2.f);
-        menuBarElem.setOutlineColor({239, 242, 249});
-
-        // Icons
-        Sprite s(menuIcon);
-        s.setOrigin(BUTTON_SIZE/2 + (BUTTON_POS / 2), BUTTON_SIZE/2);
-        s.setPosition(BUTTON_POS*i + BUTTON_POS/2, MENUBAR_HEIGHT/2);
-        s.setScale(SPRITE_SCALE, SPRITE_SCALE);
-
-        // Texts
-        Text menuText(menuNames[i], font, 14);
-        menuText.setStyle(Text::Bold);
-        menuText.setFillColor(Color::Black);
-        menuText.setOrigin(BUTTON_SIZE/2 - (BUTTON_POS / 3), BUTTON_SIZE/(1.75));
-        menuText.setPosition(BUTTON_POS*i + BUTTON_POS/3 , MENUBAR_HEIGHT);
-
-        window.draw(menuBarElem);
-        window.draw(s);
-        window.draw(menuText);
+    for(uint8_t i = 0; i <menuOptions; ++i){
+        menuBar.push_back(MenuButton(i, false, menuNames[i], iconFiles[i]));
     }
+}
+void GameThread::drawMenuBar(RenderWindow& window, vector<MenuButton>& menuBar) {
+ 
+    for(vector<MenuButton>::iterator it = begin(menuBar); it != end(menuBar); ++it) {
+        window.draw((*it).getRectangle());
+        window.draw((*it).getSprite());
+        window.draw((*it).getText());
+    }   
 }
 
 void GameThread::removeIllegalMoves(Board& game, moveTypes& possibleMoves, Piece* selectedPiece, coor2d& mousePos) {
