@@ -190,21 +190,21 @@ void GameThread::startGame() {
 }
 void GameThread::initializeMenuBar(vector<MenuButton>& menuBar) {
     constexpr uint16_t menuOptions = 3;
-    const string iconFiles[menuOptions] = {"dropDown.png", "reset.png", "flip.png"};
     const string menuNames[menuOptions] = {"Menu", "Reset", "Flip"};
-    Font font; 
-    if (!font.loadFromFile("../assets/fonts/Arial.ttf")) return;
 
-    for(uint8_t i = 0; i <menuOptions; ++i){
-        menuBar.push_back(MenuButton(i, false, font, menuNames[i], iconFiles[i]));
-    }
+    for(uint8_t i = 0; i <menuOptions; ++i)  menuBar.push_back(MenuButton(i, false, menuNames[i]));
 }
 void GameThread::drawMenuBar(RenderWindow& window, vector<MenuButton>& menuBar) {
- 
+    constexpr uint16_t menuOptions = 3;
+    const string iconFiles[menuOptions] = {"dropDown.png", "reset.png", "flip.png"};
+    Texture textures[menuOptions]{};
+
+    uint8_t i = 0;
     for(vector<MenuButton>::iterator it = begin(menuBar); it != end(menuBar); ++it) {
-        window.draw((*it).getRectangle());
-        window.draw((*it).getSprite());
-        // window.draw((*it).getText());
+        textures[i].loadFromFile(getIconPath(iconFiles[i]));
+        (*it).setSpriteTexture(textures[i]);
+        (*it).drawMenuButton(window);
+        ++i;
     }   
 }
 

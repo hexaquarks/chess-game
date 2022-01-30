@@ -1,20 +1,21 @@
 #include "../include/MenuButton.hpp"
 #include "../include/GameThread.hpp"
+#include <vector>
+#include <string> 
 
-Font font;
+Font font; 
 
-MenuButton::MenuButton(uint8_t index, bool isRotatable, Font& font, const std::string& name,const std::string& path) : index(index) , isRotatable(isRotatable) {
-        texture.loadFromFile(GameThread::getIconPath(path));
+MenuButton::MenuButton(uint8_t index, bool isRotatable,const std::string& name) : index(index) , isRotatable(isRotatable) {
+    if (!font.loadFromFile("../assets/fonts/Arial.ttf")) return;
 
-        sprite.setTexture(texture);
-        text.setString(name);
-        text.setFont(font);
-        text.setCharacterSize(14);
+    text.setString(name);
+    text.setFont(font);
+    text.setCharacterSize(14);
 
-        handleRectangle(index);
-        handleSprite(index);
-        handleText(index);
-    }
+    handleRectangle(index);
+    handleSprite(index);
+    handleText(index);
+}
 
 void MenuButton::handleRectangle(uint8_t i) {
     rectangle.setPosition(BUTTON_POS*i, 0);
@@ -33,5 +34,11 @@ void MenuButton::handleText(uint8_t i) {
     text.setFillColor(Color::Black);
     text.setOrigin(BUTTON_SIZE/2 - (BUTTON_POS / 3), BUTTON_SIZE/(1.75));
     text.setPosition(BUTTON_POS*i + BUTTON_POS/3 , MENUBAR_HEIGHT);
+}
+
+void MenuButton::drawMenuButton(RenderWindow& window) {
+    window.draw(rectangle);
+    window.draw(sprite);
+    window.draw(text);
 }
 
