@@ -59,15 +59,10 @@ void GameThread::startGame() {
 
             // Clicking on a piece
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
-
                 // Get the tile of the click
                 mousePos = {event.mouseButton.x, event.mouseButton.y};
                 int yPos = getTileYPos(mousePos);
                 if (yPos >= 0) {
-                    if (event.mouseButton.y <= MENUBAR_HEIGHT) {
-                        lastXPos = event.mouseButton.x; 
-                        lastYPos = event.mouseButton.y; 
-                    }
                     // Allow user to make moves only if they're at the current position, not looking at the previous played moves
                     if (moveList.hasMovesAfter()) continue;
 
@@ -106,12 +101,8 @@ void GameThread::startGame() {
 
             // Mouse button released
             if (event.type == Event::MouseButtonReleased) {
-                if (event.mouseButton.button == Mouse::Left ) {
-                    // if (mousePos.first == lastX && mousePos.second) {
-                        
-                    // }
-                    if (selectedPiece == nullptr) return; 
-
+                if (event.mouseButton.button == Mouse::Left) {
+                    if (selectedPiece == nullptr) continue; 
                     // If clicked and mouse remained on the same square
                     if (getTileXPos(mousePos) == selectedPiece->getY() && getTileYPos(mousePos) == selectedPiece->getX()) {
                         if (!pieceIsClicked) {
@@ -291,6 +282,7 @@ void GameThread::drawPieces(RenderWindow& window, Board& game) {
 }
 
 void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, coor2d& mousePos) {
+    if(selectedPiece == nullptr) return; // safety check
     Texture t;
     t.loadFromFile(selectedPiece->getFileName());
     Sprite s(t);
