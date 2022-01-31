@@ -102,6 +102,13 @@ void GameThread::startGame() {
             // Mouse button released
             if (event.type == Event::MouseButtonReleased) {
                 if (event.mouseButton.button == Mouse::Left) {
+                    if(mousePos.second <MENUBAR_HEIGHT) {
+                        for(vector<MenuButton>::iterator it = begin(menuBar); it != end(menuBar); ++it){
+                            if((*it).isClicked(mousePos)) {
+                                (*it).performClick(game);
+                            }
+                        }
+                    }
                     if (selectedPiece == nullptr) continue; 
                     // If clicked and mouse remained on the same square
                     if (getTileXPos(mousePos) == selectedPiece->getY() && getTileYPos(mousePos) == selectedPiece->getX()) {

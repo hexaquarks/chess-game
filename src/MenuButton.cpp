@@ -36,9 +36,32 @@ void MenuButton::handleText(uint8_t i) {
     m_text.setPosition(BUTTON_POS*i + BUTTON_POS/3 , MENUBAR_HEIGHT);
 }
 
-void MenuButton::drawMenuButton(RenderWindow& window) {
+void MenuButton::drawMenuButton(RenderWindow& window) const {
     window.draw(m_rectangle);
     window.draw(m_sprite);
     window.draw(m_text);
+}
+
+bool MenuButton::isClicked(coor2d& mousePos) const {
+    float xi = m_rectangle.getGlobalBounds().left;
+    float xf = xi + m_rectangle.getGlobalBounds().width;
+
+    return mousePos.first >= xi && mousePos.first < xf ? true : false;
+}
+
+void MenuButton::performClick(Board& game) const{
+    switch(m_index) {
+        case 0 :
+            // clicked menu button
+            break;
+        case 1 : 
+            // clicked reset button
+            break; 
+        case 2 : 
+            // clicked flip button
+            game.flipBoard();
+            break;
+    }
+    
 }
 
