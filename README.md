@@ -1,3 +1,3 @@
 # Chess Game Project
 
-Chess game app, made by [TheOneMusic](https://github.com/TheOneMusic) and [hexaquarks](https://github.com/hexaquarks).
+Chess game app, made by [NicolasAlmerge](https://github.com/NicolasAlmerge) and [hexaquarks](https://github.com/hexaquarks).
