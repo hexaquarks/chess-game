@@ -107,13 +107,10 @@ void GameThread::startGame() {
             // Mouse button released
             if (event.type == Event::MouseButtonReleased) {
                 if (event.mouseButton.button == Mouse::Left) {
-                    if (mousePos.second < MENUBAR_HEIGHT) {
-                        for (vector<MenuButton>::iterator it = menuBar.begin(); it != menuBar.end(); ++it) {
-                            if ((*it).isClicked(mousePos)) {
-                                (*it).performClick(game, moveList);
-                            }
-                        }
-                    }
+                    if (mousePos.second < MENUBAR_HEIGHT)
+                        for (MenuButton& m: menuBar)
+                            if (m.isClicked(mousePos))
+                                m.performClick(game, moveList);
 
                     if (selectedPiece == nullptr) continue;
 
@@ -123,6 +120,7 @@ void GameThread::startGame() {
                             game.setBoardTile(lastXPos, lastYPos, selectedPiece, false); 
                             pieceIsMoving = false;
                         }
+
                         pieceIsClicked = !pieceIsClicked;
                         continue;
                     }

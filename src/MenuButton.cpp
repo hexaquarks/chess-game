@@ -46,22 +46,21 @@ void MenuButton::drawMenuButton(RenderWindow& window) const {
 bool MenuButton::isClicked(coor2d& mousePos) const {
     float xi = m_rectangle.getGlobalBounds().left;
     float xf = xi + m_rectangle.getGlobalBounds().width;
-
     return mousePos.first >= xi && mousePos.first < xf;
 }
 
 void MenuButton::performClick(Board& game, MoveList& moveList) const {
     switch (m_index) {
         case 0:
-            // clicked menu button
+            // Clicked menu button
             break;
         case 1: 
-            // clicked reset button
+            // Clicked reset button
             game.reset();
             moveList.reset();
             break; 
         case 2: 
-            // clicked flip button
+            // Clicked flip button
             game.flipBoard();
             break;
     }
