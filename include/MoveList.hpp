@@ -18,6 +18,7 @@ class MoveList {
     public:
     MoveList(Board&);
     void highlightLastMove(RenderWindow&) const;
+    void reset() { m_moves.clear(); m_moveIterator = m_moves.begin(); };
     void goToPreviousMove();
     void goToNextMove();
     void addMove(MoveType, int, int, int, int, Piece*, Piece*);

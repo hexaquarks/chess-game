@@ -64,7 +64,10 @@ void GameThread::startGame() {
                 int yPos = getTileYPos(mousePos);
                 if (yPos >= 0) {
                     // Allow user to make moves only if they're at the current position, not looking at the previous played moves
-                    if (moveList.hasMovesAfter()) continue;
+                    if (moveList.hasMovesAfter()) {
+                        cout << "yep " << endl;
+                        continue;
+                    }
 
                     if (pieceIsClicked) {
                         pieceIsMoving = true;
@@ -105,7 +108,7 @@ void GameThread::startGame() {
                     if(mousePos.second <MENUBAR_HEIGHT) {
                         for(vector<MenuButton>::iterator it = begin(menuBar); it != end(menuBar); ++it){
                             if((*it).isClicked(mousePos)) {
-                                (*it).performClick(game);
+                                (*it).performClick(game, moveList);
                             }
                         }
                     }

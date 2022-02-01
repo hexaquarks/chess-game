@@ -1,5 +1,6 @@
 #include "../include/MenuButton.hpp"
 #include "../include/GameThread.hpp"
+#include "../include/MoveList.hpp"
 #include <vector>
 #include <string> 
 
@@ -49,13 +50,15 @@ bool MenuButton::isClicked(coor2d& mousePos) const {
     return mousePos.first >= xi && mousePos.first < xf ? true : false;
 }
 
-void MenuButton::performClick(Board& game) const{
+void MenuButton::performClick(Board& game, MoveList& moveList) const{
     switch(m_index) {
         case 0 :
             // clicked menu button
             break;
         case 1 : 
             // clicked reset button
+            game.reset();
+            moveList.reset();
             break; 
         case 2 : 
             // clicked flip button

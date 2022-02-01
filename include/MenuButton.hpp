@@ -5,6 +5,7 @@ using namespace sf;
 
 typedef std::pair<int, int> coor2d;
 class Board; // foward declaration
+class MoveList; // foward declaration
 
 class MenuButton {
     int m_index;
@@ -26,6 +27,6 @@ class MenuButton {
     Text getText() { return m_text; };
     void setSpriteTexture(Texture& texture) { m_sprite.setTexture(texture); };
     void drawMenuButton(RenderWindow&) const; 
-    void performClick(Board&) const;
+    void performClick(Board&, MoveList&) const;
     bool isClicked(coor2d&) const; 
 };

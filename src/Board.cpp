@@ -54,6 +54,8 @@ void Board::reset() {
     for (uint8_t row = 6; row < 8; ++row)
         for (uint8_t col = 0; col < 8; ++col)
             m_whitePieces.push_back(m_board[row][col]);
+
+    m_turn = Team::WHITE; // reset the first move to be for white
 }
 
 void Board::setBoardTile(int x, int y, Piece* piece, bool record) {
