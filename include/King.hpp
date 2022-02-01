@@ -3,7 +3,7 @@
 
 
 // Represents a king
-class King : public Piece {
+class King: public Piece {
     moveTypes possibleMovesNoCheck(Piece*[8][8]) const;
     bool isChecked(Piece*[8][8], int, int) const;
     bool canCastleKingSide(Piece*[8][8]) const;

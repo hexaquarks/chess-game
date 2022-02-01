@@ -2,8 +2,9 @@
 #include "Piece.hpp"
 #include <vector>
 
+
 // Represents a pawn
-struct Pawn : public Piece {
+struct Pawn: public Piece {
     Pawn(Team, int, int); // Constructor
 
     moveTypes calcPossibleMoves(Piece*[8][8]) const override;

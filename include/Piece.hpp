@@ -5,11 +5,9 @@
 #include <iostream>
 using namespace std;
 
-
 enum class Team { WHITE, BLACK };
 enum class PieceType { PAWN, ROOK, KNIGHT, BISHOP, KING, QUEEN, EMPTY };
 enum class MoveType { NORMAL, CASTLE_KINGSIDE, CASTLE_QUEENSIDE, ENPASSANT, NEWPIECE, CAPTURE, INIT_SPECIAL };
-
 
 typedef tuple<pair<int, int>, MoveType> moveType;
 typedef vector<moveType> moveTypes;
@@ -22,10 +20,10 @@ class Piece {
     inline static Piece* m_lastPiece = nullptr; // Last moved piece
 
     /* Class members */
-    string m_filename; // the filename for this piece
-    Team m_team; // the team this piece plays for
-    PieceType m_type; // Returns the type of this piece
-    MoveType m_lastMove; // Returns the move type of this piece
+    string m_filename; // Filename for this piece
+    Team m_team; // Team this piece plays for
+    PieceType m_type; // Type of this piece
+    MoveType m_lastMove; // Move type of this piece
     int m_xPos; int m_yPos; // X and Y positions
     bool m_moved = false; // Whether piece has moved or not
 

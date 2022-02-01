@@ -9,9 +9,10 @@
 #include "Queen.hpp"
 #include "Move.hpp"
 
+
 class Board {
     Piece* m_board[8][8];
-    Team m_turn; // which player's turn
+    Team m_turn; // White or black player's turn
     bool m_isFlipped = false;
     vector<Piece*> m_whitePieces;
     vector<Piece*> m_blackPieces;

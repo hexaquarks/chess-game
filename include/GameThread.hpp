@@ -3,8 +3,8 @@
 #include "Board.hpp"
 #include "MenuButton.hpp"
 #include <vector>
-
 using namespace sf;
+
 
 // Constants
 const string WINDOW_TITLE = "Chess Game";
@@ -16,6 +16,13 @@ constexpr uint32_t BUTTON_POS = WINDOW_SIZE / NUMBER_BUTTONS;
 constexpr float SPRITE_SCALE = 0.6;
 constexpr float SPRITE_SIZE = 128;
 constexpr float BUTTON_SIZE = 40;
+
+
+// Utility function
+inline RectangleShape createSquare() {
+    return RectangleShape({CELL_SIZE, CELL_SIZE});
+}
+
 
 class GameThread {
     inline const static string iconsPath = "../assets/icons/";
