@@ -2,8 +2,8 @@
 #include "../include/GameThread.hpp"
 #include <iostream>
 
-Piece::Piece(Team team, int x, int y, PieceType type, string pieceType)
-    : m_team(team), m_xPos(x), m_yPos(y), m_type(type) {
+Piece::Piece(Team team, int x, int y, PieceType type, string pieceType):
+    m_team(team), m_xPos(x), m_yPos(y), m_type(type) {
     m_filename = GameThread::getIconPath(pieceType + getColorCode() + fileExt);
 }
 

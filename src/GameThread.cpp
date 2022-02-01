@@ -61,58 +61,62 @@ void GameThread::startGame() {
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
                 // Get the tile of the click
                 mousePos = {event.mouseButton.x, event.mouseButton.y};
+
                 int yPos = getTileYPos(mousePos);
-                if (yPos >= 0) {
-                    // Allow user to make moves only if they're at the current position, not looking at the previous played moves
-                    if (moveList.hasMovesAfter()) {
-                        cout << "yep " << endl;
-                        continue;
-                    }
+                if (yPos < 0) continue;
 
-                    if (pieceIsClicked) {
-                        pieceIsMoving = true;
-                        pieceIsClicked = false;
-                        game.setBoardTile(lastXPos, lastYPos, nullptr, false); 
-                        continue;
-                    }
-                    Piece* piece = game.getBoardTile(getTileXPos(mousePos), yPos);
+                // Allow user to make moves only if they're at the current position, not looking at the previous played moves
+                if (moveList.hasMovesAfter()) {
+                    cout << "yep " << endl;
+                    continue;
+                }
 
-                    // If piece is not null and has the right color
-                    if (piece != nullptr && piece->getTeam() == game.getTurn()) {
-                        selectedPiece = piece;
-                        possibleMoves = game.possibleMovesFor(selectedPiece);
+                if (pieceIsClicked) {
+                    pieceIsMoving = true;
+                    pieceIsClicked = false;
+                    game.setBoardTile(lastXPos, lastYPos, nullptr, false); 
+                    continue;
+                }
 
-                        // Trim the illegal moves if in check
-                        // check for absolute pin
-                        removeIllegalMoves(game, possibleMoves, selectedPiece, mousePos);
+                Piece* piece = game.getBoardTile(getTileXPos(mousePos), yPos);
 
-                        pieceIsMoving = true;
-                        lastXPos = getTileXPos(mousePos); lastYPos = yPos;
-                        
-                        // Set the tile on the board where the piece is selected to null
-                        game.setBoardTile(lastXPos, lastYPos, nullptr, false); 
-                    }
-                } 
+                // If piece is not null and has the right color
+                if (piece != nullptr && piece->getTeam() == game.getTurn()) {
+                    selectedPiece = piece;
+                    possibleMoves = game.possibleMovesFor(selectedPiece);
+
+                    // Trim the illegal moves if in check
+                    // Check for absolute pin
+                    removeIllegalMoves(game, possibleMoves, selectedPiece, mousePos);
+
+                    pieceIsMoving = true;
+                    lastXPos = getTileXPos(mousePos); lastYPos = yPos;
+
+                    // Set the tile on the board where the piece is selected to null
+                    game.setBoardTile(lastXPos, lastYPos, nullptr, false); 
+                }
             }
 
             // Dragging a piece around
             if (event.type == Event::MouseMoved && (pieceIsMoving || pieceIsClicked)) {
                 // Update the position of the piece that is being moved
-                Vector2i MousePosition = Mouse::getPosition(window);
-                mousePos = {MousePosition.x, MousePosition.y};
+                Vector2i mousePosition = Mouse::getPosition(window);
+                mousePos = {mousePosition.x, mousePosition.y};
             }
 
             // Mouse button released
             if (event.type == Event::MouseButtonReleased) {
                 if (event.mouseButton.button == Mouse::Left) {
-                    if(mousePos.second <MENUBAR_HEIGHT) {
-                        for(vector<MenuButton>::iterator it = begin(menuBar); it != end(menuBar); ++it){
-                            if((*it).isClicked(mousePos)) {
+                    if (mousePos.second < MENUBAR_HEIGHT) {
+                        for (vector<MenuButton>::iterator it = menuBar.begin(); it != menuBar.end(); ++it) {
+                            if ((*it).isClicked(mousePos)) {
                                 (*it).performClick(game, moveList);
                             }
                         }
                     }
-                    if (selectedPiece == nullptr) continue; 
+
+                    if (selectedPiece == nullptr) continue;
+
                     // If clicked and mouse remained on the same square
                     if (getTileXPos(mousePos) == selectedPiece->getY() && getTileYPos(mousePos) == selectedPiece->getX()) {
                         if (!pieceIsClicked) {
@@ -122,9 +126,9 @@ void GameThread::startGame() {
                         pieceIsClicked = !pieceIsClicked;
                         continue;
                     }
-                    moveType* selectedMove = nullptr;
 
                     // Try to match moves
+                    moveType* selectedMove = nullptr;
                     for (moveType& move: possibleMoves) {
                         if (get<0>(move).first == getTileYPos(mousePos) && get<0>(move).second == getTileXPos(mousePos)) {
                             selectedMove = &move;
@@ -180,6 +184,7 @@ void GameThread::startGame() {
             drawCaptureCircles(window, possibleMoves, game);
             highlightHoveredSquare(window, game, possibleMoves, mousePosTemp);
         }
+
         if (pieceIsMoving) {
             drawCaptureCircles(window, possibleMoves, game);
             highlightHoveredSquare(window, game, possibleMoves, mousePos);
@@ -189,23 +194,23 @@ void GameThread::startGame() {
         window.display();
     }
 }
+
 void GameThread::initializeMenuBar(vector<MenuButton>& menuBar) {
     constexpr uint16_t menuOptions = 3;
     const string menuNames[menuOptions] = {"Menu", "Reset", "Flip"};
 
-    for(uint8_t i = 0; i <menuOptions; ++i)  menuBar.push_back(MenuButton(i, false, menuNames[i]));
+    for (uint8_t i = 0; i < menuOptions; ++i) menuBar.push_back(MenuButton(i, menuNames[i]));
 }
+
 void GameThread::drawMenuBar(RenderWindow& window, vector<MenuButton>& menuBar) {
     constexpr uint16_t menuOptions = 3;
     const string iconFiles[menuOptions] = {"dropDown.png", "reset.png", "flip.png"};
-    Texture textures[menuOptions]{};
+    Texture textures[menuOptions];
 
-    uint8_t i = 0;
-    for(vector<MenuButton>::iterator it = begin(menuBar); it != end(menuBar); ++it) {
+    for (uint8_t i = 0; i < menuOptions; ++i) {
         textures[i].loadFromFile(getIconPath(iconFiles[i]));
-        (*it).setSpriteTexture(textures[i]);
-        (*it).drawMenuButton(window);
-        ++i;
+        menuBar[i].setSpriteTexture(textures[i]);
+        menuBar[i].drawMenuButton(window);
     }   
 }
 
@@ -235,7 +240,7 @@ void GameThread::initializeBoard(RenderWindow& window, Board& game) {
     for (uint8_t i = 0; i < 8; ++i) {
         for (uint8_t j = 0; j < 8; ++j) {
             // Drawing the colored square
-            RectangleShape square(Vector2f(CELL_SIZE, CELL_SIZE));
+            RectangleShape square = createSquare();
             square.setFillColor(colours[(i+j)%2 ^ game.isFlipped()]);
             square.setPosition(getWindowXPos(i), getWindowYPos(j));
             window.draw(square);
@@ -252,7 +257,7 @@ void GameThread::highlightHoveredSquare(RenderWindow& window, Board& game, moveT
 
         if (i == xPos && j == yPos) {
             // Currently hovering a square where the piece can move 
-            RectangleShape square({CELL_SIZE, CELL_SIZE});
+            RectangleShape square = createSquare();
             square.setFillColor(colours[(i+j)%2 ^ game.isFlipped()]);
             square.setPosition(getWindowXPos(i), getWindowYPos(j));
             window.draw(square);
@@ -279,20 +284,19 @@ void GameThread::drawCaptureCircles(RenderWindow& window, moveTypes& possibleMov
 void GameThread::drawPieces(RenderWindow& window, Board& game) {
     for (uint8_t i = 0; i < 8; ++i) {
         for (uint8_t j = 0; j < 8; ++j) {
-            if (game.getBoardTile(i, j) != nullptr) {
-                Texture t;
-                t.loadFromFile(game.getBoardTile(i, j)->getFileName());
-                Sprite s(t);
-                s.setScale(SPRITE_SCALE, SPRITE_SCALE);
-                s.setPosition(getWindowXPos(i), getWindowYPos(j));
-                window.draw(s);
-            }
+            if (game.getBoardTile(i, j) == nullptr) continue;
+            Texture t;
+            t.loadFromFile(game.getBoardTile(i, j)->getFileName());
+            Sprite s(t);
+            s.setScale(SPRITE_SCALE, SPRITE_SCALE);
+            s.setPosition(getWindowXPos(i), getWindowYPos(j));
+            window.draw(s);
         }
     }
 }
 
 void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, coor2d& mousePos) {
-    if(selectedPiece == nullptr) return; // safety check
+    if (selectedPiece == nullptr) return; // Safety check
     Texture t;
     t.loadFromFile(selectedPiece->getFileName());
     Sprite s(t);
