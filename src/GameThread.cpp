@@ -1,6 +1,7 @@
 #include "../include/GameThread.hpp"
 #include "../include/MoveList.hpp"
 #include "../include/MenuButton.hpp"
+#include "../include/RessourceManager.hpp"
 #include <iostream>
 #include <vector>
 #include <list>
@@ -11,6 +12,9 @@ using namespace sf;
 void GameThread::startGame() {
     Board game;
     RenderWindow window(VideoMode(WINDOW_SIZE, WINDOW_SIZE + MENUBAR_HEIGHT), WINDOW_TITLE, Style::Titlebar | Style::Close);
+
+    // Ressources 
+    RessourceManager ressources{}; 
 
     // Setting window icon
     Image icon;
