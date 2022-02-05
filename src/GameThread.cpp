@@ -14,7 +14,8 @@ void GameThread::startGame() {
     RenderWindow window(VideoMode(WINDOW_SIZE, WINDOW_SIZE + MENUBAR_HEIGHT), WINDOW_TITLE, Style::Titlebar | Style::Close);
 
     // Ressources 
-    RessourceManager ressources{}; 
+    RessourceManager ressources; 
+    ressources.loadRessources();
 
     // Setting window icon
     Image icon;
@@ -183,12 +184,12 @@ void GameThread::startGame() {
 
         if (pieceIsClicked) {
             coor2d mousePosTemp = {Mouse::getPosition(window).x, Mouse::getPosition(window).y};
-            drawCaptureCircles(window, possibleMoves, game);
+            drawCaptureCircles(window, possibleMoves, game, ressources);
             highlightHoveredSquare(window, game, possibleMoves, mousePosTemp);
         }
 
         if (pieceIsMoving) {
-            drawCaptureCircles(window, possibleMoves, game);
+            drawCaptureCircles(window, possibleMoves, game, ressources);
             highlightHoveredSquare(window, game, possibleMoves, mousePos);
             drawDraggedPiece(selectedPiece,window, mousePos);
         }
@@ -267,15 +268,24 @@ void GameThread::highlightHoveredSquare(RenderWindow& window, Board& game, moveT
     }
 }
 
-void GameThread::drawCaptureCircles(RenderWindow& window, moveTypes& possibleMoves, Board& game) {
+void GameThread::drawCaptureCircles(RenderWindow& window, moveTypes& possibleMoves, Board& game, RessourceManager& ressources) {
     for (moveType& move: possibleMoves) {
         int i = get<0>(move).second, j = get<0>(move).first;
 
         bool isEmpty = game.getBoardTile(i, j) == nullptr;
-        Texture circleTexture;
-        circleTexture.loadFromFile(getIconPath(isEmpty? "circle.png": "empty_circle.png"));
+        // Texture circleTexture;
+        // circleTexture.loadFromFile(getIconPath(
+        //     isEmpty? "circle.png": "empty_circle.png"));
 
-        Sprite circle(circleTexture);
+        shared_ptr<Texture> temp = ressources.getTexture(
+            isEmpty? "circle.png": "empty_circle.png");
+            
+        if(temp == nullptr) {
+            cout << "it's null" << endl;
+            return;
+        }
+
+        Sprite circle(*temp);
         if (isEmpty) circle.setScale(SPRITE_SCALE, SPRITE_SCALE);
         circle.setPosition(getWindowXPos(i), getWindowYPos(j));
 

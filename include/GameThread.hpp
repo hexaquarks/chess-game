@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "RessourceManager.hpp"
 #include "Board.hpp"
 #include "MenuButton.hpp"
 #include <vector>
@@ -30,7 +31,7 @@ class GameThread {
 
     static void initializeBoard(RenderWindow&, Board&);
     static void initializeMenuBar(vector<MenuButton>&);
-    static void drawCaptureCircles(RenderWindow&, moveTypes&, Board&);
+    static void drawCaptureCircles(RenderWindow&, moveTypes&, Board&, RessourceManager&);
     static void highlightHoveredSquare(RenderWindow&, Board&, moveTypes&, coor2d&);
     static void drawMenuBar(RenderWindow&, vector<MenuButton>&);
     static void drawPieces(RenderWindow&, Board&);
