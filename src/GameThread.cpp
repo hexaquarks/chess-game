@@ -273,18 +273,10 @@ void GameThread::drawCaptureCircles(RenderWindow& window, moveTypes& possibleMov
         int i = get<0>(move).second, j = get<0>(move).first;
 
         bool isEmpty = game.getBoardTile(i, j) == nullptr;
-        // Texture circleTexture;
-        // circleTexture.loadFromFile(getIconPath(
-        //     isEmpty? "circle.png": "empty_circle.png"));
-
         shared_ptr<Texture> temp = ressources.getTexture(
             isEmpty? "circle.png": "empty_circle.png");
-            
-        if(temp == nullptr) {
-            cout << "it's null" << endl;
-            return;
-        }
 
+        if(temp == nullptr) return;
         Sprite circle(*temp);
         if (isEmpty) circle.setScale(SPRITE_SCALE, SPRITE_SCALE);
         circle.setPosition(getWindowXPos(i), getWindowYPos(j));
