@@ -8,12 +8,16 @@ void MoveList::highlightLastMove(RenderWindow& window) const {
     RectangleShape squareBefore = createSquare();
     RectangleShape squareAfter = createSquare();
 
-    Color color = ((move.getXInit()+move.getYInit()) % 2)? Color(170, 162, 58): Color(205, 210, 106);
-    squareBefore.setFillColor(color);
-    squareAfter.setFillColor(color);
 
-    squareBefore.setPosition(GameThread::getWindowXPos(move.getXInit()), GameThread::getWindowYPos(move.getYInit()));
-    squareAfter.setPosition(GameThread::getWindowXPos(move.getXTarget()), GameThread::getWindowYPos(move.getYTarget()));
+    Color colorInit = ((move.getXInit()+move.getYInit()) % 2)? Color(170, 162, 58): Color(205, 210, 106);
+    Color colorTarget = ((move.getXTarget()+move.getYTarget()) % 2)? Color(170, 162, 58): Color(205, 210, 106);
+    squareBefore.setFillColor(colorInit);
+    squareAfter.setFillColor(colorTarget);
+
+    squareBefore.setPosition(GameThread::getWindowXPos(move.getXInit()),
+        GameThread::getWindowYPos(move.getYInit()));
+    squareAfter.setPosition(GameThread::getWindowXPos(move.getXTarget()), 
+        GameThread::getWindowYPos(move.getYTarget()));
 
     window.draw(squareBefore);
     window.draw(squareAfter);
