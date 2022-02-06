@@ -28,6 +28,6 @@ class MenuButton {
     Text getText() { return m_text; };
     void setSpriteTexture(Texture& texture) { m_sprite.setTexture(texture); };
     void drawMenuButton(RenderWindow&) const; 
-    void performClick(Board&, MoveList&) const;
+    int performClick(Board&, MoveList&) const;
     bool isClicked(coor2d&) const; 
 };

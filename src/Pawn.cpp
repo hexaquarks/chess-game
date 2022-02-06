@@ -5,7 +5,7 @@ Pawn::Pawn(Team team, int xPos, int yPos): Piece(team, xPos, yPos, PieceType::PA
 
 moveTypes Pawn::calcPossibleMoves(Piece* board[8][8]) const {
     moveTypes moves;
-    int dir = (getTeam() == Team::WHITE)? -1: 1;
+    int dir = getPawnDirection(getTeam() == Team::WHITE, getIsFlipped()) ? -1 : 1;
     int xPos = getX(), yPos = getY();
     generateCaptureMoves(moves, board, dir);
     generateForwardMoves(moves, board, dir);

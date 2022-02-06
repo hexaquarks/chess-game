@@ -49,7 +49,7 @@ bool MenuButton::isClicked(coor2d& mousePos) const {
     return mousePos.first >= xi && mousePos.first < xf;
 }
 
-void MenuButton::performClick(Board& game, MoveList& moveList) const {
+int MenuButton::performClick(Board& game, MoveList& moveList) const {
     switch (m_index) {
         case 0:
             // Clicked menu button
@@ -62,6 +62,8 @@ void MenuButton::performClick(Board& game, MoveList& moveList) const {
         case 2: 
             // Clicked flip button
             game.flipBoard();
+            return 1;
             break;
     }
+    return -1;
 }

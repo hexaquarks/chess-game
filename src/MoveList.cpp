@@ -8,7 +8,6 @@ void MoveList::highlightLastMove(RenderWindow& window) const {
     RectangleShape squareBefore = createSquare();
     RectangleShape squareAfter = createSquare();
 
-
     Color colorInit = ((move.getXInit()+move.getYInit()) % 2)? Color(170, 162, 58): Color(205, 210, 106);
     Color colorTarget = ((move.getXTarget()+move.getYTarget()) % 2)? Color(170, 162, 58): Color(205, 210, 106);
     squareBefore.setFillColor(colorInit);

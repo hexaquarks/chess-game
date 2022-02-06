@@ -89,7 +89,6 @@ void GameThread::startGame() {
                     // Trim the illegal moves if in check
                     // Check for absolute pin
                     removeIllegalMoves(game, possibleMoves, selectedPiece, mousePos);
-
                     pieceIsMoving = true;
                     pieceIsClicked = false;
                     lastXPos = getTileXPos(mousePos); lastYPos = yPos;
@@ -112,7 +111,12 @@ void GameThread::startGame() {
                     [[unlikely]] if (mousePos.second < MENUBAR_HEIGHT)
                         for (MenuButton& m: menuBar)
                             if (m.isClicked(mousePos))
-                                m.performClick(game, moveList);
+                                if(m.performClick(game, moveList) == 1 && selectedPiece != nullptr) {
+                                    // possibleMoves = game.possibleMovesFor(selectedPiece);
+                                    // removeIllegalMoves(game, possibleMoves, selectedPiece, mousePos);
+                                    selectedPiece = nullptr;
+                                    mousePos = {0,0};
+                                }
 
                     if (selectedPiece == nullptr) continue;
 
@@ -235,7 +239,7 @@ void GameThread::initializeBoard(RenderWindow& window, Board& game) {
         for (uint8_t j = 0; j < 8; ++j) {
             // Drawing the colored square
             RectangleShape square = createSquare();
-            square.setFillColor(colours[(i+j)%2 ^ game.isFlipped()]);
+            square.setFillColor(colours[(i+j)%2 ^ game.getIsFlipped()]);
             square.setPosition(getWindowXPos(i), getWindowYPos(j));
             window.draw(square);
         }
@@ -252,7 +256,7 @@ void GameThread::highlightHoveredSquare(RenderWindow& window, Board& game, moveT
         if (i == xPos && j == yPos) {
             // Currently hovering a square where the piece can move 
             RectangleShape square = createSquare();
-            square.setFillColor(colours[(i+j)%2 ^ game.isFlipped()]);
+            square.setFillColor(colours[(i+j)%2 ^ game.getIsFlipped()]);
             square.setPosition(getWindowXPos(i), getWindowYPos(j));
             window.draw(square);
         }
