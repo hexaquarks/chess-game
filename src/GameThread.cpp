@@ -67,21 +67,10 @@ void GameThread::startGame() {
                 // Get the tile of the click
                 mousePos = {event.mouseButton.x, event.mouseButton.y};
 
+                // Allow user to make moves only if they're at the current live position, 
+                // and if the click is on the chess board
                 int yPos = getTileYPos(mousePos);
-                if (yPos < 0) continue;
-
-                // Allow user to make moves only if they're at the current position, not looking at the previous played moves
-                if (moveList.hasMovesAfter()) {
-                    cout << "yep " << endl;
-                    continue;
-                }
-
-                if (pieceIsClicked) {
-                    pieceIsMoving = true;
-                    pieceIsClicked = false;
-                    game.setBoardTile(lastXPos, lastYPos, nullptr, false); 
-                    continue;
-                }
+                if (yPos < 0 || moveList.hasMovesAfter()) continue;
 
                 Piece* piece = game.getBoardTile(getTileXPos(mousePos), yPos);
 
@@ -95,6 +84,7 @@ void GameThread::startGame() {
                     removeIllegalMoves(game, possibleMoves, selectedPiece, mousePos);
 
                     pieceIsMoving = true;
+                    pieceIsClicked = false;
                     lastXPos = getTileXPos(mousePos); lastYPos = yPos;
 
                     // Set the tile on the board where the piece is selected to null
@@ -112,7 +102,7 @@ void GameThread::startGame() {
             // Mouse button released
             if (event.type == Event::MouseButtonReleased) {
                 if (event.mouseButton.button == Mouse::Left) {
-                    if (mousePos.second < MENUBAR_HEIGHT)
+                    [[unlikely]] if (mousePos.second < MENUBAR_HEIGHT)
                         for (MenuButton& m: menuBar)
                             if (m.isClicked(mousePos))
                                 m.performClick(game, moveList);
@@ -125,7 +115,6 @@ void GameThread::startGame() {
                             game.setBoardTile(lastXPos, lastYPos, selectedPiece, false); 
                             pieceIsMoving = false;
                         }
-
                         pieceIsClicked = !pieceIsClicked;
                         continue;
                     }
