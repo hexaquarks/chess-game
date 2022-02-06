@@ -4,7 +4,7 @@
 
 Piece::Piece(Team team, int x, int y, PieceType type, string pieceType):
     m_team(team), m_xPos(x), m_yPos(y), m_type(type) {
-    m_filename = GameThread::getIconPath(pieceType + getColorCode() + fileExt);
+    m_filename = String(pieceType + getColorCode() + fileExt);
 }
 
 moveTypes Piece::getHorizontalAndVerticalMovements(Piece* board[8][8]) const {

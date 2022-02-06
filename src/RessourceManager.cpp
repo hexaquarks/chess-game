@@ -23,6 +23,6 @@ shared_ptr<sf::Texture> RessourceManager::getTexture(const string &name) {
 
 void RessourceManager::loadRessources() {
     // create the textures
-    for(size_t i = 0; i < 2; ++i) addTexture(m_textureNames[i]);
+    for(size_t i = 0; i < m_numberOfTextures; ++i) addTexture(m_textureNames[i]);
     // create the sounds 
 }

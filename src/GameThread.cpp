@@ -177,10 +177,10 @@ void GameThread::startGame() {
             }
         }
 
-        drawMenuBar(window, menuBar);
+        drawMenuBar(window, menuBar, ressources);
         initializeBoard(window, game);
         moveList.highlightLastMove(window);
-        drawPieces(window, game);
+        drawPieces(window, game, ressources);
 
         if (pieceIsClicked) {
             coor2d mousePosTemp = {Mouse::getPosition(window).x, Mouse::getPosition(window).y};
@@ -191,7 +191,7 @@ void GameThread::startGame() {
         if (pieceIsMoving) {
             drawCaptureCircles(window, possibleMoves, game, ressources);
             highlightHoveredSquare(window, game, possibleMoves, mousePos);
-            drawDraggedPiece(selectedPiece,window, mousePos);
+            drawDraggedPiece(selectedPiece,window, mousePos, ressources);
         }
 
         window.display();
@@ -205,14 +205,14 @@ void GameThread::initializeMenuBar(vector<MenuButton>& menuBar) {
     for (uint8_t i = 0; i < menuOptions; ++i) menuBar.push_back(MenuButton(i, menuNames[i]));
 }
 
-void GameThread::drawMenuBar(RenderWindow& window, vector<MenuButton>& menuBar) {
+void GameThread::drawMenuBar(RenderWindow& window, vector<MenuButton>& menuBar, RessourceManager& ressources) {
     constexpr uint16_t menuOptions = 3;
     const string iconFiles[menuOptions] = {"dropDown.png", "reset.png", "flip.png"};
-    Texture textures[menuOptions];
 
     for (uint8_t i = 0; i < menuOptions; ++i) {
-        textures[i].loadFromFile(getIconPath(iconFiles[i]));
-        menuBar[i].setSpriteTexture(textures[i]);
+        shared_ptr<Texture> t = ressources.getTexture(iconFiles[i]);
+        // textures[i].loadFromFile(getIconPath(iconFiles[i]));
+        menuBar[i].setSpriteTexture(*t);
         menuBar[i].drawMenuButton(window);
     }   
 }
@@ -273,11 +273,11 @@ void GameThread::drawCaptureCircles(RenderWindow& window, moveTypes& possibleMov
         int i = get<0>(move).second, j = get<0>(move).first;
 
         bool isEmpty = game.getBoardTile(i, j) == nullptr;
-        shared_ptr<Texture> temp = ressources.getTexture(
+        shared_ptr<Texture> t = ressources.getTexture(
             isEmpty? "circle.png": "empty_circle.png");
 
-        if(temp == nullptr) return;
-        Sprite circle(*temp);
+        if(t == nullptr) return;
+        Sprite circle(*t);
         if (isEmpty) circle.setScale(SPRITE_SCALE, SPRITE_SCALE);
         circle.setPosition(getWindowXPos(i), getWindowYPos(j));
 
@@ -285,13 +285,14 @@ void GameThread::drawCaptureCircles(RenderWindow& window, moveTypes& possibleMov
     }
 }
 
-void GameThread::drawPieces(RenderWindow& window, Board& game) {
+void GameThread::drawPieces(RenderWindow& window, Board& game, RessourceManager& ressources) {
     for (uint8_t i = 0; i < 8; ++i) {
         for (uint8_t j = 0; j < 8; ++j) {
             if (game.getBoardTile(i, j) == nullptr) continue;
-            Texture t;
-            t.loadFromFile(game.getBoardTile(i, j)->getFileName());
-            Sprite s(t);
+            shared_ptr<Texture> t = ressources.getTexture(game.getBoardTile(i, j)->getFileName());
+            // cout << game.getBoardTile(i, j)->getFileName() << endl;
+            if(t == nullptr) return;
+            Sprite s(*t);
             s.setScale(SPRITE_SCALE, SPRITE_SCALE);
             s.setPosition(getWindowXPos(i), getWindowYPos(j));
             window.draw(s);
@@ -299,11 +300,11 @@ void GameThread::drawPieces(RenderWindow& window, Board& game) {
     }
 }
 
-void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, coor2d& mousePos) {
+void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, coor2d& mousePos, RessourceManager& ressources) {
     if (selectedPiece == nullptr) return; // Safety check
-    Texture t;
-    t.loadFromFile(selectedPiece->getFileName());
-    Sprite s(t);
+    shared_ptr<Texture> t = ressources.getTexture(selectedPiece->getFileName());
+    if(t == nullptr) return;
+    Sprite s(*t);
     s.setScale(SPRITE_SCALE, SPRITE_SCALE);
     s.setPosition(mousePos.first, mousePos.second);
     s.setOrigin(SPRITE_SIZE/2, SPRITE_SIZE/2);

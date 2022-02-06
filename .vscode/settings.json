@@ -2,6 +2,12 @@
     "files.associations": {
         "*.html": "html",
         "tuple": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "*.tcc": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "optional": "cpp"
     }
 }

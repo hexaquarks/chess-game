@@ -33,9 +33,9 @@ class GameThread {
     static void initializeMenuBar(vector<MenuButton>&);
     static void drawCaptureCircles(RenderWindow&, moveTypes&, Board&, RessourceManager&);
     static void highlightHoveredSquare(RenderWindow&, Board&, moveTypes&, coor2d&);
-    static void drawMenuBar(RenderWindow&, vector<MenuButton>&);
-    static void drawPieces(RenderWindow&, Board&);
-    static void drawDraggedPiece(Piece*, RenderWindow&, coor2d&);
+    static void drawMenuBar(RenderWindow&, vector<MenuButton>&, RessourceManager&);
+    static void drawPieces(RenderWindow&, Board&, RessourceManager&);
+    static void drawDraggedPiece(Piece*, RenderWindow&, coor2d&, RessourceManager&);
     static void removeIllegalMoves(Board&, moveTypes&, Piece*, coor2d&);
 
     public:
