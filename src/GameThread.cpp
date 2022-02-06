@@ -169,19 +169,14 @@ void GameThread::startGame() {
         drawMenuBar(window, menuBar, ressources);
         initializeBoard(window, game);
         moveList.highlightLastMove(window);
-        drawPieces(window, game, ressources);
 
-        if (pieceIsClicked) {
-            coor2d mousePosTemp = {Mouse::getPosition(window).x, Mouse::getPosition(window).y};
-            drawCaptureCircles(window, possibleMoves, game, ressources);
-            highlightHoveredSquare(window, game, possibleMoves, mousePosTemp);
-        }
-
-        if (pieceIsMoving) {
+        if (pieceIsMoving || pieceIsClicked) {
             drawCaptureCircles(window, possibleMoves, game, ressources);
             highlightHoveredSquare(window, game, possibleMoves, mousePos);
-            drawDraggedPiece(selectedPiece,window, mousePos, ressources);
         }
+        drawPieces(window, game, ressources);
+        
+        if (pieceIsMoving) drawDraggedPiece(selectedPiece,window, mousePos, ressources);
 
         window.display();
     }
@@ -200,7 +195,6 @@ void GameThread::drawMenuBar(RenderWindow& window, vector<MenuButton>& menuBar, 
 
     for (uint8_t i = 0; i < menuOptions; ++i) {
         shared_ptr<Texture> t = ressources.getTexture(iconFiles[i]);
-        // textures[i].loadFromFile(getIconPath(iconFiles[i]));
         menuBar[i].setSpriteTexture(*t);
         menuBar[i].drawMenuButton(window);
     }   
@@ -260,7 +254,6 @@ void GameThread::highlightHoveredSquare(RenderWindow& window, Board& game, moveT
 void GameThread::drawCaptureCircles(RenderWindow& window, moveTypes& possibleMoves, Board& game, RessourceManager& ressources) {
     for (moveType& move: possibleMoves) {
         int i = get<0>(move).second, j = get<0>(move).first;
-
         bool isEmpty = game.getBoardTile(i, j) == nullptr;
         shared_ptr<Texture> t = ressources.getTexture(
             isEmpty? "circle.png": "empty_circle.png");
@@ -279,7 +272,6 @@ void GameThread::drawPieces(RenderWindow& window, Board& game, RessourceManager&
         for (uint8_t j = 0; j < 8; ++j) {
             if (game.getBoardTile(i, j) == nullptr) continue;
             shared_ptr<Texture> t = ressources.getTexture(game.getBoardTile(i, j)->getFileName());
-            // cout << game.getBoardTile(i, j)->getFileName() << endl;
             if(t == nullptr) return;
             Sprite s(*t);
             s.setScale(SPRITE_SCALE, SPRITE_SCALE);
