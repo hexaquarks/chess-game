@@ -76,6 +76,13 @@ void GameThread::startGame() {
 
                 // If piece is not null and has the right color
                 if (piece != nullptr && piece->getTeam() == game.getTurn()) {
+                    // Unselect clicked piece
+                    if(piece == selectedPiece) {
+                        selectedPiece = nullptr;
+                        pieceIsClicked = false;
+                        continue;
+                    }
+
                     selectedPiece = piece;
                     possibleMoves = game.possibleMovesFor(selectedPiece);
 
@@ -112,6 +119,7 @@ void GameThread::startGame() {
                     // If clicked and mouse remained on the same square
                     if (getTileXPos(mousePos) == selectedPiece->getY() && getTileYPos(mousePos) == selectedPiece->getX()) {
                         if (!pieceIsClicked) {
+                            // Put the piece back to it's square; it's not moving
                             game.setBoardTile(lastXPos, lastYPos, selectedPiece, false); 
                             pieceIsMoving = false;
                         }
@@ -175,7 +183,7 @@ void GameThread::startGame() {
             highlightHoveredSquare(window, game, possibleMoves, mousePos);
         }
         drawPieces(window, game, ressources);
-        
+
         if (pieceIsMoving) drawDraggedPiece(selectedPiece,window, mousePos, ressources);
 
         window.display();
