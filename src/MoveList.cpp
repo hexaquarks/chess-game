@@ -4,7 +4,6 @@ MoveList::MoveList(Board& board): game(board) {}
 
 void MoveList::highlightLastMove(RenderWindow& window) const {
     Move& move = *m_moveIterator;
-    if (move.getCapturedPiece() == nullptr) return;
 
     RectangleShape squareBefore = createSquare();
     RectangleShape squareAfter = createSquare();
