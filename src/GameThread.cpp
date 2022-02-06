@@ -292,10 +292,18 @@ void GameThread::drawPieces(RenderWindow& window, Board& game, RessourceManager&
 void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, coor2d& mousePos, RessourceManager& ressources) {
     if (selectedPiece == nullptr) return; // Safety check
     shared_ptr<Texture> t = ressources.getTexture(selectedPiece->getFileName());
-    if(t == nullptr) return;
-    Sprite s(*t);
+    shared_ptr<Texture> tBefore = ressources.getTexture(selectedPiece->getFileName());
+    
+    if(t == nullptr || tBefore == nullptr) return;
+    Sprite s(*t), sBefore(*tBefore); 
     s.setScale(SPRITE_SCALE, SPRITE_SCALE);
+    sBefore.setScale(SPRITE_SCALE, SPRITE_SCALE);
     s.setPosition(mousePos.first, mousePos.second);
+    sBefore.setPosition(selectedPiece->getY() * CELL_SIZE , 
+        selectedPiece->getX() * CELL_SIZE + MENUBAR_HEIGHT);
     s.setOrigin(SPRITE_SIZE/2, SPRITE_SIZE/2);
+    sBefore.setColor(Color(255,255,255,100));
+    
+    window.draw(sBefore);
     window.draw(s);
 }
