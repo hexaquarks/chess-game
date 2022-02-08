@@ -31,6 +31,7 @@ void GameThread::startGame() {
     bool pieceIsMoving = false;
     bool pieceIsClicked = false;
     Piece* selectedPiece = nullptr;
+    Piece* movingPiece = nullptr; // Piece transition
     coor2d mousePos = {0, 0};
     int lastXPos = 0, lastYPos = 0; // Last position of the piece before being dragged
     moveTypes possibleMoves;
@@ -310,4 +311,10 @@ void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, co
     
     window.draw(sBefore);
     window.draw(s);
+}
+
+void GameThread::setTransitioningPiece(Piece* p, int xTarget, int yTarget) {
+    m_transitioningPiece = p;
+    coor2d destination = {xTarget, yTarget};
+    GameThread::setTransitioningPieceDestination(destination);
 }

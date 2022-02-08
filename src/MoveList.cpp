@@ -115,7 +115,10 @@ void MoveList::applyMove() {
 void MoveList::undoMove() {
     Move& m = *m_moveIterator;
     Piece* captured = m.getCapturedPiece();
-    game.setBoardTile(m.getXInit(), m.getYInit(), m.getSelectedPiece()); // Set the moved piece back
+    // game.setBoardTile(m.getXInit(), m.getYInit(), m.getSelectedPiece()); // Set the moved piece back
+
+    GameThread::setTransitioningPiece(m.getSelectedPiece(),
+        m.getXInit() * CELL_SIZE, m.getYInit() * CELL_SIZE); 
     int castleRow = (m.getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0;
 
     switch (m.getMoveType()) {
