@@ -329,6 +329,8 @@ void GameThread::setTransitioningPiece(Piece* p, int xTarget, int yTarget, Piece
     trans.setCurrPos(currPos);
     trans.setIsTransitioning(true);
     trans.setIncrement();
+    cout << "destination is " << destination.first << "," << destination.second << endl;
+    cout << "curr is " << currPos.first << "," << currPos.second << endl;
 }
 
 void GameThread::drawTransitioningPiece(RenderWindow& window, PieceTransition& piece, RessourceManager& ressources, Board& game) {

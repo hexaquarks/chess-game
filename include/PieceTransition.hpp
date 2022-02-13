@@ -25,12 +25,12 @@ class PieceTransition {
     coor2d getCurrPos() { return m_currPos; }
 
     // setters
+    void setCurrPos(coor2d& pos) { m_currPos = pos; }
     void setDestination(coor2d& dest) { m_destination = dest; }
     void setTransitioningPiece() { m_piece = nullptr; }
     void setTransitioningPiece(Piece* p) { m_piece = p; }
     void setIsTransitioning(bool b) { m_isTransitioning = b; }
     void setIncrement();
-    void setCurrPos(coor2d& pos) { m_currPos = pos; }
     void setHasArrived(bool b, Board&);
 
     // getters 
