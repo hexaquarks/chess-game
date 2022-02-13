@@ -151,7 +151,7 @@ void GameThread::startGame() {
                     } else {
                         moveList.addMove(
                             get<1>(*selectedMove), getTileXPos(mousePos), getTileYPos(mousePos),
-                            lastXPos, lastYPos, selectedPiece, lastMove
+                            lastXPos, lastYPos, selectedPiece, lastMove, transitioningPiece
                         );
                         lastMove = selectedPiece;
                         lastMove->setLastMove(get<1>(*selectedMove));
@@ -177,7 +177,7 @@ void GameThread::startGame() {
                 if (event.key.code == Keyboard::Left)
                     moveList.goToPreviousMove(transitioningPiece);
                 else if (event.key.code == Keyboard::Right)
-                    moveList.goToNextMove();
+                    moveList.goToNextMove(transitioningPiece);
                 else if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::F))
                     game.flipBoard();
             }
@@ -324,13 +324,11 @@ void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, co
 void GameThread::setTransitioningPiece(Piece* p, int xTarget, int yTarget, PieceTransition& trans) {
     trans.setTransitioningPiece(p);
     coor2d destination = {xTarget, yTarget};
-    coor2d currPos = {p->getX() * CELL_SIZE, p->getY() * CELL_SIZE};
+    coor2d currPos = {p->getY() * CELL_SIZE, p->getX() * CELL_SIZE};
     trans.setDestination(destination);
     trans.setCurrPos(currPos);
     trans.setIsTransitioning(true);
     trans.setIncrement();
-    cout << "destination is " << destination.first << "," << destination.second << endl;
-    cout << "curr is " << currPos.first << "," << currPos.second << endl;
 }
 
 void GameThread::drawTransitioningPiece(RenderWindow& window, PieceTransition& piece, RessourceManager& ressources, Board& game) {

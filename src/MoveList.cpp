@@ -32,47 +32,54 @@ void MoveList::goToPreviousMove(PieceTransition& piece) {
     }
 }
 
-void MoveList::goToNextMove() { 
+void MoveList::goToNextMove(PieceTransition& piece) { 
     if (hasMovesAfter()) {
         cout << "has moves after" << endl;
         --m_moveIterator; // Go to previous move
-        applyMove();
+        applyMove(piece);
     }
 }
 
 void MoveList::addMove(MoveType moveType, int x, int y, int prevX, int prevY,
-    Piece* selectedPiece, Piece* lastMove) {
-    applyMove(moveType, x, y, prevX, prevY, selectedPiece, lastMove, true);
+    Piece* selectedPiece, Piece* lastMove, PieceTransition& piece) {
+    applyMove(moveType, x, y, prevX, prevY, selectedPiece, lastMove, true, piece);
     m_moveIterator = m_moves.begin();
 }
 
 void MoveList::applyMove(MoveType moveType, int x, int y, int prevX, int prevY,
-    Piece* p, Piece* lastMove, bool addToList) {
+    Piece* p, Piece* lastMove, bool addToList, PieceTransition& piece) {
     const int castleRow = (game.getTurn() == Team::WHITE)? 7: 0;
     Piece* oldPiece = nullptr;
 
     // Set the current tile of the piece null. Necessary for navigating back to current move through goToNextMove()
     game.setBoardTile(prevX, prevY, nullptr); 
 
+    // TODO smooth piece transition for castle 
     switch (moveType) {
         case MoveType::NORMAL:
-            game.setBoardTile(x, y, p);
-            if (addToList) m_moves.emplace_front(Move(x, y, prevX, prevY, p, MoveType::NORMAL));
+            if (addToList) {
+                m_moves.emplace_front(Move(x, y, prevX, prevY, p, MoveType::NORMAL));
+                game.setBoardTile(x, y, p);
+            }
             // soundMove.play();
             break;
 
         case MoveType::CAPTURE:
             oldPiece = game.getBoardTile(x, y);
-            game.setBoardTile(x, y, p);
-            if (addToList) m_moves.emplace_front(Move(x, y, prevX, prevY, p, oldPiece, MoveType::CAPTURE));
+            if (addToList) {
+                game.setBoardTile(x, y, p);
+                m_moves.emplace_front(Move(x, y, prevX, prevY, p, oldPiece, MoveType::CAPTURE));
+            }
             // soundCapture.play();
             break;
 
         case MoveType::ENPASSANT:
             oldPiece = game.getBoardTile(lastMove->getY(), lastMove->getX()); // The position of the captured pawn
-            game.setBoardTile(x, y, p);
             game.setBoardTile(lastMove->getY(), lastMove->getX(), nullptr);
-            if (addToList) m_moves.emplace_front(Move(x, y, prevX, prevY, p, oldPiece, MoveType::ENPASSANT));
+            if (addToList) {
+                game.setBoardTile(x, y, p);
+                m_moves.emplace_front(Move(x, y, prevX, prevY, p, oldPiece, MoveType::ENPASSANT));
+            }
             break;
 
         case MoveType::CASTLE_KINGSIDE:
@@ -92,8 +99,10 @@ void MoveList::applyMove(MoveType moveType, int x, int y, int prevX, int prevY,
             break;
 
         case MoveType::INIT_SPECIAL:
-            game.setBoardTile(x, y, p);
-            if (addToList) m_moves.emplace_front(Move(x, y, prevX, prevY, p, MoveType::INIT_SPECIAL));
+            if (addToList) {
+                game.setBoardTile(x, y, p);
+                m_moves.emplace_front(Move(x, y, prevX, prevY, p, MoveType::INIT_SPECIAL));
+            }
             break;
 
         case MoveType::NEWPIECE:
@@ -103,14 +112,16 @@ void MoveList::applyMove(MoveType moveType, int x, int y, int prevX, int prevY,
             game.addPiece(queen);
             break;
     }
+    if(!addToList) GameThread::setTransitioningPiece(p,
+        x * CELL_SIZE, y * CELL_SIZE, piece); 
 }
 
-void MoveList::applyMove() {
+void MoveList::applyMove(PieceTransition& piece) {
     Move& m = *m_moveIterator;
     applyMove(
         m.getMoveType(), m.getXTarget(),
         m.getYTarget(), m.getXInit(), m.getYInit(), 
-        m.getSelectedPiece(), m.getCapturedPiece(), false
+        m.getSelectedPiece(), m.getCapturedPiece(), false, piece
     );
 }
 
@@ -119,6 +130,7 @@ void MoveList::undoMove(PieceTransition& piece) {
     Piece* captured = m.getCapturedPiece();
     // game.setBoardTile(m.getXInit(), m.getYInit(), m.getSelectedPiece()); // Set the moved piece back
 
+    // TODO smooth transition for castle 
     GameThread::setTransitioningPiece(m.getSelectedPiece(),
         m.getXInit() * CELL_SIZE, m.getYInit() * CELL_SIZE, piece); 
         
