@@ -1,4 +1,6 @@
 #include "../include/MoveList.hpp"
+#include "../include/PieceTransition.hpp"
+#include "../include/GameThread.hpp"
 
 MoveList::MoveList(Board& board): game(board) {}
 
@@ -22,10 +24,10 @@ void MoveList::highlightLastMove(RenderWindow& window) const {
     window.draw(squareAfter);
 }
 
-void MoveList::goToPreviousMove() {
+void MoveList::goToPreviousMove(PieceTransition& piece) {
     if (hasMovesBefore()) {
         cout << "has moves before" << endl;
-        undoMove();
+        undoMove(piece);
         ++m_moveIterator; // Go to previous move
     }
 }
@@ -112,13 +114,14 @@ void MoveList::applyMove() {
     );
 }
 
-void MoveList::undoMove() {
+void MoveList::undoMove(PieceTransition& piece) {
     Move& m = *m_moveIterator;
     Piece* captured = m.getCapturedPiece();
     // game.setBoardTile(m.getXInit(), m.getYInit(), m.getSelectedPiece()); // Set the moved piece back
 
     GameThread::setTransitioningPiece(m.getSelectedPiece(),
-        m.getXInit() * CELL_SIZE, m.getYInit() * CELL_SIZE); 
+        m.getXInit() * CELL_SIZE, m.getYInit() * CELL_SIZE, piece); 
+        
     int castleRow = (m.getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0;
 
     switch (m.getMoveType()) {

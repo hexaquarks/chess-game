@@ -4,6 +4,7 @@
 #include "Board.hpp"
 #include "GameThread.hpp"
 #include "Move.hpp"
+#include "PieceTransition.hpp"
 using namespace sf;
 
 
@@ -14,13 +15,13 @@ class MoveList {
 
     void applyMove(MoveType, int, int, int, int, Piece*, Piece*, bool);
     void applyMove();
-    void undoMove();
+    void undoMove(PieceTransition&);
 
     public:
     MoveList(Board&);
     void highlightLastMove(RenderWindow&) const;
     void reset() { m_moves.clear(); m_moveIterator = m_moves.begin(); };
-    void goToPreviousMove();
+    void goToPreviousMove(PieceTransition&);
     void goToNextMove();
     void addMove(MoveType, int, int, int, int, Piece*, Piece*);
     bool hasMovesBefore() const { return m_moveIterator != m_moves.end(); }
