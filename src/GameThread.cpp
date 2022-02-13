@@ -2,6 +2,7 @@
 #include "../include/MoveList.hpp"
 #include "../include/MenuButton.hpp"
 #include "../include/RessourceManager.hpp"
+#include "../include/PieceTransition.hpp"
 #include <iostream>
 #include <vector>
 #include <list>
@@ -38,6 +39,9 @@ void GameThread::startGame() {
 
     // Additional board state variables
     Piece* lastMove = nullptr;
+    PieceTransition transitioningPiece;
+    transitioningPiece.setTransitioningPiece();
+
     MoveList moveList(game);
 
     // Sounds for piece movement
@@ -171,7 +175,7 @@ void GameThread::startGame() {
 
             if (event.type == Event::KeyPressed) {
                 if (event.key.code == Keyboard::Left)
-                    moveList.goToPreviousMove();
+                    moveList.goToPreviousMove(transitioningPiece);
                 else if (event.key.code == Keyboard::Right)
                     moveList.goToNextMove();
                 else if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::F))
@@ -191,6 +195,10 @@ void GameThread::startGame() {
 
         if (pieceIsMoving) drawDraggedPiece(selectedPiece,window, mousePos, ressources);
 
+        if(transitioningPiece.getIsTransitioning()) {
+            // cout << " is transitionning " << endl;
+            drawTransitioningPiece(window, transitioningPiece, ressources, game);
+        }
         window.display();
     }
 }
@@ -313,8 +321,25 @@ void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, co
     window.draw(s);
 }
 
-void GameThread::setTransitioningPiece(Piece* p, int xTarget, int yTarget) {
-    m_transitioningPiece = p;
+void GameThread::setTransitioningPiece(Piece* p, int xTarget, int yTarget, PieceTransition& trans) {
+    trans.setTransitioningPiece(p);
     coor2d destination = {xTarget, yTarget};
-    GameThread::setTransitioningPieceDestination(destination);
+    coor2d currPos = {p->getX() * CELL_SIZE, p->getY() * CELL_SIZE};
+    trans.setDestination(destination);
+    trans.setCurrPos(currPos);
+    trans.setIsTransitioning(true);
+    trans.setIncrement();
+}
+
+void GameThread::drawTransitioningPiece(RenderWindow& window, PieceTransition& piece, RessourceManager& ressources, Board& game) {
+    piece.move();
+    
+    shared_ptr<Texture> t = ressources.getTexture(piece.getPiece()->getFileName());   
+    if(t == nullptr ) return;
+    Sprite s(*t);
+    s.setScale(SPRITE_SCALE, SPRITE_SCALE);
+    s.setPosition(piece.getCurrPos().first, piece.getCurrPos().second + MENUBAR_HEIGHT);
+    window.draw(s);
+    
+    piece.setHasArrived(piece.pieceIsInBounds(), game);
 }

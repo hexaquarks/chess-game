@@ -3,6 +3,7 @@
 #include "RessourceManager.hpp"
 #include "Board.hpp"
 #include "MenuButton.hpp"
+#include "PieceTransition.hpp"
 #include <vector>
 using namespace sf;
 
@@ -28,8 +29,6 @@ inline RectangleShape createSquare() {
 class GameThread {
     inline const static string iconsPath = "../assets/icons/";
     inline const static string audioPath = "../assets/sounds/";
-    inline static Piece* m_transitioningPiece = nullptr;
-    static coor2d m_transitioningPieceDestination;
 
     static void initializeBoard(RenderWindow&, Board&);
     static void initializeMenuBar(vector<MenuButton>&);
@@ -39,17 +38,11 @@ class GameThread {
     static void drawPieces(RenderWindow&, Board&, RessourceManager&);
     static void drawDraggedPiece(Piece*, RenderWindow&, coor2d&, RessourceManager&);
     static void removeIllegalMoves(Board&, moveTypes&, Piece*, coor2d&);
-    static bool isPieceTransitioning() { return m_transitioningPiece != nullptr; }
-
+    static void drawTransitioningPiece(RenderWindow&, PieceTransition&, RessourceManager&, Board&);
     public:
     GameThread() = delete; // Delete constructor
     static void startGame();
 
-    static void setTransitioningPiece(Piece* p, int xTarget, int yTarget);
-    static void setTransitioningPieceDestination(coor2d& pos) {
-        m_transitioningPieceDestination.first = pos.first; 
-        m_transitioningPieceDestination.second = pos.second; 
-    }
     static int getTileXPos(coor2d& pos) { return pos.first / CELL_SIZE; }
     static int getTileYPos(coor2d& pos) {
         if (pos.second < MENUBAR_HEIGHT) return -1;
@@ -60,4 +53,5 @@ class GameThread {
 
     static string getIconPath(const string& filename) { return iconsPath + filename; }
     static string getAudioPath(const string& filename) { return audioPath + filename; }
+    static void setTransitioningPiece(Piece*, int,int, PieceTransition&);
 };
