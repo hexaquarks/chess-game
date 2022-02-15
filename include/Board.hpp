@@ -7,7 +7,6 @@
 #include "Bishop.hpp"
 #include "King.hpp"
 #include "Queen.hpp"
-#include "Move.hpp"
 
 
 class Board {
