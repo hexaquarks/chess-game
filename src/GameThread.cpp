@@ -3,6 +3,7 @@
 #include "../include/MenuButton.hpp"
 #include "../include/RessourceManager.hpp"
 #include "../include/PieceTransition.hpp"
+#include "../include/Move.hpp"
 #include <iostream>
 #include <vector>
 #include <list>
@@ -149,10 +150,13 @@ void GameThread::startGame() {
                     if (selectedMove == nullptr) {
                         game.setBoardTile(lastXPos, lastYPos, selectedPiece, false); // Cancel the move
                     } else {
-                        moveList.addMove(
-                            get<1>(*selectedMove), getTileXPos(mousePos), getTileYPos(mousePos),
-                            lastXPos, lastYPos, selectedPiece, lastMove, transitioningPiece
-                        );
+                        coor2d target = make_pair(getTileXPos(mousePos), getTileYPos(mousePos));
+                        coor2d initial = make_pair(lastXPos, lastYPos);
+
+                        Move move{target, initial,selectedPiece, get<1>(*selectedMove)};
+                        move.setCapturedPiece(lastMove);
+                        moveList.addMove(move, transitioningPiece);
+
                         lastMove = selectedPiece;
                         lastMove->setLastMove(get<1>(*selectedMove));
                         Piece::setLastMovedPiece(lastMove);
@@ -174,7 +178,7 @@ void GameThread::startGame() {
             }
 
             if (event.type == Event::KeyPressed) {
-                if (event.key.code == Keyboard::Left)
+                if (event.key.code == Keyboard::Left) 
                     moveList.goToPreviousMove(transitioningPiece);
                 else if (event.key.code == Keyboard::Right)
                     moveList.goToNextMove(transitioningPiece);
@@ -196,7 +200,6 @@ void GameThread::startGame() {
         if (pieceIsMoving) drawDraggedPiece(selectedPiece,window, mousePos, ressources);
 
         if(transitioningPiece.getIsTransitioning()) {
-            // cout << " is transitionning " << endl;
             drawTransitioningPiece(window, transitioningPiece, ressources, game);
         }
         window.display();
@@ -332,6 +335,8 @@ void GameThread::setTransitioningPiece(Piece* p, int xTarget, int yTarget, Piece
 }
 
 void GameThread::drawTransitioningPiece(RenderWindow& window, PieceTransition& piece, RessourceManager& ressources, Board& game) {
+    // cout << "setting null to " << x <<"," << y<< endl;
+    cout << "inside" << endl;
     piece.move();
     
     shared_ptr<Texture> t = ressources.getTexture(piece.getPiece()->getFileName());   
