@@ -2,7 +2,7 @@
 #include "../include/PieceTransition.hpp"
 #include "../include/GameThread.hpp"
 
-MoveList::MoveList(Board& board): game(board) {}
+MoveList::MoveList(Board& board, PieceTransition& p): game(board), m_transitioningPiece(p) {}
 
 void MoveList::highlightLastMove(RenderWindow& window) const {
     Move& move = *m_moveIterator;
@@ -26,26 +26,26 @@ void MoveList::highlightLastMove(RenderWindow& window) const {
     window.draw(squareAfter);
 }
 
-void MoveList::goToPreviousMove(PieceTransition& trans) {
+void MoveList::goToPreviousMove() {
     if (hasMovesBefore()) {
-        undoMove(trans);
+        undoMove();
         ++m_moveIterator; // Go to previous move
     }
 }
 
-void MoveList::goToNextMove(PieceTransition& trans) { 
+void MoveList::goToNextMove() { 
     if (hasMovesAfter()) {
         --m_moveIterator; // Go to previous move
-        applyMove(trans);
+        applyMove();
     }
 }
 
-void MoveList::addMove(Move& move, PieceTransition& trans) {
-    applyMove(move, true, trans);
+void MoveList::addMove(Move& move) {
+    applyMove(move, true);
     m_moveIterator = m_moves.begin();
 }
 
-void MoveList::applyMove(Move& move, bool addToList, PieceTransition& trans) {
+void MoveList::applyMove(Move& move, bool addToList) {
     const int castleRow = (game.getTurn() == Team::WHITE)? 7: 0;
     Piece* oldPiece = nullptr;
     Piece* selectedPiece = move.getSelectedPiece();
@@ -126,23 +126,24 @@ void MoveList::applyMove(Move& move, bool addToList, PieceTransition& trans) {
             break;
     }
     if(!addToList) GameThread::setTransitioningPiece(selectedPiece,
-        x * CELL_SIZE, y * CELL_SIZE, trans); 
+        x * CELL_SIZE, y * CELL_SIZE,getTransitioningPiece()); 
 }
 
-void MoveList::applyMove(PieceTransition& trans) {
+void MoveList::applyMove() {
     Move& m = *m_moveIterator;
-    applyMove(m, false, trans);
+    applyMove(m, false);
 }
 
-void MoveList::undoMove(PieceTransition& trans) {
+void MoveList::undoMove() {
     Move& m = *m_moveIterator;
     Piece* captured = m.getCapturedPiece();
     int x = m.getTarget().first;
     int y = m.getTarget().second;
 
     // TODO smooth transition for castle 
-    GameThread::setTransitioningPiece(m.getSelectedPiece(),
-        m.getInit().first * CELL_SIZE, m.getInit().second * CELL_SIZE, trans); 
+    GameThread::setTransitioningPiece(
+        m.getSelectedPiece(), m.getInit().first * CELL_SIZE, 
+        m.getInit().second * CELL_SIZE, getTransitioningPiece()); 
         
     int castleRow = (m.getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0;
 

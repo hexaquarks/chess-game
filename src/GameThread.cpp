@@ -42,8 +42,7 @@ void GameThread::startGame() {
     Piece* lastMove = nullptr;
     PieceTransition transitioningPiece;
     transitioningPiece.setTransitioningPiece();
-
-    MoveList moveList(game);
+    MoveList moveList(game, transitioningPiece);
 
     // Sounds for piece movement
     SoundBuffer bufferMove;
@@ -155,7 +154,7 @@ void GameThread::startGame() {
 
                         Move move{target, initial,selectedPiece, get<1>(*selectedMove)};
                         move.setCapturedPiece(lastMove);
-                        moveList.addMove(move, transitioningPiece);
+                        moveList.addMove(move);
 
                         lastMove = selectedPiece;
                         lastMove->setLastMove(get<1>(*selectedMove));
@@ -178,12 +177,16 @@ void GameThread::startGame() {
             }
 
             if (event.type == Event::KeyPressed) {
-                if (event.key.code == Keyboard::Left) 
-                    moveList.goToPreviousMove(transitioningPiece);
-                else if (event.key.code == Keyboard::Right)
-                    moveList.goToNextMove(transitioningPiece);
+                if (event.key.code == Keyboard::Left && !transitioningPiece.getIsTransitioning()) 
+                    moveList.goToPreviousMove();
+                else if (event.key.code == Keyboard::Right && !transitioningPiece.getIsTransitioning())
+                    moveList.goToNextMove();
                 else if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::F))
                     game.flipBoard();
+                else if (event.key.code == Keyboard::Up)
+                    moveList.goToCurrentMove();
+                else if (event.key.code == Keyboard::Down)
+                    moveList.goToInitialMove();
             }
         }
 
@@ -335,8 +338,6 @@ void GameThread::setTransitioningPiece(Piece* p, int xTarget, int yTarget, Piece
 }
 
 void GameThread::drawTransitioningPiece(RenderWindow& window, PieceTransition& piece, RessourceManager& ressources, Board& game) {
-    // cout << "setting null to " << x <<"," << y<< endl;
-    cout << "inside" << endl;
     piece.move();
     
     shared_ptr<Texture> t = ressources.getTexture(piece.getPiece()->getFileName());   
