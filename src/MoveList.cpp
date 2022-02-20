@@ -26,26 +26,26 @@ void MoveList::highlightLastMove(RenderWindow& window) const {
     window.draw(squareAfter);
 }
 
-void MoveList::goToPreviousMove() {
+void MoveList::goToPreviousMove(bool enableTransition) {
     if (hasMovesBefore()) {
-        undoMove();
+        undoMove(enableTransition);
         ++m_moveIterator; // Go to previous move
     }
 }
 
-void MoveList::goToNextMove() { 
+void MoveList::goToNextMove(bool enableTransition) { 
     if (hasMovesAfter()) {
         --m_moveIterator; // Go to previous move
-        applyMove();
+        applyMove(enableTransition);
     }
 }
 
 void MoveList::addMove(Move& move) {
-    applyMove(move, true);
+    applyMove(move, true, true);
     m_moveIterator = m_moves.begin();
 }
 
-void MoveList::applyMove(Move& move, bool addToList) {
+void MoveList::applyMove(Move& move, bool addToList, bool enableTransition) {
     const int castleRow = (game.getTurn() == Team::WHITE)? 7: 0;
     Piece* oldPiece = nullptr;
     Piece* selectedPiece = move.getSelectedPiece();
@@ -125,28 +125,27 @@ void MoveList::applyMove(Move& move, bool addToList) {
             game.addPiece(queen);
             break;
     }
-    if(!addToList) GameThread::setTransitioningPiece(selectedPiece,
-        x * CELL_SIZE, y * CELL_SIZE,getTransitioningPiece()); 
+    if(!addToList) {
+        if(enableTransition) GameThread::setTransitioningPiece(selectedPiece,
+            x * CELL_SIZE, y * CELL_SIZE, getTransitioningPiece()); 
+        else game.setBoardTile(x, y, selectedPiece);
+    } 
 }
 
-void MoveList::applyMove() {
+void MoveList::applyMove(bool enableTransition) {
     Move& m = *m_moveIterator;
-    applyMove(m, false);
+    applyMove(m, false, enableTransition);
 }
 
-void MoveList::undoMove() {
+void MoveList::undoMove(bool enableTransition) {
     Move& m = *m_moveIterator;
     Piece* captured = m.getCapturedPiece();
     int x = m.getTarget().first;
     int y = m.getTarget().second;
 
-    // TODO smooth transition for castle 
-    GameThread::setTransitioningPiece(
-        m.getSelectedPiece(), m.getInit().first * CELL_SIZE, 
-        m.getInit().second * CELL_SIZE, getTransitioningPiece()); 
-        
     int castleRow = (m.getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0;
 
+    // TODO smooth transition for castle 
     switch (m.getMoveType()) {
         case MoveType::NORMAL:
             game.setBoardTile(x, y, nullptr);
@@ -175,4 +174,10 @@ void MoveList::undoMove() {
             // TODO
             break;
     }
+    if(enableTransition) GameThread::setTransitioningPiece(
+        m.getSelectedPiece(), m.getInit().first * CELL_SIZE, 
+        m.getInit().second * CELL_SIZE, getTransitioningPiece()); 
+    else 
+        game.setBoardTile(m.getInit().first, m.getInit().second, m.getSelectedPiece());
+        
 }

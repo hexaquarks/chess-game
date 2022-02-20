@@ -178,9 +178,9 @@ void GameThread::startGame() {
 
             if (event.type == Event::KeyPressed) {
                 if (event.key.code == Keyboard::Left && !transitioningPiece.getIsTransitioning()) 
-                    moveList.goToPreviousMove();
+                    moveList.goToPreviousMove(true);
                 else if (event.key.code == Keyboard::Right && !transitioningPiece.getIsTransitioning())
-                    moveList.goToNextMove();
+                    moveList.goToNextMove(true);
                 else if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::F))
                     game.flipBoard();
                 else if (event.key.code == Keyboard::Up)
