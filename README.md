@@ -1,4 +1,6 @@
 # Chess Game Project
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 
 Chess game app, made by [NicolasAlmerge](https://github.com/NicolasAlmerge) and [hexaquarks](https://github.com/hexaquarks).
 
