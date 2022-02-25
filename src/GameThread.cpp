@@ -4,11 +4,13 @@
 #include "../include/RessourceManager.hpp"
 #include "../include/PieceTransition.hpp"
 #include "../include/Move.hpp"
+
 #include <iostream>
 #include <vector>
 #include <list>
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+
 using namespace sf;
 
 void GameThread::startGame() {

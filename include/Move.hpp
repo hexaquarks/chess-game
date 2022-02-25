@@ -21,5 +21,6 @@ class Move {
     void setTarget(coor2d& target) { m_target = target; }
     void setMoveType(MoveType moveType) { m_MoveType = moveType; }
     void setCapturedPiece(Piece* capturedPiece) { m_capturedPiece = capturedPiece; }
+    void setSelectedPiece(Piece* p) { m_selectedPiece = p; };
 
 };

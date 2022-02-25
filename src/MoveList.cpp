@@ -119,13 +119,18 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition) {
             break;
 
         case MoveType::NEWPIECE:
-            selectedPiece->move(-1, -1); // Deleted
+            // Possible leaking memory here actually ? 
+            oldPiece = game.getBoardTile(x, y);
             Queen* queen = new Queen(game.getTurn(), y, x);
-            game.setBoardTile(x, y, queen);
-            game.addPiece(queen);
+            queen->setLastMovedPiece(selectedPiece->getLastMovedPiece());
+            selectedPiece = queen;
+            if (addToList) {
+                game.setBoardTile(x, y, queen);
+                m_moves.emplace_front(Move(move, oldPiece));
+            }
             break;
     }
-    if(!addToList) {
+    if(!addToList && selectedPiece != nullptr) {
         if(enableTransition) GameThread::setTransitioningPiece(selectedPiece,
             x * CELL_SIZE, y * CELL_SIZE, getTransitioningPiece()); 
         else game.setBoardTile(x, y, selectedPiece);
@@ -171,7 +176,10 @@ void MoveList::undoMove(bool enableTransition) {
             game.setBoardTile(x, y, nullptr);
             break;
         case MoveType::NEWPIECE:
-            // TODO
+            // Possible leaking memory here actually ? 
+            game.setBoardTile(x, y, captured);
+            Pawn* pawn = new Pawn(game.getTurn(), y, x);
+            m.setSelectedPiece(pawn);
             break;
     }
     if(enableTransition) GameThread::setTransitioningPiece(
