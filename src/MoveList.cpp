@@ -45,6 +45,11 @@ void MoveList::addMove(Move& move) {
     m_moveIterator = m_moves.begin();
 }
 
+void MoveList::applyMove(bool enableTransition) {
+    Move& m = *m_moveIterator;
+    applyMove(m, false, enableTransition);
+}
+
 void MoveList::applyMove(Move& move, bool addToList, bool enableTransition) {
     const int castleRow = (game.getTurn() == Team::WHITE)? 7: 0;
     Piece* oldPiece = nullptr;
@@ -121,7 +126,7 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition) {
         case MoveType::NEWPIECE:
             // Possible leaking memory here actually ? 
             oldPiece = game.getBoardTile(x, y);
-            Queen* queen = new Queen(game.getTurn(), y, x);
+            Queen* queen = new Queen(selectedPiece->getTeam(), y, x);
             queen->setLastMovedPiece(selectedPiece->getLastMovedPiece());
             selectedPiece = queen;
             if (addToList) {
@@ -135,11 +140,6 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition) {
             x * CELL_SIZE, y * CELL_SIZE, getTransitioningPiece()); 
         else game.setBoardTile(x, y, selectedPiece);
     } 
-}
-
-void MoveList::applyMove(bool enableTransition) {
-    Move& m = *m_moveIterator;
-    applyMove(m, false, enableTransition);
 }
 
 void MoveList::undoMove(bool enableTransition) {
@@ -178,7 +178,7 @@ void MoveList::undoMove(bool enableTransition) {
         case MoveType::NEWPIECE:
             // Possible leaking memory here actually ? 
             game.setBoardTile(x, y, captured);
-            Pawn* pawn = new Pawn(game.getTurn(), y, x);
+            Pawn* pawn = new Pawn(m.getSelectedPiece()->getTeam(), y, x);
             m.setSelectedPiece(pawn);
             break;
     }
