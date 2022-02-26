@@ -1,7 +1,14 @@
 # Chess Game Project
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 
 Chess game app, made by [NicolasAlmerge](https://github.com/NicolasAlmerge) and [hexaquarks](https://github.com/hexaquarks).
 
+## Installation 
+ - Running the project requires [SFML](https://www.sfml-dev.org/download/sfml/2.5.1/) installed locally
+ - Need **C++17** compiler installed locally
+ 
+One can the compile the project from `[PATH]/chess_game/src/` by invoking `g++ -o ../main *.cpp -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio  -std=c++17 && ../main`
 ## Features
  - [x] Fully functional chess game, with respect to chess rules (*pin, check, checkmate, en passant, promotion, castle, etc*).
  - [x] Move history and move list traversal through <kbd> ← </kbd> <kbd> → </kbd> <kbd> ↑ </kbd> <kbd> ↓ </kbd>
