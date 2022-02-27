@@ -1,12 +1,14 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "RessourceManager.hpp"
-#include "Board.hpp"
-#include "MenuButton.hpp"
-#include "PieceTransition.hpp"
 #include <vector>
-using namespace sf;
 
+#include "RessourceManager.hpp"
+#include "PieceTransition.hpp"
+#include "MenuButton.hpp"
+#include "Board.hpp"
+#include "Arrow.hpp"
+
+using namespace sf;
 
 // Constants
 const string WINDOW_TITLE = "Chess Game";
@@ -39,6 +41,8 @@ class GameThread {
     static void drawDraggedPiece(Piece*, RenderWindow&, coor2d&, RessourceManager&);
     static void removeIllegalMoves(Board&, moveTypes&, Piece*, coor2d&);
     static void drawTransitioningPiece(RenderWindow&, PieceTransition&, RessourceManager&, Board&);
+    static void drawArrow(RenderWindow&, RessourceManager&, vector<Arrow>&);
+
     public:
     GameThread() = delete; // Delete constructor
     static void startGame();
