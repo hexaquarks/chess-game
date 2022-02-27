@@ -26,8 +26,8 @@ void MenuButton::handleRectangle(uint8_t i) {
 }
 
 void MenuButton::handleSprite(uint8_t i) {
-    m_sprite.setOrigin(BUTTON_SIZE/2 + BUTTON_POS/2, BUTTON_SIZE/2);
-    m_sprite.setPosition(BUTTON_POS*i + BUTTON_POS/2, MENUBAR_HEIGHT/2);
+    m_sprite.setOrigin(BUTTON_SIZE/2, BUTTON_SIZE/2);
+    m_sprite.setPosition(BUTTON_POS*i + 20, MENUBAR_HEIGHT/2);
     m_sprite.setScale(SPRITE_SCALE, SPRITE_SCALE);
 }
 
@@ -39,10 +39,7 @@ void MenuButton::handleText(uint8_t i) {
 }
 
 void MenuButton::rotateIcon() {
-    m_sprite.setOrigin(m_sprite.getLocalBounds().width / 2, m_sprite.getLocalBounds().height / 2);
     m_sprite.setRotation(m_sprite.getRotation() + 180);
-    m_sprite.setOrigin(BUTTON_SIZE/2 + BUTTON_POS/2, BUTTON_SIZE/2);
-    
 }
 
 void MenuButton::drawMenuButton(RenderWindow& window) const {
@@ -73,7 +70,7 @@ int MenuButton::performClick(Board& game, MoveList& moveList) {
     switch (m_index) {
         case 0:
             // Clicked menu button
-            // rotateIcon();
+            rotateIcon();
             break;
         case 1: 
             // Clicked reset button
