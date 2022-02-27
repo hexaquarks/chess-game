@@ -25,8 +25,8 @@ class MoveList {
     void reset() { m_moves.clear(); m_moveIterator = m_moves.begin(); };
     void goToPreviousMove(bool);
     void goToNextMove(bool);
-    void goToCurrentMove() {while(hasMovesAfter()) goToNextMove(false); }
-    void goToInitialMove() {while(hasMovesBefore()) goToPreviousMove(false); }
+    void goToCurrentMove() { while(hasMovesAfter()) goToNextMove(false); }
+    void goToInitialMove() { while(hasMovesBefore()) goToPreviousMove(false); }
     void addMove(Move&);
     bool hasMovesBefore() const { return m_moveIterator != m_moves.end(); }
     bool hasMovesAfter() const { return m_moveIterator != m_moves.begin(); }

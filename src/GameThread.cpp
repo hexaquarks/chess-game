@@ -224,8 +224,13 @@ void GameThread::drawMenuBar(RenderWindow& window, vector<MenuButton>& menuBar, 
 
     for (uint8_t i = 0; i < menuOptions; ++i) {
         shared_ptr<Texture> t = ressources.getTexture(iconFiles[i]);
-        menuBar[i].setSpriteTexture(*t);
-        menuBar[i].drawMenuButton(window);
+        MenuButton& option = menuBar[i];
+        option.setSpriteTexture(*t);
+
+        // handle color transition of menu button when clicked
+        if(option.getIsColorTransitioning()) option.doColorTransition();
+        
+        option.drawMenuButton(window);
     }   
 }
 

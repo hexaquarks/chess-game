@@ -4,7 +4,8 @@
 
 Font font;
 
-MenuButton::MenuButton(uint8_t index, const std::string& name, bool isRotatable): m_index(index), m_isRotatable(isRotatable) {
+MenuButton::MenuButton(uint8_t index, const std::string& name, bool isRotatable)
+: m_index(index), m_isRotatable(isRotatable) {
     if (!font.loadFromFile("../assets/fonts/Arial.ttf")) return;
 
     m_text.setString(name);
@@ -37,6 +38,13 @@ void MenuButton::handleText(uint8_t i) {
     m_text.setPosition(BUTTON_POS*i + BUTTON_POS/3, MENUBAR_HEIGHT);
 }
 
+void MenuButton::rotateIcon() {
+    m_sprite.setOrigin(m_sprite.getLocalBounds().width / 2, m_sprite.getLocalBounds().height / 2);
+    m_sprite.setRotation(m_sprite.getRotation() + 180);
+    m_sprite.setOrigin(BUTTON_SIZE/2 + BUTTON_POS/2, BUTTON_SIZE/2);
+    
+}
+
 void MenuButton::drawMenuButton(RenderWindow& window) const {
     window.draw(m_rectangle);
     window.draw(m_sprite);
@@ -49,10 +57,23 @@ bool MenuButton::isClicked(coor2d& mousePos) const {
     return mousePos.first >= xi && mousePos.first < xf;
 }
 
-int MenuButton::performClick(Board& game, MoveList& moveList) const {
+void MenuButton::doColorTransition() {
+    m_transitionColorIndex = m_transitionColorIndex + 5;
+    sf::Uint8 i = (sf::Uint8)m_transitionColorIndex;
+    m_rectangle.setFillColor({(sf::Uint8) (218-i), (sf::Uint8) (224-i), (sf::Uint8) (241-i)});
+
+    if(m_transitionColorIndex == 45) {
+        m_isColorTransitioning = false;
+        m_transitionColorIndex = 0;
+        m_rectangle.setFillColor({218, 224, 241});
+    }
+}
+
+int MenuButton::performClick(Board& game, MoveList& moveList) {
     switch (m_index) {
         case 0:
             // Clicked menu button
+            // rotateIcon();
             break;
         case 1: 
             // Clicked reset button
@@ -62,8 +83,11 @@ int MenuButton::performClick(Board& game, MoveList& moveList) const {
         case 2: 
             // Clicked flip button
             game.flipBoard();
+            m_isColorTransitioning = true;
             return 1;
             break;
     }
+    // make clicking shadow flashing animation
+    m_isColorTransitioning = true;
     return -1;
 }

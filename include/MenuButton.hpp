@@ -3,11 +3,12 @@
 #include <string> 
 using namespace sf;
 
-
 typedef std::pair<int, int> coor2d;
 class Board; // foward declaration
 class MoveList; // foward declaration
 
+inline Color m_transitionColors[5] = { 
+    {218, 224, 242}, {218, 224, 145}, {218, 224, 200}, {218, 224, 45},{218, 224, 242}};
 
 class MenuButton {
     int m_index;
@@ -16,6 +17,8 @@ class MenuButton {
     Text m_text;
     std::string m_string;
     bool m_isRotatable;
+    bool m_isColorTransitioning = false;
+    int m_transitionColorIndex = 0;
 
     void handleRectangle(uint8_t);
     void handleSprite(uint8_t);
@@ -23,11 +26,17 @@ class MenuButton {
 
     public: 
     MenuButton(uint8_t, const std::string&, bool isRotatable = false);
-    RectangleShape getRectangle() { return m_rectangle; }; 
-    Sprite getSprite() { return m_sprite; };
-    Text getText() { return m_text; };
-    void setSpriteTexture(Texture& texture) { m_sprite.setTexture(texture); };
+    RectangleShape getRectangle() { return m_rectangle; }
+    Sprite getSprite() { return m_sprite; }
+    Text getText() { return m_text; }
+
+    int getTransitionColorIndex() { return m_transitionColorIndex; }
+    bool getIsColorTransitioning() { return m_isColorTransitioning; }
+    void setSpriteTexture(Texture& texture) { m_sprite.setTexture(texture); }
     void drawMenuButton(RenderWindow&) const; 
-    int performClick(Board&, MoveList&) const;
+    void doColorTransition();
+    void rotateIcon(); 
+    
+    int performClick(Board&, MoveList&);
     bool isClicked(coor2d&) const; 
 };
