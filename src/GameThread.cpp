@@ -34,9 +34,11 @@ void GameThread::startGame() {
     // Parameters to handle a piece being dragged
     bool pieceIsMoving = false;
     bool pieceIsClicked = false;
+    bool isRightClicking = false;
     Piece* selectedPiece = nullptr;
     Piece* movingPiece = nullptr; // Piece transition
     coor2d mousePos = {0, 0};
+    coor2d rightClickAnchor = {0, 0};
     int lastXPos = 0, lastYPos = 0; // Last position of the piece before being dragged
     moveTypes possibleMoves;
 
@@ -45,6 +47,7 @@ void GameThread::startGame() {
     PieceTransition transitioningPiece;
     transitioningPiece.setTransitioningPiece();
     MoveList moveList(game, transitioningPiece);
+    vector<Arrow> arrowList;
 
     // Sounds for piece movement
     SoundBuffer bufferMove;
@@ -70,43 +73,49 @@ void GameThread::startGame() {
                 window.close();
 
             // Clicking on a piece
-            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
-                // Get the tile of the click
-                mousePos = {event.mouseButton.x, event.mouseButton.y};
+            if (event.type == Event::MouseButtonPressed) {
+                if(event.mouseButton.button == Mouse::Left) {
+                    // Get the tile of the click
+                    mousePos = {event.mouseButton.x, event.mouseButton.y};
 
-                // Allow user to make moves only if they're at the current live position, 
-                // and if the click is on the chess board
-                int yPos = getTileYPos(mousePos);
-                if (yPos < 0 || moveList.hasMovesAfter()) continue;
+                    // Allow user to make moves only if they're at the current live position, 
+                    // and if the click is on the chess board
+                    int yPos = getTileYPos(mousePos);
+                    if (yPos < 0 || moveList.hasMovesAfter()) continue;
 
-                Piece* piece = game.getBoardTile(getTileXPos(mousePos), yPos);
+                    Piece* piece = game.getBoardTile(getTileXPos(mousePos), yPos);
 
-                // If piece is not null and has the right color
-                if (piece != nullptr && piece->getTeam() == game.getTurn()) {
-                    // Unselect clicked piece
-                    if(piece == selectedPiece) {
-                        selectedPiece = nullptr;
+                    // If piece is not null and has the right color
+                    if (piece != nullptr && piece->getTeam() == game.getTurn()) {
+                        // Unselect clicked piece
+                        if(piece == selectedPiece) {
+                            selectedPiece = nullptr;
+                            pieceIsClicked = false;
+                            continue;
+                        }
+
+                        selectedPiece = piece;
+                        possibleMoves = game.possibleMovesFor(selectedPiece);
+
+                        // Trim the illegal moves if in check
+                        // Check for absolute pin
+                        removeIllegalMoves(game, possibleMoves, selectedPiece, mousePos);
+                        pieceIsMoving = true;
                         pieceIsClicked = false;
-                        continue;
+                        lastXPos = getTileXPos(mousePos); lastYPos = yPos;
+
+                        // Set the tile on the board where the piece is selected to null
+                        game.setBoardTile(lastXPos, lastYPos, nullptr, false); 
                     }
-
-                    selectedPiece = piece;
-                    possibleMoves = game.possibleMovesFor(selectedPiece);
-
-                    // Trim the illegal moves if in check
-                    // Check for absolute pin
-                    removeIllegalMoves(game, possibleMoves, selectedPiece, mousePos);
-                    pieceIsMoving = true;
-                    pieceIsClicked = false;
-                    lastXPos = getTileXPos(mousePos); lastYPos = yPos;
-
-                    // Set the tile on the board where the piece is selected to null
-                    game.setBoardTile(lastXPos, lastYPos, nullptr, false); 
+                }
+                if(event.mouseButton.button == Mouse::Right) {
+                    rightClickAnchor = {event.mouseButton.x, event.mouseButton.y};
+                    isRightClicking = true;
                 }
             }
 
             // Dragging a piece around
-            if (event.type == Event::MouseMoved && (pieceIsMoving || pieceIsClicked)) {
+            if (event.type == Event::MouseMoved && (pieceIsMoving || pieceIsClicked || isRightClicking)) {
                 // Update the position of the piece that is being moved
                 Vector2i mousePosition = Mouse::getPosition(window);
                 mousePos = {mousePosition.x, mousePosition.y};
@@ -169,12 +178,18 @@ void GameThread::startGame() {
                     pieceIsClicked = false;
                     mousePos = {0, 0};
                 }
-
-                if (event.mouseButton.button == Mouse::Right && selectedPiece != nullptr && pieceIsMoving) {
-                    // Reset the piece back
-                    game.setBoardTile(lastXPos, lastYPos, selectedPiece, false);
-                    selectedPiece = nullptr;
-                    pieceIsMoving = false;
+                if (event.mouseButton.button == Mouse::Right){
+                    if(selectedPiece != nullptr && pieceIsMoving){
+                        // Reset the piece back
+                        game.setBoardTile(lastXPos, lastYPos, selectedPiece, false);
+                        selectedPiece = nullptr;
+                        pieceIsMoving = false;
+                    }else {
+                        // add arrow to arrow list to be drawn
+                        arrowList.push_back(Arrow(rightClickAnchor, mousePos));
+                        isRightClicking = false;
+                        rightClickAnchor = {0,0};
+                    }
                 }
             }
 
@@ -196,17 +211,17 @@ void GameThread::startGame() {
         initializeBoard(window, game);
         moveList.highlightLastMove(window);
 
-        if (pieceIsMoving || pieceIsClicked) {
+        if(pieceIsMoving || pieceIsClicked) {
             drawCaptureCircles(window, possibleMoves, game, ressources);
             highlightHoveredSquare(window, game, possibleMoves, mousePos);
         }
         drawPieces(window, game, ressources);
-
-        if (pieceIsMoving) drawDraggedPiece(selectedPiece,window, mousePos, ressources);
-
+        if(pieceIsMoving) drawDraggedPiece(selectedPiece,window, mousePos, ressources);
         if(transitioningPiece.getIsTransitioning()) {
             drawTransitioningPiece(window, transitioningPiece, ressources, game);
         }
+
+        drawArrow(window, ressources, arrowList);
         window.display();
     }
 }
@@ -332,6 +347,22 @@ void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, co
     
     window.draw(sBefore);
     window.draw(s);
+}
+
+void GameThread::drawArrow(RenderWindow& window, RessourceManager& ressources, vector<Arrow>& arrowList) {
+    // int dx = abs(mousePos.first - anchor.first)/CELL_SIZE;
+    // int dy = abs(mousePos.second - anchor.second)/CELL_SIZE;
+    
+    for(Arrow& arrow : arrowList) {
+        cout << "in the arrow deaw function" << endl;
+        shared_ptr<Texture> t = ressources.getTexture("arrow_n2x.png");
+        if(t == nullptr) return;
+        Sprite s(*t);
+        s.setScale(SPRITE_SCALE, SPRITE_SCALE);
+
+        s.setPosition(arrow.getOrigin().first, arrow.getOrigin().second);
+        window.draw(s);
+    }
 }
 
 void GameThread::setTransitioningPiece(Piece* p, int xTarget, int yTarget, PieceTransition& trans) {
