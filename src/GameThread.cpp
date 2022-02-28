@@ -362,8 +362,8 @@ void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, co
 }
 
 void GameThread::drawCurrentArrow(RenderWindow& window, RessourceManager& ressources, Arrow& arrow) {
-    string filename = "arrow_n" + to_string(arrow.getSize() > 3 ? 3 : arrow.getSize()) + "x.png";
     if(arrow.getSize() == 0) return;
+    string filename = "arrow_n" + to_string(arrow.getSize()) + "x.png";
 
     shared_ptr<Texture> t = ressources.getTexture(filename);
     if(t == nullptr) return;

@@ -13,11 +13,12 @@ typedef unordered_map<string, shared_ptr<sf::SoundBuffer>> audioMap;
 class RessourceManager {  
     inline const static string iconsPath = "../assets/icons/";
     inline const static string audioPath = "../assets/sounds/";
-    inline static constexpr uint8_t m_numberOfTextures = 20;
+    inline static constexpr uint8_t m_numberOfTextures = 24;
     string m_textureNames[m_numberOfTextures] = {"circle.png", "empty_circle.png", 
         "bb.png", "bw.png", "kb.png", "kw.png", "nb.png", "nw.png", "pb.png", "pw.png",
         "qb.png", "qw.png", "rb.png", "reset.png", "rw.png", "dropDown.png", "flip.png",
-        "arrow_n1x.png", "arrow_n2x.png", "arrow_n3x.png"};
+        "arrow_n1x.png", "arrow_n2x.png", "arrow_n3x.png", "arrow_n4x.png", "arrow_n5x.png",
+        "arrow_n6x.png", "arrow_n7x.png"};
 
     // audioVector m_audios;
     textureMap m_textures;

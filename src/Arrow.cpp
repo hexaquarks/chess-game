@@ -28,14 +28,16 @@ void Arrow::updateArrow() {
     int dyc = (m_destination.second - m_origin.second)/(int)CELL_SIZE;
 
     // check if arrow is feasible 
-    if((dxc == 0 && dyc == 0) || (dxc != 0 && abs(dyc) > 1) || (dyc != 0 && abs(dxc) > 1)) return;
+    if((dxc == 0 && dyc == 0)) return;
+    // conditional check involving  || (dxc != 0 && abs(dyc) > 1) || (dyc != 0 && abs(dxc) > 1) ?
 
     // TODO check if out of window bounds ? 
 
     if (dxc != 0 || dyc != 0)  // if (!(x == 0 && y == 0))
         m_rotation = rotation[1 + sign(dxc)][1 + sign(dyc)];
     
-    m_size = abs(std::max(dxc, dyc));
+    m_size = std::max(abs(dxc), abs(dyc));
+    cout << m_size << endl;
 }
 
 void Arrow::resetParameters() {
