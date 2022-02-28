@@ -53,4 +53,3 @@ bool Arrow::isDrawable() {
     // cout << dx << "," << dy << endl;
     return dx > 0 || dy > 0;
 }
-
