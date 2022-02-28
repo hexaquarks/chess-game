@@ -362,11 +362,10 @@ void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, co
 }
 
 void GameThread::drawCurrentArrow(RenderWindow& window, RessourceManager& ressources, Arrow& arrow) {
-    string filename = "arrow_n" + to_string(arrow.getSize() > 2 ? 2 : arrow.getSize()) + "x.png";
-    // cout << "size is " << arrow.getSize() << endl;
+    string filename = "arrow_n" + to_string(arrow.getSize() > 3 ? 3 : arrow.getSize()) + "x.png";
     if(arrow.getSize() == 0) return;
+
     shared_ptr<Texture> t = ressources.getTexture(filename);
-    cout << filename << endl;
     if(t == nullptr) return;
     Sprite s(*t);
     // s.setScale(SPRITE_SCALE, SPRITE_SCALE);
@@ -375,17 +374,6 @@ void GameThread::drawCurrentArrow(RenderWindow& window, RessourceManager& ressou
     s.setOrigin(0, s.getLocalBounds().height / 2);
     s.rotate(arrow.getRotation());
     window.draw(s);
-    
-    // for(Arrow& arrow : arrowList) {
-    //     cout << "in the arrow deaw function" << endl;
-    //     shared_ptr<Texture> t = ressources.getTexture("arrow_n2x.png");
-    //     if(t == nullptr) return;
-    //     Sprite s(*t);
-    //     s.setScale(SPRITE_SCALE, SPRITE_SCALE);
-
-    //     s.setPosition(arrow.getOrigin().first, arrow.getOrigin().second);
-    //     window.draw(s);
-    // }
 }
 
 void GameThread::setTransitioningPiece(Piece* p, int xTarget, int yTarget, PieceTransition& trans) {
