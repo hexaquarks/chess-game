@@ -7,7 +7,8 @@ template <typename T> int sign(T val) {
     return (T(0) < val) - (val < T(0));
 }
 
-Arrow::Arrow(coor2d origin, coor2d destination) : m_origin(origin), m_destination(destination) {};
+Arrow::Arrow(coor2d origin, coor2d destination, int rotation, string filename)
+: m_origin(origin), m_destination(destination), m_rotation(rotation), m_filename(filename) {};
 
 void Arrow::setOrigin(coor2d& origin) {
     // need to format the origin to be at the center of the tile
@@ -36,8 +37,9 @@ void Arrow::updateArrow() {
     if (dxc != 0 || dyc != 0)  // if (!(x == 0 && y == 0))
         m_rotation = rotation[1 + sign(dxc)][1 + sign(dyc)];
     
-    m_size = std::max(abs(dxc), abs(dyc));
-    cout << m_size << endl;
+    int size = std::max(abs(dxc), abs(dyc));
+    if(size == 0) return;
+    m_filename = "arrow_n" + to_string(size) + "x.png";
 }
 
 void Arrow::resetParameters() {

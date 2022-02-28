@@ -194,9 +194,9 @@ void GameThread::startGame() {
                         pieceIsMoving = false;
                     }else if(isRightClicking){
                         // add arrow to arrow list to be drawn
-                        // if(arrow.isDrawable()) 
-                        //     arrowList.push_back(
-                        //         Arrow(arrow.getOrigin(), arrow.getDestination()));
+                        if(arrow.isDrawable()) arrowList.push_back(Arrow(
+                                arrow.getOrigin(), arrow.getDestination(), 
+                                arrow.getRotation(), arrow.getFilename()));
                         isRightClicking = false;
                         rightClickAnchor = {0,0};
                         arrow.resetParameters();
@@ -362,13 +362,9 @@ void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, co
 }
 
 void GameThread::drawCurrentArrow(RenderWindow& window, RessourceManager& ressources, Arrow& arrow) {
-    if(arrow.getSize() == 0) return;
-    string filename = "arrow_n" + to_string(arrow.getSize()) + "x.png";
-
-    shared_ptr<Texture> t = ressources.getTexture(filename);
+    shared_ptr<Texture> t = ressources.getTexture(arrow.getFilename());
     if(t == nullptr) return;
     Sprite s(*t);
-    // s.setScale(SPRITE_SCALE, SPRITE_SCALE);
 
     s.setPosition(arrow.getOrigin().first, arrow.getOrigin().second);
     s.setOrigin(0, s.getLocalBounds().height / 2);
