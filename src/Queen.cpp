@@ -9,4 +9,4 @@ moveTypes Queen::calcPossibleMoves(Piece* board[8][8]) const {
     for (auto& move: getDiagonalMovements(board))
         moves.push_back(move);
     return moves;
-};
+}

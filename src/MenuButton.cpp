@@ -4,8 +4,8 @@
 
 Font font;
 
-MenuButton::MenuButton(uint8_t index, const std::string& name, bool isRotatable)
-: m_index(index), m_isRotatable(isRotatable) {
+MenuButton::MenuButton(uint8_t index, const std::string& name, bool isRotatable):
+    m_index(index), m_isRotatable(isRotatable) {
     if (!font.loadFromFile("../assets/fonts/Arial.ttf")) return;
 
     m_text.setString(name);

@@ -24,4 +24,4 @@ moveTypes Knight::calcPossibleMoves(Piece* board[8][8]) const {
     }
 
     return moves;
-};
+}

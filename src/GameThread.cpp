@@ -186,13 +186,13 @@ void GameThread::startGame() {
                     pieceIsClicked = false;
                     mousePos = {0, 0};
                 }
-                if (event.mouseButton.button == Mouse::Right){
-                    if(selectedPiece != nullptr && pieceIsMoving){
+                if (event.mouseButton.button == Mouse::Right) {
+                    if(selectedPiece != nullptr && pieceIsMoving) {
                         // Reset the piece back
                         game.setBoardTile(lastXPos, lastYPos, selectedPiece, false);
                         selectedPiece = nullptr;
                         pieceIsMoving = false;
-                    }else if(isRightClicking){
+                    } else if (isRightClicking) {
                         // add arrow to arrow list to be drawn
                         // if(arrow.isDrawable()) 
                         //     arrowList.push_back(
@@ -222,17 +222,17 @@ void GameThread::startGame() {
         initializeBoard(window, game);
         moveList.highlightLastMove(window);
 
-        if(pieceIsMoving || pieceIsClicked) {
+        if (pieceIsMoving || pieceIsClicked) {
             drawCaptureCircles(window, possibleMoves, game, ressources);
             highlightHoveredSquare(window, game, possibleMoves, mousePos);
         }
         drawPieces(window, game, ressources);
-        if(pieceIsMoving) drawDraggedPiece(selectedPiece,window, mousePos, ressources);
-        if(transitioningPiece.getIsTransitioning()) {
+        if (pieceIsMoving) drawDraggedPiece(selectedPiece,window, mousePos, ressources);
+        if (transitioningPiece.getIsTransitioning()) {
             drawTransitioningPiece(window, transitioningPiece, ressources, game);
         }
 
-        if(arrow.isDrawable()) drawCurrentArrow(window, ressources, arrow);
+        if (arrow.isDrawable()) drawCurrentArrow(window, ressources, arrow);
         drawAllArrows(window, ressources, arrowList);
         window.display();
     }
@@ -255,7 +255,7 @@ void GameThread::drawMenuBar(RenderWindow& window, vector<MenuButton>& menuBar, 
         option.setSpriteTexture(*t);
 
         // handle color transition of menu button when clicked
-        if(option.getIsColorTransitioning()) option.doColorTransition();
+        if (option.getIsColorTransitioning()) option.doColorTransition();
         
         option.drawMenuButton(window);
     }   
@@ -347,12 +347,12 @@ void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, co
     shared_ptr<Texture> t = ressources.getTexture(selectedPiece->getFileName());
     shared_ptr<Texture> tBefore = ressources.getTexture(selectedPiece->getFileName());
     
-    if(t == nullptr || tBefore == nullptr) return;
+    if (t == nullptr || tBefore == nullptr) return;
     Sprite s(*t), sBefore(*tBefore); 
     s.setScale(SPRITE_SCALE, SPRITE_SCALE);
     sBefore.setScale(SPRITE_SCALE, SPRITE_SCALE);
     s.setPosition(mousePos.first, mousePos.second);
-    sBefore.setPosition(selectedPiece->getY() * CELL_SIZE , 
+    sBefore.setPosition(selectedPiece->getY() * CELL_SIZE, 
         selectedPiece->getX() * CELL_SIZE + MENUBAR_HEIGHT);
     s.setOrigin(SPRITE_SIZE/2, SPRITE_SIZE/2);
     sBefore.setColor(Color(255,255,255,100));
@@ -362,11 +362,10 @@ void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, co
 }
 
 void GameThread::drawCurrentArrow(RenderWindow& window, RessourceManager& ressources, Arrow& arrow) {
-    if(arrow.getSize() == 0) return;
+    if (arrow.getSize() == 0) return;
     string filename = "arrow_n" + to_string(arrow.getSize()) + "x.png";
-
     shared_ptr<Texture> t = ressources.getTexture(filename);
-    if(t == nullptr) return;
+    if (t == nullptr) return;
     Sprite s(*t);
     // s.setScale(SPRITE_SCALE, SPRITE_SCALE);
 

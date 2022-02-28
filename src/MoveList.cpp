@@ -182,7 +182,7 @@ void MoveList::undoMove(bool enableTransition) {
             m.setSelectedPiece(pawn);
             break;
     }
-    if(enableTransition) GameThread::setTransitioningPiece(
+    if (enableTransition) GameThread::setTransitioningPiece(
         m.getSelectedPiece(), m.getInit().first * CELL_SIZE, 
         m.getInit().second * CELL_SIZE, getTransitioningPiece()); 
     else 

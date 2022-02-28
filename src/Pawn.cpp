@@ -13,7 +13,7 @@ moveTypes Pawn::calcPossibleMoves(Piece* board[8][8]) const {
     generateEnPassantMoves(moves, board);
 
     return moves;
-};
+}
 
 void Pawn::generateCaptureMoves(moveTypes &moves, Piece* board[8][8], int dir) const {
     int xPos =getX(); int yPos = getY();
@@ -37,7 +37,7 @@ void Pawn::generateCaptureMoves(moveTypes &moves, Piece* board[8][8], int dir) c
 }
 
 void Pawn::generateForwardMoves(moveTypes &moves, Piece* board[8][8], int dir) const {
-    int xPos =getX(); int yPos = getY();
+    int xPos = getX(); int yPos = getY();
 
     // Forward move
     if ((xPos+dir == 0 || xPos+dir == 7) && board[xPos+dir][yPos] == nullptr)
