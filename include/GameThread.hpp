@@ -21,12 +21,10 @@ constexpr float SPRITE_SCALE = 0.6;
 constexpr float SPRITE_SIZE = 128;
 constexpr float BUTTON_SIZE = 40;
 
-
 // Utility function
 inline RectangleShape createSquare() {
     return RectangleShape({CELL_SIZE, CELL_SIZE});
 }
-
 
 class GameThread {
     inline const static string iconsPath = "../assets/icons/";
@@ -41,7 +39,8 @@ class GameThread {
     static void drawDraggedPiece(Piece*, RenderWindow&, coor2d&, RessourceManager&);
     static void removeIllegalMoves(Board&, moveTypes&, Piece*, coor2d&);
     static void drawTransitioningPiece(RenderWindow&, PieceTransition&, RessourceManager&, Board&);
-    static void drawArrow(RenderWindow&, RessourceManager&, vector<Arrow>&);
+    static void drawAllArrows(RenderWindow&, RessourceManager&, vector<Arrow>&){};
+    static void drawCurrentArrow(RenderWindow&, RessourceManager&, Arrow&);
 
     public:
     GameThread() = delete; // Delete constructor

@@ -48,6 +48,7 @@ void GameThread::startGame() {
     transitioningPiece.setTransitioningPiece();
     MoveList moveList(game, transitioningPiece);
     vector<Arrow> arrowList;
+    Arrow arrow;
 
     // Sounds for piece movement
     SoundBuffer bufferMove;
@@ -110,6 +111,8 @@ void GameThread::startGame() {
                 }
                 if(event.mouseButton.button == Mouse::Right) {
                     rightClickAnchor = {event.mouseButton.x, event.mouseButton.y};
+                    arrow.setOrigin(rightClickAnchor);
+                    arrow.setDestination(rightClickAnchor);
                     isRightClicking = true;
                 }
             }
@@ -119,6 +122,11 @@ void GameThread::startGame() {
                 // Update the position of the piece that is being moved
                 Vector2i mousePosition = Mouse::getPosition(window);
                 mousePos = {mousePosition.x, mousePosition.y};
+
+                if(isRightClicking) {
+                    arrow.setDestination(mousePos);
+                    arrow.updateArrow(); // update the type and rotation
+                }
             }
 
             // Mouse button released
@@ -184,11 +192,14 @@ void GameThread::startGame() {
                         game.setBoardTile(lastXPos, lastYPos, selectedPiece, false);
                         selectedPiece = nullptr;
                         pieceIsMoving = false;
-                    }else {
+                    }else if(isRightClicking){
                         // add arrow to arrow list to be drawn
-                        arrowList.push_back(Arrow(rightClickAnchor, mousePos));
+                        // if(arrow.isDrawable()) 
+                        //     arrowList.push_back(
+                        //         Arrow(arrow.getOrigin(), arrow.getDestination()));
                         isRightClicking = false;
                         rightClickAnchor = {0,0};
+                        arrow.resetParameters();
                     }
                 }
             }
@@ -221,7 +232,8 @@ void GameThread::startGame() {
             drawTransitioningPiece(window, transitioningPiece, ressources, game);
         }
 
-        drawArrow(window, ressources, arrowList);
+        if(arrow.isDrawable()) drawCurrentArrow(window, ressources, arrow);
+        drawAllArrows(window, ressources, arrowList);
         window.display();
     }
 }
@@ -349,20 +361,31 @@ void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, co
     window.draw(s);
 }
 
-void GameThread::drawArrow(RenderWindow& window, RessourceManager& ressources, vector<Arrow>& arrowList) {
-    // int dx = abs(mousePos.first - anchor.first)/CELL_SIZE;
-    // int dy = abs(mousePos.second - anchor.second)/CELL_SIZE;
-    
-    for(Arrow& arrow : arrowList) {
-        cout << "in the arrow deaw function" << endl;
-        shared_ptr<Texture> t = ressources.getTexture("arrow_n2x.png");
-        if(t == nullptr) return;
-        Sprite s(*t);
-        s.setScale(SPRITE_SCALE, SPRITE_SCALE);
+void GameThread::drawCurrentArrow(RenderWindow& window, RessourceManager& ressources, Arrow& arrow) {
+    string filename = "arrow_n" + to_string(arrow.getSize() > 2 ? 2 : arrow.getSize()) + "x.png";
+    // cout << "size is " << arrow.getSize() << endl;
+    if(arrow.getSize() == 0) return;
+    shared_ptr<Texture> t = ressources.getTexture(filename);
+    cout << filename << endl;
+    if(t == nullptr) return;
+    Sprite s(*t);
+    // s.setScale(SPRITE_SCALE, SPRITE_SCALE);
 
-        s.setPosition(arrow.getOrigin().first, arrow.getOrigin().second);
-        window.draw(s);
-    }
+    s.setPosition(arrow.getOrigin().first, arrow.getOrigin().second);
+    s.setOrigin(0, s.getLocalBounds().height / 2);
+    s.rotate(arrow.getRotation());
+    window.draw(s);
+    
+    // for(Arrow& arrow : arrowList) {
+    //     cout << "in the arrow deaw function" << endl;
+    //     shared_ptr<Texture> t = ressources.getTexture("arrow_n2x.png");
+    //     if(t == nullptr) return;
+    //     Sprite s(*t);
+    //     s.setScale(SPRITE_SCALE, SPRITE_SCALE);
+
+    //     s.setPosition(arrow.getOrigin().first, arrow.getOrigin().second);
+    //     window.draw(s);
+    // }
 }
 
 void GameThread::setTransitioningPiece(Piece* p, int xTarget, int yTarget, PieceTransition& trans) {
