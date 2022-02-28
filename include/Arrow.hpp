@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <utility>
+using namespace std;
 
 typedef std::pair<int, int> coor2d;
 
@@ -13,16 +14,16 @@ inline constexpr int rotation[3][3] = {
 class Arrow {
     coor2d m_origin;
     coor2d m_destination;
-    // string m_filename;
+    string m_filename; 
     int m_rotation;
     int m_size;
 
     public:
     Arrow(): m_rotation(0), m_size(0){};
-    Arrow(coor2d, coor2d);
+    Arrow(coor2d, coor2d, int, string);
 
     int getRotation() { return m_rotation; }
-    int getSize() { return m_size; }
+    string getFilename() { return m_filename; }
     void updateArrow();
     void setOrigin(coor2d&); 
     void resetParameters();
