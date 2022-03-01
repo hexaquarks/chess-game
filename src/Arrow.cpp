@@ -16,24 +16,21 @@ void Arrow::setOrigin(coor2d& origin) {
     m_origin.second = (origin.second / CELL_SIZE) * CELL_SIZE + MENUBAR_HEIGHT + CELL_SIZE/2;
 }
 
-void Arrow::updateArrow() { 
-    // absolute coordinates
-    int dx = m_destination.first - m_origin.first;
-    int dy = m_destination.second - m_origin.second;
+void Arrow::setDestination(coor2d& destination) {
+    m_destination.first = destination.first;
+    m_destination.second =  destination.second - MENUBAR_HEIGHT;
 
     // tile coordinates 
-    int dxc = (m_destination.first - m_origin.first)/(int)CELL_SIZE;
-    int dyc = (m_destination.second - m_origin.second)/(int)CELL_SIZE;
+    m_dx = (m_destination.first/(int)CELL_SIZE - m_origin.first/(int)CELL_SIZE);
+    m_dy = (m_destination.second/(int)CELL_SIZE - m_origin.second/(int)CELL_SIZE);
+}
 
+void Arrow::updateArrow() {
     // check if arrow is feasible 
-    if((dxc == 0 && dyc == 0)) return;
-    // conditional check involving  || (dxc != 0 && abs(dyc) > 1) || (dyc != 0 && abs(dxc) > 1) ?
-
-    // TODO check if out of window bounds ? 
-
-    if (dxc != 0 || dyc != 0) m_rotation = rotation[1 + sign(dxc)][1 + sign(dyc)];
+    if((m_dx == 0 && m_dy == 0)) return;
+    if (m_dx != 0 || m_dy != 0) m_rotation = rotation[1 + sign(m_dx)][1 + sign(m_dy)];
     
-    int size = std::max(abs(dxc), abs(dyc));
+    int size = std::max(abs(m_dx), abs(m_dy));
     if(size == 0) return; // do nothing, arrow too short
     m_filename = "arrow_n" + to_string(size) + "x.png";
 }
@@ -41,12 +38,11 @@ void Arrow::updateArrow() {
 void Arrow::resetParameters() {
      m_origin.first = 0 , m_origin.second = 0;
      m_destination.first = 0 , m_destination.second = 0;
+     m_dx = 0, m_dy = 0;
 }
 
 bool Arrow::isDrawable() {
-    int dx = abs(m_destination.first - m_origin.first)/CELL_SIZE;
-    int dy = abs(m_destination.second - m_origin.second)/CELL_SIZE;
-    return dx > 0 || dy > 0;
+    return abs(m_dx) > 0 || abs(m_dy) > 0;
 }
 
 bool Arrow::removeArrow(vector<Arrow>& arrows) {

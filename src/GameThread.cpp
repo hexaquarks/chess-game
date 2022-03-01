@@ -373,6 +373,7 @@ void GameThread::drawCurrentArrow(RenderWindow& window, RessourceManager& ressou
     if (t == nullptr) return;
     Sprite s(*t);
 
+    cout << arrow.getOrigin().first << "," << arrow.getOrigin().second << endl;
     s.setPosition(arrow.getOrigin().first, arrow.getOrigin().second);
     s.setOrigin(0, s.getLocalBounds().height / 2);
     s.rotate(arrow.getRotation());
