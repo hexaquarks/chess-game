@@ -15,9 +15,6 @@ void Arrow::setOrigin(coor2d& origin) {
     m_origin.first = (origin.first / CELL_SIZE) * CELL_SIZE + CELL_SIZE/2;
     m_origin.second = (origin.second / CELL_SIZE) * CELL_SIZE + MENUBAR_HEIGHT + CELL_SIZE/2;
 }
-void Arrow::setCoordinates(coor2d& origin, coor2d& destination) {
-    m_origin = origin; m_destination = destination; 
-}
 
 void Arrow::updateArrow() { 
     // absolute coordinates
@@ -34,11 +31,10 @@ void Arrow::updateArrow() {
 
     // TODO check if out of window bounds ? 
 
-    if (dxc != 0 || dyc != 0)  // if (!(x == 0 && y == 0))
-        m_rotation = rotation[1 + sign(dxc)][1 + sign(dyc)];
+    if (dxc != 0 || dyc != 0) m_rotation = rotation[1 + sign(dxc)][1 + sign(dyc)];
     
     int size = std::max(abs(dxc), abs(dyc));
-    if(size == 0) return;
+    if(size == 0) return; // do nothing, arrow too short
     m_filename = "arrow_n" + to_string(size) + "x.png";
 }
 
@@ -50,6 +46,21 @@ void Arrow::resetParameters() {
 bool Arrow::isDrawable() {
     int dx = abs(m_destination.first - m_origin.first)/CELL_SIZE;
     int dy = abs(m_destination.second - m_origin.second)/CELL_SIZE;
-    // cout << dx << "," << dy << endl;
     return dx > 0 || dy > 0;
+}
+
+bool Arrow::removeArrow(vector<Arrow>& arrows) {
+    vector<Arrow>::iterator it = arrows.begin();
+    bool removed = false;
+
+    while(it != arrows.end()) {
+        if(compare(*it)) { it = arrows.erase(it); removed = true;} 
+        else ++it;
+    }
+    return removed;
+}
+
+bool Arrow::compare(Arrow& arrow){
+    return arrow.getOrigin() == m_origin && arrow.getFilename() == m_filename && 
+    arrow.getRotation() == m_rotation;
 }

@@ -39,7 +39,7 @@ class GameThread {
     static void drawDraggedPiece(Piece*, RenderWindow&, coor2d&, RessourceManager&);
     static void removeIllegalMoves(Board&, vector<Move>&, Piece*, coor2d&);
     static void drawTransitioningPiece(RenderWindow&, PieceTransition&, RessourceManager&, Board&);
-    static void drawAllArrows(RenderWindow&, RessourceManager&, vector<Arrow>&){};
+    static void drawAllArrows(RenderWindow&, RessourceManager&, vector<Arrow>&);
     static void drawCurrentArrow(RenderWindow&, RessourceManager&, Arrow&);
 
     public:

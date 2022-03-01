@@ -25,6 +25,7 @@ class Arrow {
 
     int getRotation() { return m_rotation; }
     string getFilename() { return m_filename; }
+    
     void updateArrow();
     void setOrigin(coor2d&); 
     void resetParameters();
@@ -32,6 +33,8 @@ class Arrow {
     void setDestination(coor2d& destination){ m_destination = destination; }
     coor2d getOrigin() { return m_origin; }
     coor2d getDestination() { return m_destination; }
+    bool removeArrow(vector<Arrow>&);
     bool isDrawable();
+    bool compare(Arrow&);
     
 };

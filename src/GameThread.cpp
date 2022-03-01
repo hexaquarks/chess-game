@@ -196,9 +196,9 @@ void GameThread::startGame() {
                         pieceIsMoving = false;
                     } else if (isRightClicking) {
                         // add arrow to arrow list to be drawn
-                        if(arrow.isDrawable()) arrowList.push_back(Arrow(
-                                arrow.getOrigin(), arrow.getDestination(), 
-                                arrow.getRotation(), arrow.getFilename()));
+                        if(arrow.isDrawable()) {
+                            if(!arrow.removeArrow(arrowList)) arrowList.push_back(arrow);
+                        }
                         isRightClicking = false;
                         rightClickAnchor = {0,0};
                         arrow.resetParameters();
@@ -377,6 +377,19 @@ void GameThread::drawCurrentArrow(RenderWindow& window, RessourceManager& ressou
     s.setOrigin(0, s.getLocalBounds().height / 2);
     s.rotate(arrow.getRotation());
     window.draw(s);
+}
+
+void GameThread::drawAllArrows(RenderWindow& window, RessourceManager& ressources, vector<Arrow>& arrows){
+    for(auto& arrow: arrows){
+        shared_ptr<Texture> t = ressources.getTexture(arrow.getFilename());
+        if (t == nullptr) return;
+        Sprite s(*t);
+
+        s.setPosition(arrow.getOrigin().first, arrow.getOrigin().second);
+        s.setOrigin(0, s.getLocalBounds().height / 2);
+        s.rotate(arrow.getRotation());
+        window.draw(s);
+    }
 }
 
 void GameThread::setTransitioningPiece(Piece* p, int xTarget, int yTarget, PieceTransition& trans) {
