@@ -68,9 +68,35 @@ vector<Move> Board::calculateAllMoves() {
     vector<Move> moves;
     vector<Piece*> playerPieces = (m_turn == Team::WHITE)? m_whitePieces: m_blackPieces;
     for (Piece* piece: playerPieces) {
-        for (auto& move: possibleMovesFor(piece)) {
+        vector<Move> pieceMoves = possibleMovesFor(piece);
+        removeIllegalMoves(pieceMoves, piece);
+        for (auto& move: pieceMoves) {
             moves.push_back(move);
         }
     }
     return moves;
+}
+
+void Board::removeIllegalMoves(vector<Move>& possibleMoves, Piece* selectedPiece) {
+    vector<Move>::iterator it = possibleMoves.begin();
+
+    while (it != possibleMoves.end()) {
+        int x = (*it).getTarget().second;
+        int y = (*it).getTarget().first;
+
+        // Store piece occupied by target square
+        Piece* temp = getBoardTile(x, y);
+
+        int initialX = selectedPiece->getY();
+        int initialY = selectedPiece->getX();
+
+        setBoardTile(x, y, selectedPiece, false); // Move this piece to target square
+        setBoardTile(initialX, initialY, nullptr, false); // Set null to selected piece's square
+
+        if (kingIsChecked()) it = possibleMoves.erase(it);
+        else ++it;
+
+        setBoardTile(initialX, initialY, selectedPiece, false);
+        setBoardTile(x, y, temp, false); 
+    }
 }

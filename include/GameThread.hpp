@@ -37,7 +37,6 @@ class GameThread {
     static void drawMenuBar(RenderWindow&, vector<MenuButton>&);
     static void drawPieces(RenderWindow&, Board&);
     static void drawDraggedPiece(Piece*, RenderWindow&, coor2d&);
-    static void removeIllegalMoves(Board&, vector<Move>&, Piece*, coor2d&);
     static void drawTransitioningPiece(RenderWindow&, PieceTransition&, Board&);
     static void drawAllArrows(RenderWindow&, vector<Arrow>&);
     static void drawCurrentArrow(RenderWindow&, Arrow&);

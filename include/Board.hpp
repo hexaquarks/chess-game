@@ -18,6 +18,7 @@ class Board {
     King* m_whiteKing;
     King* m_blackKing;
     void freeMemory();
+    void removeIllegalMoves(vector<Move>&, Piece*);
 
     public:
     Board(): m_turn(Team::WHITE) { reset(); } // Constructor
