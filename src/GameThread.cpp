@@ -97,10 +97,6 @@ void GameThread::startGame() {
                         }
 
                         selectedPiece = piece;
-
-                        // Trim the illegal moves if in check
-                        // Check for absolute pin
-                        // removeIllegalMoves(game, possibleMoves, selectedPiece, mousePos);
                         pieceIsMoving = true;
                         pieceIsClicked = false;
                         lastXPos = isFlipped? 7-getTileXPos(mousePos): getTileXPos(mousePos); lastYPos = yPos;
@@ -135,9 +131,8 @@ void GameThread::startGame() {
                     [[unlikely]] if (mousePos.second < MENUBAR_HEIGHT)
                         for (MenuButton& m: menuBar)
                             if (m.isClicked(mousePos))
-                                if(m.performClick(game, moveList) == 1 && selectedPiece != nullptr) {
-                                    // possibleMoves = game.possibleMovesFor(selectedPiece);
-                                    // removeIllegalMoves(game, possibleMoves, selectedPiece, mousePos);
+                                if(m.performClick(game, moveList) == 1) {
+                                    // TODO fix bug (reset at beggining)
                                     selectedPiece = nullptr;
                                     mousePos = {0, 0};
                                 }
@@ -357,7 +352,6 @@ void GameThread::drawCurrentArrow(RenderWindow& window, Arrow& arrow) {
     if (t == nullptr) return;
     Sprite s(*t);
 
-    cout << arrow.getOrigin().first << "," << arrow.getOrigin().second << endl;
     s.setPosition(arrow.getOrigin().first, arrow.getOrigin().second);
     s.setOrigin(0, s.getLocalBounds().height / 2);
     s.rotate(arrow.getRotation());
