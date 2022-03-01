@@ -2,10 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
-
 using namespace std;
-
-RessourceManager::RessourceManager() {};
 
 void RessourceManager::addTexture(const string& name) { 
     shared_ptr<sf::Texture> texture = make_shared<sf::Texture>();
@@ -14,7 +11,7 @@ void RessourceManager::addTexture(const string& name) {
 }
 
 shared_ptr<sf::Texture> RessourceManager::getTexture(const string &name) {
-    for(auto it = m_textures.begin(); it != m_textures.end(); ++it) {
+    for (auto it = m_textures.begin(); it != m_textures.end(); ++it) {
         if (it->first == name) return it->second;
     }
 

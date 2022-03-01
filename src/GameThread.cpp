@@ -17,9 +17,8 @@ void GameThread::startGame() {
     Board game;
     RenderWindow window(VideoMode(WINDOW_SIZE, WINDOW_SIZE + MENUBAR_HEIGHT), WINDOW_TITLE, Style::Titlebar | Style::Close);
 
-    // Ressources 
-    RessourceManager ressources; 
-    ressources.loadRessources();
+    // Load ressources 
+    RessourceManager::loadRessources();
 
     // Setting window icon
     Image icon;
@@ -220,22 +219,22 @@ void GameThread::startGame() {
             }
         }
 
-        drawMenuBar(window, menuBar, ressources);
+        drawMenuBar(window, menuBar);
         initializeBoard(window, game);
         moveList.highlightLastMove(window);
 
         if ((pieceIsMoving || pieceIsClicked) && selectedPiece != nullptr) {
-            drawCaptureCircles(window, possibleMoves, selectedPiece, game, ressources);
+            drawCaptureCircles(window, possibleMoves, selectedPiece, game);
             highlightHoveredSquare(window, selectedPiece, game, possibleMoves, mousePos);
         }
-        drawPieces(window, game, ressources);
-        if (pieceIsMoving) drawDraggedPiece(selectedPiece, window, mousePos, ressources);
+        drawPieces(window, game);
+        if (pieceIsMoving) drawDraggedPiece(selectedPiece, window, mousePos);
         if (transitioningPiece.getIsTransitioning()) {
-            drawTransitioningPiece(window, transitioningPiece, ressources, game);
+            drawTransitioningPiece(window, transitioningPiece, game);
         }
 
-        if (arrow.isDrawable()) drawCurrentArrow(window, ressources, arrow);
-        drawAllArrows(window, ressources, arrowList);
+        if (arrow.isDrawable()) drawCurrentArrow(window, arrow);
+        drawAllArrows(window, arrowList);
         window.display();
     }
 }
@@ -247,12 +246,12 @@ void GameThread::initializeMenuBar(vector<MenuButton>& menuBar) {
     for (uint8_t i = 0; i < menuOptions; ++i) menuBar.push_back(MenuButton(i, menuNames[i]));
 }
 
-void GameThread::drawMenuBar(RenderWindow& window, vector<MenuButton>& menuBar, RessourceManager& ressources) {
+void GameThread::drawMenuBar(RenderWindow& window, vector<MenuButton>& menuBar) {
     constexpr uint16_t menuOptions = 3;
     const string iconFiles[menuOptions] = {"dropDown.png", "reset.png", "flip.png"};
 
     for (uint8_t i = 0; i < menuOptions; ++i) {
-        shared_ptr<Texture> t = ressources.getTexture(iconFiles[i]);
+        shared_ptr<Texture> t = RessourceManager::getTexture(iconFiles[i]);
         MenuButton& option = menuBar[i];
         option.setSpriteTexture(*t);
 
@@ -317,15 +316,13 @@ void GameThread::highlightHoveredSquare(RenderWindow& window, Piece* selectedPie
     }
 }
 
-void GameThread::drawCaptureCircles(RenderWindow& window, vector<Move>& possibleMoves, Piece* selectedPiece, Board& game, RessourceManager& ressources) {
+void GameThread::drawCaptureCircles(RenderWindow& window, vector<Move>& possibleMoves, Piece* selectedPiece, Board& game) {
     for (Move& move: possibleMoves) {
         int i = move.getTarget().second;
         int j = move.getTarget().first;
         if (move.getSelectedPiece() != selectedPiece) continue;
         bool isEmpty = game.getBoardTile(i, j) == nullptr;
-        shared_ptr<Texture> t = ressources.getTexture(
-            isEmpty? "circle.png": "empty_circle.png");
-
+        shared_ptr<Texture> t = RessourceManager::getTexture(isEmpty? "circle.png": "empty_circle.png");
         if (t == nullptr) return;
         Sprite circle(*t);
         if (isEmpty) circle.setScale(SPRITE_SCALE, SPRITE_SCALE);
@@ -335,11 +332,11 @@ void GameThread::drawCaptureCircles(RenderWindow& window, vector<Move>& possible
     }
 }
 
-void GameThread::drawPieces(RenderWindow& window, Board& game, RessourceManager& ressources) {
+void GameThread::drawPieces(RenderWindow& window, Board& game) {
     for (uint8_t i = 0; i < 8; ++i) {
         for (uint8_t j = 0; j < 8; ++j) {
             if (game.getBoardTile(i, j) == nullptr) continue;
-            shared_ptr<Texture> t = ressources.getTexture(game.getBoardTile(i, j)->getFileName());
+            shared_ptr<Texture> t = RessourceManager::getTexture(game.getBoardTile(i, j));
             if(t == nullptr) return;
             Sprite s(*t);
             s.setScale(SPRITE_SCALE, SPRITE_SCALE);
@@ -349,18 +346,20 @@ void GameThread::drawPieces(RenderWindow& window, Board& game, RessourceManager&
     }
 }
 
-void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, coor2d& mousePos, RessourceManager& ressources) {
+void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, coor2d& mousePos) {
     if (selectedPiece == nullptr) return; // Safety check
-    shared_ptr<Texture> t = ressources.getTexture(selectedPiece->getFileName());
-    shared_ptr<Texture> tBefore = ressources.getTexture(selectedPiece->getFileName());
-    
+    shared_ptr<Texture> t = RessourceManager::getTexture(selectedPiece);
+    shared_ptr<Texture> tBefore = RessourceManager::getTexture(selectedPiece);
+
     if (t == nullptr || tBefore == nullptr) return;
     Sprite s(*t), sBefore(*tBefore); 
     s.setScale(SPRITE_SCALE, SPRITE_SCALE);
     sBefore.setScale(SPRITE_SCALE, SPRITE_SCALE);
     s.setPosition(mousePos.first, mousePos.second);
-    sBefore.setPosition(selectedPiece->getY() * CELL_SIZE, 
-        selectedPiece->getX() * CELL_SIZE + MENUBAR_HEIGHT);
+    sBefore.setPosition(
+        selectedPiece->getY() * CELL_SIZE, 
+        selectedPiece->getX() * CELL_SIZE + MENUBAR_HEIGHT
+    );
     s.setOrigin(SPRITE_SIZE/2, SPRITE_SIZE/2);
     sBefore.setColor(Color(255,255,255,100));
     
@@ -368,8 +367,8 @@ void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, co
     window.draw(s);
 }
 
-void GameThread::drawCurrentArrow(RenderWindow& window, RessourceManager& ressources, Arrow& arrow) {
-    shared_ptr<Texture> t = ressources.getTexture(arrow.getFilename());
+void GameThread::drawCurrentArrow(RenderWindow& window, Arrow& arrow) {
+    shared_ptr<Texture> t = RessourceManager::getTexture(arrow.getFilename());
     if (t == nullptr) return;
     Sprite s(*t);
 
@@ -380,9 +379,9 @@ void GameThread::drawCurrentArrow(RenderWindow& window, RessourceManager& ressou
     window.draw(s);
 }
 
-void GameThread::drawAllArrows(RenderWindow& window, RessourceManager& ressources, vector<Arrow>& arrows){
+void GameThread::drawAllArrows(RenderWindow& window, vector<Arrow>& arrows) {
     for(auto& arrow: arrows){
-        shared_ptr<Texture> t = ressources.getTexture(arrow.getFilename());
+        shared_ptr<Texture> t = RessourceManager::getTexture(arrow.getFilename());
         if (t == nullptr) return;
         Sprite s(*t);
 
@@ -403,15 +402,13 @@ void GameThread::setTransitioningPiece(Piece* p, int xTarget, int yTarget, Piece
     trans.setIncrement();
 }
 
-void GameThread::drawTransitioningPiece(RenderWindow& window, PieceTransition& piece, RessourceManager& ressources, Board& game) {
+void GameThread::drawTransitioningPiece(RenderWindow& window, PieceTransition& piece, Board& game) {
     piece.move();
-    
-    shared_ptr<Texture> t = ressources.getTexture(piece.getPiece()->getFileName());   
+    shared_ptr<Texture> t = RessourceManager::getTexture(piece.getPiece());   
     if(t == nullptr ) return;
     Sprite s(*t);
     s.setScale(SPRITE_SCALE, SPRITE_SCALE);
     s.setPosition(piece.getCurrPos().first, piece.getCurrPos().second + MENUBAR_HEIGHT);
     window.draw(s);
-    
     piece.setHasArrived(piece.pieceIsInBounds(), game);
 }
