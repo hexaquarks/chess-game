@@ -40,7 +40,7 @@ void GameThread::startGame() {
     coor2d mousePos = {0, 0};
     coor2d rightClickAnchor = {0, 0};
     int lastXPos = 0, lastYPos = 0; // Last position of the piece before being dragged
-    moveTypes possibleMoves;
+    vector<Move> possibleMoves = game.calculateAllMoves();
 
     // Additional board state variables
     Piece* lastMove = nullptr;
@@ -96,11 +96,10 @@ void GameThread::startGame() {
                         }
 
                         selectedPiece = piece;
-                        possibleMoves = game.possibleMovesFor(selectedPiece);
 
                         // Trim the illegal moves if in check
                         // Check for absolute pin
-                        removeIllegalMoves(game, possibleMoves, selectedPiece, mousePos);
+                        // removeIllegalMoves(game, possibleMoves, selectedPiece, mousePos);
                         pieceIsMoving = true;
                         pieceIsClicked = false;
                         lastXPos = getTileXPos(mousePos); lastYPos = yPos;
@@ -109,7 +108,7 @@ void GameThread::startGame() {
                         game.setBoardTile(lastXPos, lastYPos, nullptr, false); 
                     }
                 }
-                if(event.mouseButton.button == Mouse::Right) {
+                if (event.mouseButton.button == Mouse::Right) {
                     rightClickAnchor = {event.mouseButton.x, event.mouseButton.y};
                     arrow.setOrigin(rightClickAnchor);
                     arrow.setDestination(rightClickAnchor);
@@ -156,12 +155,14 @@ void GameThread::startGame() {
                     }
 
                     // Try to match moves
-                    moveType* selectedMove = nullptr;
-                    for (moveType& move: possibleMoves) {
-                        if (get<0>(move).first == getTileYPos(mousePos) && get<0>(move).second == getTileXPos(mousePos)) {
-                            selectedMove = &move;
-                            break;
-                        } 
+                    Move* selectedMove = nullptr;
+                    for (auto& move: possibleMoves) {
+                        if (move.getSelectedPiece() == selectedPiece) {
+                            if (move.getTarget().first == getTileYPos(mousePos) && move.getTarget().second == getTileXPos(mousePos)) {
+                                selectedMove = &move;
+                                break;
+                            }
+                        }
                     }
 
                     // If move is not allowed or king is checked, place piece back, else apply the move
@@ -171,14 +172,15 @@ void GameThread::startGame() {
                         coor2d target = make_pair(getTileXPos(mousePos), getTileYPos(mousePos));
                         coor2d initial = make_pair(lastXPos, lastYPos);
 
-                        Move move{target, initial,selectedPiece, get<1>(*selectedMove)};
+                        Move move(target, initial, selectedPiece, selectedMove->getMoveType());
                         move.setCapturedPiece(lastMove);
                         moveList.addMove(move);
 
                         lastMove = selectedPiece;
-                        lastMove->setLastMove(get<1>(*selectedMove));
+                        lastMove->setLastMove(selectedMove->getMoveType());
                         Piece::setLastMovedPiece(lastMove);
                         game.switchTurn();
+                        possibleMoves = game.calculateAllMoves();
                     }
 
                     selectedPiece = nullptr;
@@ -222,12 +224,12 @@ void GameThread::startGame() {
         initializeBoard(window, game);
         moveList.highlightLastMove(window);
 
-        if (pieceIsMoving || pieceIsClicked) {
-            drawCaptureCircles(window, possibleMoves, game, ressources);
-            highlightHoveredSquare(window, game, possibleMoves, mousePos);
+        if ((pieceIsMoving || pieceIsClicked) && selectedPiece != nullptr) {
+            drawCaptureCircles(window, possibleMoves, selectedPiece, game, ressources);
+            highlightHoveredSquare(window, selectedPiece, game, possibleMoves, mousePos);
         }
         drawPieces(window, game, ressources);
-        if (pieceIsMoving) drawDraggedPiece(selectedPiece,window, mousePos, ressources);
+        if (pieceIsMoving) drawDraggedPiece(selectedPiece, window, mousePos, ressources);
         if (transitioningPiece.getIsTransitioning()) {
             drawTransitioningPiece(window, transitioningPiece, ressources, game);
         }
@@ -261,11 +263,12 @@ void GameThread::drawMenuBar(RenderWindow& window, vector<MenuButton>& menuBar, 
     }   
 }
 
-void GameThread::removeIllegalMoves(Board& game, moveTypes& possibleMoves, Piece* selectedPiece, coor2d& mousePos) {
-    moveTypes::iterator it = possibleMoves.begin();
+void GameThread::removeIllegalMoves(Board& game, vector<Move>& possibleMoves, Piece* selectedPiece, coor2d& mousePos) {
+    vector<Move>::iterator it = possibleMoves.begin();
 
     while (it != possibleMoves.end()) {
-        int x = get<0>(*it).second, y = get<0>(*it).first;
+        int x = (*it).getTarget().second;
+        int y = (*it).getTarget().first;
 
         // Store piece occupied by target square
         Piece* temp = game.getBoardTile(x, y);
@@ -295,11 +298,13 @@ void GameThread::initializeBoard(RenderWindow& window, Board& game) {
     }
 }
 
-void GameThread::highlightHoveredSquare(RenderWindow& window, Board& game, moveTypes& possibleMoves, coor2d& mousePos) {
+void GameThread::highlightHoveredSquare(RenderWindow& window, Piece* selectedPiece, Board& game, vector<Move>& possibleMoves, coor2d& mousePos) {
     const Color colours[2] = {{173, 176, 134}, {100, 111, 64}};
 
-    for (moveType& move: possibleMoves) {
-        int i = get<0>(move).second, j = get<0>(move).first;
+    for (Move& move: possibleMoves) {
+        int i = move.getTarget().second;
+        int j = move.getTarget().first;
+        if (move.getSelectedPiece() != selectedPiece) continue;
         int xPos = getTileXPos(mousePos), yPos = getTileYPos(mousePos);
 
         if (i == xPos && j == yPos) {
@@ -312,14 +317,16 @@ void GameThread::highlightHoveredSquare(RenderWindow& window, Board& game, moveT
     }
 }
 
-void GameThread::drawCaptureCircles(RenderWindow& window, moveTypes& possibleMoves, Board& game, RessourceManager& ressources) {
-    for (moveType& move: possibleMoves) {
-        int i = get<0>(move).second, j = get<0>(move).first;
+void GameThread::drawCaptureCircles(RenderWindow& window, vector<Move>& possibleMoves, Piece* selectedPiece, Board& game, RessourceManager& ressources) {
+    for (Move& move: possibleMoves) {
+        int i = move.getTarget().second;
+        int j = move.getTarget().first;
+        if (move.getSelectedPiece() != selectedPiece) continue;
         bool isEmpty = game.getBoardTile(i, j) == nullptr;
         shared_ptr<Texture> t = ressources.getTexture(
             isEmpty? "circle.png": "empty_circle.png");
 
-        if(t == nullptr) return;
+        if (t == nullptr) return;
         Sprite circle(*t);
         if (isEmpty) circle.setScale(SPRITE_SCALE, SPRITE_SCALE);
         circle.setPosition(getWindowXPos(i), getWindowYPos(j));

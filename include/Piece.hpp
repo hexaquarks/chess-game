@@ -3,11 +3,11 @@
 #include <vector>
 #include <tuple>
 #include <iostream>
+#include "Move.hpp"
 using namespace std;
 
 enum class Team { WHITE, BLACK };
 enum class PieceType { PAWN, ROOK, KNIGHT, BISHOP, KING, QUEEN, EMPTY };
-enum class MoveType { NORMAL, CASTLE_KINGSIDE, CASTLE_QUEENSIDE, ENPASSANT, NEWPIECE, CAPTURE, INIT_SPECIAL };
 
 typedef tuple<pair<int, int>, MoveType> moveType;
 typedef vector<moveType> moveTypes;
@@ -43,15 +43,15 @@ class Piece {
     int getX() const { return m_xPos; }
     int getY() const { return m_yPos; }
     bool hasMoved() const { return m_moved; }
-    moveTypes getHorizontalAndVerticalMovements(Piece*[8][8]) const;
-    moveTypes getDiagonalMovements(Piece*[8][8]) const;
+    vector<Move> getHorizontalAndVerticalMovements(Piece*[8][8]) const;
+    vector<Move> getDiagonalMovements(Piece*[8][8]) const;
 
     /* Setters */
     void setLastMove(MoveType newMove) { m_lastMove = newMove; }
     static void setLastMovedPiece(Piece* piece) { m_lastPiece = piece; }
 
     /* Utility functions */
-    virtual moveTypes calcPossibleMoves(Piece*[8][8]) const = 0; // Pure virtual function
+    virtual vector<Move> calcPossibleMoves(Piece*[8][8]) const = 0; // Pure virtual function
     void move(int x, int y, bool record = true) {
         if (record && (m_xPos != x || m_yPos != y)) m_moved = true;
         m_xPos = x;

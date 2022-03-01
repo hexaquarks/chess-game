@@ -3,8 +3,8 @@
 
 Knight::Knight(Team team, int x, int y): Piece(team, x, y, PieceType::KNIGHT, "n") {}
 
-moveTypes Knight::calcPossibleMoves(Piece* board[8][8]) const {
-    moveTypes moves;
+vector<Move> Knight::calcPossibleMoves(Piece* board[8][8]) const {
+    vector<Move> moves;
     int xPos = getX(), yPos = getY();
 
     // The possible moves
@@ -17,9 +17,9 @@ moveTypes Knight::calcPossibleMoves(Piece* board[8][8]) const {
 
         if (x >= 0 && y >= 0 && x < 8 && y < 8) {
             if (board[x][y] == nullptr)
-                moves.push_back(make_tuple(make_pair(x, y), MoveType::NORMAL));
+                moves.push_back(Move(make_pair(x, y), make_pair(xPos, yPos), board[xPos][yPos], MoveType::NORMAL));
             else if (board[x][y]->getTeam() != getTeam())
-                moves.push_back(make_tuple(make_pair(x, y), MoveType::CAPTURE));
+                moves.push_back(Move(make_pair(x, y), make_pair(xPos, yPos), board[xPos][yPos], MoveType::CAPTURE));
         }
     }
 

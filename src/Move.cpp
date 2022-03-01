@@ -1,9 +1,9 @@
 #include "../include/Move.hpp"
 
 // For NORMAL, INIT SPECIAL and CASTLE
-Move::Move(coor2d& target, coor2d& initial, Piece* selectedPiece, MoveType moveType):
+Move::Move(coor2d target, coor2d initial, Piece* selectedPiece, MoveType moveType, Piece* secondPiece):
     m_target(target),m_init(initial),
-    m_selectedPiece(selectedPiece), m_capturedPiece(nullptr),
+    m_selectedPiece(selectedPiece), m_capturedPiece(secondPiece),
     m_MoveType(moveType) {}
 
 // For CAPTURE and ENPASSANT

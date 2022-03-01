@@ -1,7 +1,13 @@
 #pragma once
-#include "Piece.hpp"
+#include <iostream>
+#include <tuple>
+using namespace std;
 
 typedef pair<int, int> coor2d;
+
+class Piece;
+
+enum class MoveType { NORMAL, CASTLE_KINGSIDE, CASTLE_QUEENSIDE, ENPASSANT, NEWPIECE, CAPTURE, INIT_SPECIAL };
 
 class Move {
     Piece* m_selectedPiece; // Piece that is being selected
@@ -11,8 +17,8 @@ class Move {
     coor2d m_init; // Initial square of the piece moved
 
     public:
-    Move(coor2d&, coor2d&, Piece*, MoveType); // Constructor for NORMAL, INIT SPECIAL and CASTLE
     Move(Move&, Piece*); // Constructor for CAPTURE, EN PASSANT
+    Move(coor2d, coor2d, Piece*, MoveType, Piece* secondPiece = nullptr);
     MoveType getMoveType() const { return m_MoveType; };
     Piece* getSelectedPiece() { return m_selectedPiece; };
     Piece* getCapturedPiece() { return m_capturedPiece; };

@@ -32,12 +32,12 @@ class GameThread {
 
     static void initializeBoard(RenderWindow&, Board&);
     static void initializeMenuBar(vector<MenuButton>&);
-    static void drawCaptureCircles(RenderWindow&, moveTypes&, Board&, RessourceManager&);
-    static void highlightHoveredSquare(RenderWindow&, Board&, moveTypes&, coor2d&);
+    static void drawCaptureCircles(RenderWindow&, vector<Move>&, Piece*, Board&, RessourceManager&);
+    static void highlightHoveredSquare(RenderWindow&, Piece*, Board&, vector<Move>&, coor2d&);
     static void drawMenuBar(RenderWindow&, vector<MenuButton>&, RessourceManager&);
     static void drawPieces(RenderWindow&, Board&, RessourceManager&);
     static void drawDraggedPiece(Piece*, RenderWindow&, coor2d&, RessourceManager&);
-    static void removeIllegalMoves(Board&, moveTypes&, Piece*, coor2d&);
+    static void removeIllegalMoves(Board&, vector<Move>&, Piece*, coor2d&);
     static void drawTransitioningPiece(RenderWindow&, PieceTransition&, RessourceManager&, Board&);
     static void drawAllArrows(RenderWindow&, RessourceManager&, vector<Arrow>&){};
     static void drawCurrentArrow(RenderWindow&, RessourceManager&, Arrow&);

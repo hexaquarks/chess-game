@@ -36,7 +36,7 @@ class Board {
         return (m_turn == Team::WHITE)? m_whiteKing->isChecked(m_board): m_blackKing->isChecked(m_board); 
     }
 
-    moveTypes possibleMovesFor(Piece* piece) { return piece->calcPossibleMoves(m_board); }
+    vector<Move> possibleMovesFor(Piece* piece) { return piece->calcPossibleMoves(m_board); }
 
     void addPiece(Piece* piece) { 
         (piece->getTeam() == Team::WHITE) ? m_whitePieces.push_back(piece) : m_blackPieces.push_back(piece); 
@@ -44,4 +44,5 @@ class Board {
     void changePiecesDirection(); 
     void flipBoard();
 
+    vector<Move> calculateAllMoves();
 };

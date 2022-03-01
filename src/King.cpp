@@ -2,16 +2,18 @@
 
 King::King(Team team, int x, int y): Piece(team, x, y, PieceType::KING, "k") {}
 
-moveTypes King::calcPossibleMoves(Piece* board[8][8]) const {
-    moveTypes moves;
+vector<Move> King::calcPossibleMoves(Piece* board[8][8]) const {
+    vector<Move> moves;
     int x = getX();
     int y = getY();
+    coor2d kingCoor = {x, y};
+    Piece* kingPos = board[x][y];
 
     // Checking castling
     if (canCastleKingSide(board))
-        moves.push_back(make_tuple(make_pair(x, 6), MoveType::CASTLE_KINGSIDE));
+        moves.push_back(Move(make_pair(x, 6), kingCoor, kingPos, MoveType::CASTLE_KINGSIDE));
     if (canCastleQueenSide(board))
-        moves.push_back(make_tuple(make_pair(x, 2), MoveType::CASTLE_QUEENSIDE));
+        moves.push_back(Move(make_pair(x, 2), kingCoor, kingPos, MoveType::CASTLE_QUEENSIDE));
 
     for (int i = max(0, x-1); i <= min(7, x+1); ++i) {
         for (int j = max(0, y-1); j <= min(7, y+1); ++j) {
@@ -27,8 +29,8 @@ moveTypes King::calcPossibleMoves(Piece* board[8][8]) const {
 
                 // If king is not checked, we can add move
                 if (!checked) {
-                    if (piece == nullptr) moves.push_back(make_tuple(make_pair(i, j), MoveType::NORMAL));
-                    else moves.push_back(make_tuple(make_pair(i, j), MoveType::CAPTURE));
+                    if (piece == nullptr) moves.push_back(Move(make_pair(i, j), kingCoor, kingPos, MoveType::NORMAL));
+                    else moves.push_back(Move(make_pair(i, j), kingCoor, kingPos, MoveType::CAPTURE));
                 }
             }
         }
@@ -36,10 +38,12 @@ moveTypes King::calcPossibleMoves(Piece* board[8][8]) const {
     return moves;
 }
 
-moveTypes King::possibleMovesNoCheck(Piece* board[8][8]) const {
-    moveTypes moves;
+vector<Move> King::possibleMovesNoCheck(Piece* board[8][8]) const {
+    vector<Move> moves;
     int x = getX();
     int y = getY();
+    coor2d kingCoor = {x, y};
+    Piece* kingPos = board[x][y];
 
     for (int i = max(0, x-1); i <= min(7, x+1); ++i) {
         for (int j = max(0, y-1); j <= min(7, y+1); ++j) {
@@ -48,8 +52,8 @@ moveTypes King::possibleMovesNoCheck(Piece* board[8][8]) const {
 
             // If position is empty or piece on it is of the opposite colour
             if (board[i][j] == nullptr || board[i][j]->getTeam() != getTeam()) {
-                if (board[i][j] == nullptr) moves.push_back(make_tuple(make_pair(i, j), MoveType::NORMAL));
-                else moves.push_back(make_tuple(make_pair(i, j), MoveType::CAPTURE));
+                if (board[i][j] == nullptr) moves.push_back(Move(make_pair(i, j), kingCoor, kingPos, MoveType::NORMAL));
+                else moves.push_back(Move(make_pair(i, j), kingCoor, kingPos, MoveType::CAPTURE));
             }
         }
     }
@@ -64,12 +68,12 @@ bool King::isChecked(Piece* board[8][8], int i, int j) const {
 
             // If piece has opposite colour, it is a potential danger
             if (p != nullptr && p->getTeam() != getTeam()) {
-                moveTypes positions = (p->getType() == PieceType::KING)
+                vector<Move> positions = (p->getType() == PieceType::KING)
                     ? ((King*) p)->possibleMovesNoCheck(board): p->calcPossibleMoves(board);
 
                 // Loop through every possible move to see if king is in danger or not
                 for (auto& move: positions)
-                    if (get<0>(move).first == i && get<0>(move).second == j)
+                    if (move.getTarget().first == i && move.getTarget().second == j)
                         return true;
             }
         }

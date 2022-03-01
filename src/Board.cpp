@@ -84,3 +84,14 @@ void Board::changePiecesDirection() {
         if(pawn) pawn->setIsFlipped(m_isFlipped);
     }
 }
+
+vector<Move> Board::calculateAllMoves() {
+    vector<Move> moves;
+    vector<Piece*> playerPieces = (m_turn == Team::WHITE)? m_whitePieces: m_blackPieces;
+    for (Piece* piece: playerPieces) {
+        for (auto& move: possibleMovesFor(piece)) {
+            moves.push_back(move);
+        }
+    }
+    return moves;
+}
