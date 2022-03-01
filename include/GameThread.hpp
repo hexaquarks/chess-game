@@ -42,6 +42,8 @@ class GameThread {
     static void drawAllArrows(RenderWindow&, vector<Arrow>&);
     static void drawCurrentArrow(RenderWindow&, Arrow&);
 
+    inline static bool isFlipped = false;
+
     public:
     GameThread() = delete; // Delete constructor
     static void startGame();
@@ -57,4 +59,7 @@ class GameThread {
     static string getIconPath(const string& filename) { return iconsPath + filename; }
     static string getAudioPath(const string& filename) { return audioPath + filename; }
     static void setTransitioningPiece(Piece*, int,int, PieceTransition&);
+
+    static void flipBoard() { isFlipped = !isFlipped; }
+    static bool boardFlipped() { return isFlipped; }
 };

@@ -64,27 +64,6 @@ void Board::setBoardTile(int x, int y, Piece* piece, bool record) {
     if (piece != nullptr) piece->move(y, x, record); 
 }
 
-void Board::flipBoard() {
-    for(uint8_t i = 0 ; i < 4 ; ++i) {
-        for(uint8_t j = 0; j < 8 ; ++j) 
-            King::swapPieces(m_board, i,j,7-i,j);
-    }
-    m_isFlipped = !m_isFlipped;
-    changePiecesDirection();
-}
-
-void Board::changePiecesDirection() {
-    for(Piece* piece: m_whitePieces) {
-        Pawn* pawn  = dynamic_cast<Pawn*>(piece);
-        if(pawn) pawn->setIsFlipped(m_isFlipped);
-    }
-
-    for(Piece* piece: m_blackPieces) {
-        Pawn* pawn  = dynamic_cast<Pawn*>(piece);
-        if(pawn) pawn->setIsFlipped(m_isFlipped);
-    }
-}
-
 vector<Move> Board::calculateAllMoves() {
     vector<Move> moves;
     vector<Piece*> playerPieces = (m_turn == Team::WHITE)? m_whitePieces: m_blackPieces;

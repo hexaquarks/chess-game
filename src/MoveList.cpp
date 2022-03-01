@@ -17,10 +17,14 @@ void MoveList::highlightLastMove(RenderWindow& window) const {
     squareBefore.setFillColor(colorInit);
     squareAfter.setFillColor(colorTarget);
 
-    squareBefore.setPosition(GameThread::getWindowXPos(move.getInit().first),
-        GameThread::getWindowYPos(move.getInit().second));
-    squareAfter.setPosition(GameThread::getWindowXPos(move.getTarget().first), 
-        GameThread::getWindowYPos(move.getTarget().second));
+    squareBefore.setPosition(
+        GameThread::getWindowXPos(GameThread::boardFlipped()? 7-move.getInit().first: move.getInit().first),
+        GameThread::getWindowYPos(GameThread::boardFlipped()? 7-move.getInit().second: move.getInit().second)
+    );
+    squareAfter.setPosition(
+        GameThread::getWindowXPos(GameThread::boardFlipped()? 7-move.getTarget().first: move.getTarget().first), 
+        GameThread::getWindowYPos(GameThread::boardFlipped()? 7-move.getTarget().second: move.getTarget().second)
+    );
 
     window.draw(squareBefore);
     window.draw(squareAfter);

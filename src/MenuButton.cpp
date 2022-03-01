@@ -79,7 +79,7 @@ int MenuButton::performClick(Board& game, MoveList& moveList) {
             break; 
         case 2: 
             // Clicked flip button
-            game.flipBoard();
+            GameThread::flipBoard();
             m_isColorTransitioning = true;
             return 1;
             break;
