@@ -74,7 +74,7 @@ void GameThread::startGame() {
 
             // Clicking on a piece
             if (event.type == Event::MouseButtonPressed) {
-                if(event.mouseButton.button == Mouse::Left) {
+                if (event.mouseButton.button == Mouse::Left) {
                     // Get the tile of the click
                     mousePos = {event.mouseButton.x, event.mouseButton.y};
 
@@ -83,7 +83,9 @@ void GameThread::startGame() {
                     int yPos = getTileYPos(mousePos);
                     if (yPos < 0 || moveList.hasMovesAfter()) continue;
 
-                    Piece* piece = game.getBoardTile(getTileXPos(mousePos), yPos);
+                    int xPos = isFlipped? 7-getTileXPos(mousePos): getTileXPos(mousePos);
+                    if (isFlipped) yPos = 7-yPos;
+                    Piece* piece = game.getBoardTile(xPos, yPos);
 
                     // If piece is not null and has the right color
                     if (piece != nullptr && piece->getTeam() == game.getTurn()) {
@@ -101,7 +103,7 @@ void GameThread::startGame() {
                         // removeIllegalMoves(game, possibleMoves, selectedPiece, mousePos);
                         pieceIsMoving = true;
                         pieceIsClicked = false;
-                        lastXPos = getTileXPos(mousePos); lastYPos = yPos;
+                        lastXPos = isFlipped? 7-getTileXPos(mousePos): getTileXPos(mousePos); lastYPos = yPos;
 
                         // Set the tile on the board where the piece is selected to null
                         game.setBoardTile(lastXPos, lastYPos, nullptr, false); 
@@ -121,7 +123,7 @@ void GameThread::startGame() {
                 Vector2i mousePosition = Mouse::getPosition(window);
                 mousePos = {mousePosition.x, mousePosition.y};
 
-                if(isRightClicking) {
+                if (isRightClicking) {
                     arrow.setDestination(mousePos);
                     arrow.updateArrow(); // update the type and rotation
                 }
@@ -137,13 +139,15 @@ void GameThread::startGame() {
                                     // possibleMoves = game.possibleMovesFor(selectedPiece);
                                     // removeIllegalMoves(game, possibleMoves, selectedPiece, mousePos);
                                     selectedPiece = nullptr;
-                                    mousePos = {0,0};
+                                    mousePos = {0, 0};
                                 }
 
                     if (selectedPiece == nullptr) continue;
 
                     // If clicked and mouse remained on the same square
-                    if (getTileXPos(mousePos) == selectedPiece->getY() && getTileYPos(mousePos) == selectedPiece->getX()) {
+                    int xPos = isFlipped? 7-getTileXPos(mousePos): getTileXPos(mousePos);
+                    int yPos = isFlipped? 7-getTileYPos(mousePos): getTileYPos(mousePos);
+                    if (xPos == selectedPiece->getY() && yPos == selectedPiece->getX()) {
                         if (!pieceIsClicked) {
                             // Put the piece back to it's square; it's not moving
                             game.setBoardTile(lastXPos, lastYPos, selectedPiece, false); 
@@ -157,7 +161,7 @@ void GameThread::startGame() {
                     Move* selectedMove = nullptr;
                     for (auto& move: possibleMoves) {
                         if (move.getSelectedPiece() == selectedPiece) {
-                            if (move.getTarget().first == getTileYPos(mousePos) && move.getTarget().second == getTileXPos(mousePos)) {
+                            if (move.getTarget().first == yPos && move.getTarget().second == xPos) {
                                 selectedMove = &move;
                                 break;
                             }
@@ -168,7 +172,7 @@ void GameThread::startGame() {
                     if (selectedMove == nullptr) {
                         game.setBoardTile(lastXPos, lastYPos, selectedPiece, false); // Cancel the move
                     } else {
-                        coor2d target = make_pair(getTileXPos(mousePos), getTileYPos(mousePos));
+                        coor2d target = make_pair(xPos, yPos);
                         coor2d initial = make_pair(lastXPos, lastYPos);
 
                         Move move(target, initial, selectedPiece, selectedMove->getMoveType());
@@ -188,15 +192,15 @@ void GameThread::startGame() {
                     mousePos = {0, 0};
                 }
                 if (event.mouseButton.button == Mouse::Right) {
-                    if(selectedPiece != nullptr && pieceIsMoving) {
+                    if (selectedPiece != nullptr && pieceIsMoving) {
                         // Reset the piece back
                         game.setBoardTile(lastXPos, lastYPos, selectedPiece, false);
                         selectedPiece = nullptr;
                         pieceIsMoving = false;
                     } else if (isRightClicking) {
                         // add arrow to arrow list to be drawn
-                        if(arrow.isDrawable()) {
-                            if(!arrow.removeArrow(arrowList)) arrowList.push_back(arrow);
+                        if (arrow.isDrawable()) {
+                            if (!arrow.removeArrow(arrowList)) arrowList.push_back(arrow);
                         }
                         isRightClicking = false;
                         rightClickAnchor = {0,0};
@@ -211,7 +215,7 @@ void GameThread::startGame() {
                 else if (event.key.code == Keyboard::Right && !transitioningPiece.getIsTransitioning())
                     moveList.goToNextMove(true);
                 else if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::F))
-                    game.flipBoard();
+                    flipBoard();
                 else if (event.key.code == Keyboard::Up)
                     moveList.goToCurrentMove();
                 else if (event.key.code == Keyboard::Down)
@@ -290,7 +294,7 @@ void GameThread::initializeBoard(RenderWindow& window, Board& game) {
         for (uint8_t j = 0; j < 8; ++j) {
             // Drawing the colored square
             RectangleShape square = createSquare();
-            square.setFillColor(colours[(i+j)%2 ^ game.getIsFlipped()]);
+            square.setFillColor(colours[(i+j)%2]);
             square.setPosition(getWindowXPos(i), getWindowYPos(j));
             window.draw(square);
         }
@@ -303,13 +307,14 @@ void GameThread::highlightHoveredSquare(RenderWindow& window, Piece* selectedPie
     for (Move& move: possibleMoves) {
         int i = move.getTarget().second;
         int j = move.getTarget().first;
+        if (isFlipped) {i = 7-i; j = 7-j;}
         if (move.getSelectedPiece() != selectedPiece) continue;
         int xPos = getTileXPos(mousePos), yPos = getTileYPos(mousePos);
 
         if (i == xPos && j == yPos) {
             // Currently hovering a square where the piece can move 
             RectangleShape square = createSquare();
-            square.setFillColor(colours[(i+j)%2 ^ game.getIsFlipped()]);
+            square.setFillColor(colours[(i+j)%2]);
             square.setPosition(getWindowXPos(i), getWindowYPos(j));
             window.draw(square);
         }
@@ -320,6 +325,7 @@ void GameThread::drawCaptureCircles(RenderWindow& window, vector<Move>& possible
     for (Move& move: possibleMoves) {
         int i = move.getTarget().second;
         int j = move.getTarget().first;
+        if (isFlipped) {i = 7-i; j = 7-j;}
         if (move.getSelectedPiece() != selectedPiece) continue;
         bool isEmpty = game.getBoardTile(i, j) == nullptr;
         shared_ptr<Texture> t = RessourceManager::getTexture(isEmpty? "circle.png": "empty_circle.png");
@@ -327,7 +333,6 @@ void GameThread::drawCaptureCircles(RenderWindow& window, vector<Move>& possible
         Sprite circle(*t);
         if (isEmpty) circle.setScale(SPRITE_SCALE, SPRITE_SCALE);
         circle.setPosition(getWindowXPos(i), getWindowYPos(j));
-
         window.draw(circle);
     }
 }
@@ -335,12 +340,13 @@ void GameThread::drawCaptureCircles(RenderWindow& window, vector<Move>& possible
 void GameThread::drawPieces(RenderWindow& window, Board& game) {
     for (uint8_t i = 0; i < 8; ++i) {
         for (uint8_t j = 0; j < 8; ++j) {
-            if (game.getBoardTile(i, j) == nullptr) continue;
-            shared_ptr<Texture> t = RessourceManager::getTexture(game.getBoardTile(i, j));
-            if(t == nullptr) return;
+            Piece* piece = game.getBoardTile(i, j);
+            if (piece == nullptr) continue;
+            shared_ptr<Texture> t = RessourceManager::getTexture(piece);
+            if (t == nullptr) return;
             Sprite s(*t);
             s.setScale(SPRITE_SCALE, SPRITE_SCALE);
-            s.setPosition(getWindowXPos(i), getWindowYPos(j));
+            s.setPosition(getWindowXPos(isFlipped? (7-i): i), getWindowYPos(isFlipped? (7-j): j));
             window.draw(s);
         }
     }
@@ -357,12 +363,12 @@ void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, co
     sBefore.setScale(SPRITE_SCALE, SPRITE_SCALE);
     s.setPosition(mousePos.first, mousePos.second);
     sBefore.setPosition(
-        selectedPiece->getY() * CELL_SIZE, 
-        selectedPiece->getX() * CELL_SIZE + MENUBAR_HEIGHT
+        (isFlipped? 7-selectedPiece->getY(): selectedPiece->getY()) * CELL_SIZE, 
+        (isFlipped? 7-selectedPiece->getX(): selectedPiece->getX()) * CELL_SIZE + MENUBAR_HEIGHT
     );
     s.setOrigin(SPRITE_SIZE/2, SPRITE_SIZE/2);
-    sBefore.setColor(Color(255,255,255,100));
-    
+    sBefore.setColor({255, 255, 255, 100});
+
     window.draw(sBefore);
     window.draw(s);
 }
@@ -380,7 +386,7 @@ void GameThread::drawCurrentArrow(RenderWindow& window, Arrow& arrow) {
 }
 
 void GameThread::drawAllArrows(RenderWindow& window, vector<Arrow>& arrows) {
-    for(auto& arrow: arrows){
+    for (auto& arrow: arrows) {
         shared_ptr<Texture> t = RessourceManager::getTexture(arrow.getFilename());
         if (t == nullptr) return;
         Sprite s(*t);
@@ -405,7 +411,7 @@ void GameThread::setTransitioningPiece(Piece* p, int xTarget, int yTarget, Piece
 void GameThread::drawTransitioningPiece(RenderWindow& window, PieceTransition& piece, Board& game) {
     piece.move();
     shared_ptr<Texture> t = RessourceManager::getTexture(piece.getPiece());   
-    if(t == nullptr ) return;
+    if (t == nullptr) return;
     Sprite s(*t);
     s.setScale(SPRITE_SCALE, SPRITE_SCALE);
     s.setPosition(piece.getCurrPos().first, piece.getCurrPos().second + MENUBAR_HEIGHT);

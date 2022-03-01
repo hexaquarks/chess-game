@@ -27,8 +27,6 @@ class Board {
     Piece* getBoardTile(int x, int y) const { return m_board[y][x]; }
     void setBoardTile(int, int, Piece*, bool record = true);
 
-    bool getIsFlipped() { return m_isFlipped; };
-
     Team getTurn() const { return m_turn; }
     void switchTurn() { m_turn = (m_turn == Team::WHITE)? Team::BLACK: Team::WHITE; }
 
@@ -39,10 +37,8 @@ class Board {
     vector<Move> possibleMovesFor(Piece* piece) { return piece->calcPossibleMoves(m_board); }
 
     void addPiece(Piece* piece) { 
-        (piece->getTeam() == Team::WHITE) ? m_whitePieces.push_back(piece) : m_blackPieces.push_back(piece); 
+        (piece->getTeam() == Team::WHITE) ? m_whitePieces.push_back(piece): m_blackPieces.push_back(piece); 
     }
-    void changePiecesDirection(); 
-    void flipBoard();
 
     vector<Move> calculateAllMoves();
 };
