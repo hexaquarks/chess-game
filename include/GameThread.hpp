@@ -32,15 +32,15 @@ class GameThread {
 
     static void initializeBoard(RenderWindow&, Board&);
     static void initializeMenuBar(vector<MenuButton>&);
-    static void drawCaptureCircles(RenderWindow&, vector<Move>&, Piece*, Board&, RessourceManager&);
+    static void drawCaptureCircles(RenderWindow&, vector<Move>&, Piece*, Board&);
     static void highlightHoveredSquare(RenderWindow&, Piece*, Board&, vector<Move>&, coor2d&);
-    static void drawMenuBar(RenderWindow&, vector<MenuButton>&, RessourceManager&);
-    static void drawPieces(RenderWindow&, Board&, RessourceManager&);
-    static void drawDraggedPiece(Piece*, RenderWindow&, coor2d&, RessourceManager&);
+    static void drawMenuBar(RenderWindow&, vector<MenuButton>&);
+    static void drawPieces(RenderWindow&, Board&);
+    static void drawDraggedPiece(Piece*, RenderWindow&, coor2d&);
     static void removeIllegalMoves(Board&, vector<Move>&, Piece*, coor2d&);
-    static void drawTransitioningPiece(RenderWindow&, PieceTransition&, RessourceManager&, Board&);
-    static void drawAllArrows(RenderWindow&, RessourceManager&, vector<Arrow>&);
-    static void drawCurrentArrow(RenderWindow&, RessourceManager&, Arrow&);
+    static void drawTransitioningPiece(RenderWindow&, PieceTransition&, Board&);
+    static void drawAllArrows(RenderWindow&, vector<Arrow>&);
+    static void drawCurrentArrow(RenderWindow&, Arrow&);
 
     public:
     GameThread() = delete; // Delete constructor
