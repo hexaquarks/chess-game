@@ -14,7 +14,7 @@
 using namespace sf;
 
 void GameThread::startGame() {
-    //window(VideoMode(WINDOW_SIZE, WINDOW_SIZE + MENUBAR_HEIGHT), WINDOW_TITLE, Style::Titlebar | Style::Close);
+    window.setFramerateLimit(60);
 
     // Load ressources 
     RessourceManager::loadRessources();
