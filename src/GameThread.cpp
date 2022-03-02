@@ -222,6 +222,7 @@ void GameThread::startGame() {
         }
 
         drawMenuBar();
+        drawSidePanel(sidePanel);
         initializeBoard();
         moveList.highlightLastMove(window);
         if (game.kingIsChecked()) drawKingCheckCircle();
@@ -250,6 +251,18 @@ void GameThread::initializeMenuBar() {
     const string menuNames[menuOptions] = {"Menu", "Reset", "Flip"};
 
     for (uint8_t i = 0; i < menuOptions; ++i) menuBar.push_back(MenuButton(i, menuNames[i]));
+}
+
+void GameThread::drawSidePanel(SidePanel& sidePanel) {
+    RectangleShape mainPanel(Vector2f(PANEL_SIZE - 2*BORDER_SIZE, MAIN_PANEL_HEIGHT - 2*BORDER_SIZE));
+    RectangleShape southPanel(Vector2f(PANEL_SIZE - 2*BORDER_SIZE, SOUTH_PANEL_HEIGHT));
+    mainPanel.setFillColor(Color::White);
+    southPanel.setFillColor(Color::White);
+    mainPanel.setPosition(WINDOW_SIZE+BORDER_SIZE, MENUBAR_HEIGHT);
+    southPanel.setPosition(WINDOW_SIZE+BORDER_SIZE, MENUBAR_HEIGHT+MAIN_PANEL_HEIGHT-BORDER_SIZE);
+    
+    window.draw(mainPanel);
+    window.draw(southPanel);
 }
 
 void GameThread::drawMenuBar() {

@@ -6,6 +6,7 @@
 #include "MenuButton.hpp"
 #include "Board.hpp"
 #include "Arrow.hpp"
+#include "SidePanel.hpp"
 
 using namespace sf;
 
@@ -29,12 +30,15 @@ class GameThread {
     inline const static string audioPath = "../assets/sounds/";
 
     inline static Board game;
-    inline static RenderWindow window = {VideoMode(WINDOW_SIZE, WINDOW_SIZE + MENUBAR_HEIGHT), "Chess Game", Style::Titlebar | Style::Close};
+    inline static SidePanel sidePanel;
+    inline static RenderWindow window = {VideoMode(WINDOW_SIZE + PANEL_SIZE, WINDOW_SIZE + MENUBAR_HEIGHT),
+                                        "Chess Game", Style::Titlebar | Style::Close};
     inline static vector<MenuButton> menuBar;
     inline static vector<Move> possibleMoves;
 
     static void initializeBoard();
     static void initializeMenuBar();
+    static void drawSidePanel(SidePanel&);
     static void drawCaptureCircles(Piece*);
     static void highlightHoveredSquare(Piece*, coor2d&);
     static void drawMenuBar();
