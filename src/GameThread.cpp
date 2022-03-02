@@ -235,8 +235,7 @@ void GameThread::startGame() {
             drawTransitioningPiece(window, transitioningPiece, game);
         }
 
-        if (arrow.isDrawable()) drawCurrentArrow(window, arrow);
-        drawAllArrows(window, arrowList);
+        drawAllArrows(window, arrowList, arrow);
         window.display();
     }
 }
@@ -350,24 +349,13 @@ void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, co
     window.draw(s);
 }
 
-void GameThread::drawCurrentArrow(RenderWindow& window, Arrow& arrow) {
-    shared_ptr<Texture> t = RessourceManager::getTexture(arrow.getFilename());
-    if (t == nullptr) return;
-    Sprite s(*t);
+void GameThread::drawAllArrows(RenderWindow& window, vector<Arrow>& arrows, Arrow& currArrow) {
+    if(arrows.size() == 0) return;
+    arrows.emplace_back(currArrow);
 
-    if(arrow.isLArrow()) {
-        s.setOrigin(CELL_SIZE/2 , s.getLocalBounds().height - CELL_SIZE/2);
-        s.setPosition(arrow.getOrigin().first, arrow.getOrigin().second);
-    }else {
-        s.setOrigin(0, s.getLocalBounds().height / 2);
-        s.setPosition(arrow.getOrigin().first, arrow.getOrigin().second);
-    }
-    s.rotate(arrow.getRotation());
-    window.draw(s);
-}
-
-void GameThread::drawAllArrows(RenderWindow& window, vector<Arrow>& arrows) {
     for (auto& arrow: arrows) {
+        if(!arrow.isDrawable()) continue;
+
         shared_ptr<Texture> t = RessourceManager::getTexture(arrow.getFilename());
         if (t == nullptr) return;
         Sprite s(*t);
@@ -382,6 +370,7 @@ void GameThread::drawAllArrows(RenderWindow& window, vector<Arrow>& arrows) {
         s.rotate(arrow.getRotation());
         window.draw(s);
     }
+    arrows.pop_back();
 }
 
 void GameThread::setTransitioningPiece(Piece* p, int xTarget, int yTarget, PieceTransition& trans) {

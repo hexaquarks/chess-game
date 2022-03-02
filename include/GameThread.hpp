@@ -38,8 +38,7 @@ class GameThread {
     static void drawPieces(RenderWindow&, Board&);
     static void drawDraggedPiece(Piece*, RenderWindow&, coor2d&);
     static void drawTransitioningPiece(RenderWindow&, PieceTransition&, Board&);
-    static void drawAllArrows(RenderWindow&, vector<Arrow>&);
-    static void drawCurrentArrow(RenderWindow&, Arrow&);
+    static void drawAllArrows(RenderWindow&, vector<Arrow>&, Arrow&);
 
     inline static bool isFlipped = false;
 
