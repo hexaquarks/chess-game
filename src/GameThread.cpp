@@ -175,13 +175,15 @@ void GameThread::startGame() {
 
                         Move move(target, initial, selectedPiece, selectedMove->getMoveType());
                         move.setCapturedPiece(lastMove);
-                        moveList.addMove(move);
+                        move.setMoveArrows(arrowList);
+                        moveList.addMove(move, arrowList);
 
                         lastMove = selectedPiece;
                         lastMove->setLastMove(selectedMove->getMoveType());
                         Piece::setLastMovedPiece(lastMove);
                         game.switchTurn();
                         possibleMoves = game.calculateAllMoves();
+                        arrowList.clear();
                     }
 
                     selectedPiece = nullptr;
@@ -209,15 +211,15 @@ void GameThread::startGame() {
 
             if (event.type == Event::KeyPressed) {
                 if (event.key.code == Keyboard::Left && !transitioningPiece.getIsTransitioning()) 
-                    moveList.goToPreviousMove(true);
+                    moveList.goToPreviousMove(true, arrowList);
                 else if (event.key.code == Keyboard::Right && !transitioningPiece.getIsTransitioning())
-                    moveList.goToNextMove(true);
+                    moveList.goToNextMove(true, arrowList);
                 else if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::F))
                     flipBoard();
                 else if (event.key.code == Keyboard::Up)
-                    moveList.goToCurrentMove();
+                    moveList.goToCurrentMove(arrowList);
                 else if (event.key.code == Keyboard::Down)
-                    moveList.goToInitialMove();
+                    moveList.goToInitialMove(arrowList);
             }
         }
 

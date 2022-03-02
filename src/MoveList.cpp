@@ -30,31 +30,31 @@ void MoveList::highlightLastMove(RenderWindow& window) const {
     window.draw(squareAfter);
 }
 
-void MoveList::goToPreviousMove(bool enableTransition) {
+void MoveList::goToPreviousMove(bool enableTransition, vector<Arrow>& arrowList) {
     if (hasMovesBefore()) {
-        undoMove(enableTransition);
+        undoMove(enableTransition, arrowList);
         ++m_moveIterator; // Go to previous move
     }
 }
 
-void MoveList::goToNextMove(bool enableTransition) { 
+void MoveList::goToNextMove(bool enableTransition, vector<Arrow>& arrowList) { 
     if (hasMovesAfter()) {
         --m_moveIterator; // Go to previous move
-        applyMove(enableTransition);
+        applyMove(enableTransition, arrowList);
     }
 }
 
-void MoveList::addMove(Move& move) {
-    applyMove(move, true, true);
+void MoveList::addMove(Move& move, vector<Arrow>& arrowList) {
+    applyMove(move, true, true, arrowList);
     m_moveIterator = m_moves.begin();
 }
 
-void MoveList::applyMove(bool enableTransition) {
+void MoveList::applyMove(bool enableTransition, vector<Arrow>& arrowList) {
     Move& m = *m_moveIterator;
-    applyMove(m, false, enableTransition);
+    applyMove(m, false, enableTransition, arrowList);
 }
 
-void MoveList::applyMove(Move& move, bool addToList, bool enableTransition) {
+void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vector<Arrow>& arrowList) {
     const int castleRow = (game.getTurn() == Team::WHITE)? 7: 0;
     Piece* oldPiece = nullptr;
     Piece* selectedPiece = move.getSelectedPiece();
@@ -145,17 +145,19 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition) {
             x * CELL_SIZE, y * CELL_SIZE, getTransitioningPiece()
         ); 
         else game.setBoardTile(x, y, selectedPiece);
+        
+        arrowList = move.getMoveArrows();
     }
 }
 
-void MoveList::undoMove(bool enableTransition) {
+void MoveList::undoMove(bool enableTransition, vector<Arrow>& arrowList) {
     Move& m = *m_moveIterator;
     Piece* captured = m.getCapturedPiece();
     int x = m.getTarget().first;
     int y = m.getTarget().second;
 
     int castleRow = (m.getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0;
-
+    arrowList = m.getMoveArrows();
     // TODO smooth transition for castle 
     switch (m.getMoveType()) {
         case MoveType::NORMAL:

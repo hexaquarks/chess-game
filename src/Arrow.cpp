@@ -23,7 +23,6 @@ coor2d Arrow::getFormattedOrigin() {
 }
 
 void Arrow::setDestination(coor2d& destination) {
-    cout << destination.first << "," << destination.second << endl;
     m_destination.first = destination.first;
     m_destination.second =  destination.second - MENUBAR_HEIGHT;
 
@@ -34,14 +33,14 @@ void Arrow::setDestination(coor2d& destination) {
 
 void Arrow::updateArrow() {
     // check if arrow is feasible 
-    if((m_dx == 0 && m_dy == 0)) return;
+    if ((m_dx == 0 && m_dy == 0)) return;
     if (m_dx != 0 || m_dy != 0) m_rotation = rotation[1 + sign(m_dx)][1 + sign(m_dy)];
     
     int size = std::max(abs(m_dx), abs(m_dy));
-    if(size == 0) return; // do nothing, arrow too short
-    if(checkOutOfBounds()) return; // do nothing, arrow out of window
+    if (size == 0) return; // do nothing, arrow too short
+    if (checkOutOfBounds()) return; // do nothing, arrow out of window
 
-    if(abs(abs(m_dx)-abs(m_dy)) == 1 && abs(m_dx) > 0 && abs(m_dy) > 0) checkKnightSquares();
+    if (abs(abs(m_dx)-abs(m_dy)) == 1 && abs(m_dx) > 0 && abs(m_dy) > 0) checkKnightSquares();
     else {
         m_filename = "arrow_n" + to_string(size) + "x.png";
         m_isLArrow = false;
@@ -88,13 +87,12 @@ bool Arrow::removeArrow(vector<Arrow>& arrows) {
     bool removed = false;
 
     while(it != arrows.end()) {
-        if(compare(*it)) { it = arrows.erase(it); removed = true;} 
+        if(compare(*it)) { it = arrows.erase(it); removed = true; } 
         else ++it;
     }
     return removed;
 }
 
 bool Arrow::compare(Arrow& arrow){
-    return arrow.getOrigin() == m_origin && arrow.getFilename() == m_filename && 
-    arrow.getRotation() == m_rotation;
+    return arrow.getFilename() == m_filename && arrow.getRotation() == m_rotation;
 }
