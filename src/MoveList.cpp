@@ -67,7 +67,7 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vect
 
     // Set the current tile of the piece null. Necessary for navigating back to current move through goToNextMove()
     game.setBoardTile(prevX, prevY, nullptr); 
-
+    arrowList = move.getMoveArrows();
     // TODO smooth piece transition for castle 
     switch (move.getMoveType()) {
         case MoveType::NORMAL:
@@ -145,8 +145,6 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vect
             x * CELL_SIZE, y * CELL_SIZE, getTransitioningPiece()
         ); 
         else game.setBoardTile(x, y, selectedPiece);
-        
-        arrowList = move.getMoveArrows();
     }
 }
 

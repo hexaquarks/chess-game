@@ -56,13 +56,13 @@ void Arrow::checkKnightSquares() {
     vector<coor2d>::iterator it_ur = urCoords.begin();
     vector<coor2d>::iterator it_ru = ruCoords.begin();
 
-    while(it_ur != urCoords.end()) {
-        if((*it_ur).first == m_dx && (*it_ur).second == m_dy){
+    while (it_ur != urCoords.end()) {
+        if ((*it_ur).first == m_dx && (*it_ur).second == m_dy){
             m_rotation = (it_ur - urCoords.begin())*90;
             m_filename = "arrow_Nur.png";
             break;
         }
-        if((*it_ru).first == m_dx && (*it_ru).second == m_dy){
+        if ((*it_ru).first == m_dx && (*it_ru).second == m_dy){
             m_rotation = (it_ru - ruCoords.begin())*90;
             m_filename = "arrow_Nru.png";
             break;
@@ -86,7 +86,7 @@ bool Arrow::removeArrow(vector<Arrow>& arrows) {
     vector<Arrow>::iterator it = arrows.begin();
     bool removed = false;
 
-    while(it != arrows.end()) {
+    while (it != arrows.end()) {
         if(compare(*it)) { it = arrows.erase(it); removed = true; } 
         else ++it;
     }
@@ -94,5 +94,6 @@ bool Arrow::removeArrow(vector<Arrow>& arrows) {
 }
 
 bool Arrow::compare(Arrow& arrow){
-    return arrow.getFilename() == m_filename && arrow.getRotation() == m_rotation;
+    return arrow.getFormattedOrigin() == getFormattedOrigin() &&
+    arrow.getFilename() == m_filename && arrow.getRotation() == m_rotation;
 }
