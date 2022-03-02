@@ -81,10 +81,9 @@ int MenuButton::performClick(Board& game, MoveList& moveList) {
             // Clicked flip button
             GameThread::flipBoard();
             m_isColorTransitioning = true;
-            return 1;
             break;
     }
     // make clicking shadow flashing animation
     m_isColorTransitioning = true;
-    return -1;
+    return m_index;
 }

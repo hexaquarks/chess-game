@@ -32,7 +32,38 @@ void Arrow::updateArrow() {
     
     int size = std::max(abs(m_dx), abs(m_dy));
     if(size == 0) return; // do nothing, arrow too short
-    m_filename = "arrow_n" + to_string(size) + "x.png";
+    if(checkOutOfBounds()) return; // do nothing, arrow out of window
+
+    if(abs(abs(m_dx)-abs(m_dy)) == 1 && abs(m_dx) > 0 && abs(m_dy) > 0) checkKnightSquares();
+    else {
+        m_filename = "arrow_n" + to_string(size) + "x.png";
+        m_isLArrow = false;
+    }
+}
+
+bool Arrow::checkOutOfBounds() {
+    return m_destination.first < 0 || m_destination.first > WINDOW_SIZE ||
+    m_destination.second < 0 || m_destination.second > WINDOW_SIZE;
+}
+
+void Arrow::checkKnightSquares() {
+    vector<coor2d>::iterator it_ur = urCoords.begin();
+    vector<coor2d>::iterator it_ru = ruCoords.begin();
+
+    while(it_ur != urCoords.end()) {
+        if((*it_ur).first == m_dx && (*it_ur).second == m_dy){
+            m_rotation = (it_ur - urCoords.begin())*90;
+            m_filename = "arrow_Nur.png";
+            break;
+        }
+        if((*it_ru).first == m_dx && (*it_ru).second == m_dy){
+            m_rotation = (it_ru - ruCoords.begin())*90;
+            m_filename = "arrow_Nru.png";
+            break;
+        }
+        ++it_ru; ++it_ur;
+    }
+    m_isLArrow = true;
 }
 
 void Arrow::resetParameters() {

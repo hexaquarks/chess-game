@@ -134,6 +134,7 @@ void GameThread::startGame() {
                                 if(m.performClick(game, moveList) == 1) {
                                     // TODO fix bug (reset at beggining)
                                     selectedPiece = nullptr;
+                                    arrowList.clear();
                                     mousePos = {0, 0};
                                 }
 
@@ -373,8 +374,13 @@ void GameThread::drawCurrentArrow(RenderWindow& window, Arrow& arrow) {
     if (t == nullptr) return;
     Sprite s(*t);
 
-    s.setPosition(arrow.getOrigin().first, arrow.getOrigin().second);
-    s.setOrigin(0, s.getLocalBounds().height / 2);
+    if(arrow.isLArrow()) {
+        s.setOrigin(CELL_SIZE/2 , s.getLocalBounds().height - CELL_SIZE/2);
+        s.setPosition(arrow.getOrigin().first, arrow.getOrigin().second);
+    }else {
+        s.setOrigin(0, s.getLocalBounds().height / 2);
+        s.setPosition(arrow.getOrigin().first, arrow.getOrigin().second);
+    }
     s.rotate(arrow.getRotation());
     window.draw(s);
 }
@@ -385,8 +391,13 @@ void GameThread::drawAllArrows(RenderWindow& window, vector<Arrow>& arrows) {
         if (t == nullptr) return;
         Sprite s(*t);
 
-        s.setPosition(arrow.getOrigin().first, arrow.getOrigin().second);
-        s.setOrigin(0, s.getLocalBounds().height / 2);
+        if(arrow.isLArrow()) {
+            s.setOrigin(CELL_SIZE/2 , s.getLocalBounds().height - CELL_SIZE/2);
+            s.setPosition(arrow.getOrigin().first, arrow.getOrigin().second);
+        }else {
+            s.setOrigin(0, s.getLocalBounds().height / 2);
+            s.setPosition(arrow.getOrigin().first, arrow.getOrigin().second);
+        }
         s.rotate(arrow.getRotation());
         window.draw(s);
     }

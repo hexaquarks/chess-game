@@ -6,12 +6,13 @@
 using namespace std;
 
 typedef std::pair<int, int> coor2d;
-
 inline constexpr int rotation[3][3] = {
         {225, 180, 135},
         {270,   0,  90},
         {315,   0,  45},
 };
+inline vector<coor2d> urCoords = {{1,-2}, {2,1}, {-1,2}, {-2,-1}};
+inline vector<coor2d> ruCoords = {{2,-1}, {1,2}, {-2,1}, {-1,-2}};
 
 class Arrow {
     coor2d m_origin; // origin absolute coordinate
@@ -20,6 +21,7 @@ class Arrow {
     int m_dx, m_dy; // tile differential coordinates
     int m_rotation; // multiples of 45 degrees
     int m_size; // size of the arrow (0 to 7)
+    bool m_isLArrow = false;
 
     public:
     Arrow(): m_rotation(0), m_size(0){};
@@ -33,10 +35,12 @@ class Arrow {
     void setCoordinates(coor2d&,coor2d&);
     void setDestination(coor2d&);
     void setOrigin(coor2d&); 
+    void checkKnightSquares();
+    bool checkOutOfBounds();
     void updateArrow();
     void resetParameters();
     bool removeArrow(vector<Arrow>&);
     bool isDrawable();
     bool compare(Arrow&);
-    
+    bool isLArrow() { return m_isLArrow; }
 };
