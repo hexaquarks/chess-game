@@ -106,10 +106,12 @@ void GameThread::startGame() {
                     }
                 }
                 if (event.mouseButton.button == Mouse::Right) {
-                    rightClickAnchor = {event.mouseButton.x, event.mouseButton.y};
-                    arrow.setOrigin(rightClickAnchor);
-                    arrow.setDestination(rightClickAnchor);
-                    isRightClicking = true;
+                    if(!pieceIsMoving) {
+                        rightClickAnchor = {event.mouseButton.x, event.mouseButton.y};
+                        arrow.setOrigin(rightClickAnchor);
+                        arrow.setDestination(rightClickAnchor);
+                        isRightClicking = true;
+                    }
                 }
             }
 
