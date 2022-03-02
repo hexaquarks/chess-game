@@ -12,11 +12,18 @@ Arrow::Arrow(coor2d origin, coor2d destination, int rotation, string filename)
 
 void Arrow::setOrigin(coor2d& origin) {
     // need to format the origin to be at the center of the tile
-    m_origin.first = (origin.first / CELL_SIZE) * CELL_SIZE + CELL_SIZE/2;
-    m_origin.second = (origin.second / CELL_SIZE) * CELL_SIZE + MENUBAR_HEIGHT + CELL_SIZE/2;
+    m_origin.first = origin.first;
+    m_origin.second = origin.second - MENUBAR_HEIGHT;
+}
+
+coor2d Arrow::getFormattedOrigin() {
+    int x = (m_origin.first / CELL_SIZE) * CELL_SIZE + CELL_SIZE/2;
+    int y = (m_origin.second / CELL_SIZE) * CELL_SIZE + CELL_SIZE/2 + MENUBAR_HEIGHT;
+    return {x,y};
 }
 
 void Arrow::setDestination(coor2d& destination) {
+    cout << destination.first << "," << destination.second << endl;
     m_destination.first = destination.first;
     m_destination.second =  destination.second - MENUBAR_HEIGHT;
 

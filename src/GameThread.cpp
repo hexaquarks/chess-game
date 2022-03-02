@@ -359,13 +359,14 @@ void GameThread::drawAllArrows(RenderWindow& window, vector<Arrow>& arrows, Arro
         shared_ptr<Texture> t = RessourceManager::getTexture(arrow.getFilename());
         if (t == nullptr) return;
         Sprite s(*t);
+        coor2d arrowOrigin = arrow.getFormattedOrigin();
 
         if(arrow.isLArrow()) {
             s.setOrigin(CELL_SIZE/2 , s.getLocalBounds().height - CELL_SIZE/2);
-            s.setPosition(arrow.getOrigin().first, arrow.getOrigin().second);
+            s.setPosition(arrowOrigin.first, arrowOrigin.second);
         }else {
             s.setOrigin(0, s.getLocalBounds().height / 2);
-            s.setPosition(arrow.getOrigin().first, arrow.getOrigin().second);
+            s.setPosition(arrowOrigin.first, arrowOrigin.second);
         }
         s.rotate(arrow.getRotation());
         window.draw(s);

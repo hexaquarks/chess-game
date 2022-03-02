@@ -29,6 +29,7 @@ class Arrow {
 
     string getFilename() { return m_filename; }
     coor2d getOrigin() { return m_origin; }
+    coor2d getFormattedOrigin();
     coor2d getDestination() { return m_destination; }
     int getRotation() { return m_rotation; }
     
