@@ -59,15 +59,18 @@ void Board::reset() {
 }
 
 void Board::setBoardTile(int x, int y, Piece* piece, bool record) {
-    // Set up the piece
+    if (record && m_board[y][x] != nullptr) {
+        m_board[y][x]->move(-1, -1);
+    }
     m_board[y][x] = piece;
-    if (piece != nullptr) piece->move(y, x, record); 
+    if (piece != nullptr) piece->move(y, x, record);
 }
 
 vector<Move> Board::calculateAllMoves() {
     vector<Move> moves;
     vector<Piece*> playerPieces = (m_turn == Team::WHITE)? m_whitePieces: m_blackPieces;
     for (Piece* piece: playerPieces) {
+        if (piece->getX() == -1 || piece->getY() == -1) continue;
         vector<Move> pieceMoves = possibleMovesFor(piece);
         removeIllegalMoves(pieceMoves, piece);
         for (auto& move: pieceMoves) {

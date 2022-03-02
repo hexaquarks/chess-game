@@ -131,7 +131,7 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition) {
             // Possible leaking memory here actually ? 
             oldPiece = game.getBoardTile(x, y);
             Queen* queen = new Queen(selectedPiece->getTeam(), y, x);
-            queen->setLastMovedPiece(selectedPiece->getLastMovedPiece());
+            Piece::setLastMovedPiece(Piece::getLastMovedPiece());
             selectedPiece = queen;
             if (addToList) {
                 game.setBoardTile(x, y, queen);
@@ -139,11 +139,13 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition) {
             }
             break;
     }
-    if(!addToList && selectedPiece != nullptr) {
-        if(enableTransition) GameThread::setTransitioningPiece(selectedPiece,
-            x * CELL_SIZE, y * CELL_SIZE, getTransitioningPiece()); 
+    if (!addToList && selectedPiece != nullptr) {
+        if (enableTransition) GameThread::setTransitioningPiece(
+            selectedPiece,
+            x * CELL_SIZE, y * CELL_SIZE, getTransitioningPiece()
+        ); 
         else game.setBoardTile(x, y, selectedPiece);
-    } 
+    }
 }
 
 void MoveList::undoMove(bool enableTransition) {
