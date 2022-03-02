@@ -32,7 +32,11 @@ class Board {
     void switchTurn() { m_turn = (m_turn == Team::WHITE)? Team::BLACK: Team::WHITE; }
 
     bool kingIsChecked() { 
-        return (m_turn == Team::WHITE)? m_whiteKing->isChecked(m_board): m_blackKing->isChecked(m_board); 
+        return getKing()->isChecked(m_board); 
+    }
+
+    King* getKing() const {
+        return (m_turn == Team::WHITE)? m_whiteKing: m_blackKing;
     }
 
     vector<Move> possibleMovesFor(Piece* piece) { return piece->calcPossibleMoves(m_board); }

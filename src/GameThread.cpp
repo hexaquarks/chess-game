@@ -14,8 +14,7 @@
 using namespace sf;
 
 void GameThread::startGame() {
-    Board game;
-    RenderWindow window(VideoMode(WINDOW_SIZE, WINDOW_SIZE + MENUBAR_HEIGHT), WINDOW_TITLE, Style::Titlebar | Style::Close);
+    //window(VideoMode(WINDOW_SIZE, WINDOW_SIZE + MENUBAR_HEIGHT), WINDOW_TITLE, Style::Titlebar | Style::Close);
 
     // Load ressources 
     RessourceManager::loadRessources();
@@ -27,8 +26,7 @@ void GameThread::startGame() {
     window.setPosition({300, 300});
 
     // Window parameters
-    vector<MenuButton> menuBar; 
-    initializeMenuBar(menuBar);
+    initializeMenuBar();
 
     // Parameters to handle a piece being dragged
     bool pieceIsMoving = false;
@@ -39,7 +37,7 @@ void GameThread::startGame() {
     coor2d mousePos = {0, 0};
     coor2d rightClickAnchor = {0, 0};
     int lastXPos = 0, lastYPos = 0; // Last position of the piece before being dragged
-    vector<Move> possibleMoves = game.calculateAllMoves();
+    possibleMoves = game.calculateAllMoves();
 
     // Additional board state variables
     Piece* lastMove = nullptr;
@@ -223,33 +221,38 @@ void GameThread::startGame() {
             }
         }
 
-        drawMenuBar(window, menuBar);
-        initializeBoard(window, game);
+        drawMenuBar();
+        initializeBoard();
         moveList.highlightLastMove(window);
+        if (game.kingIsChecked()) drawKingCheckCircle();
 
         if ((pieceIsMoving || pieceIsClicked) && selectedPiece != nullptr) {
-            drawCaptureCircles(window, possibleMoves, selectedPiece, game);
-            highlightHoveredSquare(window, selectedPiece, game, possibleMoves, mousePos);
+            drawCaptureCircles(selectedPiece);
+            highlightHoveredSquare(selectedPiece, mousePos);
         }
-        drawPieces(window, game);
-        if (pieceIsMoving) drawDraggedPiece(selectedPiece, window, mousePos);
+        drawPieces();
+        if (pieceIsMoving) drawDraggedPiece(selectedPiece, mousePos);
         if (transitioningPiece.getIsTransitioning()) {
-            drawTransitioningPiece(window, transitioningPiece, game);
+            drawTransitioningPiece(transitioningPiece);
         }
 
-        drawAllArrows(window, arrowList, arrow);
+        drawAllArrows(arrowList, arrow);
+
+        // End conditions
+        if (possibleMoves.empty()) drawEndResults();
+
         window.display();
     }
 }
 
-void GameThread::initializeMenuBar(vector<MenuButton>& menuBar) {
+void GameThread::initializeMenuBar() {
     constexpr uint16_t menuOptions = 3;
     const string menuNames[menuOptions] = {"Menu", "Reset", "Flip"};
 
     for (uint8_t i = 0; i < menuOptions; ++i) menuBar.push_back(MenuButton(i, menuNames[i]));
 }
 
-void GameThread::drawMenuBar(RenderWindow& window, vector<MenuButton>& menuBar) {
+void GameThread::drawMenuBar() {
     constexpr uint16_t menuOptions = 3;
     const string iconFiles[menuOptions] = {"dropDown.png", "reset.png", "flip.png"};
 
@@ -265,7 +268,7 @@ void GameThread::drawMenuBar(RenderWindow& window, vector<MenuButton>& menuBar) 
     }   
 }
 
-void GameThread::initializeBoard(RenderWindow& window, Board& game) {
+void GameThread::initializeBoard() {
     const Color colours[2] = {{240, 217, 181}, {181, 136, 99}};
 
     for (uint8_t i = 0; i < 8; ++i) {
@@ -279,7 +282,7 @@ void GameThread::initializeBoard(RenderWindow& window, Board& game) {
     }
 }
 
-void GameThread::highlightHoveredSquare(RenderWindow& window, Piece* selectedPiece, Board& game, vector<Move>& possibleMoves, coor2d& mousePos) {
+void GameThread::highlightHoveredSquare(Piece* selectedPiece, coor2d& mousePos) {
     const Color colours[2] = {{173, 176, 134}, {100, 111, 64}};
 
     for (Move& move: possibleMoves) {
@@ -299,7 +302,7 @@ void GameThread::highlightHoveredSquare(RenderWindow& window, Piece* selectedPie
     }
 }
 
-void GameThread::drawCaptureCircles(RenderWindow& window, vector<Move>& possibleMoves, Piece* selectedPiece, Board& game) {
+void GameThread::drawCaptureCircles(Piece* selectedPiece) {
     for (Move& move: possibleMoves) {
         int i = move.getTarget().second;
         int j = move.getTarget().first;
@@ -315,7 +318,7 @@ void GameThread::drawCaptureCircles(RenderWindow& window, vector<Move>& possible
     }
 }
 
-void GameThread::drawPieces(RenderWindow& window, Board& game) {
+void GameThread::drawPieces() {
     for (uint8_t i = 0; i < 8; ++i) {
         for (uint8_t j = 0; j < 8; ++j) {
             Piece* piece = game.getBoardTile(i, j);
@@ -330,7 +333,7 @@ void GameThread::drawPieces(RenderWindow& window, Board& game) {
     }
 }
 
-void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, coor2d& mousePos) {
+void GameThread::drawDraggedPiece(Piece* selectedPiece, coor2d& mousePos) {
     if (selectedPiece == nullptr) return; // Safety check
     shared_ptr<Texture> t = RessourceManager::getTexture(selectedPiece);
     shared_ptr<Texture> tBefore = RessourceManager::getTexture(selectedPiece);
@@ -351,7 +354,7 @@ void GameThread::drawDraggedPiece(Piece* selectedPiece, RenderWindow& window, co
     window.draw(s);
 }
 
-void GameThread::drawAllArrows(RenderWindow& window, vector<Arrow>& arrows, Arrow& currArrow) {
+void GameThread::drawAllArrows(vector<Arrow>& arrows, Arrow& currArrow) {
     if(arrows.size() == 0) return;
     arrows.emplace_back(currArrow);
 
@@ -376,6 +379,35 @@ void GameThread::drawAllArrows(RenderWindow& window, vector<Arrow>& arrows, Arro
     arrows.pop_back();
 }
 
+void GameThread::drawKingCheckCircle() {
+    King* king = game.getKing();
+    CircleShape c(CELL_SIZE/2);
+    c.setFillColor({245, 80, 65});
+    int x = isFlipped? 7-king->getY(): king->getY();
+    int y = isFlipped? 7-king->getX(): king->getX();
+    c.setPosition(getWindowXPos(x), getWindowYPos(y));
+    window.draw(c);
+}
+
+void GameThread::drawEndResults() {
+    // Checkmate
+    if (game.kingIsChecked()) {
+        King* losing = game.getKing();
+        Texture t; t.loadFromFile(getIconPath("checkmate.png"));
+        Sprite checkmate(t);
+        checkmate.setScale(0.5, 0.5);
+        checkmate.setOrigin(40, 40);
+        checkmate.setPosition(
+            getWindowXPos(isFlipped? 7-losing->getY(): losing->getY())+CELL_SIZE,
+            getWindowYPos(isFlipped? 7-losing->getX(): losing->getX())
+        );
+        window.draw(checkmate);
+        return;
+    }
+
+    // Stalemate
+}
+
 void GameThread::setTransitioningPiece(Piece* p, int xTarget, int yTarget, PieceTransition& trans) {
     trans.setTransitioningPiece(p);
     coor2d destination = {xTarget, yTarget};
@@ -386,7 +418,7 @@ void GameThread::setTransitioningPiece(Piece* p, int xTarget, int yTarget, Piece
     trans.setIncrement();
 }
 
-void GameThread::drawTransitioningPiece(RenderWindow& window, PieceTransition& piece, Board& game) {
+void GameThread::drawTransitioningPiece(PieceTransition& piece) {
     piece.move();
     shared_ptr<Texture> t = RessourceManager::getTexture(piece.getPiece());   
     if (t == nullptr) return;

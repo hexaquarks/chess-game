@@ -5,6 +5,7 @@
 MoveList::MoveList(Board& board, PieceTransition& p): game(board), m_transitioningPiece(p) {}
 
 void MoveList::highlightLastMove(RenderWindow& window) const {
+    if (m_moves.empty()) return;
     Move& move = *m_moveIterator;
 
     RectangleShape squareBefore = createSquare();

@@ -1,7 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
-
 #include "RessourceManager.hpp"
 #include "PieceTransition.hpp"
 #include "MenuButton.hpp"
@@ -11,7 +10,6 @@
 using namespace sf;
 
 // Constants
-const string WINDOW_TITLE = "Chess Game";
 constexpr uint32_t WINDOW_SIZE = 640;
 constexpr uint32_t CELL_SIZE = WINDOW_SIZE / 8;
 constexpr uint32_t MENUBAR_HEIGHT = 30;
@@ -30,15 +28,22 @@ class GameThread {
     inline const static string iconsPath = "../assets/icons/";
     inline const static string audioPath = "../assets/sounds/";
 
-    static void initializeBoard(RenderWindow&, Board&);
-    static void initializeMenuBar(vector<MenuButton>&);
-    static void drawCaptureCircles(RenderWindow&, vector<Move>&, Piece*, Board&);
-    static void highlightHoveredSquare(RenderWindow&, Piece*, Board&, vector<Move>&, coor2d&);
-    static void drawMenuBar(RenderWindow&, vector<MenuButton>&);
-    static void drawPieces(RenderWindow&, Board&);
-    static void drawDraggedPiece(Piece*, RenderWindow&, coor2d&);
-    static void drawTransitioningPiece(RenderWindow&, PieceTransition&, Board&);
-    static void drawAllArrows(RenderWindow&, vector<Arrow>&, Arrow&);
+    inline static Board game;
+    inline static RenderWindow window = {VideoMode(WINDOW_SIZE, WINDOW_SIZE + MENUBAR_HEIGHT), "Chess Game", Style::Titlebar | Style::Close};
+    inline static vector<MenuButton> menuBar;
+    inline static vector<Move> possibleMoves;
+
+    static void initializeBoard();
+    static void initializeMenuBar();
+    static void drawCaptureCircles(Piece*);
+    static void highlightHoveredSquare(Piece*, coor2d&);
+    static void drawMenuBar();
+    static void drawPieces();
+    static void drawDraggedPiece(Piece*, coor2d&);
+    static void drawTransitioningPiece(PieceTransition&);
+    static void drawAllArrows(vector<Arrow>&, Arrow&);
+    static void drawEndResults();
+    static void drawKingCheckCircle();
 
     inline static bool isFlipped = false;
 
