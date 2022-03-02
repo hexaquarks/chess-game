@@ -262,27 +262,6 @@ void GameThread::drawMenuBar(RenderWindow& window, vector<MenuButton>& menuBar) 
     }   
 }
 
-void GameThread::removeIllegalMoves(Board& game, vector<Move>& possibleMoves, Piece* selectedPiece, coor2d& mousePos) {
-    vector<Move>::iterator it = possibleMoves.begin();
-
-    while (it != possibleMoves.end()) {
-        int x = (*it).getTarget().second;
-        int y = (*it).getTarget().first;
-
-        // Store piece occupied by target square
-        Piece* temp = game.getBoardTile(x, y);
-
-        game.setBoardTile(x, y, selectedPiece, false); // Move this piece to target square
-        game.setBoardTile(getTileXPos(mousePos), getTileYPos(mousePos), nullptr, false); // Set null to selected piece's square
-
-        if (game.kingIsChecked()) it = possibleMoves.erase(it);
-        else ++it;
-
-        game.setBoardTile(getTileXPos(mousePos), getTileYPos(mousePos), selectedPiece, false);
-        game.setBoardTile(x, y, temp, false); 
-    }
-}
-
 void GameThread::initializeBoard(RenderWindow& window, Board& game) {
     const Color colours[2] = {{240, 217, 181}, {181, 136, 99}};
 
@@ -321,13 +300,13 @@ void GameThread::drawCaptureCircles(RenderWindow& window, vector<Move>& possible
     for (Move& move: possibleMoves) {
         int i = move.getTarget().second;
         int j = move.getTarget().first;
-        if (isFlipped) {i = 7-i; j = 7-j;}
         if (move.getSelectedPiece() != selectedPiece) continue;
         bool isEmpty = game.getBoardTile(i, j) == nullptr;
         shared_ptr<Texture> t = RessourceManager::getTexture(isEmpty? "circle.png": "empty_circle.png");
         if (t == nullptr) return;
         Sprite circle(*t);
         if (isEmpty) circle.setScale(SPRITE_SCALE, SPRITE_SCALE);
+        if (isFlipped) {i = 7-i; j = 7-j;}
         circle.setPosition(getWindowXPos(i), getWindowYPos(j));
         window.draw(circle);
     }

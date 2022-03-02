@@ -59,18 +59,47 @@ void Board::reset() {
 }
 
 void Board::setBoardTile(int x, int y, Piece* piece, bool record) {
-    // Set up the piece
+    if (record && m_board[y][x] != nullptr) {
+        m_board[y][x]->move(-1, -1);
+    }
     m_board[y][x] = piece;
-    if (piece != nullptr) piece->move(y, x, record); 
+    if (piece != nullptr) piece->move(y, x, record);
 }
 
 vector<Move> Board::calculateAllMoves() {
     vector<Move> moves;
     vector<Piece*> playerPieces = (m_turn == Team::WHITE)? m_whitePieces: m_blackPieces;
     for (Piece* piece: playerPieces) {
-        for (auto& move: possibleMovesFor(piece)) {
+        if (piece->getX() == -1 || piece->getY() == -1) continue;
+        vector<Move> pieceMoves = possibleMovesFor(piece);
+        removeIllegalMoves(pieceMoves, piece);
+        for (auto& move: pieceMoves) {
             moves.push_back(move);
         }
     }
     return moves;
+}
+
+void Board::removeIllegalMoves(vector<Move>& possibleMoves, Piece* selectedPiece) {
+    vector<Move>::iterator it = possibleMoves.begin();
+
+    while (it != possibleMoves.end()) {
+        int x = (*it).getTarget().second;
+        int y = (*it).getTarget().first;
+
+        // Store piece occupied by target square
+        Piece* temp = getBoardTile(x, y);
+
+        int initialX = selectedPiece->getY();
+        int initialY = selectedPiece->getX();
+
+        setBoardTile(x, y, selectedPiece, false); // Move this piece to target square
+        setBoardTile(initialX, initialY, nullptr, false); // Set null to selected piece's square
+
+        if (kingIsChecked()) it = possibleMoves.erase(it);
+        else ++it;
+
+        setBoardTile(initialX, initialY, selectedPiece, false);
+        setBoardTile(x, y, temp, false); 
+    }
 }
