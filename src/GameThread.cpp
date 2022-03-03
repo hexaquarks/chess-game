@@ -5,6 +5,7 @@
 #include "../include/PieceTransition.hpp"
 #include "../include/Move.hpp"
 #include "../include/SidePanel.hpp"
+#include "Shader.cpp"
 
 #include <iostream>
 #include <vector>
@@ -19,7 +20,6 @@ void GameThread::startGame() {
 
     // Load ressources 
     RessourceManager::loadRessources();
-    shared_ptr<Font> font = RessourceManager::getFont("Arial.ttf"); 
 
     // Setting window icon
     Image icon;
@@ -29,7 +29,7 @@ void GameThread::startGame() {
 
     // Window parameters
     initializeMenuBar();
-    SidePanel sidePanel{window, *font};
+    SidePanel sidePanel{window};
 
     // Parameters to handle a piece being dragged
     bool pieceIsMoving = false;
@@ -403,13 +403,24 @@ void GameThread::drawAllArrows(vector<Arrow>& arrows, Arrow& currArrow) {
 }
 
 void GameThread::drawKingCheckCircle() {
+    Shader shader;
+    shader.loadFromMemory(VertexShader, RadialGradient);
+    shader.setUniform("windowHeight", static_cast<float>(window.getSize().y)); 
+
     King* king = game.getKing();
     CircleShape c(CELL_SIZE/2);
-    c.setFillColor({245, 80, 65, 100});
+    
+    c.setFillColor(Color::Transparent);
     int x = isFlipped? 7-king->getY(): king->getY();
     int y = isFlipped? 7-king->getX(): king->getX();
     c.setPosition(getWindowXPos(x), getWindowYPos(y));
-    window.draw(c);
+    shader.setUniform("color", Glsl::Vec4(1.f, 0.f, 0.f, 1.f));
+    shader.setUniform("center", sf::Vector2f(c.getPosition().x + c.getRadius(), 
+                      c.getPosition().y + + c.getRadius()));
+    shader.setUniform("radius", c.getRadius());
+    shader.setUniform("expand", 0.15f);
+
+    window.draw(c, &shader);
 }
 
 void GameThread::drawEndResults() {
