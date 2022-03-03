@@ -4,6 +4,7 @@
 #include "../include/RessourceManager.hpp"
 #include "../include/PieceTransition.hpp"
 #include "../include/Move.hpp"
+#include "../include/SidePanel.hpp"
 
 #include <iostream>
 #include <vector>
@@ -27,6 +28,7 @@ void GameThread::startGame() {
 
     // Window parameters
     initializeMenuBar();
+    SidePanel sidePanel{window};
 
     // Parameters to handle a piece being dragged
     bool pieceIsMoving = false;
@@ -175,6 +177,7 @@ void GameThread::startGame() {
                         move.setCapturedPiece(lastMove);
                         move.setMoveArrows(arrowList);
                         moveList.addMove(move, arrowList);
+                        sidePanel.addMove(moveList, move);
 
                         lastMove = selectedPiece;
                         lastMove->setLastMove(selectedMove->getMoveType());
@@ -254,6 +257,7 @@ void GameThread::initializeMenuBar() {
 }
 
 void GameThread::drawSidePanel(SidePanel& sidePanel) {
+    // Draw the main panels
     RectangleShape mainPanel(Vector2f(PANEL_SIZE - 2*BORDER_SIZE, MAIN_PANEL_HEIGHT - 2*BORDER_SIZE));
     RectangleShape southPanel(Vector2f(PANEL_SIZE - 2*BORDER_SIZE, SOUTH_PANEL_HEIGHT));
     mainPanel.setFillColor(Color::White);
@@ -263,6 +267,9 @@ void GameThread::drawSidePanel(SidePanel& sidePanel) {
     
     window.draw(mainPanel);
     window.draw(southPanel);
+
+    // Draw the content on the panels
+    sidePanel.drawMoves();
 }
 
 void GameThread::drawMenuBar() {
@@ -395,7 +402,7 @@ void GameThread::drawAllArrows(vector<Arrow>& arrows, Arrow& currArrow) {
 void GameThread::drawKingCheckCircle() {
     King* king = game.getKing();
     CircleShape c(CELL_SIZE/2);
-    c.setFillColor({245, 80, 65});
+    c.setFillColor({245, 80, 65, 100});
     int x = isFlipped? 7-king->getY(): king->getY();
     int y = isFlipped? 7-king->getX(): king->getX();
     c.setPosition(getWindowXPos(x), getWindowYPos(y));
@@ -408,6 +415,7 @@ void GameThread::drawEndResults() {
         King* losing = game.getKing();
         Texture t; t.loadFromFile(getIconPath("checkmate.png"));
         Sprite checkmate(t);
+        checkmate.setColor({255, 255, 255, 200});
         checkmate.setScale(0.5, 0.5);
         checkmate.setOrigin(40, 40);
         checkmate.setPosition(

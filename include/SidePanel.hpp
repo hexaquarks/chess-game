@@ -1,17 +1,29 @@
 #pragma once
-using namespace std;
 
-constexpr uint32_t MENUBAR_HEIGHTT = 30; // temporary fix
-constexpr uint32_t PANEL_SIZE = 640;
-constexpr uint32_t BORDER_SIZE = 5;
-constexpr uint32_t SOUTH_PANEL_HEIGHT = MENUBAR_HEIGHTT;
-constexpr uint32_t MAIN_PANEL_HEIGHT = PANEL_SIZE - SOUTH_PANEL_HEIGHT;
+#include <SFML/Graphics.hpp>
+#include "Move.hpp"
+#include "Piece.hpp"
+#include "GameThread.hpp"
+#include "MoveList.hpp"
+
+using namespace std;
+using namespace sf;
+
+inline const string letters = "abcdefgh";
+inline vector<string> textBoxes;
 
 class SidePanel {
-    // vector<Row> rows;
+    RenderWindow& m_window;
+    int m_xPos = 5; // horizontal position for the next move text
+    int m_yPos = 5; // vertical position for the next move text
 
     public:
-    SidePanel(){};
+    SidePanel(RenderWindow& window): m_window(window){};
 
+    pair<char,int> findLetterCoord(coor2d);
+    coor2d findNextAvailableSpot();
+    string parseMove(Move&, int, bool);
     void getLocalCoordinates();
+    void addMove(MoveList&, Move&); 
+    void drawMoves();
 };

@@ -21,6 +21,7 @@ class MoveList {
     public:
     MoveList(Board&, PieceTransition&);
     PieceTransition& getTransitioningPiece() { return m_transitioningPiece; }
+    list<Move> getMoveList() { return m_moves; }
     void highlightLastMove(RenderWindow&) const;
     void reset() { m_moves.clear(); m_moveIterator = m_moves.begin(); };
     void goToPreviousMove(bool, vector<Arrow>&);

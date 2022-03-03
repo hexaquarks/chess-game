@@ -6,16 +6,21 @@
 #include "MenuButton.hpp"
 #include "Board.hpp"
 #include "Arrow.hpp"
-#include "SidePanel.hpp"
 
 using namespace sf;
 
+class SidePanel; // Forward declaration
+
 // Constants
-constexpr uint32_t WINDOW_SIZE = 640;
-constexpr uint32_t CELL_SIZE = WINDOW_SIZE / 8;
 constexpr uint32_t MENUBAR_HEIGHT = 30;
 constexpr uint32_t NUMBER_BUTTONS = 6;
+constexpr uint32_t WINDOW_SIZE = 640;
+constexpr uint32_t CELL_SIZE = WINDOW_SIZE / 8;
 constexpr uint32_t BUTTON_POS = WINDOW_SIZE / NUMBER_BUTTONS;
+constexpr uint32_t PANEL_SIZE = 640;
+constexpr uint32_t BORDER_SIZE = 5;
+constexpr uint32_t SOUTH_PANEL_HEIGHT = MENUBAR_HEIGHT;
+constexpr uint32_t MAIN_PANEL_HEIGHT = PANEL_SIZE - SOUTH_PANEL_HEIGHT;
 constexpr float SPRITE_SCALE = 0.6;
 constexpr float SPRITE_SIZE = 128;
 constexpr float BUTTON_SIZE = 40;
@@ -30,7 +35,6 @@ class GameThread {
     inline const static string audioPath = "../assets/sounds/";
 
     inline static Board game;
-    inline static SidePanel sidePanel;
     inline static RenderWindow window = {VideoMode(WINDOW_SIZE + PANEL_SIZE, WINDOW_SIZE + MENUBAR_HEIGHT),
                                         "Chess Game", Style::Titlebar | Style::Close};
     inline static vector<MenuButton> menuBar;
