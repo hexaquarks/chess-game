@@ -19,17 +19,20 @@ void MoveBox::handleRectangle() {
     m_rectangle.setPosition(WINDOW_SIZE + m_position.first, MENUBAR_HEIGHT + m_position.second);
     m_rectangle.setSize(recSize);
     m_rectangle.setFillColor(Color::White);
-    m_rectangle.setOutlineThickness(2.f);
 
-    m_textsf.setPosition(WINDOW_SIZE + m_position.first, MENUBAR_HEIGHT + m_position.second);
+    float positionalShift = ((BOX_HORIZONTAL_SCALE - 1.f)*m_rectangle.getLocalBounds().width)/2.f;
+
+    m_rectangle.setScale(BOX_HORIZONTAL_SCALE, BOX_VERTICAL_SCALE);
+    m_textsf.setPosition(WINDOW_SIZE + m_position.first + positionalShift,
+                         MENUBAR_HEIGHT + m_position.second);
 }
 
 bool MoveBox::isHowered(coor2d& mousePos) {
     int x = mousePos.first - WINDOW_SIZE;
     int y = mousePos.second - MENUBAR_HEIGHT;
 
-    return ((x > getPosition().first && x <= getPosition().first +  getTextBounds().width) &&
-        (y > getPosition().second && y <= getPosition().second +  getTextBounds().height));
+    return ((x > getPosition().first && x <= getPosition().first +  getScaledWidth()) 
+         && (y > getPosition().second && y <= getPosition().second +  getScaledHeight()));
 }
 
 void MoveBox::setDefault() {

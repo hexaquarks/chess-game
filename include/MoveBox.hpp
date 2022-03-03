@@ -4,6 +4,10 @@
 using namespace std;
 using namespace sf;
 
+inline float BOX_HORIZONTAL_SCALE = 1.25;
+inline float BOX_VERTICAL_SCALE = 1.25;
+inline float BOX_TEXT_HORIZONTAL_SHIFT = 1.05;
+
 class MoveBox {
     bool m_isSelected = false;
     RectangleShape m_rectangle;
@@ -15,6 +19,8 @@ class MoveBox {
     public:
     MoveBox(coor2d, string);
 
+    float getScaledWidth() { return BOX_HORIZONTAL_SCALE * m_textBounds.width; }
+    float getScaledHeight() { return BOX_VERTICAL_SCALE * m_textsf.getCharacterSize(); }
     void setPosition(coor2d coord) { m_position = coord; }
     RectangleShape getRectangle() { return m_rectangle; }
     FloatRect getTextBounds() { return m_textBounds; }

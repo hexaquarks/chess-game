@@ -9,7 +9,7 @@ void SidePanel::addMove(MoveList& moves, Move& move) {
     MoveBox moveBox(m_nextPos, text); // Make the text box
     moveBox.handleText(); // Create the Text, and pass the font ressource
     checkOutOfBounds(moveBox); // check if object's width goes out of bounds and update
-    m_nextPos.first += (10 + moveBox.getTextBounds().width); // increment for next move box
+    m_nextPos.first += (moveBox.getScaledWidth()); // increment for next move box
 
     moveBoxes.emplace_back(moveBox);
 }
@@ -39,7 +39,7 @@ string SidePanel::parseMove(Move& move, int moveNumber, bool showNumber) {
         case PieceType::PAWN:
             // TODO fix promotion
             if(moveType == MoveType::CAPTURE || moveType == MoveType::ENPASSANT){
-                text += string(1, letters.at(coord.first)) + "x";
+                text += string(1, letters.at(coord.first-1)) + "x";
                 return text + letterCoordString;
             }
             break;
