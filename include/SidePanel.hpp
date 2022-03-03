@@ -16,10 +16,9 @@ inline vector<MoveBox> moveBoxes;
 class SidePanel {
     RenderWindow& m_window;
     coor2d m_nextPos = {BORDER_SIZE + 10, 10};
-    Font& m_fontPointer;
 
     public:
-    SidePanel(RenderWindow& window, Font& font): m_window(window), m_fontPointer(font){};
+    SidePanel(RenderWindow& window): m_window(window){};
 
     pair<char,int> findLetterCoord(coor2d);
     coor2d findNextAvailableSpot();

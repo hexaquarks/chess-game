@@ -2,14 +2,12 @@
 #include "../include/GameThread.hpp"
 #include "../include/MoveList.hpp"
 
-Font font;
-
 MenuButton::MenuButton(uint8_t index, const std::string& name, bool isRotatable):
     m_index(index), m_isRotatable(isRotatable) {
-    if (!font.loadFromFile("../assets/fonts/Arial.ttf")) return;
 
+    shared_ptr<Font> font =  RessourceManager::getFont("Arial.ttf");
     m_text.setString(name);
-    m_text.setFont(font);
+    m_text.setFont(*font);
     m_text.setCharacterSize(14);
 
     handleRectangle(index);

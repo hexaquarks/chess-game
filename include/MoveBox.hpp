@@ -25,5 +25,5 @@ class MoveBox {
     void setIsSelected();
     void setDefault();
     void handleRectangle();
-    void handleText(Font&);
+    void handleText();
 };

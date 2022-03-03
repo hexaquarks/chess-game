@@ -7,7 +7,7 @@ void SidePanel::addMove(MoveList& moves, Move& move) {
     string text = parseMove(move, (moveListSize/2) + 1, showNumber);
 
     MoveBox moveBox(m_nextPos, text); // Make the text box
-    moveBox.handleText(m_fontPointer); // Create the Text, and pass the font ressource
+    moveBox.handleText(); // Create the Text, and pass the font ressource
     checkOutOfBounds(moveBox); // check if object's width goes out of bounds and update
     m_nextPos.first += (10 + moveBox.getTextBounds().width); // increment for next move box
 
@@ -79,7 +79,7 @@ void SidePanel::drawMoves(coor2d& mousePos) {
 
     for (auto& moveBox : moveBoxes) {
         moveBox.handleRectangle();
-        
+
         if(moveBox.isHowered(mousePos)) moveBox.setIsSelected(); 
         else moveBox.setDefault();
 

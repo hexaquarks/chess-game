@@ -2,10 +2,11 @@
 
 MoveBox::MoveBox(coor2d position, string text): m_position(position), m_text(text) {};
 
-void MoveBox::handleText(Font& font) {
+void MoveBox::handleText() {
+    shared_ptr<Font> font =  RessourceManager::getFont("Arial.ttf");
 
     m_textsf.setString(m_text);
-    m_textsf.setFont(font);
+    m_textsf.setFont(*font);
     m_textsf.setCharacterSize(25);
     m_textsf.setStyle(Text::Bold);
     m_textsf.setFillColor(Color::Black);
