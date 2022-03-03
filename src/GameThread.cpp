@@ -19,7 +19,7 @@ void GameThread::startGame() {
 
     // Load ressources 
     RessourceManager::loadRessources();
-
+    shared_ptr<Font> font = RessourceManager::getFont("Arial.ttf");
     // Setting window icon
     Image icon;
     icon.loadFromFile(getIconPath("nw.png"));
@@ -28,7 +28,7 @@ void GameThread::startGame() {
 
     // Window parameters
     initializeMenuBar();
-    SidePanel sidePanel{window};
+    SidePanel sidePanel{window, *font};
 
     // Parameters to handle a piece being dragged
     bool pieceIsMoving = false;
