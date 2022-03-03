@@ -19,7 +19,8 @@ void GameThread::startGame() {
 
     // Load ressources 
     RessourceManager::loadRessources();
-    shared_ptr<Font> font = RessourceManager::getFont("Arial.ttf");
+    shared_ptr<Font> font = RessourceManager::getFont("Arial.ttf"); 
+
     // Setting window icon
     Image icon;
     icon.loadFromFile(getIconPath("nw.png"));
@@ -269,7 +270,9 @@ void GameThread::drawSidePanel(SidePanel& sidePanel) {
     window.draw(southPanel);
 
     // Draw the content on the panels
-    sidePanel.drawMoves();
+    Vector2i position = sf::Mouse::getPosition(window);
+    coor2d mousePos = {position.x , position.y};
+    sidePanel.drawMoves(mousePos);
 }
 
 void GameThread::drawMenuBar() {

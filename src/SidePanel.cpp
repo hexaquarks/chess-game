@@ -74,11 +74,14 @@ void SidePanel::checkOutOfBounds(MoveBox& moveBox) {
     }
 }
 
-void SidePanel::drawMoves() {
+void SidePanel::drawMoves(coor2d& mousePos) {
     if (moveBoxes.size() == 0 ) return; // no moves added yet, return
 
     for (auto& moveBox : moveBoxes) {
         moveBox.handleRectangle();
+        
+        if(moveBox.isHowered(mousePos)) moveBox.setIsSelected(); 
+        else moveBox.setDefault();
 
         m_window.draw(moveBox.getRectangle());
         m_window.draw(moveBox.getTextsf());

@@ -15,12 +15,15 @@ class MoveBox {
     public:
     MoveBox(coor2d, string);
 
-    void setPosition(coor2d coord) { m_position = coord; };
+    void setPosition(coor2d coord) { m_position = coord; }
     RectangleShape getRectangle() { return m_rectangle; }
     FloatRect getTextBounds() { return m_textBounds; }
     coor2d getPosition() { return m_position; }
     string getText() { return m_text; }
-    Text getTextsf() { cout << m_textsf.getCharacterSize() << endl; return m_textsf; }
+    Text getTextsf() { return m_textsf; }
+    bool isHowered(coor2d&);
+    void setIsSelected();
+    void setDefault();
     void handleRectangle();
     void handleText(Font&);
 };

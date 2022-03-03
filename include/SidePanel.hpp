@@ -27,6 +27,6 @@ class SidePanel {
     void resetNextPos() { m_nextPos = {BORDER_SIZE + 10, 10}; }
     void goToNextRow(int height);
     void addMove(MoveList&, Move&); 
-    void drawMoves();
+    void drawMoves(coor2d&);
     void checkOutOfBounds(MoveBox&);
 };
