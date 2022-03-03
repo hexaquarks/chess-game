@@ -14,8 +14,8 @@ inline vector<string> textBoxes;
 
 class SidePanel {
     RenderWindow& m_window;
-    int m_xPos = 5; // horizontal position for the next move text
-    int m_yPos = 5; // vertical position for the next move text
+    int m_xPos = BORDER_SIZE + 10; // horizontal position for the next move text
+    int m_yPos = 10; // vertical position for the next move text
 
     public:
     SidePanel(RenderWindow& window): m_window(window){};

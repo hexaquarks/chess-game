@@ -15,15 +15,15 @@ pair<char,int> SidePanel::findLetterCoord(coor2d target) {
 }
 
 string SidePanel::parseMove(Move& move, int moveNumber, bool showNumber) {
-    string text = (showNumber)? to_string(moveNumber) + ". " : " ";
+    string text = (showNumber)? to_string(moveNumber) + "." : " ";
     MoveType moveType = move.getMoveType();
 
     // side cases
     if (moveType == MoveType::CASTLE_KINGSIDE) {
-        return text + "O-O";
+        return text + "0-0";
     }
     if (moveType == MoveType::CASTLE_QUEENSIDE) {
-        return text + "O-O-O";
+        return text + "0-0-0";
     }
 
     coor2d coord = move.getTarget();
@@ -50,6 +50,9 @@ string SidePanel::parseMove(Move& move, int moveNumber, bool showNumber) {
         case PieceType::QUEEN:
             text += "Q";
             break;
+        case PieceType::KING:
+            text += "k";
+            break;
     }
     return text + string((moveType == MoveType::CAPTURE)? "x" : "") + letterCoordString;
 }
@@ -66,35 +69,33 @@ void SidePanel::drawMoves() {
 
         text.setString(moveText);
         text.setFont(font);
-        text.setCharacterSize(20);
-        FloatRect textSize = text.getLocalBounds();
-
-        if(WINDOW_SIZE + m_xPos + textSize.width >= 2*WINDOW_SIZE-BORDER_SIZE){
-            // Go to next row
-            m_yPos += (5 + textSize.height);
-            m_xPos = 10;
-        }
-
-        rectangle.setPosition(WINDOW_SIZE + m_xPos, MENUBAR_HEIGHT + m_yPos);
-        rectangle.setSize({textSize.width, textSize.height});
-        rectangle.setScale(1.4,1.4); // testing 
-        rectangle.setFillColor(Color::White);
-        rectangle.setOutlineThickness(2.f);
-        rectangle.setOutlineColor({239, 242, 249});
-
+        text.setCharacterSize(25);
         text.setStyle(Text::Bold);
         text.setFillColor(Color::Black);
+
+        FloatRect textBounds = text.getGlobalBounds();
+
+        if(WINDOW_SIZE + m_xPos + textBounds.width >= 2*WINDOW_SIZE-BORDER_SIZE){
+            // Go to next row
+            m_yPos += (20 + textBounds.height);
+            m_xPos = 10 + BORDER_SIZE;
+        }
+
+        Vector2f recSize(textBounds.width, text.getCharacterSize());
+        rectangle.setPosition(WINDOW_SIZE + m_xPos, MENUBAR_HEIGHT + m_yPos);
+        rectangle.setSize(recSize);
+        rectangle.setFillColor(Color::White);
+        rectangle.setOutlineThickness(2.f);
+
         text.setPosition(WINDOW_SIZE + m_xPos, MENUBAR_HEIGHT + m_yPos);
         
         m_window.draw(rectangle);
         m_window.draw(text);
 
         // update x,y pos for the next move text
-        m_xPos += (5 + rectangle.getLocalBounds().width);
-        // m_yPos += 5 + textSize.height;
-
+        m_xPos += (10 + textBounds.width);
     }
-    m_xPos = 5; m_yPos = 5; // reset x,y pos back to original for drawing in next tick
+    m_xPos = 10 + BORDER_SIZE; m_yPos = 10; // reset x,y pos back to original for drawing in next tick
 
 }
 
