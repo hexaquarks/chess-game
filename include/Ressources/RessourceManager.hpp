@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <memory>
-#include "Piece.hpp"
+#include "../Pieces/Piece.hpp"
 using namespace std;
 
 typedef unordered_map<string, shared_ptr<sf::Texture>> textureMap;
@@ -12,9 +12,9 @@ typedef unordered_map<string, shared_ptr<sf::SoundBuffer>> audioMap;
 typedef unordered_map<string, shared_ptr<sf::Font>> fontsMap;
 
 class RessourceManager {  
-    inline const static string iconsPath = "../assets/icons/";
-    inline const static string audioPath = "../assets/sounds/";
-    inline const static string fontPath = "../assets/fonts/";
+    inline const static string iconsPath = "../../assets/icons/";
+    inline const static string audioPath = "../../assets/sounds/";
+    inline const static string fontPath = "../../assets/fonts/";
 
     inline static constexpr uint8_t m_numberOfTextures = 33;
     inline const static string m_textureNames[m_numberOfTextures] = {"circle.png", "empty_circle.png", 

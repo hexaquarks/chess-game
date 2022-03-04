@@ -1,4 +1,4 @@
-#include "../include/SidePanel.hpp"
+#include "../include/Components/SidePanel.hpp"
 
 void SidePanel::addMove(MoveList& moves, Move& move) {
     int moveListSize = moves.getMoveList().size();

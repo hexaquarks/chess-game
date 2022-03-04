@@ -1,6 +1,6 @@
-#include "../include/MenuButton.hpp"
+#include "../include/Components/MenuButton.hpp"
 #include "../include/GameThread.hpp"
-#include "../include/MoveList.hpp"
+#include "../include/Utilities/MoveList.hpp"
 
 MenuButton::MenuButton(uint8_t index, const std::string& name, bool isRotatable):
     m_index(index), m_isRotatable(isRotatable) {

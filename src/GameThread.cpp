@@ -1,11 +1,11 @@
 #include "../include/GameThread.hpp"
-#include "../include/MoveList.hpp"
-#include "../include/MenuButton.hpp"
-#include "../include/RessourceManager.hpp"
-#include "../include/PieceTransition.hpp"
-#include "../include/Move.hpp"
-#include "../include/SidePanel.hpp"
-#include "Shader.cpp"
+#include "../include/Utilities/MoveList.hpp"
+#include "../include/Components/MenuButton.hpp"
+#include "../include/Ressources/RessourceManager.hpp"
+#include "../include/Utilities/PieceTransition.hpp"
+#include "../include/Utilities/Move.hpp"
+#include "../include/Components/SidePanel.hpp"
+#include "./Ressources/Shader.cpp"
 
 #include <iostream>
 #include <vector>
@@ -17,6 +17,8 @@ using namespace sf;
 
 void GameThread::startGame() {
     window.setFramerateLimit(60);
+
+    cout << "here " << endl;
 
     // Load ressources 
     RessourceManager::loadRessources();
