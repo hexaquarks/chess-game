@@ -1,4 +1,4 @@
-#include "../include/Pieces/Knight.hpp"
+#include "../../include/Pieces/Knight.hpp"
 #include <vector>
 
 Knight::Knight(Team team, int x, int y): Piece(team, x, y, PieceType::KNIGHT, "n") {}

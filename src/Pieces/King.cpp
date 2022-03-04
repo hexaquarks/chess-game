@@ -1,4 +1,4 @@
-#include "../include/Pieces/King.hpp"
+#include "../../include/Pieces/King.hpp"
 
 King::King(Team team, int x, int y): Piece(team, x, y, PieceType::KING, "k") {}
 

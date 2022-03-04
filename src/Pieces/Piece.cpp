@@ -1,5 +1,5 @@
-#include "../include/Piece.hpp"
-#include "../include/GameThread.hpp"
+#include "../../include/Pieces/Piece.hpp"
+#include "../../include/GameThread.hpp"
 #include <iostream>
 
 Piece::Piece(Team team, int x, int y, PieceType type, string pieceType):

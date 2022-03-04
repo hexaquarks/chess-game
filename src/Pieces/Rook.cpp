@@ -1,4 +1,4 @@
-#include "../include/Pieces/Rook.hpp"
+#include "../../include/Pieces/Rook.hpp"
 #include <vector>
 
 Rook::Rook(Team team, int x, int y): Piece(team, x, y, PieceType::ROOK, "r") {}
