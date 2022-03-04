@@ -1,5 +1,5 @@
-#include "../include/Piece.hpp"
-#include "../include/PieceTransition.hpp"
+#include "../include/Pieces/Piece.hpp"
+#include "../include/Utilities/PieceTransition.hpp"
 #include "../include/GameThread.hpp"
 
 void PieceTransition::setIncrement() { 
@@ -40,7 +40,6 @@ void PieceTransition::setHasArrived(bool b, Board& board) {
         m_yArrived = false;
         m_increment = {0,0};
         board.setBoardTile(m_currPos.first / CELL_SIZE , m_currPos.second / CELL_SIZE, m_piece);
-        cout << "arrived "<< endl;
         //  m_piece = nullptr;
     }
 }

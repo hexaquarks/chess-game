@@ -1,5 +1,5 @@
-#include "../include/Board.hpp"
-#include "../include/King.hpp"
+#include "../include/Components/Board.hpp"
+#include "../include/Pieces/King.hpp"
 #include <algorithm>
 
 void Board::freeMemory() {

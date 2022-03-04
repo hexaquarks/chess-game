@@ -1,12 +1,12 @@
 #pragma once
 #include <list>
-#include "Piece.hpp"
-#include "Pawn.hpp"
-#include "Rook.hpp"
-#include "Knight.hpp"
-#include "Bishop.hpp"
-#include "King.hpp"
-#include "Queen.hpp"
+#include "../Pieces/Piece.hpp"
+#include "../Pieces/Pawn.hpp"
+#include "../Pieces/Rook.hpp"
+#include "../Pieces/Knight.hpp"
+#include "../Pieces/Bishop.hpp"
+#include "../Pieces/King.hpp"
+#include "../Pieces/Queen.hpp"
 
 
 class Board {

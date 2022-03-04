@@ -3,7 +3,7 @@
 #include <vector>
 #include <tuple>
 #include <iostream>
-#include "Move.hpp"
+#include "../Utilities/Move.hpp"
 using namespace std;
 
 enum class Team { WHITE, BLACK };

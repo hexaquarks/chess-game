@@ -1,11 +1,11 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include "RessourceManager.hpp"
-#include "PieceTransition.hpp"
-#include "MenuButton.hpp"
-#include "Board.hpp"
-#include "Arrow.hpp"
+#include "Ressources/RessourceManager.hpp"
+#include "Utilities/PieceTransition.hpp"
+#include "Components/MenuButton.hpp"
+#include "Components/Board.hpp"
+#include "Utilities/Arrow.hpp"
 
 using namespace sf;
 

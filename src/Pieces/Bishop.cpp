@@ -1,4 +1,4 @@
-#include "../include/Bishop.hpp"
+#include "../include/Pieces/Bishop.hpp"
 
 Bishop::Bishop(Team team, int x, int y): Piece(team, x, y, PieceType::BISHOP, "b") {}
 

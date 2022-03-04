@@ -1,4 +1,4 @@
-#include "../include/MoveBox.hpp"
+#include "../include/Components/MoveBox.hpp"
 
 MoveBox::MoveBox(coor2d position, string text): m_position(position), m_text(text) {};
 

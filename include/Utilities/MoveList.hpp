@@ -1,8 +1,8 @@
 #pragma once
 #include <list>
 #include <SFML/Graphics.hpp>
-#include "Board.hpp"
-#include "GameThread.hpp"
+#include "../Components/Board.hpp"
+#include "../GameThread.hpp"
 #include "Move.hpp"
 #include "PieceTransition.hpp"
 using namespace sf;

@@ -1,10 +1,10 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "Move.hpp"
-#include "Piece.hpp"
-#include "GameThread.hpp"
-#include "MoveList.hpp"
+#include "../Utilities/Move.hpp"
+#include "../Pieces/Piece.hpp"
+#include "../GameThread.hpp"
+#include "../Utilities/MoveList.hpp"
 #include "MoveBox.hpp"
 
 using namespace std;

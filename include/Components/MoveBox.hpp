@@ -1,5 +1,5 @@
 #pragma once
-#include "GameThread.hpp"
+#include "../GameThread.hpp"
 
 using namespace std;
 using namespace sf;

@@ -1,4 +1,4 @@
-#include "../include/Pawn.hpp"
+#include "../include/Pieces/Pawn.hpp"
 #include <vector>
 
 Pawn::Pawn(Team team, int xPos, int yPos): Piece(team, xPos, yPos, PieceType::PAWN, "p") {}
