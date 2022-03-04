@@ -1,6 +1,6 @@
-#include "../include/Pieces/Piece.hpp"
-#include "../include/Utilities/PieceTransition.hpp"
-#include "../include/GameThread.hpp"
+#include "../../include/Pieces/Piece.hpp"
+#include "../../include/Utilities/PieceTransition.hpp"
+#include "../../include/GameThread.hpp"
 
 void PieceTransition::setIncrement() { 
     if (m_piece == nullptr) return; 

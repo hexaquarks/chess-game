@@ -1,6 +1,6 @@
-#include "../include/MoveList.hpp"
-#include "../include/PieceTransition.hpp"
-#include "../include/GameThread.hpp"
+#include "../../include/Utilities/MoveList.hpp"
+#include "../../include/Utilities/PieceTransition.hpp"
+#include "../../include/GameThread.hpp"
 
 MoveList::MoveList(Board& board, PieceTransition& p): game(board), m_transitioningPiece(p) {}
 

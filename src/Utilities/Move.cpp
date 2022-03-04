@@ -1,4 +1,4 @@
-#include "../include/Move.hpp"
+#include "../../include/Utilities/Move.hpp"
 
 // For NORMAL, INIT SPECIAL and CASTLE
 Move::Move(coor2d target, coor2d initial, Piece* selectedPiece, MoveType moveType, Piece* secondPiece):

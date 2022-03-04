@@ -1,7 +1,7 @@
 #include <utility>
 #include <algorithm> 
-#include "../include/Arrow.hpp"
-#include "../include/GameThread.hpp"
+#include "../../include/Utilities/Arrow.hpp"
+#include "../../include/GameThread.hpp"
 
 template <typename T> int sign(T val) {
     return (T(0) < val) - (val < T(0));
