@@ -5,6 +5,7 @@
 #include "../include/PieceTransition.hpp"
 #include "../include/Move.hpp"
 #include "../include/SidePanel.hpp"
+#include "Shader.cpp"
 
 #include <iostream>
 #include <vector>
@@ -269,7 +270,9 @@ void GameThread::drawSidePanel(SidePanel& sidePanel) {
     window.draw(southPanel);
 
     // Draw the content on the panels
-    sidePanel.drawMoves();
+    Vector2i position = sf::Mouse::getPosition(window);
+    coor2d mousePos = {position.x , position.y};
+    sidePanel.drawMoves(mousePos);
 }
 
 void GameThread::drawMenuBar() {
@@ -400,13 +403,24 @@ void GameThread::drawAllArrows(vector<Arrow>& arrows, Arrow& currArrow) {
 }
 
 void GameThread::drawKingCheckCircle() {
+    Shader shader;
+    shader.loadFromMemory(VertexShader, RadialGradient);
+    shader.setUniform("windowHeight", static_cast<float>(window.getSize().y)); 
+
     King* king = game.getKing();
     CircleShape c(CELL_SIZE/2);
-    c.setFillColor({245, 80, 65, 100});
+    
+    c.setFillColor(Color::Transparent);
     int x = isFlipped? 7-king->getY(): king->getY();
     int y = isFlipped? 7-king->getX(): king->getX();
     c.setPosition(getWindowXPos(x), getWindowYPos(y));
-    window.draw(c);
+    shader.setUniform("color", Glsl::Vec4(1.f, 0.f, 0.f, 1.f));
+    shader.setUniform("center", sf::Vector2f(c.getPosition().x + c.getRadius(), 
+                      c.getPosition().y + + c.getRadius()));
+    shader.setUniform("radius", c.getRadius());
+    shader.setUniform("expand", 0.15f);
+
+    window.draw(c, &shader);
 }
 
 void GameThread::drawEndResults() {

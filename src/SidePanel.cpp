@@ -2,11 +2,16 @@
 
 void SidePanel::addMove(MoveList& moves, Move& move) {
     int moveListSize = moves.getMoveList().size();
-    bool isPair = moveListSize % 2 != 0;
-    string text;
+    bool showNumber = moveListSize % 2 != 0;
 
-    text = parseMove(move, (moveListSize/2) + 1, isPair);
-    textBoxes.emplace_back(text);
+    string text = parseMove(move, (moveListSize/2) + 1, showNumber);
+
+    MoveBox moveBox(m_nextPos, text); // Make the text box
+    moveBox.handleText(); // Create the Text, and pass the font ressource
+    checkOutOfBounds(moveBox); // check if object's width goes out of bounds and update
+    m_nextPos.first += (moveBox.getScaledWidth()); // increment for next move box
+
+    moveBoxes.emplace_back(moveBox);
 }
 
 pair<char,int> SidePanel::findLetterCoord(coor2d target) {
@@ -30,11 +35,11 @@ string SidePanel::parseMove(Move& move, int moveNumber, bool showNumber) {
     pair<char, int> letterCoord = findLetterCoord(coord);
     string letterCoordString = (1, letterCoord.first) + to_string(letterCoord.second);;
 
-    switch(move.getSelectedPiece()->getType()) {
+    switch (move.getSelectedPiece()->getType()) {
         case PieceType::PAWN:
             // TODO fix promotion
             if(moveType == MoveType::CAPTURE || moveType == MoveType::ENPASSANT){
-                text += string(1, letters.at(coord.first)) + "x";
+                text += string(1, letters.at(coord.first-1)) + "x";
                 return text + letterCoordString;
             }
             break;
@@ -57,46 +62,32 @@ string SidePanel::parseMove(Move& move, int moveNumber, bool showNumber) {
     return text + string((moveType == MoveType::CAPTURE)? "x" : "") + letterCoordString;
 }
 
-void SidePanel::drawMoves() {
-    if(textBoxes.size() == 0 ) return; // no moves added yet, return
+void SidePanel::goToNextRow(int height) {
+     m_nextPos = {BORDER_SIZE + 10, m_nextPos.second + height + 20};
+}
 
-    Font font;
-    if (!font.loadFromFile("../assets/fonts/Arial.ttf")) return;
-
-    for(auto& moveText : textBoxes) {
-        Text text;
-        RectangleShape rectangle;
-
-        text.setString(moveText);
-        text.setFont(font);
-        text.setCharacterSize(25);
-        text.setStyle(Text::Bold);
-        text.setFillColor(Color::Black);
-
-        FloatRect textBounds = text.getGlobalBounds();
-
-        if(WINDOW_SIZE + m_xPos + textBounds.width >= 2*WINDOW_SIZE-BORDER_SIZE){
-            // Go to next row
-            m_yPos += (20 + textBounds.height);
-            m_xPos = 10 + BORDER_SIZE;
-        }
-
-        Vector2f recSize(textBounds.width, text.getCharacterSize());
-        rectangle.setPosition(WINDOW_SIZE + m_xPos, MENUBAR_HEIGHT + m_yPos);
-        rectangle.setSize(recSize);
-        rectangle.setFillColor(Color::White);
-        rectangle.setOutlineThickness(2.f);
-
-        text.setPosition(WINDOW_SIZE + m_xPos, MENUBAR_HEIGHT + m_yPos);
-        
-        m_window.draw(rectangle);
-        m_window.draw(text);
-
-        // update x,y pos for the next move text
-        m_xPos += (10 + textBounds.width);
+void SidePanel::checkOutOfBounds(MoveBox& moveBox) {
+    int newPos = WINDOW_SIZE + m_nextPos.first + moveBox.getTextBounds().width;
+    if (newPos >= WINDOW_SIZE + PANEL_SIZE - BORDER_SIZE) {
+        goToNextRow(moveBox.getTextBounds().height); // change next position 
+        moveBox.setPosition(m_nextPos); // update the new position
     }
-    m_xPos = 10 + BORDER_SIZE; m_yPos = 10; // reset x,y pos back to original for drawing in next tick
+}
 
+void SidePanel::drawMoves(coor2d& mousePos) {
+    if (moveBoxes.size() == 0 ) return; // no moves added yet, return
+
+    for (auto& moveBox : moveBoxes) {
+        moveBox.handleRectangle();
+
+        if(moveBox.isHowered(mousePos)) moveBox.setIsSelected(); 
+        else moveBox.setDefault();
+
+        m_window.draw(moveBox.getRectangle());
+        m_window.draw(moveBox.getTextsf());
+
+    }
+    // resetNextPos();
 }
 
 coor2d SidePanel::findNextAvailableSpot() {

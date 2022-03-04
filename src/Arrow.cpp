@@ -41,7 +41,10 @@ void Arrow::updateArrow() {
     if (checkOutOfBounds()) return; // do nothing, arrow out of window
 
     if (abs(abs(m_dx)-abs(m_dy)) == 1 && abs(m_dx) > 0 && abs(m_dy) > 0) checkKnightSquares();
-    else {
+    else if (abs(m_dx) == abs(m_dy)) {
+        m_filename = "arrow_d" + to_string(size) + "x.png";
+        m_isLArrow = false;
+    } else {
         m_filename = "arrow_n" + to_string(size) + "x.png";
         m_isLArrow = false;
     }
