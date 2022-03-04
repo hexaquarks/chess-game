@@ -31,9 +31,6 @@ inline RectangleShape createSquare() {
 }
 
 class GameThread {
-    inline const static string iconsPath = "../assets/icons/";
-    inline const static string audioPath = "../assets/sounds/";
-
     inline static Board game;
     inline static RenderWindow window = {VideoMode(WINDOW_SIZE + PANEL_SIZE, WINDOW_SIZE + MENUBAR_HEIGHT),
                                         "Chess Game", Style::Titlebar | Style::Close};
@@ -67,8 +64,6 @@ class GameThread {
     static int getWindowXPos(int i) { return i * CELL_SIZE; }
     static int getWindowYPos(int j) { return j * CELL_SIZE + MENUBAR_HEIGHT; }
 
-    static string getIconPath(const string& filename) { return iconsPath + filename; }
-    static string getAudioPath(const string& filename) { return audioPath + filename; }
     static void setTransitioningPiece(Piece*, int,int, PieceTransition&);
 
     static void flipBoard() { isFlipped = !isFlipped; }

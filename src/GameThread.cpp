@@ -22,7 +22,7 @@ void GameThread::startGame() {
 
     // Setting window icon
     Image icon;
-    icon.loadFromFile(getIconPath("nw.png"));
+    icon.loadFromFile(RessourceManager::getIconPath("nw.png"));
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     window.setPosition({300, 300});
 
@@ -51,12 +51,12 @@ void GameThread::startGame() {
 
     // Sounds for piece movement
     SoundBuffer bufferMove;
-    if (!bufferMove.loadFromFile(getAudioPath("move.wav"))) return;
+    if (!bufferMove.loadFromFile(RessourceManager::getAudioPath("move.wav"))) return;
     Sound soundMove;
     soundMove.setBuffer(bufferMove);
 
     SoundBuffer bufferCapture;
-    if (!bufferCapture.loadFromFile(getAudioPath("captures.wav"))) return;
+    if (!bufferCapture.loadFromFile(RessourceManager::getAudioPath("captures.wav"))) return;
     Sound soundCapture;
     soundCapture.setBuffer(bufferCapture);
 
@@ -106,7 +106,7 @@ void GameThread::startGame() {
                     }
                 }
                 if (event.mouseButton.button == Mouse::Right) {
-                    if(!pieceIsMoving) {
+                    if (!pieceIsMoving) {
                         rightClickAnchor = {event.mouseButton.x, event.mouseButton.y};
                         arrow.setOrigin(rightClickAnchor);
                         arrow.setDestination(rightClickAnchor);
@@ -375,7 +375,7 @@ void GameThread::drawDraggedPiece(Piece* selectedPiece, coor2d& mousePos) {
 }
 
 void GameThread::drawAllArrows(vector<Arrow>& arrows, Arrow& currArrow) {
-    if(arrows.size() == 0) return;
+    if (arrows.empty()) return;
     arrows.emplace_back(currArrow);
 
     for (auto& arrow: arrows) {
@@ -413,7 +413,7 @@ void GameThread::drawEndResults() {
     // Checkmate
     if (game.kingIsChecked()) {
         King* losing = game.getKing();
-        Texture t; t.loadFromFile(getIconPath("checkmate.png"));
+        Texture t; t.loadFromFile(RessourceManager::getIconPath("checkmate.png"));
         Sprite checkmate(t);
         checkmate.setColor({255, 255, 255, 200});
         checkmate.setScale(0.5, 0.5);

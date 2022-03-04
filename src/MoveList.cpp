@@ -99,19 +99,19 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vect
 
         case MoveType::CASTLE_KINGSIDE:
             oldPiece = game.getBoardTile(7, castleRow);
-            game.setBoardTile(5, castleRow, game.getBoardTile(7, castleRow));
+            game.setBoardTile(5, castleRow, oldPiece);
             game.setBoardTile(7, castleRow, nullptr);
             game.setBoardTile(6, castleRow, selectedPiece);
-            if (addToList){
+            if (addToList) {
                 coor2d target = make_pair(6, castleRow);
                 move.setTarget(target);
                 m_moves.emplace_front(Move(move, oldPiece));
-            }    
+            }
             break;
 
         case MoveType::CASTLE_QUEENSIDE:
-            oldPiece = game.getBoardTile(7, castleRow);
-            game.setBoardTile(3, castleRow, game.getBoardTile(0, castleRow));
+            oldPiece = game.getBoardTile(0, castleRow);
+            game.setBoardTile(3, castleRow, oldPiece);
             game.setBoardTile(0, castleRow, nullptr);
             game.setBoardTile(2, castleRow, selectedPiece);
             if (addToList) {
@@ -131,7 +131,9 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vect
         case MoveType::NEWPIECE:
             // Possible leaking memory here actually ? 
             oldPiece = game.getBoardTile(x, y);
+            oldPiece->move(-1, -1);
             Queen* queen = new Queen(selectedPiece->getTeam(), y, x);
+            game.addPiece(queen);
             Piece::setLastMovedPiece(Piece::getLastMovedPiece());
             selectedPiece = queen;
             if (addToList) {
@@ -140,11 +142,12 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vect
             }
             break;
     }
+
     if (!addToList && selectedPiece != nullptr) {
         if (enableTransition) GameThread::setTransitioningPiece(
             selectedPiece,
             x * CELL_SIZE, y * CELL_SIZE, getTransitioningPiece()
-        ); 
+        );
         else game.setBoardTile(x, y, selectedPiece);
     }
 }
