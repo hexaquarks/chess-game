@@ -99,19 +99,19 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vect
 
         case MoveType::CASTLE_KINGSIDE:
             oldPiece = game.getBoardTile(7, castleRow);
-            game.setBoardTile(5, castleRow, oldPiece);
+            game.setBoardTile(5, castleRow, game.getBoardTile(7, castleRow));
             game.setBoardTile(7, castleRow, nullptr);
             game.setBoardTile(6, castleRow, selectedPiece);
-            if (addToList) {
+            if (addToList){
                 coor2d target = make_pair(6, castleRow);
                 move.setTarget(target);
                 m_moves.emplace_front(Move(move, oldPiece));
-            }
+            }    
             break;
 
         case MoveType::CASTLE_QUEENSIDE:
-            oldPiece = game.getBoardTile(0, castleRow);
-            game.setBoardTile(3, castleRow, oldPiece);
+            oldPiece = game.getBoardTile(7, castleRow);
+            game.setBoardTile(3, castleRow, game.getBoardTile(0, castleRow));
             game.setBoardTile(0, castleRow, nullptr);
             game.setBoardTile(2, castleRow, selectedPiece);
             if (addToList) {
@@ -131,9 +131,7 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vect
         case MoveType::NEWPIECE:
             // Possible leaking memory here actually ? 
             oldPiece = game.getBoardTile(x, y);
-            oldPiece->move(-1, -1);
             Queen* queen = new Queen(selectedPiece->getTeam(), y, x);
-            game.addPiece(queen);
             Piece::setLastMovedPiece(Piece::getLastMovedPiece());
             selectedPiece = queen;
             if (addToList) {
@@ -142,13 +140,16 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vect
             }
             break;
     }
-
     if (!addToList && selectedPiece != nullptr) {
-        if (enableTransition) GameThread::setTransitioningPiece(
-            selectedPiece,
-            x * CELL_SIZE, y * CELL_SIZE, getTransitioningPiece()
-        );
-        else game.setBoardTile(x, y, selectedPiece);
+        if (enableTransition) {
+            // move the piece from the (-1,-1) hidden location back to the square 
+            // where it begins it's transition
+            selectedPiece->move(prevY, prevX);
+
+            // enable piece visual transition
+            GameThread::setTransitioningPiece( selectedPiece,
+            x * CELL_SIZE, y * CELL_SIZE, getTransitioningPiece()); 
+        } else game.setBoardTile(x, y, selectedPiece);
     }
 }
 
@@ -192,9 +193,16 @@ void MoveList::undoMove(bool enableTransition, vector<Arrow>& arrowList) {
             m.setSelectedPiece(pawn);
             break;
     }
-    if (enableTransition) GameThread::setTransitioningPiece(
+    if (enableTransition) {
+        // move the piece from the (-1,-1) hidden location back to the square 
+        // where it begins it's transition
+        m.getSelectedPiece()->move(y,x); 
+
+        // enable transition movement
+        GameThread::setTransitioningPiece(
         m.getSelectedPiece(), m.getInit().first * CELL_SIZE, 
         m.getInit().second * CELL_SIZE, getTransitioningPiece()); 
+    }
     else 
         game.setBoardTile(m.getInit().first, m.getInit().second, m.getSelectedPiece());
         
