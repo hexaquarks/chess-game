@@ -90,8 +90,8 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vect
             break;
 
         case MoveType::ENPASSANT:
-            oldCoors = {capturedPiece->getX(), capturedPiece->getY()};
-            game.setBoardTile(oldCoors.second, oldCoors.first, nullptr);
+            oldCoors = {capturedPiece->getY(), capturedPiece->getX()};
+            game.setBoardTile(oldCoors.first, oldCoors.second, nullptr);
             if (addToList) {
                 game.setBoardTile(x, y, selectedPiece);
                 m_moves.emplace_front(Move(move, capturedPiece, oldCoors));
