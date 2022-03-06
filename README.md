@@ -13,6 +13,7 @@ One can the compile the project from `[PATH]/chess_game/src/` by invoking `g++ -
  - [x] Fully functional chess game, with respect to chess rules (*pin, check, checkmate, en passant, promotion, castle, etc*).
  - [x] Move history and move list traversal through <kbd> ← </kbd> <kbd> → </kbd> <kbd> ↑ </kbd> <kbd> ↓ </kbd>
  - [x] Dynamic square highlighting
+ - [x] Arrow drawing (*normal, diagonal, L-shaped*)
  - [x] Smooth piece transition effect
  - [x] Functional menu options (*reset, flip board <kbd> Control </kbd>+<kbd> F </kbd>*)
  - [x] Mechanical utilities (*drag-and-drop, click-and-drop, right-click to reset piece, select/unselect, etc*)
