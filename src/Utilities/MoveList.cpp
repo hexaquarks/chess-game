@@ -61,6 +61,7 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vect
     Piece* selectedPiece = move.getSelectedPiece();
     Piece* capturedPiece = move.getCapturedPiece();
 
+    coor2d oldCoors;
     int prevX = move.getInit().first;
     int prevY = move.getInit().second;
     int x = move.getTarget().first;
@@ -89,29 +90,29 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vect
             break;
 
         case MoveType::ENPASSANT:
-            oldPiece = game.getBoardTile(capturedPiece->getY(), capturedPiece->getX()); // The position of the captured pawn
-            game.setBoardTile(capturedPiece->getY(), capturedPiece->getX(), nullptr);
+            oldCoors = {capturedPiece->getX(), capturedPiece->getY()};
+            game.setBoardTile(oldCoors.second, oldCoors.first, nullptr);
             if (addToList) {
                 game.setBoardTile(x, y, selectedPiece);
-                m_moves.emplace_front(Move(move, oldPiece));
+                m_moves.emplace_front(Move(move, capturedPiece, oldCoors));
             }
             break;
 
         case MoveType::CASTLE_KINGSIDE:
             oldPiece = game.getBoardTile(7, castleRow);
-            game.setBoardTile(5, castleRow, game.getBoardTile(7, castleRow));
+            game.setBoardTile(5, castleRow, oldPiece);
             game.setBoardTile(7, castleRow, nullptr);
             game.setBoardTile(6, castleRow, selectedPiece);
-            if (addToList){
+            if (addToList) {
                 coor2d target = make_pair(6, castleRow);
                 move.setTarget(target);
                 m_moves.emplace_front(Move(move, oldPiece));
-            }    
+            }
             break;
 
         case MoveType::CASTLE_QUEENSIDE:
-            oldPiece = game.getBoardTile(7, castleRow);
-            game.setBoardTile(3, castleRow, game.getBoardTile(0, castleRow));
+            oldPiece = game.getBoardTile(0, castleRow);
+            game.setBoardTile(3, castleRow, oldPiece);
             game.setBoardTile(0, castleRow, nullptr);
             game.setBoardTile(2, castleRow, selectedPiece);
             if (addToList) {
@@ -140,16 +141,20 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vect
             }
             break;
     }
+
     if (!addToList && selectedPiece != nullptr) {
         if (enableTransition) {
-            // move the piece from the (-1,-1) hidden location back to the square 
+            // move the piece from the (-1, -1) hidden location back to the square 
             // where it begins it's transition
             selectedPiece->move(prevY, prevX);
 
             // enable piece visual transition
-            GameThread::setTransitioningPiece( selectedPiece,
-            x * CELL_SIZE, y * CELL_SIZE, getTransitioningPiece()); 
-        } else game.setBoardTile(x, y, selectedPiece);
+            GameThread::setTransitioningPiece(selectedPiece,
+                x*CELL_SIZE, y*CELL_SIZE, getTransitioningPiece()
+            ); 
+        } else {
+            game.setBoardTile(x, y, selectedPiece);
+        }
     }
 }
 
@@ -171,7 +176,7 @@ void MoveList::undoMove(bool enableTransition, vector<Arrow>& arrowList) {
             break;
         case MoveType::ENPASSANT:
             game.setBoardTile(x, y, nullptr);
-            game.setBoardTile(captured->getY(), captured->getX(), captured);
+            game.setBoardTile(m.getSpecial().first, m.getSpecial().second, captured);
             break;
         case MoveType::CASTLE_KINGSIDE:
             game.setBoardTile(7, castleRow, captured);
@@ -191,19 +196,19 @@ void MoveList::undoMove(bool enableTransition, vector<Arrow>& arrowList) {
             game.setBoardTile(x, y, captured);
             Pawn* pawn = new Pawn(m.getSelectedPiece()->getTeam(), y, x);
             m.setSelectedPiece(pawn);
-            break;
     }
+
     if (enableTransition) {
         // move the piece from the (-1,-1) hidden location back to the square 
         // where it begins it's transition
-        m.getSelectedPiece()->move(y,x); 
+        m.getSelectedPiece()->move(y, x); 
 
-        // enable transition movement
+        // Enable transition movement
         GameThread::setTransitioningPiece(
-        m.getSelectedPiece(), m.getInit().first * CELL_SIZE, 
-        m.getInit().second * CELL_SIZE, getTransitioningPiece()); 
-    }
-    else 
+            m.getSelectedPiece(), m.getInit().first * CELL_SIZE, 
+            m.getInit().second * CELL_SIZE, getTransitioningPiece()
+        );
+    } else {
         game.setBoardTile(m.getInit().first, m.getInit().second, m.getSelectedPiece());
-        
+    }
 }
