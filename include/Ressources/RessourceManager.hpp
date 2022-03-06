@@ -16,10 +16,11 @@ class RessourceManager {
     inline const static string audioPath = "../assets/sounds/";
     inline const static string fontPath = "../assets/fonts/";
 
-    inline static constexpr uint8_t m_numberOfTextures = 33;
+    inline static constexpr uint8_t m_numberOfTextures = 36;
     inline const static string m_textureNames[m_numberOfTextures] = {"circle.png", "empty_circle.png", 
         "bb.png", "bw.png", "kb.png", "kw.png", "nb.png", "nw.png", "pb.png", "pw.png",
-        "qb.png", "qw.png", "rb.png", "reset.png", "rw.png", "dropDown.png", "flip.png",
+        "qb.png", "qw.png", "rb.png", "reset.png", "resetWhite.png", "rw.png", "dropDown.png", 
+        "dropDownWhite.png", "flip.png", "flipWhite.png",
         "arrow_n1x.png", "arrow_n2x.png", "arrow_n3x.png", "arrow_n4x.png", "arrow_n5x.png",
         "arrow_n6x.png", "arrow_n7x.png", "arrow_Nur.png", "arrow_Nru.png", "arrow_d1x.png",
         "arrow_d2x.png","arrow_d3x.png","arrow_d4x.png","arrow_d5x.png","arrow_d6x.png",

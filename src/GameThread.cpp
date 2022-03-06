@@ -18,8 +18,6 @@ using namespace sf;
 void GameThread::startGame() {
     window.setFramerateLimit(60);
 
-    cout << "here " << endl;
-
     // Load ressources 
     RessourceManager::loadRessources();
 
@@ -66,7 +64,8 @@ void GameThread::startGame() {
     // This is the main loop (a.k.a game loop) this ensures that the program does not terminate until we exit
     Event event;
     while (window.isOpen()) {
-        window.clear(Color(218, 224, 241));
+        // window.clear(Color(218, 224, 241));
+        window.clear(Color(23,23,23));
 
         // We use a while loop for the pending events in case there were multiple events occured
         while (window.pollEvent(event)) {
@@ -263,8 +262,8 @@ void GameThread::drawSidePanel(SidePanel& sidePanel) {
     // Draw the main panels
     RectangleShape mainPanel(Vector2f(PANEL_SIZE - 2*BORDER_SIZE, MAIN_PANEL_HEIGHT - 2*BORDER_SIZE));
     RectangleShape southPanel(Vector2f(PANEL_SIZE - 2*BORDER_SIZE, SOUTH_PANEL_HEIGHT));
-    mainPanel.setFillColor(Color::White);
-    southPanel.setFillColor(Color::White);
+    mainPanel.setFillColor(Color(50,50,50)); // cjarcoal
+    southPanel.setFillColor(Color(50,50,50));
     mainPanel.setPosition(WINDOW_SIZE+BORDER_SIZE, MENUBAR_HEIGHT);
     southPanel.setPosition(WINDOW_SIZE+BORDER_SIZE, MENUBAR_HEIGHT+MAIN_PANEL_HEIGHT-BORDER_SIZE);
     
@@ -279,7 +278,7 @@ void GameThread::drawSidePanel(SidePanel& sidePanel) {
 
 void GameThread::drawMenuBar() {
     constexpr uint16_t menuOptions = 3;
-    const string iconFiles[menuOptions] = {"dropDown.png", "reset.png", "flip.png"};
+    const string iconFiles[menuOptions] = {"dropDownWhite.png", "resetWhite.png", "flipWhite.png"};
 
     for (uint8_t i = 0; i < menuOptions; ++i) {
         shared_ptr<Texture> t = RessourceManager::getTexture(iconFiles[i]);

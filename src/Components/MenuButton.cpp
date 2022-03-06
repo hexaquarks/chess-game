@@ -18,7 +18,7 @@ MenuButton::MenuButton(uint8_t index, const std::string& name, bool isRotatable)
 void MenuButton::handleRectangle(uint8_t i) {
     m_rectangle.setPosition(BUTTON_POS*i, 0);
     m_rectangle.setSize({BUTTON_POS, MENUBAR_HEIGHT});
-    m_rectangle.setFillColor({218, 224, 241});
+    m_rectangle.setFillColor({23,23,23});
     m_rectangle.setOutlineThickness(2.f);
     m_rectangle.setOutlineColor({239, 242, 249});
 }
@@ -31,7 +31,7 @@ void MenuButton::handleSprite(uint8_t i) {
 
 void MenuButton::handleText(uint8_t i) {
     m_text.setStyle(Text::Bold);
-    m_text.setFillColor(Color::Black);
+    m_text.setFillColor(Color(240, 248, 255));
     m_text.setOrigin(BUTTON_SIZE/2 - BUTTON_POS/3, BUTTON_SIZE/1.75);
     m_text.setPosition(BUTTON_POS*i + BUTTON_POS/3, MENUBAR_HEIGHT);
 }

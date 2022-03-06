@@ -18,7 +18,7 @@ void MoveBox::handleRectangle() {
     Vector2f recSize(m_textBounds.width, m_textsf.getCharacterSize());
     m_rectangle.setPosition(WINDOW_SIZE + m_position.first, MENUBAR_HEIGHT + m_position.second);
     m_rectangle.setSize(recSize);
-    m_rectangle.setFillColor(Color::White);
+    m_rectangle.setFillColor(Color(50,50,50));
 
     float positionalShift = ((BOX_HORIZONTAL_SCALE - 1.f)*m_rectangle.getLocalBounds().width)/2.f;
 
@@ -36,13 +36,13 @@ bool MoveBox::isHowered(coor2d& mousePos) {
 }
 
 void MoveBox::setDefault() {
-    m_textsf.setFillColor(Color::Black);
-    m_rectangle.setFillColor(Color::White);
+    m_textsf.setFillColor(Color(240, 248, 255)); // aliceblue
+    m_rectangle.setFillColor(Color(50,50,50)); // charcoal
 }
 
 void MoveBox::setIsSelected() {
-    m_textsf.setFillColor(Color::White);
-    m_rectangle.setFillColor(Color::Black);
+    m_textsf.setFillColor(Color(50,50,50));  // charcoal
+    m_rectangle.setFillColor(Color(240, 248, 255)); // aliceblue
 }
 
 
