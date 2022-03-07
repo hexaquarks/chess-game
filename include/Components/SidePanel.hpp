@@ -29,4 +29,5 @@ class SidePanel {
     void addMove(Move&); 
     void drawMoves(coor2d&);
     void checkOutOfBounds(MoveBox&);
+    void handleMoveBoxClicked(coor2d&);
 };

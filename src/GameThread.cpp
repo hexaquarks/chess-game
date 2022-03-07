@@ -132,6 +132,7 @@ void GameThread::startGame() {
             // Mouse button released
             if (event.type == Event::MouseButtonReleased) {
                 if (event.mouseButton.button == Mouse::Left) {
+                    // Handle menu bar buttons
                     [[unlikely]] if (mousePos.second < MENUBAR_HEIGHT)
                         for (MenuButton& m: menuBar)
                             if (m.isClicked(mousePos))
@@ -141,6 +142,8 @@ void GameThread::startGame() {
                                     arrowList.clear();
                                     mousePos = {0, 0};
                                 }
+                    // Handle Side Panel buttons
+                    sidePanel.handleMouseBoxClicked(mousePos);
 
                     if (selectedPiece == nullptr) continue;
 

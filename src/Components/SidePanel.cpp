@@ -77,6 +77,39 @@ void SidePanel::checkOutOfBounds(MoveBox& moveBox) {
     }
 }
 
+void SidePanel::handleMoveBoxClicked(coor2d& mousePos) {
+    int newMoveIndex = 0;
+
+    for(auto& moveBox : moveBoxes) {
+        float width = moveBox.getScaledWidth();
+        float height = moveBox.getScaledHeight();
+        int xPos = moveBox.getPosition().first;
+        int yPos = moveBox.getPosition().second;
+
+        int x = mousePos.first - WINDOW_SIZE; 
+        int y = mousePos.second - MENUBAR_HEIGHT;
+        
+        if ((x >= xPos && x < xPos + width) && 
+            (y >= yPos && y < yPos + height)) {
+            int currMoveIndex = m_moveList.getMoveListSize() - m_moveList.getIteratorIndex() -1;
+            vector<Arrow> temp{}; // for testing 
+            if (newMoveIndex > currMoveIndex) {
+                while (newMoveIndex > currMoveIndex) {
+                    m_moveList.goToNextMove(false, temp);
+                    --newMoveIndex;
+                }
+            } else if (newMoveIndex < currMoveIndex) {
+                while (newMoveIndex < currMoveIndex) {
+                    m_moveList.goToPreviousMove(false, temp);
+                    ++newMoveIndex;
+                }
+            } 
+            break;
+        }
+        ++newMoveIndex;
+    }
+}
+
 void SidePanel::drawMoves(coor2d& mousePos) {
     if (moveBoxes.size() == 0 ) return; // no moves added yet, return
 
@@ -89,7 +122,6 @@ void SidePanel::drawMoves(coor2d& mousePos) {
         else moveBox.setDefault();
 
         // Change the color of te Move Box if it is represents the current move
-        
         int currMoveIndex = m_moveList.getMoveListSize() - m_moveList.getIteratorIndex() -1;
         if(counter == currMoveIndex) moveBox.setIsCurrentMove();
 
@@ -99,3 +131,4 @@ void SidePanel::drawMoves(coor2d& mousePos) {
     }
     // resetNextPos();
 }
+
