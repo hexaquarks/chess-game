@@ -56,7 +56,7 @@ void MoveList::applyMove(bool enableTransition, vector<Arrow>& arrowList) {
 }
 
 void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vector<Arrow>& arrowList) {
-    const int castleRow = (game.getTurn() == Team::WHITE)? 7: 0;
+    const int castleRow = (move.getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0;
     Piece* oldPiece = nullptr;
     Piece* selectedPiece = move.getSelectedPiece();
     Piece* capturedPiece = move.getCapturedPiece();
@@ -113,7 +113,7 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vect
         case MoveType::CASTLE_QUEENSIDE:
             oldPiece = game.getBoardTile(0, castleRow);
             game.setBoardTile(3, castleRow, oldPiece);
-            game.setBoardTile(0, castleRow, nullptr);
+            game.setBoardTile(0, castleRow, nullptr, false);
             game.setBoardTile(2, castleRow, selectedPiece);
             if (addToList) {
                 coor2d target = make_pair(2, castleRow);
@@ -185,8 +185,8 @@ void MoveList::undoMove(bool enableTransition, vector<Arrow>& arrowList) {
             break;
         case MoveType::CASTLE_QUEENSIDE:
             game.setBoardTile(0, castleRow, captured);
-            game.setBoardTile(2, castleRow, nullptr);
-            game.setBoardTile(3, castleRow, nullptr);
+            game.setBoardTile(2, castleRow, nullptr, false);
+            game.setBoardTile(3, castleRow, nullptr, false);
             break;
         case MoveType::INIT_SPECIAL:
             game.setBoardTile(x, y, nullptr);
