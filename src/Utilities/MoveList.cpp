@@ -99,9 +99,9 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vect
             break;
 
         case MoveType::CASTLE_KINGSIDE:
-            oldPiece = game.getBoardTile(7, castleRow);
-            game.setBoardTile(5, castleRow, oldPiece);
-            game.setBoardTile(7, castleRow, nullptr);
+            oldPiece = game.getBoardTile(7, castleRow); 
+            game.setBoardTile(5, castleRow, oldPiece); 
+            game.setBoardTile(7, castleRow, nullptr, false);
             game.setBoardTile(6, castleRow, selectedPiece);
             if (addToList) {
                 coor2d target = make_pair(6, castleRow);
@@ -180,8 +180,8 @@ void MoveList::undoMove(bool enableTransition, vector<Arrow>& arrowList) {
             break;
         case MoveType::CASTLE_KINGSIDE:
             game.setBoardTile(7, castleRow, captured);
-            game.setBoardTile(6, castleRow, nullptr);
-            game.setBoardTile(5, castleRow, nullptr);
+            game.setBoardTile(6, castleRow, nullptr, false);
+            game.setBoardTile(5, castleRow, nullptr, false);
             break;
         case MoveType::CASTLE_QUEENSIDE:
             game.setBoardTile(0, castleRow, captured);
