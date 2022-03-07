@@ -1,17 +1,20 @@
 #include "../../include/Components/SidePanel.hpp"
 
-void SidePanel::addMove(MoveList& moves, Move& move) {
-    int moveListSize = moves.getMoveList().size();
+void SidePanel::addMove(Move& move) {
+    // get the text coordinates information for a Move Box
+    int moveListSize = m_moveList.getMoveListSize();
+    int moveNumber = (moveListSize / 2) + 1;
     bool showNumber = moveListSize % 2 != 0;
+    string text = parseMove(move, moveNumber, showNumber);
 
-    string text = parseMove(move, (moveListSize/2) + 1, showNumber);
-
+    // construct the Move Box
     MoveBox moveBox(m_nextPos, text); // Make the text box
     moveBox.handleText(); // Create the Text, and pass the font ressource
     checkOutOfBounds(moveBox); // check if object's width goes out of bounds and update
     m_nextPos.first += (moveBox.getScaledWidth()); // increment for next move box
 
     moveBoxes.emplace_back(moveBox);
+    ++moveBoxCounter;
 }
 
 pair<char,int> SidePanel::findLetterCoord(coor2d target) {
@@ -77,19 +80,22 @@ void SidePanel::checkOutOfBounds(MoveBox& moveBox) {
 void SidePanel::drawMoves(coor2d& mousePos) {
     if (moveBoxes.size() == 0 ) return; // no moves added yet, return
 
+    int counter = 0;
     for (auto& moveBox : moveBoxes) {
         moveBox.handleRectangle();
-
+        
+        // Change the color of the Move Box if it is howered
         if(moveBox.isHowered(mousePos)) moveBox.setIsSelected(); 
         else moveBox.setDefault();
 
+        // Change the color of te Move Box if it is represents the current move
+        
+        int currMoveIndex = m_moveList.getMoveListSize() - m_moveList.getIteratorIndex() -1;
+        if(counter == currMoveIndex) moveBox.setIsCurrentMove();
+
+        ++counter;
         m_window.draw(moveBox.getRectangle());
         m_window.draw(moveBox.getTextsf());
-
     }
     // resetNextPos();
-}
-
-coor2d SidePanel::findNextAvailableSpot() {
-    return make_pair(0,0);
 }

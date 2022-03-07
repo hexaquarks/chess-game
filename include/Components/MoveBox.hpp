@@ -28,6 +28,7 @@ class MoveBox {
     string getText() { return m_text; }
     Text getTextsf() { return m_textsf; }
     bool isHowered(coor2d&);
+    void setIsCurrentMove();
     void setIsSelected();
     void setDefault();
     void handleRectangle();

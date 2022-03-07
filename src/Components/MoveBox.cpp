@@ -41,8 +41,12 @@ void MoveBox::setDefault() {
 }
 
 void MoveBox::setIsSelected() {
+    m_textsf.setFillColor({240, 248, 255});  // charcoal
+    m_rectangle.setFillColor({139, 148, 158}); // aliceblue
+}
+
+void MoveBox::setIsCurrentMove() {
     m_textsf.setFillColor({50, 50, 50});  // charcoal
     m_rectangle.setFillColor({240, 248, 255}); // aliceblue
 }
-
 

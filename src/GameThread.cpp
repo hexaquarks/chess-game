@@ -27,10 +27,6 @@ void GameThread::startGame() {
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     window.setPosition({300, 300});
 
-    // Window parameters
-    initializeMenuBar();
-    SidePanel sidePanel{window};
-
     // Parameters to handle a piece being dragged
     bool pieceIsMoving = false;
     bool pieceIsClicked = false;
@@ -49,6 +45,10 @@ void GameThread::startGame() {
     MoveList moveList(game, transitioningPiece);
     vector<Arrow> arrowList;
     Arrow arrow;
+
+    // Window parameters
+    initializeMenuBar();
+    SidePanel sidePanel{window, moveList};
 
     // Sounds for piece movement
     SoundBuffer bufferMove;
@@ -179,7 +179,7 @@ void GameThread::startGame() {
                         move.setCapturedPiece(lastMove);
                         move.setMoveArrows(arrowList);
                         moveList.addMove(move, arrowList);
-                        sidePanel.addMove(moveList, move);
+                        sidePanel.addMove(move);
 
                         lastMove = selectedPiece;
                         lastMove->setLastMove(selectedMove->getMoveType());
