@@ -15,17 +15,18 @@ inline vector<MoveBox> moveBoxes;
 
 class SidePanel {
     RenderWindow& m_window;
+    MoveList& m_moveList;
     coor2d m_nextPos = {BORDER_SIZE + 10, 10};
+    int moveBoxCounter = 0;
 
     public:
-    SidePanel(RenderWindow& window): m_window(window){};
+    SidePanel(RenderWindow& window, MoveList& moveList): m_window(window), m_moveList(moveList){};
 
     pair<char,int> findLetterCoord(coor2d);
-    coor2d findNextAvailableSpot();
     string parseMove(Move&, int, bool);
     void resetNextPos() { m_nextPos = {BORDER_SIZE + 10, 10}; }
     void goToNextRow(int height);
-    void addMove(MoveList&, Move&); 
+    void addMove(Move&); 
     void drawMoves(coor2d&);
     void checkOutOfBounds(MoveBox&);
 };
