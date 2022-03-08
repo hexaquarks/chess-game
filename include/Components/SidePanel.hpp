@@ -22,12 +22,12 @@ class SidePanel {
     public:
     SidePanel(RenderWindow& window, MoveList& moveList): m_window(window), m_moveList(moveList){};
 
-    pair<char,int> findLetterCoord(coor2d);
-    string parseMove(Move&, int, bool);
+    pair<char,int> findLetterCoord(coor2d) const;
+    string parseMove(Move&, int, bool) const;
     void resetNextPos() { m_nextPos = {BORDER_SIZE + 10, 10}; }
     void goToNextRow(int height);
     void addMove(Move&); 
-    void drawMoves(coor2d&);
+    void drawMoves(coor2d&) const;
     void checkOutOfBounds(MoveBox&);
-    void handleMoveBoxClicked(coor2d&);
+    void handleMoveBoxClicked(coor2d&) const;
 };

@@ -17,12 +17,12 @@ void SidePanel::addMove(Move& move) {
     ++moveBoxCounter;
 }
 
-pair<char,int> SidePanel::findLetterCoord(coor2d target) {
+pair<char,int> SidePanel::findLetterCoord(coor2d target) const {
     char letter = letters.at(target.first);
     return make_pair(letter, 8-target.second);
 }
 
-string SidePanel::parseMove(Move& move, int moveNumber, bool showNumber) {
+string SidePanel::parseMove(Move& move, int moveNumber, bool showNumber) const {
     string text = (showNumber)? to_string(moveNumber) + "." : " ";
     MoveType moveType = move.getMoveType();
 
@@ -77,7 +77,7 @@ void SidePanel::checkOutOfBounds(MoveBox& moveBox) {
     }
 }
 
-void SidePanel::handleMoveBoxClicked(coor2d& mousePos) {
+void SidePanel::handleMoveBoxClicked(coor2d& mousePos) const{
     int newMoveIndex = 0;
 
     for(auto& moveBox : moveBoxes) {
@@ -110,7 +110,7 @@ void SidePanel::handleMoveBoxClicked(coor2d& mousePos) {
     }
 }
 
-void SidePanel::drawMoves(coor2d& mousePos) {
+void SidePanel::drawMoves(coor2d& mousePos) const {
     if (moveBoxes.size() == 0 ) return; // no moves added yet, return
 
     int counter = 0;
