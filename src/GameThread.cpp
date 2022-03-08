@@ -142,8 +142,8 @@ void GameThread::startGame() {
                                     arrowList.clear();
                                     mousePos = {0, 0};
                                 }
-                    // Handle Side Panel buttons
-                    sidePanel.handleMouseBoxClicked(mousePos);
+                    // Handle Side Panel Move Box buttons click
+                    sidePanel.handleMoveBoxClicked(mousePos);
 
                     if (selectedPiece == nullptr) continue;
 
