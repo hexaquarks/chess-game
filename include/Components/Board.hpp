@@ -10,13 +10,16 @@
 
 
 class Board {
+    // Member variables
     Piece* m_board[8][8];
     Team m_turn; // White or black player's turn
-    bool m_isFlipped = false;
     vector<Piece*> m_whitePieces;
     vector<Piece*> m_blackPieces;
     King* m_whiteKing;
     King* m_blackKing;
+    bool m_isFlipped = false;
+
+    // Private functions
     void freeMemory();
     void removeIllegalMoves(vector<Move>&, Piece*);
 
@@ -25,25 +28,17 @@ class Board {
     ~Board() { freeMemory(); } // Destructor
 
     void reset(); // Resets the board
-    Piece* getBoardTile(int x, int y) const { return m_board[y][x]; }
-    void setBoardTile(int, int, Piece*, bool record = true);
 
+    // Getters and setters 
+    Piece* getBoardTile(int x, int y) const { return m_board[y][x]; }
+    King* getKing() const { return (m_turn == Team::WHITE)? m_whiteKing: m_blackKing; }
     Team getTurn() const { return m_turn; }
+    void setBoardTile(int, int, Piece*, bool record = true);
     void switchTurn() { m_turn = (m_turn == Team::WHITE)? Team::BLACK: Team::WHITE; }
 
-    bool kingIsChecked() { 
-        return getKing()->isChecked(m_board); 
-    }
-
-    King* getKing() const {
-        return (m_turn == Team::WHITE)? m_whiteKing: m_blackKing;
-    }
-
+    // Utility functions
     vector<Move> possibleMovesFor(Piece* piece) { return piece->calcPossibleMoves(m_board); }
-
-    void addPiece(Piece* piece) { 
-        (piece->getTeam() == Team::WHITE) ? m_whitePieces.push_back(piece): m_blackPieces.push_back(piece); 
-    }
-
     vector<Move> calculateAllMoves();
+    bool kingIsChecked() { return getKing()->isChecked(m_board); }
+    void addPiece(Piece*);
 };
