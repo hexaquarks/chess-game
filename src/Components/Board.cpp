@@ -81,7 +81,7 @@ vector<Move> Board::calculateAllMoves() {
 }
 
 void Board::removeIllegalMoves(vector<Move>& possibleMoves, Piece* selectedPiece) {
-    vector<Move>::iterator it = possibleMoves.begin();
+    vector<Move>::const_iterator it = possibleMoves.begin();
 
     while (it != possibleMoves.end()) {
         int x = (*it).getTarget().second;
