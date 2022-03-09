@@ -226,6 +226,9 @@ void GameThread::startGame() {
                     moveList.goToCurrentMove(arrowList);
                 else if (event.key.code == Keyboard::Down)
                     moveList.goToInitialMove(arrowList);
+                else if (event.key.code == Keyboard::S) {
+                    drawPopUpWindow(window);
+                }
             }
         }
 
@@ -244,13 +247,29 @@ void GameThread::startGame() {
         if (transitioningPiece.getIsTransitioning()) {
             drawTransitioningPiece(transitioningPiece);
         }
-
         drawAllArrows(arrowList, arrow);
 
         // End conditions
         if (possibleMoves.empty()) drawEndResults();
 
         window.display();
+    }
+}
+
+void GameThread::drawPopUpWindow(Window& parentWindow) {
+    sf::RenderWindow popUpWindow(sf::VideoMode(320,240), "Select a move", sf::Style::Close);
+    popUpWindow.setPosition(parentWindow.getPosition() + sf::Vector2i(200,200));
+
+    sf::Event event;
+    while (popUpWindow.isOpen()) {
+        popUpWindow.clear(Color(23,23,23));
+        popUpWindow.display();
+
+        while(popUpWindow.pollEvent(event)) {
+            if(event.type == sf::Event::Closed) popUpWindow.close();
+            if(event.type == sf::Event::LostFocus) 
+                if(parentWindow.hasFocus()) popUpWindow.requestFocus();
+        }
     }
 }
 
