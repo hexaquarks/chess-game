@@ -256,7 +256,7 @@ void GameThread::startGame() {
         // End conditions
         if (possibleMoves.empty()) drawEndResults();
         if(drawPanel) {
-            moveSelectionPanel.drawMoveSelectionPanel();
+            moveSelectionPanel.drawMoveSelectionPanel(4);
         }
 
         window.display();
