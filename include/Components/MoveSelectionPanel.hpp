@@ -11,9 +11,10 @@ class MoveSelectionPanel {
     RectangleShape m_topRect;
 
     public:
-    MoveSelectionPanel(RenderWindow&);
+    MoveSelectionPanel(RenderWindow& window): m_window(window) {};
 
     void handleTitleText();
     void handlePanelRectangle();
     void handleTopRectangle();
+    void drawMoveSelectionPanel();
 };

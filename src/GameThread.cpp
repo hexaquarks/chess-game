@@ -5,6 +5,7 @@
 #include "../include/Utilities/PieceTransition.hpp"
 #include "../include/Utilities/Move.hpp"
 #include "../include/Components/SidePanel.hpp"
+#include "../include/Components/MoveSelectionPanel.hpp"
 #include "./Ressources/Shader.cpp"
 
 #include <iostream>
@@ -49,6 +50,7 @@ void GameThread::startGame() {
     // Window parameters
     initializeMenuBar();
     SidePanel sidePanel{window, moveList};
+    MoveSelectionPanel moveSelectionPanel{window};
     bool drawPanel = false;
 
     // Sounds for piece movement
@@ -253,35 +255,12 @@ void GameThread::startGame() {
 
         // End conditions
         if (possibleMoves.empty()) drawEndResults();
-        if(drawPanel) drawMoveSelectionPanel(3);
+        if(drawPanel) {
+            moveSelectionPanel.drawMoveSelectionPanel();
+        }
 
         window.display();
     }
-}
-
-void GameThread::drawMoveSelectionPanel(int n) {
-    // draw all the panel
-    RectangleShape mainPanel(Vector2f(200,300));
-    mainPanel.setFillColor(Color(211,211,211)); 
-    mainPanel.setPosition(WINDOW_SIZE + PANEL_SIZE / 3, PANEL_SIZE / 3);
-
-    // draw top left rectangle and title text
-    RectangleShape topRectangle(Vector2f(200,50));
-    topRectangle.setFillColor(Color(240, 248, 255));
-    topRectangle.setPosition(mainPanel.getPosition());
-    shared_ptr<Font> f = RessourceManager::getFont("Arial.ttf");
-    Text title;
-    title.setFont(*f);
-    title.setString("Select a variation");
-    title.setCharacterSize(14);
-    title.setFillColor(Color::Black);
-    title.setPosition(mainPanel.getPosition() + Vector2f(10.f,10.f));
-
-    // draw the selection buttons
-    
-    window.draw(mainPanel);
-    window.draw(topRectangle);
-    window.draw(title);
 }
 
 void GameThread::initializeMenuBar() {
