@@ -225,10 +225,12 @@ void GameThread::startGame() {
                     moveList.goToNextMove(true, arrowList);
                 else if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::F))
                     flipBoard();
-                else if (event.key.code == Keyboard::Up)
-                    moveList.goToCurrentMove(arrowList);
-                else if (event.key.code == Keyboard::Down)
-                    moveList.goToInitialMove(arrowList);
+                else if (event.key.code == Keyboard::Up) {
+                    drawPanel? moveSelectionPanel.goToPreviousVariation():moveList.goToCurrentMove(arrowList);
+                }
+                else if (event.key.code == Keyboard::Down) {
+                    drawPanel? moveSelectionPanel.goToNextVariation():moveList.goToInitialMove(arrowList);
+                }
                 else if (event.key.code == Keyboard::S) {
                     // testing
                     drawPanel = !drawPanel;
@@ -256,7 +258,8 @@ void GameThread::startGame() {
         // End conditions
         if (possibleMoves.empty()) drawEndResults();
         if(drawPanel) {
-            moveSelectionPanel.drawMoveSelectionPanel(4);
+            vector<string> testing{"1...e4", "1...d4", "1...c3", "1...c4"};
+            moveSelectionPanel.drawMoveSelectionPanel(testing);
         }
 
         window.display();
