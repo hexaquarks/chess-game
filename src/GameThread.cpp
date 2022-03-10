@@ -49,6 +49,7 @@ void GameThread::startGame() {
     // Window parameters
     initializeMenuBar();
     SidePanel sidePanel{window, moveList};
+    bool drawPanel = false;
 
     // Sounds for piece movement
     SoundBuffer bufferMove;
@@ -227,7 +228,8 @@ void GameThread::startGame() {
                 else if (event.key.code == Keyboard::Down)
                     moveList.goToInitialMove(arrowList);
                 else if (event.key.code == Keyboard::S) {
-                    drawPopUpWindow(window);
+                    // testing
+                    drawPanel = !drawPanel;
                 }
             }
         }
@@ -251,26 +253,35 @@ void GameThread::startGame() {
 
         // End conditions
         if (possibleMoves.empty()) drawEndResults();
+        if(drawPanel) drawMoveSelectionPanel(3);
 
         window.display();
     }
 }
 
-void GameThread::drawPopUpWindow(Window& parentWindow) {
-    sf::RenderWindow popUpWindow(sf::VideoMode(320,240), "Select a move", sf::Style::Close);
-    popUpWindow.setPosition(parentWindow.getPosition() + sf::Vector2i(200,200));
+void GameThread::drawMoveSelectionPanel(int n) {
+    // draw all the panel
+    RectangleShape mainPanel(Vector2f(200,300));
+    mainPanel.setFillColor(Color(211,211,211)); 
+    mainPanel.setPosition(WINDOW_SIZE + PANEL_SIZE / 3, PANEL_SIZE / 3);
 
-    sf::Event event;
-    while (popUpWindow.isOpen()) {
-        popUpWindow.clear(Color(23,23,23));
-        popUpWindow.display();
+    // draw top left rectangle and title text
+    RectangleShape topRectangle(Vector2f(200,50));
+    topRectangle.setFillColor(Color(240, 248, 255));
+    topRectangle.setPosition(mainPanel.getPosition());
+    shared_ptr<Font> f = RessourceManager::getFont("Arial.ttf");
+    Text title;
+    title.setFont(*f);
+    title.setString("Select a variation");
+    title.setCharacterSize(14);
+    title.setFillColor(Color::Black);
+    title.setPosition(mainPanel.getPosition() + Vector2f(10.f,10.f));
 
-        while(popUpWindow.pollEvent(event)) {
-            if(event.type == sf::Event::Closed) popUpWindow.close();
-            if(event.type == sf::Event::LostFocus) 
-                if(parentWindow.hasFocus()) popUpWindow.requestFocus();
-        }
-    }
+    // draw the selection buttons
+    
+    window.draw(mainPanel);
+    window.draw(topRectangle);
+    window.draw(title);
 }
 
 void GameThread::initializeMenuBar() {
