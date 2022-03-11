@@ -14,21 +14,21 @@ void MoveSelectionPanel::handlePanelRectangle() {
 
     // draw all the panel
     m_panel.setSize(Vector2f(PANEL_WIDTH,m_height));
-    m_panel.setFillColor(Color(211,211,211)); 
+    m_panel.setFillColor(GRAY); 
     m_panel.setPosition(WINDOW_SIZE + PANEL_SIZE / 3, PANEL_SIZE / 3);
 }
 
 void MoveSelectionPanel::handleSubPanels() {
     // draw top left rectangle and title text
     m_topRect.setSize(Vector2f(PANEL_WIDTH,TOP_PANEL_HEIGHT));
-    m_topRect.setFillColor(Color(240, 248, 255));
+    m_topRect.setFillColor(LIGHT_WHITE);
     m_topRect.setPosition(m_panel.getPosition());
 
     // draw bottom rectangle for the set of variation (buttons)
     const int h = m_height - (2 * INNER_MARGIN) - TOP_PANEL_HEIGHT;
     Vector2f panelPos{INNER_MARGIN, TOP_PANEL_HEIGHT + INNER_MARGIN};
     m_variationsPanel.setSize(Vector2f(PANEL_WIDTH - (2 * INNER_MARGIN), h));
-    m_variationsPanel.setFillColor(Color(240, 248, 255));
+    m_variationsPanel.setFillColor(LIGHT_WHITE);
     m_variationsPanel.setPosition(m_panel.getPosition() + panelPos);
     m_variationsPanel.setOutlineColor(Color::Black);
     m_variationsPanel.setOutlineThickness(2.f);
@@ -40,7 +40,7 @@ void MoveSelectionPanel::handleVariations(vector<std::string>& variations) {
         // Draw the rectangle container for the variation text
         RectangleShape variationRect{Vector2f(PANEL_WIDTH - 2 * INNER_MARGIN, VARIATION_HEIGHT)};
         Vector2f newPos{0, float(counter) * VARIATION_HEIGHT};
-        variationRect.setFillColor((counter == m_selectionIndex)? Color::Blue: Color(240, 248, 255));
+        variationRect.setFillColor((counter == m_selectionIndex)? BLUE: LIGHT_WHITE);
         variationRect.setPosition(m_variationsPanel.getPosition() + newPos);
         variationRect.setOutlineColor(Color::Black);
         variationRect.setOutlineThickness(2.f);
@@ -52,7 +52,6 @@ void MoveSelectionPanel::handleVariations(vector<std::string>& variations) {
         variationText.setFont(*f);
         variationText.setString(text);
         variationText.setCharacterSize(16);
-        variationText.setStyle(Text::Bold);
         variationText.setFillColor((counter == m_selectionIndex)? Color::White : Color::Black);
         variationText.setPosition(variationRect.getPosition() + Vector2f(5.f,5.f));
         m_variationTexts.emplace_back(variationText);
@@ -79,22 +78,22 @@ void MoveSelectionPanel::drawMoveSelectionPanel(vector<std::string>& variations)
 
 void MoveSelectionPanel::goToNextVariation() {
     // set the blue variation back to normal color
-    m_variationRectangles.at(m_selectionIndex).setFillColor(Color(240, 248, 255));
+    m_variationRectangles.at(m_selectionIndex).setFillColor(LIGHT_WHITE);
 
     // increment the selected variation
-    m_selectionIndex = (m_selectionIndex == m_numberOfVariations--)? m_selectionIndex: m_selectionIndex+1;
+    m_selectionIndex = (m_selectionIndex == m_numberOfVariations-1)? m_selectionIndex: m_selectionIndex+1;
     
     // Set the new variation to selected color
-    m_variationRectangles.at(m_selectionIndex).setFillColor(Color::Blue);
+    m_variationRectangles.at(m_selectionIndex).setFillColor(BLUE);
 }
 
 void MoveSelectionPanel::goToPreviousVariation() {
     // set the blue variation back to normal color
-    m_variationRectangles.at(m_selectionIndex).setFillColor(Color(240, 248, 255));
+    m_variationRectangles.at(m_selectionIndex).setFillColor(LIGHT_WHITE);
     
     // decrement the selected variation
     m_selectionIndex = (m_selectionIndex == 0)? m_selectionIndex: m_selectionIndex-1;
     
     // Set the new variation to selected color
-    m_variationRectangles.at(m_selectionIndex).setFillColor(Color::Blue);
+    m_variationRectangles.at(m_selectionIndex).setFillColor(BLUE);
 }
