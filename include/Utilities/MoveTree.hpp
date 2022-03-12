@@ -13,14 +13,6 @@ class MoveTree {
     MoveTreeNode* getNode();
     MoveTreeNode* getRoot() { return m_root; }
 
-    void insertNode(Move&);
-    void goToNextNode(int);
-    void goToPreviousNode();
-    void printTreeRec(MoveTreeNode*&, vector<bool>, int a = 0, bool b = false);
-    void printTree();
-    int getNumberOfMoves() { return numberOfMoves; }
-    void printPreorder(MoveTreeNode*&);
-
     struct Iterator {
         using iterator_category = bidirectional_iterator_tag;
         using difference_type   = ptrdiff_t;
@@ -77,6 +69,14 @@ class MoveTree {
 
     Iterator begin() { return Iterator(m_root); }
     Iterator end()   { return Iterator(nullptr); } 
+
+    void insertNode(Move&, MoveTree::Iterator&);
+    void goToNextNode(int, MoveTree::Iterator&);
+    void goToPreviousNode(MoveTree::Iterator&);
+    void printTreeRec(MoveTreeNode*&, vector<bool>, int a = 0, bool b = false);
+    void printTree();
+    int getNumberOfMoves() { return numberOfMoves; }
+    void printPreorder(MoveTreeNode*&);
 };
 
 inline MoveTreeNode* currNode = nullptr;  // Necessary to declare after class

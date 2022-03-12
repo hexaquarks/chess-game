@@ -18,7 +18,7 @@
 using namespace sf;
 
 void GameThread::startGame() {
-    window.setFramerateLimit(FPS);
+    window.setFramerateLimit(60);
 
     // Load ressources 
     RessourceManager::loadRessources();
@@ -48,6 +48,7 @@ void GameThread::startGame() {
     vector<Arrow> arrowList;
     Arrow arrow;
     MoveTree moveTree;
+    MoveTree::Iterator treeIterator = moveTree.begin();
 
     // Window parameters
     initializeMenuBar();
@@ -195,7 +196,7 @@ void GameThread::startGame() {
                         moveList.addMove(move, arrowList);
                         sidePanel.addMove(move);
 
-                        moveTree.insertNode(move);
+                        moveTree.insertNode(move, treeIterator);
                         // moveTree.printTree();
                         MoveTreeNode* temp = moveTree.getRoot();
                         moveTree.printPreorder(temp);
@@ -239,7 +240,7 @@ void GameThread::startGame() {
             if (event.type == Event::KeyPressed) {
                 if (event.key.code == Keyboard::Left && !transitioningPiece.getIsTransitioning()) {
                     moveList.goToPreviousMove(true, arrowList);
-                    moveTree.goToPreviousNode();
+                    moveTree.goToPreviousNode(treeIterator);
                 }
                 else if (event.key.code == Keyboard::Right && !transitioningPiece.getIsTransitioning())
                     moveList.goToNextMove(true, arrowList);

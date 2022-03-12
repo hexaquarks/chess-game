@@ -1,10 +1,10 @@
 #include "../../include/Utilities/MoveTree.hpp"
 
-MoveTreeNode* MoveTree::findNode(MoveTreeNode*& root) {
-    if (root == currNode) {
-        return root;
+MoveTreeNode* MoveTree::findNode(MoveTreeNode*& node) {
+    if (m_root == node) {
+        return m_root;
     } else {
-        for (auto child: root->m_children) {
+        for (auto child: m_root->m_children) {
             MoveTreeNode* result = findNode(child);
             if (result != nullptr) return result;
         }
@@ -12,40 +12,34 @@ MoveTreeNode* MoveTree::findNode(MoveTreeNode*& root) {
     return nullptr;
 }
 
-void MoveTree::insertNode(Move& newMove) {
+void MoveTree::insertNode(Move& newMove, MoveTree::Iterator& it) {
     MoveTreeNode* newNode = new MoveTreeNode{newMove}; // Make new node with the move
 
     if (!m_root) {
         // currNode is head
         m_root = newNode;
         m_root->m_parent = nullptr;  
+        // do not change it since it's already pointing to root from .begin()
     } else {
         // currNode is a node in the body
-        // m_root->m_children.emplace_back(newMove);
-        // newNode->m_parent = m_root;
-
-        MoveTreeNode* temp = findNode(currNode);
-        // cout << "parent of curr node is  : " <<  currNode->m_parent->m_move.getTarget().first << endl;
-        temp->m_children.emplace_back(newNode); // assign new node as children to currNode
-        newNode->m_parent = temp; // set currNode to be new Node's parent
-        
+        MoveTreeNode* currNode = &(*it);
+        currNode->m_children.emplace_back(newNode);
+        newNode->m_parent = currNode;
+        ++currNode->childNumber;
+        it.goToChild(currNode->childNumber--);        
     }
     ++numberOfMoves;
-    MoveTreeNode* newCurrNode = newNode; // traverse currNode to the new node
-    currNode = newCurrNode;
-
 }
 
-void MoveTree::goToNextNode(int slectedMoveIndex) {
+void MoveTree::goToNextNode(int slectedMoveIndex, MoveTree::Iterator& it) {
     // go to next move only if it is not a Leaf node
-    if (currNode->m_children.size() != 0)
-        currNode = currNode->m_children.at(slectedMoveIndex);
+    if (it->m_children.size() != 0)
+        it.goToChild(slectedMoveIndex);
 }
 
-void MoveTree::goToPreviousNode() {   
+void MoveTree::goToPreviousNode(MoveTree::Iterator& it) {   
     // go to previous move only if it is not NULL
-    if (currNode->m_parent != nullptr)
-        currNode = currNode->m_parent;
+    if (it->m_parent != nullptr) --it;
 }
 
 void printTreeRec(MoveTreeNode*& root, vector<bool> flag,
