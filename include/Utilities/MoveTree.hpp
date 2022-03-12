@@ -30,28 +30,49 @@ class MoveTree {
         MoveTreeNode& operator*() const { return *m_ptr; }
         MoveTreeNode* operator->() { return m_ptr; }
 
+        void goToChild(int i) { m_ptr = m_ptr->m_children.at(i); } 
+
+        void goToParent() { m_ptr = m_ptr->m_parent; }
+
         // Prefix increment
-        // Iterator& operator++(int i) { m_ptr = m_ptr->m_children.at(i); return *this; }  
+        MoveTreeNode* operator++() {
+            goToChild(0); return m_ptr;
+        }
 
         // Postfix increment
-        Iterator operator++(int i) { 
-            Iterator tmp = m_ptr; m_ptr = m_ptr->m_children.at(i); return tmp; 
+        MoveTreeNode* operator++(int) { 
+            MoveTreeNode* res = m_ptr; goToChild(0); return res;
+        }
+
+        // Shift child number
+        MoveTreeNode* operator>>(int n) {
+            int childNumber = m_ptr->childNumber;
+            goToParent();
+            goToChild(childNumber+n);
+        }
+
+        // Shift child number
+        MoveTreeNode* operator<<(int n) {
+            int childNumber = m_ptr->childNumber;
+            goToParent();
+            goToChild(childNumber-n);
         }
 
         // Prefix decrement
-        Iterator& operator--() { m_ptr = m_ptr->m_parent; return *this; }  
+        MoveTreeNode* operator--() { goToParent(); return m_ptr; }
 
         // Postfix decrement
-        Iterator operator++(int) { Iterator tmp = m_ptr; m_ptr = m_ptr->m_parent; return tmp; }
+        MoveTreeNode* operator--(int) { MoveTreeNode* res = m_ptr; goToParent(); return res; }
 
-        friend bool operator== (const Iterator& a, const Iterator& b) 
+        friend bool operator ==(const Iterator& a, const Iterator& b) 
             { return a.m_ptr == b.m_ptr; };
-        friend bool operator!= (const Iterator& a, const Iterator& b) 
+        friend bool operator !=(const Iterator& a, const Iterator& b) 
             { return a.m_ptr != b.m_ptr; };
 
         private:
         MoveTreeNode* m_ptr;
     };
+
     Iterator begin() { return Iterator(m_root); }
     Iterator end()   { return Iterator(nullptr); } 
 };

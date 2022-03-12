@@ -6,7 +6,8 @@ using namespace std;
 class MoveTreeNode {
     static inline int numberOfMoves = 0;
 
-    public: 
+    public:
+    int childNumber = 0;
     MoveTreeNode* m_parent; // To go to previous move
     MoveTreeNode(Move&);   // public for now for debbuging
     Move& m_move; // Key   // public for now for debbuging
