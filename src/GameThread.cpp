@@ -16,7 +16,7 @@
 using namespace sf;
 
 void GameThread::startGame() {
-    window.setFramerateLimit(60);
+    window.setFramerateLimit(FPS);
 
     // Load ressources 
     RessourceManager::loadRessources();

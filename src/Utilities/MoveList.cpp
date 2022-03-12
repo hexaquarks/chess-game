@@ -56,6 +56,7 @@ void MoveList::applyMove(bool enableTransition, vector<Arrow>& arrowList) {
 }
 
 void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vector<Arrow>& arrowList) {
+    cout << static_cast<int>(move.getMoveType()) << endl;
     const int castleRow = (game.getTurn() == Team::WHITE)? 7: 0;
     Piece* oldPiece = nullptr;
     Piece* selectedPiece = move.getSelectedPiece();
@@ -100,8 +101,8 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vect
 
         case MoveType::CASTLE_KINGSIDE:
             oldPiece = game.getBoardTile(7, castleRow);
-            game.setBoardTile(5, castleRow, oldPiece);
             game.setBoardTile(7, castleRow, nullptr);
+            game.setBoardTile(5, castleRow, oldPiece);
             game.setBoardTile(6, castleRow, selectedPiece);
             if (addToList) {
                 coor2d target = make_pair(6, castleRow);
@@ -112,8 +113,8 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vect
 
         case MoveType::CASTLE_QUEENSIDE:
             oldPiece = game.getBoardTile(0, castleRow);
-            game.setBoardTile(3, castleRow, oldPiece);
             game.setBoardTile(0, castleRow, nullptr);
+            game.setBoardTile(3, castleRow, oldPiece);
             game.setBoardTile(2, castleRow, selectedPiece);
             if (addToList) {
                 coor2d target = make_pair(2, castleRow);
@@ -133,10 +134,9 @@ void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vect
             // Possible leaking memory here actually ? 
             oldPiece = game.getBoardTile(x, y);
             Queen* queen = new Queen(selectedPiece->getTeam(), y, x);
-            Piece::setLastMovedPiece(Piece::getLastMovedPiece());
-            selectedPiece = queen;
+            Piece::setLastMovedPiece(queen);
+            game.setBoardTile(x, y, queen);
             if (addToList) {
-                game.setBoardTile(x, y, queen);
                 m_moves.emplace_front(Move(move, oldPiece));
             }
             break;
@@ -163,6 +163,8 @@ void MoveList::undoMove(bool enableTransition, vector<Arrow>& arrowList) {
     Piece* captured = m.getCapturedPiece();
     int x = m.getTarget().first;
     int y = m.getTarget().second;
+    int prevX = m.getInit().first;
+    int prevY = m.getInit().second;
 
     int castleRow = (m.getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0;
     arrowList = m.getMoveArrows();
@@ -179,23 +181,22 @@ void MoveList::undoMove(bool enableTransition, vector<Arrow>& arrowList) {
             game.setBoardTile(m.getSpecial().first, m.getSpecial().second, captured);
             break;
         case MoveType::CASTLE_KINGSIDE:
-            game.setBoardTile(7, castleRow, captured);
-            game.setBoardTile(6, castleRow, nullptr);
             game.setBoardTile(5, castleRow, nullptr);
+            game.setBoardTile(6, castleRow, nullptr);
+            game.setBoardTile(7, castleRow, captured);
             break;
         case MoveType::CASTLE_QUEENSIDE:
-            game.setBoardTile(0, castleRow, captured);
-            game.setBoardTile(2, castleRow, nullptr);
             game.setBoardTile(3, castleRow, nullptr);
+            game.setBoardTile(2, castleRow, nullptr);
+            game.setBoardTile(0, castleRow, captured);
             break;
         case MoveType::INIT_SPECIAL:
             game.setBoardTile(x, y, nullptr);
             break;
         case MoveType::NEWPIECE:
-            // Possible leaking memory here actually ? 
+            Piece* queen = game.getBoardTile(x, y);
             game.setBoardTile(x, y, captured);
-            Pawn* pawn = new Pawn(m.getSelectedPiece()->getTeam(), y, x);
-            m.setSelectedPiece(pawn);
+            delete queen;
     }
 
     if (enableTransition) {

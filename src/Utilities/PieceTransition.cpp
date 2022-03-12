@@ -14,7 +14,7 @@ void PieceTransition::setIncrement() {
 }
 
 bool PieceTransition::pieceIsInBounds() {
-    if (m_piece == nullptr ) return false;
+    if (m_piece == nullptr) return false;
 
     // stop if arrived in the tile for temporary logical simplicity
     if (m_currPos.first == m_destination.first )  m_xArrived = true;
