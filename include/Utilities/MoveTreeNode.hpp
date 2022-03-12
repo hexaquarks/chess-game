@@ -4,18 +4,11 @@
 using namespace std;
 
 class MoveTreeNode {
-    Move& m_move; // Key
-    MoveTreeNode* m_parent; // To go to previous move
-    vector<MoveTreeNode*> m_children;   // To to go to next move
+    static inline int numberOfMoves = 0;
 
     public: 
-    MoveTreeNode(Move&);
-
-    void insertNode(MoveTreeNode*, Move&);
-    void goToNextNode(int);
-    void goToPreviousNode(int);
-    MoveTreeNode* getNode();
-
+    MoveTreeNode* m_parent; // To go to previous move
+    MoveTreeNode(Move&);   // public for now for debbuging
+    Move& m_move; // Key   // public for now for debbuging
+    vector<MoveTreeNode*> m_children;   // To to go to next move
 };
-
-static inline MoveTreeNode* currNode = nullptr;  // Necessary to declare after class

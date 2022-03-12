@@ -35,6 +35,7 @@ void MoveList::goToPreviousMove(bool enableTransition, vector<Arrow>& arrowList)
     if (hasMovesBefore()) {
         undoMove(enableTransition, arrowList);
         ++m_moveIterator; // Go to previous move
+        game.switchTurn();
     }
 }
 
@@ -42,6 +43,7 @@ void MoveList::goToNextMove(bool enableTransition, vector<Arrow>& arrowList) {
     if (hasMovesAfter()) {
         --m_moveIterator; // Go to previous move
         applyMove(enableTransition, arrowList);
+        game.switchTurn();
     }
 }
 
