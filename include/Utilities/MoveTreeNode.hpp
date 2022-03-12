@@ -8,7 +8,7 @@ class MoveTreeNode {
 
     public:
     int childNumber = 0;
-    MoveTreeNode* m_parent; // To go to previous move
+    MoveTreeNode* m_parent = nullptr; // To go to previous move
     MoveTreeNode(Move&);   // public for now for debbuging
     Move& m_move; // Key   // public for now for debbuging
     vector<MoveTreeNode*> m_children;   // To to go to next move

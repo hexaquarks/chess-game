@@ -21,8 +21,20 @@ class MoveTree {
 
         MoveTreeNode& operator*() const { return *m_ptr; }
         MoveTreeNode* operator->() { return m_ptr; }
+        MoveTreeNode* get() { return m_ptr; }
 
-        void goToChild(int i) { m_ptr = m_ptr->m_children.at(i); } 
+        void goToChild(int i) { m_ptr = m_ptr->m_children.at(i); }
+
+        void addChild(MoveTreeNode* child) {
+            if (m_ptr == nullptr) {
+                m_ptr = child;
+            } else {
+                m_ptr->m_children.emplace_back(child);
+                child->m_parent = m_ptr;
+                goToChild(0);
+                ++m_ptr->childNumber;
+            }
+        }
 
         void goToParent() { m_ptr = m_ptr->m_parent; }
 

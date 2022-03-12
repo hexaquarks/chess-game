@@ -13,21 +13,10 @@ MoveTreeNode* MoveTree::findNode(MoveTreeNode*& node) {
 }
 
 void MoveTree::insertNode(Move& newMove, MoveTree::Iterator& it) {
-    MoveTreeNode* newNode = new MoveTreeNode{newMove}; // Make new node with the move
+    MoveTreeNode* newNode = new MoveTreeNode(newMove); // Make new node with the move
+    it.addChild(newNode);
 
-    if (!m_root) {
-        // currNode is head
-        m_root = newNode;
-        m_root->m_parent = nullptr;  
-        // do not change it since it's already pointing to root from .begin()
-    } else {
-        // currNode is a node in the body
-        MoveTreeNode* currNode = &(*it);
-        currNode->m_children.emplace_back(newNode);
-        newNode->m_parent = currNode;
-        ++currNode->childNumber;
-        it.goToChild(currNode->childNumber--);        
-    }
+    if (m_root == nullptr) m_root = newNode;
     ++numberOfMoves;
 }
 
