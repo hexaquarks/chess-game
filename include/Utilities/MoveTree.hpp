@@ -49,6 +49,7 @@ class MoveTree {
             int childNumber = m_ptr->childNumber;
             goToParent();
             goToChild(childNumber+n);
+            return m_ptr;
         }
 
         // Shift child number
@@ -56,6 +57,7 @@ class MoveTree {
             int childNumber = m_ptr->childNumber;
             goToParent();
             goToChild(childNumber-n);
+            return m_ptr;
         }
 
         // Prefix decrement
