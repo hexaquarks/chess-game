@@ -1,5 +1,6 @@
 #pragma once
 #include <list>
+#include <iterator>
 #include <SFML/Graphics.hpp>
 #include "../Components/Board.hpp"
 #include "../GameThread.hpp"
@@ -21,7 +22,8 @@ class MoveList {
     public:
     MoveList(Board&, PieceTransition&);
     PieceTransition& getTransitioningPiece() { return m_transitioningPiece; }
-    list<Move> getMoveList() { return m_moves; }
+    int getIteratorIndex() { return std::distance(m_moves.begin(), m_moveIterator); }
+    int getMoveListSize() { return m_moves.size(); }
     void highlightLastMove(RenderWindow&) const;
     void reset() { m_moves.clear(); m_moveIterator = m_moves.begin(); };
     void goToPreviousMove(bool, vector<Arrow>&);

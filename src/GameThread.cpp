@@ -5,6 +5,8 @@
 #include "../include/Utilities/PieceTransition.hpp"
 #include "../include/Utilities/Move.hpp"
 #include "../include/Components/SidePanel.hpp"
+#include "../include/Components/MoveSelectionPanel.hpp"
+#include "../include/Utilities/MoveTree.hpp"
 #include "./Ressources/Shader.cpp"
 
 #include <iostream>
@@ -27,10 +29,6 @@ void GameThread::startGame() {
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     window.setPosition({300, 300});
 
-    // Window parameters
-    initializeMenuBar();
-    SidePanel sidePanel{window};
-
     // Parameters to handle a piece being dragged
     bool pieceIsMoving = false;
     bool pieceIsClicked = false;
@@ -49,6 +47,13 @@ void GameThread::startGame() {
     MoveList moveList(game, transitioningPiece);
     vector<Arrow> arrowList;
     Arrow arrow;
+    MoveTree moveTree;
+
+    // Window parameters
+    initializeMenuBar();
+    SidePanel sidePanel{window, moveList};
+    MoveSelectionPanel moveSelectionPanel{window};
+    bool showMoveSelectionPanel = false;
 
     // Sounds for piece movement
     SoundBuffer bufferMove;
@@ -77,19 +82,25 @@ void GameThread::startGame() {
             // Clicking on a piece
             if (event.type == Event::MouseButtonPressed) {
                 if (event.mouseButton.button == Mouse::Left) {
+                    possibleMoves = game.calculateAllMoves();
                     // Get the tile of the click
                     mousePos = {event.mouseButton.x, event.mouseButton.y};
 
                     // Allow user to make moves only if they're at the current live position, 
                     // and if the click is on the chess board
                     int yPos = getTileYPos(mousePos);
-                    if (yPos < 0 || moveList.hasMovesAfter()) continue;
+                    // if (yPos < 0 || moveList.hasMovesAfter()) continue;
+                    if (yPos < 0 ) continue; //testing
 
                     int xPos = isFlipped? 7-getTileXPos(mousePos): getTileXPos(mousePos);
                     if (isFlipped) yPos = 7-yPos;
                     Piece* piece = game.getBoardTile(xPos, yPos);
 
                     // If piece is not null and has the right color
+                    if(game.getTurn() == Team::WHITE) {
+                        cout << "white's turn " << endl;
+                    } else { cout << "blacks's turn " << endl; }
+
                     if (piece != nullptr && piece->getTeam() == game.getTurn()) {
                         // Unselect clicked piece
                         if(piece == selectedPiece) {
@@ -132,6 +143,7 @@ void GameThread::startGame() {
             // Mouse button released
             if (event.type == Event::MouseButtonReleased) {
                 if (event.mouseButton.button == Mouse::Left) {
+                    // Handle menu bar buttons
                     [[unlikely]] if (mousePos.second < MENUBAR_HEIGHT)
                         for (MenuButton& m: menuBar)
                             if (m.isClicked(mousePos))
@@ -141,6 +153,8 @@ void GameThread::startGame() {
                                     arrowList.clear();
                                     mousePos = {0, 0};
                                 }
+                    // Handle Side Panel Move Box buttons click
+                    sidePanel.handleMoveBoxClicked(mousePos);
 
                     if (selectedPiece == nullptr) continue;
 
@@ -179,13 +193,23 @@ void GameThread::startGame() {
                         move.setCapturedPiece(lastMove);
                         move.setMoveArrows(arrowList);
                         moveList.addMove(move, arrowList);
-                        sidePanel.addMove(moveList, move);
+                        sidePanel.addMove(move);
+
+                        moveTree.insertNode(move);
+                        // moveTree.printTree();
+                        MoveTreeNode* temp = moveTree.getRoot();
+                        moveTree.printPreorder(temp);
+                        // cout << "root first : " <<  moveTree->m_move.getTarget().first << endl;
+                        // if(moveTree->m_children.size() != 0) {
+                        //     cout << "root first : " <<  moveTree->m_children.at(0)->m_move.getTarget().first << endl;
+                        // }
+                        // vector<bool> flag(MoveTreeNode::getNumberOfMoves(), true);
+                        // MoveTreeNode::printTree(moveTree, flag);
 
                         lastMove = selectedPiece;
                         lastMove->setLastMove(selectedMove->getMoveType());
                         Piece::setLastMovedPiece(lastMove);
                         game.switchTurn();
-                        possibleMoves = game.calculateAllMoves();
                         arrowList.clear();
                     }
 
@@ -213,16 +237,26 @@ void GameThread::startGame() {
             }
 
             if (event.type == Event::KeyPressed) {
-                if (event.key.code == Keyboard::Left && !transitioningPiece.getIsTransitioning()) 
+                if (event.key.code == Keyboard::Left && !transitioningPiece.getIsTransitioning()) {
                     moveList.goToPreviousMove(true, arrowList);
+                    moveTree.goToPreviousNode();
+                }
                 else if (event.key.code == Keyboard::Right && !transitioningPiece.getIsTransitioning())
                     moveList.goToNextMove(true, arrowList);
                 else if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::F))
                     flipBoard();
-                else if (event.key.code == Keyboard::Up)
-                    moveList.goToCurrentMove(arrowList);
-                else if (event.key.code == Keyboard::Down)
-                    moveList.goToInitialMove(arrowList);
+                else if (event.key.code == Keyboard::Up) {
+                    showMoveSelectionPanel
+                        ? moveSelectionPanel.goToPreviousVariation(): moveList.goToCurrentMove(arrowList);
+                }
+                else if (event.key.code == Keyboard::Down) {
+                    showMoveSelectionPanel
+                        ? moveSelectionPanel.goToNextVariation(): moveList.goToInitialMove(arrowList);
+                }
+                else if (event.key.code == Keyboard::S) {
+                    // testing
+                    showMoveSelectionPanel = !showMoveSelectionPanel;
+                }
             }
         }
 
@@ -241,11 +275,14 @@ void GameThread::startGame() {
         if (transitioningPiece.getIsTransitioning()) {
             drawTransitioningPiece(transitioningPiece);
         }
-
         drawAllArrows(arrowList, arrow);
 
         // End conditions
         if (possibleMoves.empty()) drawEndResults();
+        if(showMoveSelectionPanel) {
+            vector<string> testing{"1...e4", "1...d4", "1...c3", "1...c4"};
+            moveSelectionPanel.drawMoveSelectionPanel(testing);
+        }
 
         window.display();
     }

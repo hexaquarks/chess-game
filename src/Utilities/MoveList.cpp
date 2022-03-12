@@ -35,6 +35,7 @@ void MoveList::goToPreviousMove(bool enableTransition, vector<Arrow>& arrowList)
     if (hasMovesBefore()) {
         undoMove(enableTransition, arrowList);
         ++m_moveIterator; // Go to previous move
+        game.switchTurn();
     }
 }
 
@@ -42,6 +43,7 @@ void MoveList::goToNextMove(bool enableTransition, vector<Arrow>& arrowList) {
     if (hasMovesAfter()) {
         --m_moveIterator; // Go to previous move
         applyMove(enableTransition, arrowList);
+        game.switchTurn();
     }
 }
 
@@ -56,7 +58,6 @@ void MoveList::applyMove(bool enableTransition, vector<Arrow>& arrowList) {
 }
 
 void MoveList::applyMove(Move& move, bool addToList, bool enableTransition, vector<Arrow>& arrowList) {
-    cout << static_cast<int>(move.getMoveType()) << endl;
     const int castleRow = (game.getTurn() == Team::WHITE)? 7: 0;
     Piece* oldPiece = nullptr;
     Piece* selectedPiece = move.getSelectedPiece();

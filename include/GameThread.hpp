@@ -49,6 +49,7 @@ class GameThread {
     static void drawAllArrows(vector<Arrow>&, Arrow&);
     static void drawEndResults();
     static void drawKingCheckCircle();
+    static void drawMoveSelectionPanel(int);
 
     inline static bool isFlipped = false;
 

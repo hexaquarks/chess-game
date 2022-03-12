@@ -7,7 +7,7 @@ typedef std::pair<int, int> coor2d;
 class Board; // foward declaration
 class MoveList; // foward declaration
 
-inline Color m_transitionColors[5] = { 
+inline const Color m_transitionColors[5] = { 
     {218, 224, 242}, {218, 224, 145}, {218, 224, 200}, {218, 224, 45},{218, 224, 242}};
 
 class MenuButton {
@@ -26,12 +26,12 @@ class MenuButton {
 
     public: 
     MenuButton(uint8_t, const std::string&, bool isRotatable = false);
-    RectangleShape getRectangle() { return m_rectangle; }
-    Sprite getSprite() { return m_sprite; }
-    Text getText() { return m_text; }
+    RectangleShape getRectangle() const { return m_rectangle; }
+    Sprite getSprite() const { return m_sprite; }
+    Text getText() const { return m_text; }
 
-    int getTransitionColorIndex() { return m_transitionColorIndex; }
-    bool getIsColorTransitioning() { return m_isColorTransitioning; }
+    int getTransitionColorIndex() const { return m_transitionColorIndex; }
+    bool getIsColorTransitioning() const { return m_isColorTransitioning; }
     void setSpriteTexture(Texture& texture) { m_sprite.setTexture(texture); }
     void drawMenuButton(RenderWindow&) const; 
     void doColorTransition();

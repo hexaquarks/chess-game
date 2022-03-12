@@ -58,6 +58,11 @@ void Board::reset() {
     m_turn = Team::WHITE; // reset the first move to be for white
 }
 
+void Board::addPiece(Piece* piece) {
+    (piece->getTeam() == Team::WHITE)? m_whitePieces.push_back(piece)
+                                     : m_blackPieces.push_back(piece); 
+}
+
 void Board::setBoardTile(int x, int y, Piece* piece, bool record) {
     if (record && m_board[y][x] != nullptr) {
         m_board[y][x]->move(-1, -1);
@@ -81,7 +86,7 @@ vector<Move> Board::calculateAllMoves() {
 }
 
 void Board::removeIllegalMoves(vector<Move>& possibleMoves, Piece* selectedPiece) {
-    vector<Move>::iterator it = possibleMoves.begin();
+    vector<Move>::const_iterator it = possibleMoves.begin();
 
     while (it != possibleMoves.end()) {
         int x = (*it).getTarget().second;

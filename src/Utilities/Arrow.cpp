@@ -52,12 +52,12 @@ void Arrow::updateArrow() {
 
 bool Arrow::checkOutOfBounds() {
     return m_destination.first < 0 || m_destination.first > WINDOW_SIZE ||
-    m_destination.second < 0 || m_destination.second > WINDOW_SIZE;
+           m_destination.second < 0 || m_destination.second > WINDOW_SIZE;
 }
 
 void Arrow::checkKnightSquares() {
-    vector<coor2d>::iterator it_ur = urCoords.begin();
-    vector<coor2d>::iterator it_ru = ruCoords.begin();
+    vector<coor2d>::const_iterator it_ur = urCoords.begin();
+    vector<coor2d>::const_iterator it_ru = ruCoords.begin();
 
     while (it_ur != urCoords.end()) {
         if ((*it_ur).first == m_dx && (*it_ur).second == m_dy){
@@ -76,9 +76,9 @@ void Arrow::checkKnightSquares() {
 }
 
 void Arrow::resetParameters() {
-     m_origin.first = 0 , m_origin.second = 0;
-     m_destination.first = 0 , m_destination.second = 0;
-     m_dx = 0, m_dy = 0;
+    m_origin = {0,0};
+    m_destination = {0,0};
+    m_dx = 0, m_dy = 0;
 }
 
 bool Arrow::isDrawable() {

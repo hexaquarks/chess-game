@@ -53,7 +53,7 @@ bool MenuButton::isClicked(coor2d& mousePos) const {
 }
 
 void MenuButton::doColorTransition() {
-    m_transitionColorIndex = m_transitionColorIndex + 5;
+    m_transitionColorIndex += 5;
     sf::Uint8 i = (sf::Uint8)m_transitionColorIndex;
     m_rectangle.setFillColor({(sf::Uint8) (218-i), (sf::Uint8) (224-i), (sf::Uint8) (241-i)});
 

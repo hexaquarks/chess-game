@@ -25,7 +25,6 @@ bool PieceTransition::pieceIsInBounds() {
 
 void PieceTransition::move() { 
     if (m_piece == nullptr) return; 
-    cout << m_destination.first << "," << m_destination.second << endl;
     // move the piece only if piece is not in destinantion bounds yet.
     if (!m_xArrived) m_currPos.first += m_increment.first;
     if (!m_yArrived) m_currPos.second += m_increment.second;
