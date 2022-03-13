@@ -85,10 +85,8 @@ class MoveTree {
     void insertNode(Move&, MoveTree::Iterator&);
     void goToNextNode(int, MoveTree::Iterator&);
     void goToPreviousNode(MoveTree::Iterator&);
-    void printTreeRec(MoveTreeNode*&, vector<bool>, int a = 0, bool b = false);
     void printTree();
+    void printTreeRec(MoveTreeNode*&, vector<bool>, int a = 0, bool b = false);
     int getNumberOfMoves() { return numberOfMoves; }
     void printPreorder(MoveTreeNode*&);
 };
-
-inline MoveTreeNode* currNode = nullptr;  // Necessary to declare after class

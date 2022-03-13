@@ -48,6 +48,7 @@ void GameThread::startGame() {
     vector<Arrow> arrowList;
     Arrow arrow;
     MoveTree moveTree;
+    moveTree.printTree();
     MoveTree::Iterator treeIterator = moveTree.begin();
 
     // Window parameters
@@ -197,15 +198,7 @@ void GameThread::startGame() {
                         sidePanel.addMove(move);
 
                         moveTree.insertNode(move, treeIterator);
-                        // moveTree.printTree();
-                        MoveTreeNode* temp = moveTree.getRoot();
-                        moveTree.printPreorder(temp);
-                        // cout << "root first : " <<  moveTree->m_move.getTarget().first << endl;
-                        // if(moveTree->m_children.size() != 0) {
-                        //     cout << "root first : " <<  moveTree->m_children.at(0)->m_move.getTarget().first << endl;
-                        // }
-                        // vector<bool> flag(MoveTreeNode::getNumberOfMoves(), true);
-                        // MoveTreeNode::printTree(moveTree, flag);
+                        moveTree.printTree();
 
                         lastMove = selectedPiece;
                         lastMove->setLastMove(selectedMove->getMoveType());

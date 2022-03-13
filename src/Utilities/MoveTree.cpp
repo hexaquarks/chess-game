@@ -31,7 +31,7 @@ void MoveTree::goToPreviousNode(MoveTree::Iterator& it) {
     if (it->m_parent != nullptr) --it;
 }
 
-void printTreeRec(MoveTreeNode*& root, vector<bool> flag,
+void MoveTree::printTreeRec(MoveTreeNode*& root, vector<bool> flag,
     int depth, bool isLast) {
 
     if (root == nullptr) return;
@@ -58,8 +58,8 @@ void printTreeRec(MoveTreeNode*& root, vector<bool> flag,
 
 void MoveTree::printTree() {
     vector<bool> flag(getNumberOfMoves(), true);
-    cout << "===== Printing the move tree =====";
-    // printTreeRec(m_root, flag);
+    cout << "===== Printing the move tree =====" << endl;
+    printTreeRec(m_root, flag);
 }
 
 
