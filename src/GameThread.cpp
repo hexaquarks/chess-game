@@ -54,7 +54,7 @@ void GameThread::startGame() {
     // Window parameters
     initializeMenuBar();
     SidePanel sidePanel{window, moveList};
-    MoveSelectionPanel moveSelectionPanel{window};
+    MoveSelectionPanel moveSelectionPanel{window, sidePanel};
     bool showMoveSelectionPanel = false;
 
     // Sounds for piece movement
@@ -199,6 +199,9 @@ void GameThread::startGame() {
 
                         moveTree.insertNode(move, treeIterator);
                         moveTree.printTree();
+                        MoveTreeNode* temp = treeIterator.get();
+                        // while(temp->m_parent != nullptr) temp = temp->m_parent;
+                        moveTree.printPreorder(temp);
 
                         lastMove = selectedPiece;
                         lastMove->setLastMove(selectedMove->getMoveType());
@@ -273,9 +276,9 @@ void GameThread::startGame() {
 
         // End conditions
         if (possibleMoves.empty()) drawEndResults();
-        if(showMoveSelectionPanel) {
+        if (showMoveSelectionPanel) {
             vector<string> testing{"1...e4", "1...d4", "1...c3", "1...c4"};
-            moveSelectionPanel.drawMoveSelectionPanel(testing);
+            moveSelectionPanel.drawMoveSelectionPanel(treeIterator);
         }
 
         window.display();

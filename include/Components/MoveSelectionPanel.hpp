@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "../GameThread.hpp"
+#include "../Utilities/MoveTree.hpp"
+#include "SidePanel.hpp"
 #include <string>
 
 using namespace std;
@@ -16,6 +18,7 @@ inline const Color LIGHT_WHITE{240, 248, 255};
 
 class MoveSelectionPanel {
     RenderWindow& m_window;
+    SidePanel& m_sidePanel;
     Text m_title;
     RectangleShape m_panel;
     RectangleShape m_variationsPanel;
@@ -27,13 +30,14 @@ class MoveSelectionPanel {
     int m_numberOfVariations = 0;
 
     public:
-    MoveSelectionPanel(RenderWindow& window): m_window(window) {};
+    MoveSelectionPanel(RenderWindow& window, SidePanel& panel)
+    : m_window(window), m_sidePanel(panel) {};
 
     void handleTitleText();
     void handlePanelRectangle();
     void handleSubPanels();
     void handleVariations(vector<std::string>&);
-    void drawMoveSelectionPanel(vector<std::string>&);
+    void drawMoveSelectionPanel(MoveTree::Iterator&);
     void goToNextVariation();
     void goToPreviousVariation();
 };
