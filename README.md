@@ -8,7 +8,7 @@ Chess game app, made by [NicolasAlmerge](https://github.com/NicolasAlmerge) and 
  - Running the project requires [SFML](https://www.sfml-dev.org/download/sfml/2.5.1/) installed locally
  - Need **C++17** compiler installed locally
  
-One can the compile the project from `[PATH]/chess_game/src/` by invoking `g++ -o ../main *.cpp -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio  -std=c++17 && ../main`
+One can the compile the project from `[PATH]/chess_game/src/` by invoking `g++ -o ../main *.cpp Utilities/*.cpp Ressources/*.cpp Pieces/*.cpp Components/*.cpp -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -std=c++17 && ../main`
 ## Features
  - [x] Fully functional chess game, with respect to chess rules (*pin, check, checkmate, en passant, promotion, castle, etc*).
  - [x] Move history and move list traversal through <kbd> ← </kbd> <kbd> → </kbd> <kbd> ↑ </kbd> <kbd> ↓ </kbd>
@@ -46,7 +46,26 @@ One can the compile the project from `[PATH]/chess_game/src/` by invoking `g++ -
 </div>
 
 ## TODO List
-  - Implement [Stockfish](https://github.com/official-stockfish/Stockfish) in the application
-  - Implement [pgn](https://en.wikipedia.org/wiki/Portable_Game_Notation) file parser and reader
-  - Ability to record user-generated chess lines on the board, to be saved in on a local file system
-  - Use the pgn user-generated files to implement an *opening trainer*, similar to [puzzle rush](https://www.chess.com/puzzles/rush) and [puzzle storm](https://lichess.org/storm)
+ - [ ] Main Functionalities
+     - [x] Chess Board
+     - [x] Linked List data structure for move traversal
+         - [x] Merge with Smooth Piece Transition
+     - [ ] N-ary Tree data structure for move traversal and variation building
+         - [ ] Merge with Smooth Piece Transition
+         - [x] Design the custom iterator
+         - [ ] Merge with right Side Panel move representation and traversal
+     - [ ] Right Side Panel
+         - [x] Draw move list on the panel as performed on the board
+         - [x] Traverse to move by clicking on the side panel's move sub boxes
+         - [ ] Top menu bar options
+         - [ ] Bottom menu bar with options *(promote variation, delete variation)* [requires N-ary tree DS to be functional]
+         - [x] Popup move selection window
+     - [ ] Left Side Panel
+         - [ ] Represent file structure [requires file system and pgn parser]
+     - [ ] Fix sound buffer
+     - [ ] Modularize further `GameThread.cpp`, and clean up code over all
+     - [ ] implement an *opening trainer*, similar to [puzzle rush](https://www.chess.com/puzzles/rush) and [puzzle storm]](https://lichess.org/storm) [end goal]
+ - [ ] Utilities
+     - [ ] Implement [Stockfish](https://github.com/official-stockfish/Stockfish) in the application
+     - [ ] Implement [pgn](https://en.wikipedia.org/wiki/Portable_Game_Notation) file parser and reader
+     - [ ] Ability to record user-generated chess lines on the board, to be saved in on a local file system
