@@ -48,7 +48,6 @@ void GameThread::startGame() {
     vector<Arrow> arrowList;
     Arrow arrow;
     MoveTree moveTree;
-    moveTree.printTree();
     MoveTree::Iterator treeIterator = moveTree.begin();
 
     // Window parameters
@@ -191,17 +190,14 @@ void GameThread::startGame() {
                         coor2d target = make_pair(xPos, yPos);
                         coor2d initial = make_pair(lastXPos, lastYPos);
 
-                        Move move(target, initial, selectedPiece, selectedMove->getMoveType());
-                        move.setCapturedPiece(lastMove);
-                        move.setMoveArrows(arrowList);
-                        moveList.addMove(move, arrowList);
-                        sidePanel.addMove(move);
+                        Move* move = new Move(target, initial, selectedPiece, selectedMove->getMoveType());
+                        move->setCapturedPiece(lastMove);
+                        move->setMoveArrows(arrowList);
+                        moveList.addMove(*move, arrowList);
+                        sidePanel.addMove(*move);
 
-                        moveTree.insertNode(move, treeIterator);
+                        moveTree.insertNode(*move, treeIterator);
                         moveTree.printTree();
-                        MoveTreeNode* temp = treeIterator.get();
-                        // while(temp->m_parent != nullptr) temp = temp->m_parent;
-                        moveTree.printPreorder(temp);
 
                         lastMove = selectedPiece;
                         lastMove->setLastMove(selectedMove->getMoveType());
@@ -276,10 +272,10 @@ void GameThread::startGame() {
 
         // End conditions
         if (possibleMoves.empty()) drawEndResults();
-        if (showMoveSelectionPanel) {
-            vector<string> testing{"1...e4", "1...d4", "1...c3", "1...c4"};
-            moveSelectionPanel.drawMoveSelectionPanel(treeIterator);
-        }
+        // if (showMoveSelectionPanel) {
+        //     vector<string> testing{"1...e4", "1...d4", "1...c3", "1...c4"};
+        //     moveSelectionPanel.drawMoveSelectionPanel(treeIterator);
+        // }
 
         window.display();
     }

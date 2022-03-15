@@ -32,7 +32,7 @@ class MoveTree {
                 m_ptr->m_children.emplace_back(child);
                 child->m_parent = m_ptr;
                 goToChild(0);
-                ++m_ptr->childNumber;
+                ++(m_ptr->childNumber);
             }
         }
 
