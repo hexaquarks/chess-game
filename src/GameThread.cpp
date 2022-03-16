@@ -235,8 +235,15 @@ void GameThread::startGame() {
                     moveTree.goToPreviousNode(treeIterator);
                 }
                 else if (event.key.code == Keyboard::Right && !transitioningPiece.getIsTransitioning()) {
-                    moveList.goToNextMove(true, arrowList);
-                    moveTree.goToNextNode(0, treeIterator);
+                    if (treeIterator.get()->childNumber != 0) {
+                        showMoveSelectionPanel = true;
+                        // TODO suspend all other event handling and draw gray alpha benhind
+                        // the selection panel until a variation is chosen
+
+                    } else {
+                        moveList.goToNextMove(true, arrowList);
+                        moveTree.goToNextNode(0, treeIterator);
+                    }
                 }
                 else if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::F))
                     flipBoard();
@@ -251,6 +258,13 @@ void GameThread::startGame() {
                 else if (event.key.code == Keyboard::S) {
                     // testing
                     showMoveSelectionPanel = !showMoveSelectionPanel;
+                }
+                else if (event.key.code == Keyboard::Enter) {
+                    if(showMoveSelectionPanel) {
+                        moveList.goToNextMove(true, arrowList);
+                        moveTree.goToNextNode(moveSelectionPanel.getSelection(), treeIterator);
+                        showMoveSelectionPanel = false;
+                    }
                 }
             }
         }
@@ -274,7 +288,9 @@ void GameThread::startGame() {
 
         // End conditions
         if (possibleMoves.empty()) drawEndResults();
+
         if (showMoveSelectionPanel) {
+            drawGrayCover();
             moveSelectionPanel.drawMoveSelectionPanel(treeIterator);
         }
 
@@ -305,6 +321,13 @@ void GameThread::drawSidePanel(SidePanel& sidePanel) {
     Vector2i position = sf::Mouse::getPosition(window);
     coor2d mousePos = {position.x , position.y};
     sidePanel.drawMoves(mousePos);
+}
+
+void GameThread::drawGrayCover() {
+    RectangleShape cover{Vector2f(WINDOW_SIZE + PANEL_SIZE, WINDOW_SIZE)};
+    cover.setFillColor(Color(220,220,220,75));
+    cover.setPosition(0, MENUBAR_HEIGHT);
+    window.draw(cover);
 }
 
 void GameThread::drawMenuBar() {

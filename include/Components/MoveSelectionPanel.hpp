@@ -33,6 +33,7 @@ class MoveSelectionPanel {
     MoveSelectionPanel(RenderWindow& window, SidePanel& panel)
     : m_window(window), m_sidePanel(panel) {};
 
+    int getSelection() { return m_selectionIndex; }
     void handleTitleText();
     void handlePanelRectangle();
     void handleSubPanels();

@@ -87,7 +87,6 @@ void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it) {
     m_window.draw(m_title);
     for(auto& rect: m_variationRectangles) m_window.draw(rect);
     for(auto& text: m_variationTexts) m_window.draw(text);
-    m_variationRectangles.clear();
 
     reset();
 }
@@ -115,6 +114,6 @@ void MoveSelectionPanel::goToPreviousVariation() {
 }
 
 void MoveSelectionPanel::reset() {
-    m_variationRectangles.clear();
+    // m_variationRectangles.clear();
     m_variationTexts.clear();
 }
