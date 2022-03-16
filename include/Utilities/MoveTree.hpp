@@ -6,12 +6,12 @@ using namespace std;
 
 class MoveTree {
     public: 
-    MoveTreeNode* m_root = nullptr; // Root of the tree
+    unique_ptr<MoveTreeNode> m_root = make_unique<MoveTreeNode>(); // Root of the tree
     int numberOfMoves = 0;
 
     MoveTreeNode* findNode(MoveTreeNode*&);
     MoveTreeNode* getNode();
-    MoveTreeNode* getRoot() { return m_root; }
+    MoveTreeNode* getRoot() { return m_root.get(); }
 
     struct Iterator {
         using iterator_category = bidirectional_iterator_tag;
@@ -79,14 +79,14 @@ class MoveTree {
         MoveTreeNode* m_ptr;
     };
 
-    Iterator begin() { return Iterator(m_root); }
+    Iterator begin() { return Iterator(getRoot()); }
     Iterator end()   { return Iterator(nullptr); } 
 
     void insertNode(Move&, MoveTree::Iterator&);
     void goToNextNode(int, MoveTree::Iterator&);
     void goToPreviousNode(MoveTree::Iterator&);
     void printTree();
-    void printTreeRec(MoveTreeNode*&, vector<bool>, int a = 0, bool b = false);
+    void printTreeRec(MoveTreeNode*, vector<bool>, int a = 0, bool b = false);
     int getNumberOfMoves() { return numberOfMoves; }
     void printPreorder(MoveTreeNode*&);
 };

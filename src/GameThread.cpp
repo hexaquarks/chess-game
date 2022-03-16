@@ -195,9 +195,11 @@ void GameThread::startGame() {
                         move->setMoveArrows(arrowList);
                         moveList.addMove(*move, arrowList);
                         sidePanel.addMove(*move);
-
+                        cout << "Fuck" << endl;
                         moveTree.insertNode(*move, treeIterator);
+                        cout << "You" << endl;
                         moveTree.printTree();
+                        cout << "C++" << endl;
 
                         lastMove = selectedPiece;
                         lastMove->setLastMove(selectedMove->getMoveType());

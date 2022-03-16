@@ -74,7 +74,7 @@ void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it) {
     }
     for (int i = 0; i < it.get()->childNumber; ++i) {
         cout << "in func "<< endl;
-        variations.emplace_back(m_sidePanel.parseMove(it.get()->m_children.at(i)->m_move, moveNumber, showNumber)); 
+        variations.emplace_back(m_sidePanel.parseMove(*(it.get()->m_children.at(i)->m_move), moveNumber, showNumber)); 
     }
     // for (auto& move : it.get()->m_children) {
     //     cout << "in func "<< endl;

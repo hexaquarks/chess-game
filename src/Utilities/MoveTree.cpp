@@ -1,13 +1,9 @@
 #include "../../include/Utilities/MoveTree.hpp"
 
 MoveTreeNode* MoveTree::findNode(MoveTreeNode*& node) {
-    if (m_root == node) {
-        return m_root;
-    } else {
-        for (auto child: m_root->m_children) {
-            MoveTreeNode* result = findNode(child);
-            if (result != nullptr) return result;
-        }
+    for (auto child: m_root->m_children) {
+        MoveTreeNode* result = findNode(child);
+        if (result != nullptr) return result;
     }
     return nullptr;
 }
@@ -15,8 +11,6 @@ MoveTreeNode* MoveTree::findNode(MoveTreeNode*& node) {
 void MoveTree::insertNode(Move& newMove, MoveTree::Iterator& it) {
     MoveTreeNode* newNode = new MoveTreeNode(newMove); // Make new node with the move
     it.addChild(newNode);
-
-    if (m_root == nullptr) m_root = newNode;
     ++numberOfMoves;
 }
 
@@ -31,16 +25,18 @@ void MoveTree::goToPreviousNode(MoveTree::Iterator& it) {
     if (it->m_parent != nullptr) --it;
 }
 
-void MoveTree::printTreeRec(MoveTreeNode*& root, vector<bool> flag,
-    int depth, bool isLast) {
-
-    if (root == nullptr) return;
+void MoveTree::printTreeRec(MoveTreeNode* root, vector<bool> flag, int depth, bool isLast) {
+    if (root->m_move.get() == nullptr) return;
 
     for (int i = 1; i < depth; ++i) {
         if (flag[i] == true) cout << "| " << " " << " " << " ";
         else  cout << " " << " " << " " << " ";
     }
-    coor2d tar = root->m_move.getTarget();
+
+    cout << "Go" << endl;
+
+    coor2d tar = root->m_move->getTarget();
+    cout << "Hello" << endl;
     if (depth == 0)
         cout << "(" << tar.first << "," << tar.second << ")" << '\n';
     else if (isLast) {
@@ -49,17 +45,21 @@ void MoveTree::printTreeRec(MoveTreeNode*& root, vector<bool> flag,
     } else 
         cout << "+--- " << "(" << tar.first << "," << tar.second << ")" << '\n';
 
+    cout << "Fuck" << endl;
     int it = 0;
     for (auto i = root->m_children.begin(); i != root->m_children.end(); ++i, ++it)
         printTreeRec(*i, flag, depth + 1,it == (root->m_children.size()) - 1);
 
+    cout << "Yourself" << endl;
     flag[depth] = true;   
 }
 
 void MoveTree::printTree() {
     vector<bool> flag(getNumberOfMoves(), true);
     cout << "===== Printing the move tree =====" << endl;
-    printTreeRec(m_root, flag);
+    MoveTreeNode* movePtr = m_root.get();
+    cout << "Motherfucker" << endl;
+    printTreeRec(movePtr, flag);
 }
 
 
@@ -68,7 +68,7 @@ void MoveTree::printPreorder(MoveTreeNode*& m_root) {
 
     int i = 0;
     MoveTreeNode *temp = nullptr;
-    coor2d tar = m_root->m_move.getTarget();
+    coor2d tar = m_root->m_move->getTarget();
     cout << "  " << "(" << tar.first << "," << tar.second << ")";
     // iterating the child of given node
     while (i < m_root->m_children.size()) {
