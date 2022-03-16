@@ -31,8 +31,8 @@ class MoveTree {
             } else {
                 m_ptr->m_children.emplace_back(child);
                 child->m_parent = m_ptr;
-                goToChild(0);
                 ++(m_ptr->childNumber);
+                goToChild(m_ptr->childNumber-1);
             }
         }
 
