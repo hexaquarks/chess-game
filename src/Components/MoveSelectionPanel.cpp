@@ -13,7 +13,7 @@ void MoveSelectionPanel::handlePanelRectangle() {
     m_height = TOP_PANEL_HEIGHT + (m_numberOfVariations * VARIATION_HEIGHT) + (2 * INNER_MARGIN);
 
     // draw all the panel
-    m_panel.setSize(Vector2f(PANEL_WIDTH,m_height));
+    m_panel.setSize(Vector2f(PANEL_WIDTH, m_height));
     m_panel.setFillColor(GRAY); 
     m_panel.setPosition(WINDOW_SIZE + PANEL_SIZE / 3, PANEL_SIZE / 3);
 }
@@ -68,16 +68,11 @@ void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it) {
     vector<string> variations; 
     
     for (int i = 0; i < it.get()->childNumber; ++i) {
-<<<<<<< HEAD
-        cout << "in func "<< endl;
-        variations.emplace_back(m_sidePanel.parseMove(*(it.get()->m_children.at(i)->m_move), moveNumber, showNumber)); 
-=======
         variations.emplace_back(
             m_sidePanel.parseMove(
-                it.get()->m_children.at(i)->m_move, moveNumber, showNumber, true
+                *(it.get()->m_children.at(i)->m_move), moveNumber, showNumber, true
             )
         ); 
->>>>>>> 4a92243eb942692faa5307cf0823220787700dcf
     }
     // Set the number of variations locally
     m_numberOfVariations = variations.size();
@@ -90,8 +85,8 @@ void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it) {
     m_window.draw(m_panel);
     m_window.draw(m_topRect);
     m_window.draw(m_title);
-    for(auto& rect: m_variationRectangles) m_window.draw(rect);
-    for(auto& text: m_variationTexts) m_window.draw(text);
+    for (auto& rect: m_variationRectangles) m_window.draw(rect);
+    for (auto& text: m_variationTexts) m_window.draw(text);
 
     reset();
 }
