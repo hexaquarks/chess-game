@@ -40,4 +40,5 @@ class MoveSelectionPanel {
     void drawMoveSelectionPanel(MoveTree::Iterator&);
     void goToNextVariation();
     void goToPreviousVariation();
+    void reset();
 };

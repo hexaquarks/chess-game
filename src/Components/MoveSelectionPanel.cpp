@@ -74,13 +74,11 @@ void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it) {
             )
         ); 
     }
-
     // Set the number of variations locally
     m_numberOfVariations = variations.size();
 
     handlePanelRectangle();
     handleSubPanels();
-    cout << "variation size is : " << variations.size() << endl;
     handleVariations(variations);
     handleTitleText();
 
@@ -89,6 +87,9 @@ void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it) {
     m_window.draw(m_title);
     for(auto& rect: m_variationRectangles) m_window.draw(rect);
     for(auto& text: m_variationTexts) m_window.draw(text);
+    m_variationRectangles.clear();
+
+    reset();
 }
 
 void MoveSelectionPanel::goToNextVariation() {
@@ -111,4 +112,9 @@ void MoveSelectionPanel::goToPreviousVariation() {
     
     // Set the new variation to selected color
     m_variationRectangles.at(m_selectionIndex).setFillColor(BLUE);
+}
+
+void MoveSelectionPanel::reset() {
+    m_variationRectangles.clear();
+    m_variationTexts.clear();
 }
