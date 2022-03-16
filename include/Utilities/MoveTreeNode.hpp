@@ -12,5 +12,4 @@ class MoveTreeNode {
     MoveTreeNode(Move&);   // public for now for debbuging
     Move& m_move; // Key   // public for now for debbuging
     vector<MoveTreeNode*> m_children;   // To to go to next move
-    int getNodeLevel();
 };

@@ -38,6 +38,16 @@ class MoveTree {
 
         void goToParent() { m_ptr = m_ptr->m_parent; }
 
+        int getNodeLevel() {
+            MoveTreeNode* temp = m_ptr;
+            int i = 0;
+            while(temp->m_parent != nullptr) {
+                temp = temp->m_parent;
+                ++i;
+            }
+            return i;
+        }
+
         // Prefix increment
         MoveTreeNode* operator++() {
             goToChild(0); return m_ptr;
@@ -89,4 +99,5 @@ class MoveTree {
     void printTreeRec(MoveTreeNode*&, vector<bool>, int a = 0, bool b = false);
     int getNumberOfMoves() { return numberOfMoves; }
     void printPreorder(MoveTreeNode*&);
+    int getNodeLevel(MoveTree::Iterator&);
 };
