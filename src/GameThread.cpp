@@ -234,8 +234,10 @@ void GameThread::startGame() {
                     moveList.goToPreviousMove(true, arrowList);
                     moveTree.goToPreviousNode(treeIterator);
                 }
-                else if (event.key.code == Keyboard::Right && !transitioningPiece.getIsTransitioning())
+                else if (event.key.code == Keyboard::Right && !transitioningPiece.getIsTransitioning()) {
                     moveList.goToNextMove(true, arrowList);
+                    moveTree.goToNextNode(0, treeIterator);
+                }
                 else if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::F))
                     flipBoard();
                 else if (event.key.code == Keyboard::Up) {
@@ -272,10 +274,9 @@ void GameThread::startGame() {
 
         // End conditions
         if (possibleMoves.empty()) drawEndResults();
-        // if (showMoveSelectionPanel) {
-        //     vector<string> testing{"1...e4", "1...d4", "1...c3", "1...c4"};
-        //     moveSelectionPanel.drawMoveSelectionPanel(treeIterator);
-        // }
+        if (showMoveSelectionPanel) {
+            moveSelectionPanel.drawMoveSelectionPanel(treeIterator);
+        }
 
         window.display();
     }
