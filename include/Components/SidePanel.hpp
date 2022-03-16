@@ -23,7 +23,7 @@ class SidePanel {
     SidePanel(RenderWindow& window, MoveList& moveList): m_window(window), m_moveList(moveList){};
 
     pair<char,int> findLetterCoord(coor2d) const;
-    string parseMove(Move&, int, bool) const;
+    string parseMove(Move&, int, bool, bool = false) const;
     void resetNextPos() { m_nextPos = {BORDER_SIZE + 10, 10}; }
     void goToNextRow(int height);
     void addMove(Move&); 
