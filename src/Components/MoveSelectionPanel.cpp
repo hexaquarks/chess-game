@@ -62,26 +62,23 @@ void MoveSelectionPanel::handleVariations(vector<std::string>& variations) {
 
 void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it) {
     // construct the strings
-    int moveListSize = it.get()->getNodeLevel();
-    cout << "node level is : " << moveListSize << endl;
+    int moveListSize = it.getNodeLevel() + 2;  // +2 because initial is nullptr
     int moveNumber = (moveListSize / 2) + 1;
     bool showNumber = moveListSize % 2 != 0;
     vector<string> variations; 
-    // cout << "trying : " << it.get()->m_move << endl;
-    if(it.get() == nullptr){
-        cout << "it's nill " << endl;
-        return;
-    }
+    
     for (int i = 0; i < it.get()->childNumber; ++i) {
+<<<<<<< HEAD
         cout << "in func "<< endl;
         variations.emplace_back(m_sidePanel.parseMove(*(it.get()->m_children.at(i)->m_move), moveNumber, showNumber)); 
+=======
+        variations.emplace_back(
+            m_sidePanel.parseMove(
+                it.get()->m_children.at(i)->m_move, moveNumber, showNumber, true
+            )
+        ); 
+>>>>>>> 4a92243eb942692faa5307cf0823220787700dcf
     }
-    // for (auto& move : it.get()->m_children) {
-    //     cout << "in func "<< endl;
-    //     variations.emplace_back(m_sidePanel.parseMove(move->m_move, moveNumber, showNumber));
-    // }
-    cout << "out of func " << endl;
-
     // Set the number of variations locally
     m_numberOfVariations = variations.size();
 
@@ -95,6 +92,8 @@ void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it) {
     m_window.draw(m_title);
     for(auto& rect: m_variationRectangles) m_window.draw(rect);
     for(auto& text: m_variationTexts) m_window.draw(text);
+
+    reset();
 }
 
 void MoveSelectionPanel::goToNextVariation() {
@@ -117,4 +116,9 @@ void MoveSelectionPanel::goToPreviousVariation() {
     
     // Set the new variation to selected color
     m_variationRectangles.at(m_selectionIndex).setFillColor(BLUE);
+}
+
+void MoveSelectionPanel::reset() {
+    // m_variationRectangles.clear();
+    m_variationTexts.clear();
 }

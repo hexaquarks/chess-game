@@ -13,5 +13,4 @@ class MoveTreeNode {
     MoveTreeNode(): m_move(nullptr) {}
     unique_ptr<Move> m_move; // Key   // public for now for debbuging
     vector<MoveTreeNode*> m_children;   // To to go to next move
-    int getNodeLevel();
 };

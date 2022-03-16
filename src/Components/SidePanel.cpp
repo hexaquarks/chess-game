@@ -22,8 +22,10 @@ pair<char,int> SidePanel::findLetterCoord(coor2d target) const {
     return make_pair(letter, 8-target.second);
 }
 
-string SidePanel::parseMove(Move& move, int moveNumber, bool showNumber) const {
-    string text = (showNumber)? to_string(moveNumber) + "." : " ";
+string SidePanel::parseMove(Move& move, int moveNumber, bool showNumber, bool showDots) const {
+    string text = (showNumber)
+        ? to_string(moveNumber) + ". " 
+        : (showDots)? to_string(moveNumber-1) + "... " : " ";
     MoveType moveType = move.getMoveType();
 
     // side cases

@@ -77,3 +77,13 @@ void MoveTree::printPreorder(MoveTreeNode*& m_root) {
         i++;
     }
 }
+
+int MoveTree::getNodeLevel(MoveTree::Iterator& it) {
+    MoveTreeNode* temp = it.get();
+    int i = 0;
+    while(temp->m_parent != nullptr) {
+        temp = temp->m_parent;
+        ++i;
+    }
+    return i;
+}

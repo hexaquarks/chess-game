@@ -50,6 +50,7 @@ class GameThread {
     static void drawEndResults();
     static void drawKingCheckCircle();
     static void drawMoveSelectionPanel(int);
+    static void drawGrayCover();
 
     inline static bool isFlipped = false;
 
