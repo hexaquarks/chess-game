@@ -33,10 +33,7 @@ void MoveTree::printTreeRec(MoveTreeNode* root, vector<bool> flag, int depth, bo
         else  cout << " " << " " << " " << " ";
     }
 
-    cout << "Go" << endl;
-
     coor2d tar = root->m_move->getTarget();
-    cout << "Hello" << endl;
     if (depth == 0)
         cout << "(" << tar.first << "," << tar.second << ")" << '\n';
     else if (isLast) {
@@ -45,12 +42,10 @@ void MoveTree::printTreeRec(MoveTreeNode* root, vector<bool> flag, int depth, bo
     } else 
         cout << "+--- " << "(" << tar.first << "," << tar.second << ")" << '\n';
 
-    cout << "Fuck" << endl;
     int it = 0;
     for (auto i = root->m_children.begin(); i != root->m_children.end(); ++i, ++it)
         printTreeRec(*i, flag, depth + 1,it == (root->m_children.size()) - 1);
 
-    cout << "Yourself" << endl;
     flag[depth] = true;   
 }
 
@@ -58,7 +53,6 @@ void MoveTree::printTree() {
     vector<bool> flag(getNumberOfMoves(), true);
     cout << "===== Printing the move tree =====" << endl;
     MoveTreeNode* movePtr = m_root.get();
-    cout << "Motherfucker" << endl;
     printTreeRec(movePtr, flag);
 }
 

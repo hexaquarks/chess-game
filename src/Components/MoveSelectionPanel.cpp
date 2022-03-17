@@ -96,7 +96,7 @@ void MoveSelectionPanel::goToNextVariation() {
     m_variationRectangles.at(m_selectionIndex).setFillColor(LIGHT_WHITE);
 
     // increment the selected variation
-    m_selectionIndex = (m_selectionIndex == m_numberOfVariations-1)? m_selectionIndex: m_selectionIndex+1;
+    if (m_selectionIndex != m_numberOfVariations-1) ++m_selectionIndex;
     
     // Set the new variation to selected color
     m_variationRectangles.at(m_selectionIndex).setFillColor(BLUE);
@@ -107,7 +107,7 @@ void MoveSelectionPanel::goToPreviousVariation() {
     m_variationRectangles.at(m_selectionIndex).setFillColor(LIGHT_WHITE);
     
     // decrement the selected variation
-    m_selectionIndex = (m_selectionIndex == 0)? m_selectionIndex: m_selectionIndex-1;
+    if (m_selectionIndex != 0) --m_selectionIndex;
     
     // Set the new variation to selected color
     m_variationRectangles.at(m_selectionIndex).setFillColor(BLUE);
