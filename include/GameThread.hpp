@@ -6,10 +6,13 @@
 #include "Components/MenuButton.hpp"
 #include "Components/Board.hpp"
 #include "Utilities/Arrow.hpp"
+#include "Utilities/MoveTree.hpp"
+#include "Utilities/MoveList.hpp"
 
 using namespace sf;
 
 class SidePanel; // Forward declaration
+class MoveSelectionPanel; // Forward declaration
 
 // Constants
 constexpr uint32_t MENUBAR_HEIGHT = 30;
@@ -36,7 +39,12 @@ class GameThread {
                                         "Chess Game", Style::Titlebar | Style::Close};
     inline static vector<MenuButton> menuBar;
     inline static vector<Move> possibleMoves;
+    inline static PieceTransition transitioningPiece;
+    inline static MoveList moveList{game, transitioningPiece};
+    inline static MoveTree moveTree;
+    inline static MoveTree::Iterator treeIterator = moveTree.begin();
 
+    static void handleKeyPressed(Event&, MoveSelectionPanel&, vector<Arrow>&, bool&);
     static void initializeBoard();
     static void initializeMenuBar();
     static void drawSidePanel(SidePanel&);

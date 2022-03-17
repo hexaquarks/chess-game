@@ -3,7 +3,6 @@
 #include <iterator>
 #include <SFML/Graphics.hpp>
 #include "../Components/Board.hpp"
-#include "../GameThread.hpp"
 #include "Move.hpp"
 #include "PieceTransition.hpp"
 using namespace sf;

@@ -1,12 +1,10 @@
 #include "../include/GameThread.hpp"
-#include "../include/Utilities/MoveList.hpp"
 #include "../include/Components/MenuButton.hpp"
 #include "../include/Ressources/RessourceManager.hpp"
 #include "../include/Utilities/PieceTransition.hpp"
 #include "../include/Utilities/Move.hpp"
 #include "../include/Components/SidePanel.hpp"
 #include "../include/Components/MoveSelectionPanel.hpp"
-#include "../include/Utilities/MoveTree.hpp"
 #include "./Ressources/Shader.cpp"
 
 #include <iostream>
@@ -42,13 +40,8 @@ void GameThread::startGame() {
 
     // Additional board state variables
     Piece* lastMove = nullptr;
-    PieceTransition transitioningPiece;
-    transitioningPiece.setTransitioningPiece();
-    MoveList moveList(game, transitioningPiece);
     vector<Arrow> arrowList;
     Arrow arrow;
-    MoveTree moveTree;
-    MoveTree::Iterator treeIterator = moveTree.begin();
 
     // Window parameters
     initializeMenuBar();
@@ -195,11 +188,9 @@ void GameThread::startGame() {
                         move->setMoveArrows(arrowList);
                         moveList.addMove(*move, arrowList);
                         sidePanel.addMove(*move);
-                        cout << "Fuck" << endl;
-                        moveTree.insertNode(*move, treeIterator);
-                        cout << "You" << endl;
+                        
+                        moveTree.insertNode(*move, treeIterator);;
                         moveTree.printTree();
-                        cout << "C++" << endl;
 
                         lastMove = selectedPiece;
                         lastMove->setLastMove(selectedMove->getMoveType());
@@ -232,42 +223,7 @@ void GameThread::startGame() {
             }
 
             if (event.type == Event::KeyPressed) {
-                if (event.key.code == Keyboard::Left && !transitioningPiece.getIsTransitioning()) {
-                    moveList.goToPreviousMove(true, arrowList);
-                    moveTree.goToPreviousNode(treeIterator);
-                }
-                else if (event.key.code == Keyboard::Right && !transitioningPiece.getIsTransitioning()) {
-                    if (treeIterator.get()->childNumber != 0) {
-                        showMoveSelectionPanel = true;
-                        // TODO suspend all other event handling and draw gray alpha benhind
-                        // the selection panel until a variation is chosen
-
-                    } else {
-                        moveList.goToNextMove(true, arrowList);
-                        moveTree.goToNextNode(0, treeIterator);
-                    }
-                }
-                else if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::F))
-                    flipBoard();
-                else if (event.key.code == Keyboard::Up) {
-                    showMoveSelectionPanel
-                        ? moveSelectionPanel.goToPreviousVariation(): moveList.goToCurrentMove(arrowList);
-                }
-                else if (event.key.code == Keyboard::Down) {
-                    showMoveSelectionPanel
-                        ? moveSelectionPanel.goToNextVariation(): moveList.goToInitialMove(arrowList);
-                }
-                else if (event.key.code == Keyboard::S) {
-                    // testing
-                    showMoveSelectionPanel = !showMoveSelectionPanel;
-                }
-                else if (event.key.code == Keyboard::Enter) {
-                    if(showMoveSelectionPanel) {
-                        moveList.goToNextMove(true, arrowList);
-                        moveTree.goToNextNode(moveSelectionPanel.getSelection(), treeIterator);
-                        showMoveSelectionPanel = false;
-                    }
-                }
+                handleKeyPressed(event, moveSelectionPanel, arrowList, showMoveSelectionPanel);
             }
         }
 
@@ -519,4 +475,45 @@ void GameThread::drawTransitioningPiece(PieceTransition& piece) {
     s.setPosition(piece.getCurrPos().first, piece.getCurrPos().second + MENUBAR_HEIGHT);
     window.draw(s);
     piece.setHasArrived(piece.pieceIsInBounds(), game);
+}
+
+void GameThread::handleKeyPressed(Event& event, MoveSelectionPanel& moveSelectionPanel,
+    vector<Arrow>& arrowList, bool& showMoveSelectionPanel) {
+        
+    if (event.key.code == Keyboard::Left && !transitioningPiece.getIsTransitioning()) {
+        moveList.goToPreviousMove(true, arrowList);
+        moveTree.goToPreviousNode(treeIterator);
+    }
+    else if (event.key.code == Keyboard::Right && !transitioningPiece.getIsTransitioning()) {
+        if (treeIterator.get()->childNumber != 0) {
+            showMoveSelectionPanel = true;
+            // TODO suspend all other event handling and draw gray alpha benhind
+            // the selection panel until a variation is chosen
+
+        } else {
+            moveList.goToNextMove(true, arrowList);
+            moveTree.goToNextNode(0, treeIterator);
+        }
+    }
+    else if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::F))
+        flipBoard();
+    else if (event.key.code == Keyboard::Up) {
+        showMoveSelectionPanel
+            ? moveSelectionPanel.goToPreviousVariation(): moveList.goToCurrentMove(arrowList);
+    }
+    else if (event.key.code == Keyboard::Down) {
+        showMoveSelectionPanel
+            ? moveSelectionPanel.goToNextVariation(): moveList.goToInitialMove(arrowList);
+    }
+    else if (event.key.code == Keyboard::S) {
+        // testing
+        showMoveSelectionPanel = !showMoveSelectionPanel;
+    }
+    else if (event.key.code == Keyboard::Enter) {
+        if(showMoveSelectionPanel) {
+            moveList.goToNextMove(true, arrowList);
+            moveTree.goToNextNode(moveSelectionPanel.getSelection(), treeIterator);
+            showMoveSelectionPanel = false;
+        }
+    }
 }
