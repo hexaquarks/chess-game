@@ -17,7 +17,7 @@ class PieceTransition {
     bool m_yArrived= false;
 
     public:
-    PieceTransition() {}; 
+    PieceTransition() { m_piece = nullptr; }; 
 
     Piece* getPiece() { return m_piece; }
     coor2d getIncrement() { return m_increment; }
