@@ -113,19 +113,21 @@ void SidePanel::handleMoveBoxClicked(coor2d& mousePos) const{
 }
 
 void SidePanel::drawMoves(coor2d& mousePos) const {
-    if (moveBoxes.size() == 0 ) return; // no moves added yet, return
+    if (moveBoxes.size() == 0) return; // no moves added yet, return
 
     int counter = 0;
     for (auto& moveBox : moveBoxes) {
         moveBox.handleRectangle();
         
-        // Change the color of the Move Box if it is howered
-        if(moveBox.isHowered(mousePos)) moveBox.setIsSelected(); 
-        else moveBox.setDefault();
+        if (!m_showMoveSelectionPanel) {
+            // Change the color of the Move Box if it is howered
+            if (moveBox.isHowered(mousePos)) moveBox.setIsSelected(); 
+            else moveBox.setDefault();
+        }
 
         // Change the color of te Move Box if it is represents the current move
         int currMoveIndex = m_moveList.getMoveListSize() - m_moveList.getIteratorIndex() -1;
-        if(counter == currMoveIndex) moveBox.setIsCurrentMove();
+        if (counter == currMoveIndex) moveBox.setIsCurrentMove();
 
         ++counter;
         m_window.draw(moveBox.getRectangle());

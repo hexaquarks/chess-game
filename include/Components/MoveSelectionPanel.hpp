@@ -28,11 +28,13 @@ class MoveSelectionPanel {
     int m_height;
     int m_selectionIndex = 0;
     int m_numberOfVariations = 0;
+    bool m_isHowered = false;
 
     public:
     MoveSelectionPanel(RenderWindow& window, SidePanel& panel)
     : m_window(window), m_sidePanel(panel) {};
 
+    bool isHowered(coor2d&); 
     int getSelection() { return m_selectionIndex; }
     void handleTitleText();
     void handlePanelRectangle();

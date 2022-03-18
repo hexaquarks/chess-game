@@ -45,9 +45,9 @@ void GameThread::startGame() {
 
     // Window parameters
     initializeMenuBar();
-    SidePanel sidePanel{window, moveList};
-    MoveSelectionPanel moveSelectionPanel{window, sidePanel};
     bool showMoveSelectionPanel = false; 
+    SidePanel sidePanel{window, moveList,showMoveSelectionPanel};
+    MoveSelectionPanel moveSelectionPanel{window, sidePanel};
 
     // Sounds for piece movement
     SoundBuffer bufferMove;
@@ -84,17 +84,17 @@ void GameThread::startGame() {
                     // and if the click is on the chess board
                     int yPos = getTileYPos(mousePos);
                     // if (yPos < 0 || moveList.hasMovesAfter()) continue;
-                    if (yPos < 0 ) continue; //testing
+                    if (yPos < 0) continue; 
+
+                    // Do not register click if Moveselection panel is activated
+                    // and the mouse is not within the panel's bounds
+                    if (showMoveSelectionPanel && !moveSelectionPanel.isHowered(mousePos)) continue;
 
                     int xPos = isFlipped? 7-getTileXPos(mousePos): getTileXPos(mousePos);
                     if (isFlipped) yPos = 7-yPos;
                     Piece* piece = game.getBoardTile(xPos, yPos);
 
                     // If piece is not null and has the right color
-                    if(game.getTurn() == Team::WHITE) {
-                        cout << "white's turn " << endl;
-                    } else { cout << "blacks's turn " << endl; }
-
                     if (piece != nullptr && piece->getTeam() == game.getTurn()) {
                         // Unselect clicked piece
                         if(piece == selectedPiece) {
@@ -148,7 +148,8 @@ void GameThread::startGame() {
                                     mousePos = {0, 0};
                                 }
                     // Handle Side Panel Move Box buttons click
-                    sidePanel.handleMoveBoxClicked(mousePos);
+                    if (!showMoveSelectionPanel) sidePanel.handleMoveBoxClicked(mousePos);
+                    // ^^^ Possible bug here when moveboxe and moveselection panel overlap
 
                     if (selectedPiece == nullptr) continue;
 

@@ -18,9 +18,11 @@ class SidePanel {
     MoveList& m_moveList;
     coor2d m_nextPos = {BORDER_SIZE + 10, 10};
     int moveBoxCounter = 0;
+    bool& m_showMoveSelectionPanel;
 
     public:
-    SidePanel(RenderWindow& window, MoveList& moveList): m_window(window), m_moveList(moveList){};
+    SidePanel(RenderWindow& window, MoveList& moveList, bool& b)
+    : m_window(window), m_moveList(moveList), m_showMoveSelectionPanel(b) {};
 
     pair<char,int> findLetterCoord(coor2d) const;
     string parseMove(Move&, int, bool, bool = false) const;

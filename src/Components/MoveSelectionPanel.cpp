@@ -91,6 +91,16 @@ void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it) {
     reset();
 }
 
+bool MoveSelectionPanel::isHowered(coor2d& mousePos) {
+    int x = m_panel.getPosition().x;
+    int y = m_panel.getPosition().y;
+    
+    return (mousePos.first >= x 
+     && mousePos.first <= x + m_panel.getLocalBounds().width 
+     && mousePos.second >= y
+     && mousePos.second <= y + m_panel.getLocalBounds().height);
+}
+
 void MoveSelectionPanel::goToNextVariation() {
     // set the blue variation back to normal color
     m_variationRectangles.at(m_selectionIndex).setFillColor(LIGHT_WHITE);
