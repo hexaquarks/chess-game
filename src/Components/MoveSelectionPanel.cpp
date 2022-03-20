@@ -91,7 +91,7 @@ void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it) {
     reset();
 }
 
-bool MoveSelectionPanel::isHowered(coor2d& mousePos) {
+bool MoveSelectionPanel::isHowered(coor2d& mousePos) const {
     int x = m_panel.getPosition().x;
     int y = m_panel.getPosition().y;
     

@@ -34,8 +34,8 @@ class MoveSelectionPanel {
     MoveSelectionPanel(RenderWindow& window, SidePanel& panel)
     : m_window(window), m_sidePanel(panel) {};
 
-    bool isHowered(coor2d&); 
-    int getSelection() { return m_selectionIndex; }
+    bool isHowered(coor2d&) const; 
+    int getSelection() const { return m_selectionIndex; }
     void handleTitleText();
     void handlePanelRectangle();
     void handleSubPanels();
