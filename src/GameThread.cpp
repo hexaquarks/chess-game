@@ -489,14 +489,15 @@ void GameThread::handleKeyPressed(Event& event, MoveSelectionPanel& moveSelectio
             break;
         case Keyboard::Right:
             if (treeIterator.get()->childNumber > 1) {
-                showMoveSelectionPanel = true; // Open the panel display
-
-                // TODO suspend all other event handling and draw gray alpha benhind
-                // the selection panel until a variation is chosen
-            } else {
-                moveList.goToNextMove(true, arrowList);
-                moveTree.goToNextNode(0, treeIterator);
+                if (showMoveSelectionPanel) {
+                    moveList.goToNextMove(true, arrowList);
+                    moveTree.goToNextNode(moveSelectionPanel.getSelection(), treeIterator); 
+                }
+                showMoveSelectionPanel = !showMoveSelectionPanel;
+                return;
             }
+            moveList.goToNextMove(true, arrowList);
+            moveTree.goToNextNode(0, treeIterator);
             break;
         case Keyboard::LControl: 
             flipBoard();
