@@ -20,6 +20,9 @@ class MoveList {
 
     public:
     MoveList(Board&, PieceTransition&);
+    list<Move>::iterator getNewIterator() { return m_moves.begin(); }
+    list<Move>::iterator getIterator() { return m_moveIterator; }
+    list<Move> getMoves() { return m_moves; }
     PieceTransition& getTransitioningPiece() { return m_transitioningPiece; }
     int getIteratorIndex() { return std::distance(m_moves.begin(), m_moveIterator); }
     int getMoveListSize() { return m_moves.size(); }

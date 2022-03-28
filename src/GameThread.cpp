@@ -46,7 +46,7 @@ void GameThread::startGame() {
     // Window parameters
     initializeMenuBar();
     bool showMoveSelectionPanel = false; 
-    SidePanel sidePanel{window, moveList,showMoveSelectionPanel};
+    SidePanel sidePanel{window, moveList,moveTree, showMoveSelectionPanel};
     MoveSelectionPanel moveSelectionPanel{window, sidePanel};
 
     // Sounds for piece movement
@@ -188,9 +188,9 @@ void GameThread::startGame() {
                         move->setCapturedPiece(lastMove);
                         move->setMoveArrows(arrowList);
                         moveList.addMove(*move, arrowList);
-                        sidePanel.addMove(*move);
+                        // sidePanel.addMove(*move);
                         
-                        moveTree.insertNode(*move, treeIterator);;
+                        moveTree.insertNode(*move, treeIterator);
                         moveTree.printTree();
 
                         lastMove = selectedPiece;
