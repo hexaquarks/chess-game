@@ -31,8 +31,8 @@ class SidePanel {
     void goToNextRow(int height);
     void addMove(Move&); 
     void drawMoves(coor2d&);
-    void drawMove(Move&, int, int);
+    coor2d drawMove(Move&, int, int, coor2d);
     void checkOutOfBounds(MoveBox&, int);
     void handleMoveBoxClicked(coor2d&) const;
-    void drawFromNode(MoveTreeNode*&, int, int);
+    void drawFromNode(MoveTreeNode*&, int, int, coor2d);
 };
