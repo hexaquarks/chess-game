@@ -11,8 +11,11 @@
 using namespace std;
 using namespace sf;
 
+inline constexpr int INIT_WIDTH = BORDER_SIZE + 10;
+inline constexpr int INIT_HEIGHT = 10;
 inline const string letters = "abcdefgh";
 inline vector<MoveBox> moveBoxes;
+
 
 class SidePanel {
     RenderWindow& m_window;
@@ -20,6 +23,7 @@ class SidePanel {
     MoveTree& m_moveTree;
     coor2d m_nextPos = {BORDER_SIZE + 10, 10};
     int moveBoxCounter = 0;
+    int m_row = 0;
     bool& m_showMoveSelectionPanel;
 
     public:

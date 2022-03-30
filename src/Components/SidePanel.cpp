@@ -115,16 +115,21 @@ void SidePanel::drawFromNode(MoveTreeNode*& node, int level, int offset, coor2d 
     if (node->m_move.get() != nullptr) {
         nextPos = drawMove(*(node->m_move), level, offset, nextPos);
         nextPos.first += offset;
+        nextPos.second += m_row * 35;
     }   
 
     if (node->childNumber == 1) {
-        // if root, give nextPos, else nextPos2
-        drawFromNode(node->m_children.at(0), level+1, 0, nextPos);
+        drawFromNode(node->m_children.at(0), level+1, offset, nextPos);
     } else {
         // draw the nodes with offset on a new line
         for (int i = 0; i < node->childNumber; ++i) {
-            drawFromNode(node->m_children.at(i), level+1, offset+30, 
-                        {BORDER_SIZE + 10, 10 + offset});  
+            if (i == 0) drawFromNode(node->m_children.at(0), level+1, offset, nextPos);
+            else {
+                ++m_row;
+                nextPos = {INIT_WIDTH, INIT_HEIGHT + (m_row * 35)};
+                drawFromNode(node->m_children.at(i), level+1, offset+30, 
+                            nextPos);  
+            }
         }
     }
 }
@@ -137,6 +142,7 @@ coor2d SidePanel::drawMove(Move& move, int level, int offset, coor2d nextPos) {
     string text = parseMove(move, moveNumber, showNumber);
 
     // construct the Move Box
+    nextPos.first += offset;
     MoveBox moveBox(nextPos, text); // Make the text box
     moveBox.handleText(); // Create the Text, and pass the font ressource
     // checkOutOfBounds(moveBox, offset); // check if object's width goes out of bounds and update
@@ -153,8 +159,8 @@ coor2d SidePanel::drawMove(Move& move, int level, int offset, coor2d nextPos) {
 
 void SidePanel::drawMoves(coor2d& mousePos) {
     MoveTreeNode* root = m_moveTree.getRoot();
-    drawFromNode(root, 0, 0, {BORDER_SIZE + 10, 10}); 
-
+    drawFromNode(root, 0, 0, {INIT_WIDTH, INIT_HEIGHT}); 
+    m_row = 0; // reset to 0 for next iteration 
     // if (moveBoxes.size() == 0) return; // no moves added yet, return
 
     // int counter = 0;
