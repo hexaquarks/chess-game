@@ -7,7 +7,7 @@
 using namespace std;
 
 enum class Team { WHITE, BLACK };
-enum class PieceType { PAWN, ROOK, KNIGHT, BISHOP, KING, QUEEN, EMPTY };
+enum class PieceType { PAWN, ROOK, KNIGHT, BISHOP, KING, QUEEN };
 
 typedef tuple<pair<int, int>, MoveType> moveType;
 typedef vector<moveType> moveTypes;

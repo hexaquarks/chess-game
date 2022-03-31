@@ -74,7 +74,7 @@ class GameThread {
     static int getWindowXPos(int i) { return i * CELL_SIZE; }
     static int getWindowYPos(int j) { return j * CELL_SIZE + MENUBAR_HEIGHT; }
 
-    static void setTransitioningPiece(Piece*, int,int, PieceTransition&);
+    static void setTransitioningPiece(Piece*, int, int, PieceTransition&);
 
     static void flipBoard() { isFlipped = !isFlipped; }
     static bool boardFlipped() { return isFlipped; }

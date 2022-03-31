@@ -97,7 +97,7 @@ void GameThread::startGame() {
                     // If piece is not null and has the right color
                     if (piece != nullptr && piece->getTeam() == game.getTurn()) {
                         // Unselect clicked piece
-                        if(piece == selectedPiece) {
+                        if (piece == selectedPiece) {
                             selectedPiece = nullptr;
                             pieceIsClicked = false;
                             continue;
@@ -517,6 +517,6 @@ void GameThread::handleKeyPressed(Event& event, MoveSelectionPanel& moveSelectio
                 showMoveSelectionPanel = false; // close the panel display
             }
             break;
-
+        default: break; // Avoid pattern matching not exhaustive warning
     }
 }

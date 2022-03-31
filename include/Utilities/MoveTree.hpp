@@ -41,7 +41,7 @@ class MoveTree {
         int getNodeLevel() {
             MoveTreeNode* temp = m_ptr;
             int i = 0;
-            while(temp->m_parent != nullptr) {
+            while (temp->m_parent != nullptr) {
                 temp = temp->m_parent;
                 ++i;
             }
