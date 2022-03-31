@@ -13,6 +13,8 @@ using namespace sf;
 
 inline constexpr int INIT_WIDTH = BORDER_SIZE + 10;
 inline constexpr int INIT_HEIGHT = 10;
+inline constexpr int ROW_HEIGHT = 35;
+inline constexpr int HORIZONTAL_OFFSET = 30;
 inline const string letters = "abcdefgh";
 inline vector<MoveBox> moveBoxes;
 
@@ -35,8 +37,8 @@ class SidePanel {
     void goToNextRow(int height);
     void addMove(Move&); 
     void drawMoves(coor2d&);
-    coor2d drawMove(Move&, int, int, coor2d);
+    coor2d drawMove(Move&, int, int, coor2d, coor2d&);
     void checkOutOfBounds(MoveBox&, int);
     void handleMoveBoxClicked(coor2d&) const;
-    void drawFromNode(MoveTreeNode*&, int, int, coor2d);
+    void drawFromNode(MoveTreeNode*&, int, int, coor2d, coor2d&);
 };

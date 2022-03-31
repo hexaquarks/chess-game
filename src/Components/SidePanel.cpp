@@ -28,8 +28,8 @@ pair<char,int> SidePanel::findLetterCoord(coor2d target) const {
 
 string SidePanel::parseMove(Move& move, int moveNumber, bool showNumber, bool showDots) const {
     string text = (showNumber)
-        ? to_string(moveNumber) + ". " 
-        : (showDots)? to_string(moveNumber-1) + "... " : " ";
+        ? to_string(moveNumber) + "." 
+        : (showDots)? to_string(moveNumber-1) + "..." : "";
     MoveType moveType = move.getMoveType();
 
     // side cases
@@ -104,29 +104,28 @@ void SidePanel::handleMoveBoxClicked(coor2d& mousePos) const{
     }
 }
 
-void SidePanel::drawFromNode(MoveTreeNode*& node, int level, int offset, coor2d nextPos) {
+void SidePanel::drawFromNode(MoveTreeNode*& node, int level, int offset, coor2d nextPos, coor2d& mousePos) {
     // base case leaf
-    if (node->m_move.get() == nullptr) {
-        if (node->m_parent != nullptr) return;
-    }
+    if (node->m_move.get() == nullptr && node->m_parent != nullptr) return;
 
     // draw the node
     if (node->m_move.get() != nullptr) {
-        nextPos = drawMove(*(node->m_move), level, offset, nextPos);
+        nextPos = drawMove(*(node->m_move), level, offset, nextPos, mousePos);
     }   
 
     // reccursive step
     for (int i = 0; i < node->childNumber; ++i) {
-        if (i == 0) drawFromNode(node->m_children.at(0), level+1, offset, nextPos);
+        if (i == 0) drawFromNode(node->m_children.at(0), level+1, offset, nextPos, mousePos);
         else {
             ++m_row;
-            nextPos = {INIT_WIDTH, INIT_HEIGHT + (m_row * 35)};
-            drawFromNode(node->m_children.at(i), level+1, offset+30, nextPos);  
+            nextPos = {INIT_WIDTH, INIT_HEIGHT + (m_row * ROW_HEIGHT)};
+            drawFromNode(node->m_children.at(i), level+1,
+                         offset+HORIZONTAL_OFFSET, nextPos, mousePos);  
         }
     }
 }
 
-coor2d SidePanel::drawMove(Move& move, int level, int offset, coor2d nextPos) {
+coor2d SidePanel::drawMove(Move& move, int level, int offset, coor2d nextPos, coor2d& mousePos) {
     // iterate through all the move list from begining to end
     // get the text coordinates information for a Move Box
     int moveNumber = (level / 2) + 1;
@@ -137,11 +136,16 @@ coor2d SidePanel::drawMove(Move& move, int level, int offset, coor2d nextPos) {
     nextPos.first += offset; 
     MoveBox moveBox(nextPos, text); // Make the text box
     moveBox.handleText(); // Create the Text, and pass the font ressource
+
     // checkOutOfBounds(moveBox, offset); // check if object's width goes out of bounds and update
     // m_nextPos.first += (moveBox.getScaledWidth()); // increment for next move box
-    moveBox.setDefault(); // set defaul color
 
     moveBox.handleRectangle();
+    if (!m_showMoveSelectionPanel) {
+        // Change the color of the Move Box if it is howered
+        if (moveBox.isHowered(mousePos)) moveBox.setIsSelected(); 
+        else moveBox.setDefault();
+    }
     m_window.draw(moveBox.getRectangle());
     m_window.draw(moveBox.getTextsf());
 
@@ -150,7 +154,7 @@ coor2d SidePanel::drawMove(Move& move, int level, int offset, coor2d nextPos) {
 
 void SidePanel::drawMoves(coor2d& mousePos) {
     MoveTreeNode* root = m_moveTree.getRoot();
-    drawFromNode(root, 0, 0, {INIT_WIDTH, INIT_HEIGHT}); 
+    drawFromNode(root, 0, 0, {INIT_WIDTH, INIT_HEIGHT}, mousePos); 
     m_row = 0; // reset to 0 for next iteration 
     // if (moveBoxes.size() == 0) return; // no moves added yet, return
 
