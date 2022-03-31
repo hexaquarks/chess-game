@@ -105,31 +105,23 @@ void SidePanel::handleMoveBoxClicked(coor2d& mousePos) const{
 }
 
 void SidePanel::drawFromNode(MoveTreeNode*& node, int level, int offset, coor2d nextPos) {
-    // if one child draw it and increment nextPos
-    // if more than one child draw first then increment offset
-
+    // base case leaf
     if (node->m_move.get() == nullptr) {
         if (node->m_parent != nullptr) return;
     }
-    // draw the node with no offset
+
+    // draw the node
     if (node->m_move.get() != nullptr) {
         nextPos = drawMove(*(node->m_move), level, offset, nextPos);
-        nextPos.first += offset;
-        nextPos.second += m_row * 35;
     }   
 
-    if (node->childNumber == 1) {
-        drawFromNode(node->m_children.at(0), level+1, offset, nextPos);
-    } else {
-        // draw the nodes with offset on a new line
-        for (int i = 0; i < node->childNumber; ++i) {
-            if (i == 0) drawFromNode(node->m_children.at(0), level+1, offset, nextPos);
-            else {
-                ++m_row;
-                nextPos = {INIT_WIDTH, INIT_HEIGHT + (m_row * 35)};
-                drawFromNode(node->m_children.at(i), level+1, offset+30, 
-                            nextPos);  
-            }
+    // reccursive step
+    for (int i = 0; i < node->childNumber; ++i) {
+        if (i == 0) drawFromNode(node->m_children.at(0), level+1, offset, nextPos);
+        else {
+            ++m_row;
+            nextPos = {INIT_WIDTH, INIT_HEIGHT + (m_row * 35)};
+            drawFromNode(node->m_children.at(i), level+1, offset+30, nextPos);  
         }
     }
 }
@@ -142,7 +134,7 @@ coor2d SidePanel::drawMove(Move& move, int level, int offset, coor2d nextPos) {
     string text = parseMove(move, moveNumber, showNumber);
 
     // construct the Move Box
-    nextPos.first += offset;
+    nextPos.first += offset; 
     MoveBox moveBox(nextPos, text); // Make the text box
     moveBox.handleText(); // Create the Text, and pass the font ressource
     // checkOutOfBounds(moveBox, offset); // check if object's width goes out of bounds and update
@@ -153,8 +145,7 @@ coor2d SidePanel::drawMove(Move& move, int level, int offset, coor2d nextPos) {
     m_window.draw(moveBox.getRectangle());
     m_window.draw(moveBox.getTextsf());
 
-    cout << "move drawn" << endl;
-    return {nextPos.first += (moveBox.getScaledWidth()), nextPos.second};
+    return {nextPos.first += (moveBox.getScaledWidth()-offset), nextPos.second};
 }
 
 void SidePanel::drawMoves(coor2d& mousePos) {
