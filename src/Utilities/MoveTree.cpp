@@ -52,7 +52,7 @@ void MoveTree::printTreeRec(MoveTreeNode* root, vector<bool> flag, int depth, bo
 void MoveTree::printTree() {
     vector<bool> flag(getNumberOfMoves(), true);
     cout << "===== Printing the move tree =====" << endl;
-    MoveTreeNode* movePtr = m_root.get();
+    MoveTreeNode* movePtr = m_root.get()->m_children.at(0);
     printTreeRec(movePtr, flag);
 }
 
