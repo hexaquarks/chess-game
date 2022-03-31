@@ -37,6 +37,7 @@ class SidePanel {
     void goToNextRow(int height);
     void addMove(Move&); 
     void drawMoves(coor2d&);
+    void drawSquareBracket(coor2d&, int, bool) const;
     coor2d drawMove(Move&, int, int, coor2d, coor2d&);
     void checkOutOfBounds(MoveBox&, int);
     void handleMoveBoxClicked(coor2d&) const;

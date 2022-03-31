@@ -104,9 +104,40 @@ void SidePanel::handleMoveBoxClicked(coor2d& mousePos) const{
     }
 }
 
+void SidePanel::drawSquareBracket(coor2d& nextPos, int offset, bool open) const {
+    nextPos.first += offset; 
+
+    shared_ptr<Font> font =  RessourceManager::getFont("Arial.ttf");
+    Text textsf;
+    textsf.setString(open ? "[" : "]");
+    textsf.setFont(*font);
+    textsf.setCharacterSize(28);
+    textsf.setStyle(Text::Bold);
+    textsf.setFillColor({240, 248, 255});
+
+    Vector2f recSize(textsf.getGlobalBounds().width, textsf.getCharacterSize());
+    RectangleShape rect;
+    rect.setPosition(WINDOW_SIZE + nextPos.first, MENUBAR_HEIGHT + nextPos.second);
+    rect.setSize(recSize);
+    rect.setFillColor({50, 50, 50});
+
+    float positionalShift = ((BOX_HORIZONTAL_SCALE - 1.f) * rect.getLocalBounds().width)/2.f;
+    rect.setScale(BOX_HORIZONTAL_SCALE, BOX_VERTICAL_SCALE);
+    textsf.setPosition(WINDOW_SIZE + nextPos.first + positionalShift,
+                         MENUBAR_HEIGHT + nextPos.second - 4);
+
+    m_window.draw(rect);
+    m_window.draw(textsf);
+    nextPos.first -= offset;
+}
+
 void SidePanel::drawFromNode(MoveTreeNode*& node, int level, int offset, coor2d nextPos, coor2d& mousePos) {
     // base case leaf
-    if (node->m_move.get() == nullptr && node->m_parent != nullptr) return;
+    if (node->m_move.get() == nullptr && node->m_parent != nullptr) {
+        // close the open bracket for sub variation
+        if (offset != 0) drawSquareBracket(nextPos, offset + 10 , false);
+        return;
+    }
 
     // draw the node
     if (node->m_move.get() != nullptr) {
@@ -119,6 +150,7 @@ void SidePanel::drawFromNode(MoveTreeNode*& node, int level, int offset, coor2d 
         else {
             ++m_row;
             nextPos = {INIT_WIDTH, INIT_HEIGHT + (m_row * ROW_HEIGHT)};
+            drawSquareBracket(nextPos, offset + HORIZONTAL_OFFSET - 10, true);
             drawFromNode(node->m_children.at(i), level+1,
                          offset+HORIZONTAL_OFFSET, nextPos, mousePos);  
         }
