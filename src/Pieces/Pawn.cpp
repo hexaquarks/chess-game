@@ -43,6 +43,7 @@ void Pawn::generateForwardMoves(vector<Move> &moves, Piece* board[8][8], int dir
     int xPos = getX(); int yPos = getY();
     coor2d pawnCoor = {xPos, yPos};
     Piece* pawnPos = board[xPos][yPos];
+    bool hasNotMoved = (getTeam() == Team::WHITE && xPos == 6) || (getTeam() == Team::BLACK && xPos == 1);
 
     // Forward move
     if ((xPos+dir == 0 || xPos+dir == 7) && board[xPos+dir][yPos] == nullptr)
@@ -50,7 +51,7 @@ void Pawn::generateForwardMoves(vector<Move> &moves, Piece* board[8][8], int dir
     else if (board[xPos+dir][yPos] == nullptr)  {
         moves.push_back(Move(make_pair(xPos+dir, yPos), pawnCoor, pawnPos, MoveType::NORMAL));
         // Double square initial move
-        if (!hasMoved() && board[xPos+2*dir][yPos] == nullptr)
+        if (hasNotMoved && board[xPos+2*dir][yPos] == nullptr)
             moves.push_back(Move(make_pair(xPos+2*dir, yPos), pawnCoor, pawnPos, MoveType::INIT_SPECIAL));
     }
 
