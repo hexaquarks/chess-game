@@ -42,12 +42,12 @@ string SidePanel::parseMove(Move& move, int moveNumber, bool showNumber, bool sh
 
     coor2d coord = move.getTarget();
     pair<char, int> letterCoord = findLetterCoord(coord);
-    string letterCoordString = (1, letterCoord.first) + to_string(letterCoord.second);
+    string letterCoordString = (1, letterCoord.first) + to_string(letterCoord.second);;
 
     switch (move.getSelectedPiece()->getType()) {
         case PieceType::PAWN:
             // TODO fix promotion
-            if (moveType == MoveType::CAPTURE || moveType == MoveType::ENPASSANT){
+            if(moveType == MoveType::CAPTURE || moveType == MoveType::ENPASSANT){
                 text += string(1, letters.at(coord.first-1)) + "x";
                 return text + letterCoordString;
             } break;

@@ -36,7 +36,6 @@ class Move {
     void setMoveArrows(vector<Arrow> arrows) { m_arrows = arrows; }
     bool operator ==(Move& other) {
         return m_selectedPiece == other.m_selectedPiece &&
-        m_capturedPiece == other.m_capturedPiece &&
         m_MoveType == other.m_MoveType &&
         m_target == other.m_target &&
         m_init == other.m_init &&

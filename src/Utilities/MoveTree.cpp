@@ -9,12 +9,12 @@ MoveTreeNode* MoveTree::findNode(MoveTreeNode*& node) {
 }
 
 void MoveTree::insertNode(Move& newMove, MoveTree::Iterator& it) {
-    /*for (int i = 0; i < it->m_children.size(); ++i) {
+    for (int i = 0; i < it->m_children.size(); ++i) {
         if (*(it->m_children[i]->m_move.get()) == newMove) {
             it.goToChild(i);
             return;
         }
-    }*/
+    }
     MoveTreeNode* newNode = new MoveTreeNode(newMove); // Make new node with the move
     it.addChild(newNode);
     ++numberOfMoves;
