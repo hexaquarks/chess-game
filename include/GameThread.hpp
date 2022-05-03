@@ -30,34 +30,34 @@ constexpr float BUTTON_SIZE = 40;
 
 // Utility function
 inline RectangleShape createSquare() {
-    return RectangleShape({CELL_SIZE, CELL_SIZE});
+    return RectangleShape( { CELL_SIZE, CELL_SIZE } );
 }
 
 class GameThread {
     inline static Board game;
-    inline static RenderWindow window = {VideoMode(WINDOW_SIZE + PANEL_SIZE, WINDOW_SIZE + MENUBAR_HEIGHT),
-                                        "Chess Game", Style::Titlebar | Style::Close};
-    inline static vector<MenuButton> menuBar;
-    inline static vector<Move> possibleMoves;
+    inline static RenderWindow window = { VideoMode(WINDOW_SIZE + PANEL_SIZE, WINDOW_SIZE + MENUBAR_HEIGHT),
+                                        "Chess Game", Style::Titlebar | Style::Close };
+    inline static vector< MenuButton > menuBar;
+    inline static vector< Move > possibleMoves;
     inline static PieceTransition transitioningPiece;
-    inline static MoveList moveList{game, transitioningPiece};
+    inline static MoveList moveList{ game, transitioningPiece };
     inline static MoveTree moveTree;
     inline static MoveTree::Iterator treeIterator = moveTree.begin();
 
-    static void handleKeyPressed(Event&, MoveSelectionPanel&, vector<Arrow>&, bool&);
+    static void handleKeyPressed( Event&, MoveSelectionPanel&, vector< Arrow >&, bool& );
     static void initializeBoard();
     static void initializeMenuBar();
-    static void drawSidePanel(SidePanel&);
-    static void drawCaptureCircles(Piece*);
-    static void highlightHoveredSquare(Piece*, coor2d&);
+    static void drawSidePanel( SidePanel& );
+    static void drawCaptureCircles( Piece* );
+    static void highlightHoveredSquare( Piece*, coor2d& );
     static void drawMenuBar();
     static void drawPieces();
-    static void drawDraggedPiece(Piece*, coor2d&);
-    static void drawTransitioningPiece(PieceTransition&);
-    static void drawAllArrows(vector<Arrow>&, Arrow&);
+    static void drawDraggedPiece( Piece*, coor2d& );
+    static void drawTransitioningPiece( PieceTransition& );
+    static void drawAllArrows( vector< Arrow >&, Arrow& );
     static void drawEndResults();
     static void drawKingCheckCircle();
-    static void drawMoveSelectionPanel(int);
+    static void drawMoveSelectionPanel( int );
     static void drawGrayCover();
 
     inline static bool isFlipped = false;
@@ -66,15 +66,15 @@ class GameThread {
     GameThread() = delete; // Delete constructor
     static void startGame();
 
-    static int getTileXPos(coor2d& pos) { return pos.first / CELL_SIZE; }
-    static int getTileYPos(coor2d& pos) {
-        if (pos.second < MENUBAR_HEIGHT) return -1;
-        return (pos.second - MENUBAR_HEIGHT) / CELL_SIZE;
+    static int getTileXPos( coor2d& pos ) { return pos.first / CELL_SIZE; }
+    static int getTileYPos( coor2d& pos ) {
+        if ( pos.second < MENUBAR_HEIGHT ) return -1;
+        return ( pos.second - MENUBAR_HEIGHT ) / CELL_SIZE;
     }
-    static int getWindowXPos(int i) { return i * CELL_SIZE; }
-    static int getWindowYPos(int j) { return j * CELL_SIZE + MENUBAR_HEIGHT; }
+    static int getWindowXPos( int i ) { return i * CELL_SIZE; }
+    static int getWindowYPos( int j ) { return j * CELL_SIZE + MENUBAR_HEIGHT; }
 
-    static void setTransitioningPiece(Piece*, int, int, PieceTransition&);
+    static void setTransitioningPiece( Piece*, int, int, PieceTransition& );
 
     static void flipBoard() { isFlipped = !isFlipped; }
     static bool boardFlipped() { return isFlipped; }
