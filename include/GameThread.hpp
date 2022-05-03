@@ -30,13 +30,13 @@ constexpr float BUTTON_SIZE = 40;
 
 // Utility function
 inline RectangleShape createSquare() {
-    return RectangleShape({CELL_SIZE, CELL_SIZE});
+    return RectangleShape({ CELL_SIZE, CELL_SIZE });
 }
 
 class GameThread {
     inline static Board game;
-    inline static RenderWindow window = {VideoMode(WINDOW_SIZE + PANEL_SIZE, WINDOW_SIZE + MENUBAR_HEIGHT),
-                                        "Chess Game", Style::Titlebar | Style::Close};
+    inline static RenderWindow window = { VideoMode(WINDOW_SIZE + PANEL_SIZE, WINDOW_SIZE + MENUBAR_HEIGHT),
+                                        "Chess Game", Style::Titlebar | Style::Close };
     inline static vector<MenuButton> menuBar;
     inline static vector<Move> possibleMoves;
     inline static PieceTransition transitioningPiece;
@@ -66,10 +66,10 @@ class GameThread {
     GameThread() = delete; // Delete constructor
     static void startGame();
 
-    static int getTileXPos(coor2d& pos) { return pos.first / CELL_SIZE; }
-    static int getTileYPos(coor2d& pos) {
-        if (pos.second < MENUBAR_HEIGHT) return -1;
-        return (pos.second - MENUBAR_HEIGHT) / CELL_SIZE;
+    static int getTileXPos(coor2d& pos_) { return pos_.first / CELL_SIZE; }
+    static int getTileYPos(coor2d& pos_) {
+        if (pos_.second < MENUBAR_HEIGHT) return -1;
+        return (pos_.second - MENUBAR_HEIGHT) / CELL_SIZE;
     }
     static int getWindowXPos(int i) { return i * CELL_SIZE; }
     static int getWindowYPos(int j) { return j * CELL_SIZE + MENUBAR_HEIGHT; }
