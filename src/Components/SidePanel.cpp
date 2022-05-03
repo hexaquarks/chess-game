@@ -146,13 +146,7 @@ void SidePanel::drawFromNode(MoveTreeNode*& node, int level, int offset, coor2d 
 
     // reccursive step
     for (int i = 0; i < node->childNumber; ++i) {
-        // if (node->childNumber > 1) {
-        //     nextPos.first = {INIT_WIDTH};
-        //     nextPos.second += node->childNumber * ROW_HEIGHT;
-        // }
-        if (i == 0) {
-            drawFromNode(node->m_children.at(0), level+1, offset, nextPos, mousePos);
-        }
+        if (i == 0) drawFromNode(node->m_children.at(0), level+1, offset, nextPos, mousePos);
         else {
             ++m_row;
             nextPos = {INIT_WIDTH, INIT_HEIGHT + (m_row * ROW_HEIGHT)};
