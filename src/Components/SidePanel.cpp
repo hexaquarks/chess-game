@@ -61,7 +61,7 @@ string SidePanel::parseMove(Move& move_, int moveNumber_, bool showNumber_, bool
 }
 
 void SidePanel::goToNextRow(int height_) {
-     m_nextPos = {BORDER_SIZE + 10, m_nextPos.second + height_ + 20};
+     m_nextPos = { BORDER_SIZE + 10, m_nextPos.second + height_ + 20 };
 }
 
 void SidePanel::checkOutOfBounds(MoveBox& moveBox_, int offset_) {
@@ -149,7 +149,7 @@ void SidePanel::drawFromNode(MoveTreeNode*& node_, int level_, int offset_, coor
         if (i == 0) drawFromNode(node_->m_children.at(0), level_+1, offset_, nextPos_, mousePos);
         else {
             ++m_row;
-            nextPos_ = {INIT_WIDTH, INIT_HEIGHT + (m_row * ROW_HEIGHT)};
+            nextPos_ = { INIT_WIDTH, INIT_HEIGHT + (m_row * ROW_HEIGHT) };
             drawSquareBracket(nextPos_, offset_ + HORIZONTAL_OFFSET - 10, true);
             drawFromNode(node_->m_children.at(i), level_+1,
                          offset_+HORIZONTAL_OFFSET, nextPos_, mousePos);  

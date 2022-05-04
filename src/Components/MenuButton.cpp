@@ -17,10 +17,10 @@ MenuButton::MenuButton(uint8_t index_, const std::string& name_, bool isRotatabl
 
 void MenuButton::handleRectangle(uint8_t i_) {
     m_rectangle.setPosition(BUTTON_POS*i_, 0);
-    m_rectangle.setSize({BUTTON_POS, MENUBAR_HEIGHT});
-    m_rectangle.setFillColor({23,23,23});
+    m_rectangle.setSize({ BUTTON_POS, MENUBAR_HEIGHT });
+    m_rectangle.setFillColor({ 23,23,23 });
     m_rectangle.setOutlineThickness(2.f);
-    m_rectangle.setOutlineColor({239, 242, 249});
+    m_rectangle.setOutlineColor({ 239, 242, 249 });
 }
 
 void MenuButton::handleSprite(uint8_t i_) {
@@ -55,12 +55,12 @@ bool MenuButton::isClicked(coor2d& mousePos_) const {
 void MenuButton::doColorTransition() {
     m_transitionColorIndex += 5;
     sf::Uint8 i = (sf::Uint8)m_transitionColorIndex;
-    m_rectangle.setFillColor({(sf::Uint8) (218-i), (sf::Uint8) (224-i), (sf::Uint8) (241-i)});
+    m_rectangle.setFillColor({ (sf::Uint8) (218-i), (sf::Uint8) (224-i), (sf::Uint8) (241-i) });
 
     if(m_transitionColorIndex == 45) {
         m_isColorTransitioning = false;
         m_transitionColorIndex = 0;
-        m_rectangle.setFillColor({218, 224, 241});
+        m_rectangle.setFillColor({ 218, 224, 241 });
     }
 }
 

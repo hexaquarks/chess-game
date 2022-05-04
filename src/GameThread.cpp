@@ -79,7 +79,7 @@ void GameThread::startGame() {
                 if (event.mouseButton.button == Mouse::Left) {
                     possibleMoves = game.calculateAllMoves();
                     // Get the tile of the click
-                    mousePos = {event.mouseButton.x, event.mouseButton.y};
+                    mousePos = { event.mouseButton.x, event.mouseButton.y }; 
 
                     // Allow user to make moves only if they're at the current live position, 
                     // and if the click is on the chess board
@@ -115,7 +115,7 @@ void GameThread::startGame() {
                 }
                 if (event.mouseButton.button == Mouse::Right) {
                     if (!pieceIsMoving) {
-                        rightClickAnchor = {event.mouseButton.x, event.mouseButton.y};
+                        rightClickAnchor = { event.mouseButton.x, event.mouseButton.y };
                         arrow.setOrigin(rightClickAnchor);
                         arrow.setDestination(rightClickAnchor);
                         isRightClicking = true;
@@ -127,7 +127,7 @@ void GameThread::startGame() {
             if (event.type == Event::MouseMoved && (pieceIsMoving || pieceIsClicked || isRightClicking)) {
                 // Update the position of the piece that is being moved
                 Vector2i mousePosition = Mouse::getPosition(window);
-                mousePos = {mousePosition.x, mousePosition.y};
+                mousePos = { mousePosition.x, mousePosition.y };
 
                 if (isRightClicking) {
                     arrow.setDestination(mousePos);
@@ -146,7 +146,7 @@ void GameThread::startGame() {
                                     // TODO fix bug (reset at beggining)
                                     pSelectedPiece = nullptr;
                                     arrowList.clear();
-                                    mousePos = {0, 0};
+                                    mousePos = { 0, 0 };
                                 }
                     // Handle Side Panel Move Box buttons click
                     if (!showMoveSelectionPanel) sidePanel.handleMoveBoxClicked(mousePos);
@@ -204,7 +204,7 @@ void GameThread::startGame() {
                     pSelectedPiece = nullptr;
                     pieceIsMoving = false;
                     pieceIsClicked = false;
-                    mousePos = {0, 0};
+                    mousePos = { 0, 0 };
                 }
                 if (event.mouseButton.button == Mouse::Right) {
                     if (pSelectedPiece != nullptr && pieceIsMoving) {
@@ -260,7 +260,7 @@ void GameThread::startGame() {
 
 void GameThread::initializeMenuBar() {
     constexpr uint16_t menuOptions = 3;
-    const string menuNames[menuOptions] = {"Menu", "Reset", "Flip"};
+    const string menuNames[menuOptions] = { "Menu", "Reset", "Flip" };
 
     for (uint8_t i = 0; i < menuOptions; ++i) menuBar.push_back(MenuButton(i, menuNames[i]));
 }
@@ -279,12 +279,12 @@ void GameThread::drawSidePanel(SidePanel& sidePanel_) {
 
     // Draw the content on the panels
     Vector2i position = sf::Mouse::getPosition(window);
-    coor2d mousePos = {position.x , position.y};
+    coor2d mousePos = { position.x , position.y };
     sidePanel_.drawMoves(mousePos);
 }
 
 void GameThread::drawGrayCover() {
-    RectangleShape cover{Vector2f(WINDOW_SIZE + PANEL_SIZE, WINDOW_SIZE)};
+    RectangleShape cover{ Vector2f(WINDOW_SIZE + PANEL_SIZE, WINDOW_SIZE) };
     cover.setFillColor(Color(220,220,220,75));
     cover.setPosition(0, MENUBAR_HEIGHT);
     window.draw(cover);
@@ -292,7 +292,7 @@ void GameThread::drawGrayCover() {
 
 void GameThread::drawMenuBar() {
     constexpr uint16_t menuOptions = 3;
-    const string iconFiles[menuOptions] = {"dropDownWhite.png", "resetWhite.png", "flipWhite.png"};
+    const string iconFiles[menuOptions] = { "dropDownWhite.png", "resetWhite.png", "flipWhite.png" };
 
     for (uint8_t i = 0; i < menuOptions; ++i) {
         shared_ptr<Texture> t = RessourceManager::getTexture(iconFiles[i]);
@@ -307,7 +307,7 @@ void GameThread::drawMenuBar() {
 }
 
 void GameThread::initializeBoard() {
-    const Color colours[2] = {{240, 217, 181}, {181, 136, 99}};
+    const Color colours[2] = { { 240, 217, 181 }, { 181, 136, 99 } };
 
     for (uint8_t i = 0; i < 8; ++i) {
         for (uint8_t j = 0; j < 8; ++j) {
@@ -321,12 +321,12 @@ void GameThread::initializeBoard() {
 }
 
 void GameThread::highlightHoveredSquare(Piece* pSelectedPiece_, coor2d& mousePos_) {
-    const Color colours[2] = {{173, 176, 134}, {100, 111, 64}};
+    const Color colours[2] = { { 173, 176, 134 }, { 100, 111, 64 } };
 
     for (Move& move: possibleMoves) {
         int i = move.getTarget().second;
         int j = move.getTarget().first;
-        if (isFlipped) {i = 7-i; j = 7-j;}
+        if (isFlipped) { i = 7-i; j = 7-j; }
         if (move.getSelectedPiece() != pSelectedPiece_) continue;
         int xPos = getTileXPos(mousePos_), yPos = getTileYPos(mousePos_);
 
@@ -344,6 +344,7 @@ void GameThread::drawCaptureCircles(Piece* pSelectedPiece_) {
     for (Move& move: possibleMoves) {
         int i = move.getTarget().second;
         int j = move.getTarget().first;
+
         if (move.getSelectedPiece() != pSelectedPiece_) continue;
         bool isEmpty = game.getBoardTile(i, j) == nullptr;
         shared_ptr<Texture> t = RessourceManager::getTexture(isEmpty? "circle.png": "empty_circle.png");
@@ -386,7 +387,7 @@ void GameThread::drawDraggedPiece(Piece* pSelectedPiece_, coor2d& mousePos_) {
         (isFlipped? 7-pSelectedPiece_->getX(): pSelectedPiece_->getX()) * CELL_SIZE + MENUBAR_HEIGHT
     );
     s.setOrigin(SPRITE_SIZE/2, SPRITE_SIZE/2);
-    sBefore.setColor({255, 255, 255, 100});
+    sBefore.setColor({ 255, 255, 255, 100 });
 
     window.draw(sBefore);
     window.draw(s);
@@ -444,7 +445,7 @@ void GameThread::drawEndResults() {
         King* losing = game.getKing();
         Texture t; t.loadFromFile(RessourceManager::getIconPath("checkmate.png"));
         Sprite checkmate(t);
-        checkmate.setColor({255, 255, 255, 200});
+        checkmate.setColor({ 255, 255, 255, 200 });
         checkmate.setScale(0.5, 0.5);
         checkmate.setOrigin(40, 40);
         checkmate.setPosition(
@@ -460,8 +461,8 @@ void GameThread::drawEndResults() {
 
 void GameThread::setTransitioningPiece(Piece* p_, int xTarget_, int yTarget_, PieceTransition& trans_) {
     trans_.setTransitioningPiece(p_);
-    coor2d destination = {xTarget_, yTarget_};
-    coor2d currPos = {p_->getY() * CELL_SIZE, p_->getX() * CELL_SIZE};
+    coor2d destination = { xTarget_, yTarget_ };
+    coor2d currPos = { p_->getY() * CELL_SIZE, p_->getX() * CELL_SIZE };
     trans_.setDestination(destination);
     trans_.setCurrPos(currPos);
     trans_.setIsTransitioning(true);

@@ -9,8 +9,8 @@ vector<Move> Knight::calcPossibleMoves(Piece* board_[8][8]) const {
     int yPos = getY();
 
     // The possible moves
-    int X[8] = {2, 1, -1, -2, -2, -1, 1, 2};
-    int Y[8] = {1, 2, 2, 1, -1, -2, -2, -1};
+    int X[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
+    int Y[8] = { 1, 2, 2, 1, -1, -2, -2, -1 };
 
     for (int i = 0; i < 8; ++i) {
         int x = xPos + X[i];

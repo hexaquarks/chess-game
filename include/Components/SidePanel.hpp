@@ -23,7 +23,7 @@ class SidePanel {
     RenderWindow& m_window;
     MoveList& m_moveList;
     MoveTree& m_moveTree;
-    coor2d m_nextPos = {BORDER_SIZE + 10, 10};
+    coor2d m_nextPos = { BORDER_SIZE + 10, 10 };
     int moveBoxCounter = 0;
     int m_row = 0;
     bool& m_showMoveSelectionPanel;

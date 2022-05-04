@@ -26,7 +26,7 @@ void MoveSelectionPanel::handleSubPanels() {
 
     // draw bottom rectangle for the set of variation (buttons)
     const int h = m_height - (2 * INNER_MARGIN) - TOP_PANEL_HEIGHT;
-    Vector2f panelPos{INNER_MARGIN, TOP_PANEL_HEIGHT + INNER_MARGIN};
+    Vector2f panelPos{ INNER_MARGIN, TOP_PANEL_HEIGHT + INNER_MARGIN };
     m_variationsPanel.setSize(Vector2f(PANEL_WIDTH - (2 * INNER_MARGIN), h));
     m_variationsPanel.setFillColor(LIGHT_WHITE);
     m_variationsPanel.setPosition(m_panel.getPosition() + panelPos);
@@ -39,7 +39,7 @@ void MoveSelectionPanel::handleVariations(vector<std::string>& variations_) {
     for (auto& text : variations_) {
         // Draw the rectangle container for the variation text
         RectangleShape variationRect{Vector2f(PANEL_WIDTH - 2 * INNER_MARGIN, VARIATION_HEIGHT)};
-        Vector2f newPos{0, float(counter) * VARIATION_HEIGHT};
+        Vector2f newPos{ 0, float(counter) * VARIATION_HEIGHT };
         variationRect.setFillColor((counter == m_selectionIndex)? BLUE: LIGHT_WHITE);
         variationRect.setPosition(m_variationsPanel.getPosition() + newPos);
         variationRect.setOutlineColor(Color::Black);

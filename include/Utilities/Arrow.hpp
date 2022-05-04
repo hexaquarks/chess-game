@@ -7,12 +7,12 @@ using namespace std;
 
 typedef std::pair<int, int> coor2d;
 inline constexpr int rotation[3][3] = {
-        {225, 180, 135},
-        {270,   0,  90},
-        {315,   0,  45},
+        { 225, 180, 135 },
+        { 270,   0,  90 },
+        { 315,   0,  45 },
 };
-inline vector<coor2d> urCoords = {{1,-2}, {2,1}, {-1,2}, {-2,-1}};
-inline vector<coor2d> ruCoords = {{2,-1}, {1,2}, {-2,1}, {-1,-2}};
+inline vector<coor2d> urCoords = { { 1,-2 }, { 2,1 }, { -1,2 }, { -2,-1 } };
+inline vector<coor2d> ruCoords = { { 2,-1 }, { 1,2 }, { -2,1 }, { -1,-2 } };
 
 class Arrow {
     coor2d m_origin; // origin absolute coordinate
