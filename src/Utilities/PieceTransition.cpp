@@ -30,15 +30,15 @@ void PieceTransition::move() {
     if (!m_yArrived) m_currPos.second += m_increment.second;
 }
 
-void PieceTransition::setHasArrived(bool b, Board& board) {
-    m_hasArrived = b;
+void PieceTransition::setHasArrived(bool b_, Board& board_) {
+    m_hasArrived = b_;
     if (m_hasArrived) {
         // piece has arrived at destination 
         m_isTransitioning = false;
         m_xArrived = false;
         m_yArrived = false;
-        m_increment = {0,0};
-        board.setBoardTile(m_currPos.first / CELL_SIZE , m_currPos.second / CELL_SIZE, m_piece);
+        m_increment = { 0, 0 };
+        board_.setBoardTile(m_currPos.first / CELL_SIZE , m_currPos.second / CELL_SIZE, m_piece);
         //  m_piece = nullptr;
     }
 }

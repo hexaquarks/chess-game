@@ -3,17 +3,17 @@
 #include "../../include/Utilities/Arrow.hpp"
 #include "../../include/GameThread.hpp"
 
-template <typename T> int sign(T val) {
-    return (T(0) < val) - (val < T(0));
+template <typename T> int sign(T val_) {
+    return (T(0) < val_) - (val_ < T(0));
 }
 
-Arrow::Arrow(coor2d origin, coor2d destination, int rotation, string filename)
-: m_origin(origin), m_destination(destination), m_rotation(rotation), m_filename(filename) {};
+Arrow::Arrow(coor2d origin_, coor2d destination_, int rotation_, string filename_)
+: m_origin(origin_), m_destination(destination_), m_rotation(rotation_), m_filename(filename_) {};
 
-void Arrow::setOrigin(coor2d& origin) {
+void Arrow::setOrigin(coor2d& origin_) {
     // need to format the origin to be at the center of the tile
-    m_origin.first = origin.first;
-    m_origin.second = origin.second - MENUBAR_HEIGHT;
+    m_origin.first = origin_.first;
+    m_origin.second = origin_.second - MENUBAR_HEIGHT;
 }
 
 coor2d Arrow::getFormattedOrigin() {
@@ -22,9 +22,9 @@ coor2d Arrow::getFormattedOrigin() {
     return {x,y};
 }
 
-void Arrow::setDestination(coor2d& destination) {
-    m_destination.first = destination.first;
-    m_destination.second =  destination.second - MENUBAR_HEIGHT;
+void Arrow::setDestination(coor2d& destination_) {
+    m_destination.first = destination_.first;
+    m_destination.second =  destination_.second - MENUBAR_HEIGHT;
 
     // tile coordinates 
     m_dx = (m_destination.first/(int)CELL_SIZE - m_origin.first/(int)CELL_SIZE);
@@ -85,18 +85,18 @@ bool Arrow::isDrawable() {
     return abs(m_dx) > 0 || abs(m_dy) > 0;
 }
 
-bool Arrow::removeArrow(vector<Arrow>& arrows) {
-    vector<Arrow>::iterator it = arrows.begin();
+bool Arrow::removeArrow(vector<Arrow>& arrows_) {
+    vector<Arrow>::iterator it = arrows_.begin();
     bool removed = false;
 
-    while (it != arrows.end()) {
-        if(compare(*it)) { it = arrows.erase(it); removed = true; } 
+    while (it != arrows_.end()) {
+        if(compare(*it)) { it = arrows_.erase(it); removed = true; } 
         else ++it;
     }
     return removed;
 }
 
-bool Arrow::compare(Arrow& arrow){
-    return arrow.getFormattedOrigin() == getFormattedOrigin() &&
-    arrow.getFilename() == m_filename && arrow.getRotation() == m_rotation;
+bool Arrow::compare(Arrow& arrow_){
+    return arrow_.getFormattedOrigin() == getFormattedOrigin() &&
+    arrow_.getFilename() == m_filename && arrow_.getRotation() == m_rotation;
 }

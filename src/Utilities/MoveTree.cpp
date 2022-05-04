@@ -1,6 +1,6 @@
 #include "../../include/Utilities/MoveTree.hpp"
 
-MoveTreeNode* MoveTree::findNode(MoveTreeNode*& node) {
+MoveTreeNode* MoveTree::findNode(MoveTreeNode*& node_) {
     for (auto child: m_root->m_children) {
         MoveTreeNode* result = findNode(child);
         if (result != nullptr) return result;
@@ -8,51 +8,51 @@ MoveTreeNode* MoveTree::findNode(MoveTreeNode*& node) {
     return nullptr;
 }
 
-void MoveTree::insertNode(Move& newMove, MoveTree::Iterator& it) {
-    for (int i = 0; i < it->m_children.size(); ++i) {
-        if (*(it->m_children[i]->m_move.get()) == newMove) {
-            it.goToChild(i);
+void MoveTree::insertNode(Move& newMove_, MoveTree::Iterator& it_) {
+    for (int i = 0; i < it_->m_children.size(); ++i) {
+        if (*(it_->m_children[i]->m_move.get()) == newMove_) {
+            it_.goToChild(i);
             return;
         }
     }
-    MoveTreeNode* newNode = new MoveTreeNode(newMove); // Make new node with the move
-    it.addChild(newNode);
+    MoveTreeNode* newNode = new MoveTreeNode(newMove_); // Make new node with the move
+    it_.addChild(newNode);
     ++numberOfMoves;
 }
 
-void MoveTree::goToNextNode(int slectedMoveIndex, MoveTree::Iterator& it) {
+void MoveTree::goToNextNode(int slectedMoveIndex_, MoveTree::Iterator& it_) {
     // go to next move only if it is not a Leaf node
-    if (it->m_children.size() != 0)
-        it.goToChild(slectedMoveIndex);
+    if (it_->m_children.size() != 0)
+        it_.goToChild(slectedMoveIndex_);
 }
 
-void MoveTree::goToPreviousNode(MoveTree::Iterator& it) {   
+void MoveTree::goToPreviousNode(MoveTree::Iterator& it_) {   
     // go to previous move only if it is not NULL
-    if (it->m_parent != nullptr) --it;
+    if (it_->m_parent != nullptr) --it_;
 }
 
-void MoveTree::printTreeRec(MoveTreeNode* root, vector<bool> flag, int depth, bool isLast) {
-    if (root->m_move.get() == nullptr) return;
+void MoveTree::printTreeRec(MoveTreeNode* root_, vector<bool> flag_, int depth_, bool isLast_) {
+    if (root_->m_move.get() == nullptr) return;
 
-    for (int i = 1; i < depth; ++i) {
-        if (flag[i] == true) cout << "| " << " " << " " << " ";
+    for (int i = 1; i < depth_; ++i) {
+        if (flag_[i] == true) cout << "| " << " " << " " << " ";
         else  cout << " " << " " << " " << " ";
     }
 
-    coor2d tar = root->m_move->getTarget();
-    if (depth == 0)
+    coor2d tar = root_->m_move->getTarget();
+    if (depth_ == 0)
         cout << "(" << tar.first << "," << tar.second << ")" << '\n';
-    else if (isLast) {
+    else if (isLast_) {
         cout << "+--- " << "(" << tar.first << "," << tar.second << ")" << '\n';
-        flag[depth] = false;
+        flag_[depth_] = false;
     } else 
         cout << "+--- " << "(" << tar.first << "," << tar.second << ")" << '\n';
 
     int it = 0;
-    for (auto i = root->m_children.begin(); i != root->m_children.end(); ++i, ++it)
-        printTreeRec(*i, flag, depth + 1,it == (root->m_children.size()) - 1);
+    for (auto i = root_->m_children.begin(); i != root_->m_children.end(); ++i, ++it)
+        printTreeRec(*i, flag_, depth_ + 1,it == (root_->m_children.size()) - 1);
 
-    flag[depth] = true;   
+    flag_[depth_] = true;   
 }
 
 void MoveTree::printTree() {
@@ -78,8 +78,8 @@ void MoveTree::printPreorder(MoveTreeNode*& m_root) {
     }
 }
 
-int MoveTree::getNodeLevel(MoveTree::Iterator& it) {
-    MoveTreeNode* temp = it.get();
+int MoveTree::getNodeLevel(MoveTree::Iterator& it_) {
+    MoveTreeNode* temp = it_.get();
     int i = 0;
     while(temp->m_parent != nullptr) {
         temp = temp->m_parent;
