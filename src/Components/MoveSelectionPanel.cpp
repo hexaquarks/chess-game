@@ -34,9 +34,9 @@ void MoveSelectionPanel::handleSubPanels() {
     m_variationsPanel.setOutlineThickness(2.f);
 }
 
-void MoveSelectionPanel::handleVariations(vector<std::string>& variations) { 
+void MoveSelectionPanel::handleVariations(vector<std::string>& variations_) { 
     int counter = 0;
-    for (auto& text : variations) {
+    for (auto& text : variations_) {
         // Draw the rectangle container for the variation text
         RectangleShape variationRect{Vector2f(PANEL_WIDTH - 2 * INNER_MARGIN, VARIATION_HEIGHT)};
         Vector2f newPos{0, float(counter) * VARIATION_HEIGHT};
@@ -60,17 +60,17 @@ void MoveSelectionPanel::handleVariations(vector<std::string>& variations) {
     }
 }
 
-void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it) {
+void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it_) {
     // construct the strings
-    int moveListSize = it.getNodeLevel() + 2;  // +2 because initial is nullptr
+    int moveListSize = it_.getNodeLevel() + 2;  // +2 because initial is nullptr
     int moveNumber = (moveListSize / 2) + 1;
     bool showNumber = moveListSize % 2 != 0;
     vector<string> variations; 
     
-    for (int i = 0; i < it.get()->childNumber; ++i) {
+    for (int i = 0; i < it_.get()->childNumber; ++i) {
         variations.emplace_back(
             m_sidePanel.parseMove(
-                *(it.get()->m_children.at(i)->m_move), moveNumber, showNumber, true
+                *(it_.get()->m_children.at(i)->m_move), moveNumber, showNumber, true
             )
         ); 
     }
@@ -91,14 +91,14 @@ void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it) {
     reset();
 }
 
-bool MoveSelectionPanel::isHowered(coor2d& mousePos) const {
+bool MoveSelectionPanel::isHowered(coor2d& mousePos_) const {
     int x = m_panel.getPosition().x;
     int y = m_panel.getPosition().y;
     
-    return (mousePos.first >= x 
-     && mousePos.first <= x + m_panel.getLocalBounds().width 
-     && mousePos.second >= y
-     && mousePos.second <= y + m_panel.getLocalBounds().height);
+    return (mousePos_.first >= x 
+     && mousePos_.first <= x + m_panel.getLocalBounds().width 
+     && mousePos_.second >= y
+     && mousePos_.second <= y + m_panel.getLocalBounds().height);
 }
 
 void MoveSelectionPanel::goToNextVariation() {

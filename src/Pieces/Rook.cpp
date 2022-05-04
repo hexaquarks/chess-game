@@ -1,8 +1,8 @@
 #include "../../include/Pieces/Rook.hpp"
 #include <vector>
 
-Rook::Rook(Team team, int x, int y): Piece(team, x, y, PieceType::ROOK, "r") {}
+Rook::Rook(Team team_, int x_, int y_): Piece(team_, x_, y_, PieceType::ROOK, "r") {}
 
-vector<Move> Rook::calcPossibleMoves(Piece* board[8][8]) const {
-    return getHorizontalAndVerticalMovements(board);
+vector<Move> Rook::calcPossibleMoves(Piece* pBoard_[8][8]) const {
+    return getHorizontalAndVerticalMovements(pBoard_);
 }

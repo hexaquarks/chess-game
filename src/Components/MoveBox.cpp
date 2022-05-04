@@ -1,6 +1,6 @@
 #include "../../include/Components/MoveBox.hpp"
 
-MoveBox::MoveBox(coor2d position, string text): m_position(position), m_text(text) {};
+MoveBox::MoveBox(coor2d position_, string text_): m_position(position_), m_text(text_) {};
 
 void MoveBox::handleText() {
     shared_ptr<Font> font =  RessourceManager::getFont("Arial.ttf");
@@ -27,9 +27,9 @@ void MoveBox::handleRectangle() {
                          MENUBAR_HEIGHT + m_position.second);
 }
 
-bool MoveBox::isHowered(coor2d& mousePos) const {
-    int x = mousePos.first - WINDOW_SIZE;
-    int y = mousePos.second - MENUBAR_HEIGHT;
+bool MoveBox::isHowered(coor2d& mousePos_) const {
+    int x = mousePos_.first - WINDOW_SIZE;
+    int y = mousePos_.second - MENUBAR_HEIGHT;
 
     return ((x > getPosition().first && x <= getPosition().first +  getScaledWidth()) 
          && (y > getPosition().second && y <= getPosition().second +  getScaledHeight()));

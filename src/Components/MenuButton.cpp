@@ -2,30 +2,30 @@
 #include "../../include/GameThread.hpp"
 #include "../../include/Utilities/MoveList.hpp"
 
-MenuButton::MenuButton(uint8_t index, const std::string& name, bool isRotatable):
-    m_index(index), m_isRotatable(isRotatable) {
+MenuButton::MenuButton(uint8_t index_, const std::string& name_, bool isRotatable_):
+    m_index(index_), m_isRotatable(isRotatable_) {
 
     shared_ptr<Font> font =  RessourceManager::getFont("Arial.ttf");
-    m_text.setString(name);
+    m_text.setString(name_);
     m_text.setFont(*font);
     m_text.setCharacterSize(14);
 
-    handleRectangle(index);
-    handleSprite(index);
-    handleText(index);
+    handleRectangle(index_);
+    handleSprite(index_);
+    handleText(index_);
 }
 
-void MenuButton::handleRectangle(uint8_t i) {
-    m_rectangle.setPosition(BUTTON_POS*i, 0);
+void MenuButton::handleRectangle(uint8_t i_) {
+    m_rectangle.setPosition(BUTTON_POS*i_, 0);
     m_rectangle.setSize({BUTTON_POS, MENUBAR_HEIGHT});
     m_rectangle.setFillColor({23,23,23});
     m_rectangle.setOutlineThickness(2.f);
     m_rectangle.setOutlineColor({239, 242, 249});
 }
 
-void MenuButton::handleSprite(uint8_t i) {
+void MenuButton::handleSprite(uint8_t i_) {
     m_sprite.setOrigin(BUTTON_SIZE/2, BUTTON_SIZE/2);
-    m_sprite.setPosition(BUTTON_POS*i + 20, MENUBAR_HEIGHT/2);
+    m_sprite.setPosition(BUTTON_POS*i_ + 20, MENUBAR_HEIGHT/2);
     m_sprite.setScale(SPRITE_SCALE, SPRITE_SCALE);
 }
 
@@ -40,16 +40,16 @@ void MenuButton::rotateIcon() {
     m_sprite.setRotation(m_sprite.getRotation() + 180);
 }
 
-void MenuButton::drawMenuButton(RenderWindow& window) const {
-    window.draw(m_rectangle);
-    window.draw(m_sprite);
-    window.draw(m_text);
+void MenuButton::drawMenuButton(RenderWindow& window_) const {
+    window_.draw(m_rectangle);
+    window_.draw(m_sprite);
+    window_.draw(m_text);
 }
 
-bool MenuButton::isClicked(coor2d& mousePos) const {
+bool MenuButton::isClicked(coor2d& mousePos_) const {
     float xi = m_rectangle.getGlobalBounds().left;
     float xf = xi + m_rectangle.getGlobalBounds().width;
-    return mousePos.first >= xi && mousePos.first < xf;
+    return mousePos_.first >= xi && mousePos_.first < xf;
 }
 
 void MenuButton::doColorTransition() {
@@ -64,7 +64,7 @@ void MenuButton::doColorTransition() {
     }
 }
 
-int MenuButton::performClick(Board& game, MoveList& moveList) {
+int MenuButton::performClick(Board& game_, MoveList& moveList_) {
     switch (m_index) {
         case 0:
             // Clicked menu button
@@ -72,8 +72,8 @@ int MenuButton::performClick(Board& game, MoveList& moveList) {
             break;
         case 1: 
             // Clicked reset button
-            game.reset();
-            moveList.reset();
+            game_.reset();
+            moveList_.reset();
             break; 
         case 2: 
             // Clicked flip button

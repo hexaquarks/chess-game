@@ -58,17 +58,17 @@ void Board::reset() {
     m_turn = Team::WHITE; // reset the first move to be for white
 }
 
-void Board::addPiece(Piece* piece) {
-    (piece->getTeam() == Team::WHITE)? m_whitePieces.push_back(piece)
-                                     : m_blackPieces.push_back(piece); 
+void Board::addPiece(Piece* pPiece_) {
+    (pPiece_->getTeam() == Team::WHITE)? m_whitePieces.push_back(pPiece_)
+                                     : m_blackPieces.push_back(pPiece_); 
 }
 
-void Board::setBoardTile(int x, int y, Piece* piece, bool record) {
-    if (record && m_board[y][x] != nullptr) {
-        m_board[y][x]->move(-1, -1);
+void Board::setBoardTile(int x_, int y_, Piece* pPiece_, bool record_) {
+    if (record_ && m_board[y_][x_] != nullptr) {
+        m_board[y_][x_]->move(-1, -1);
     }
-    m_board[y][x] = piece;
-    if (piece != nullptr) piece->move(y, x, record);
+    m_board[y_][x_] = pPiece_;
+    if (pPiece_ != nullptr) pPiece_->move(y_, x_, record_);
 }
 
 vector<Move> Board::calculateAllMoves() {
@@ -85,26 +85,26 @@ vector<Move> Board::calculateAllMoves() {
     return moves;
 }
 
-void Board::removeIllegalMoves(vector<Move>& possibleMoves, Piece* selectedPiece) {
-    vector<Move>::const_iterator it = possibleMoves.begin();
+void Board::removeIllegalMoves(vector<Move>& possibleMoves_, Piece* pSelectedPiece_) {
+    vector<Move>::const_iterator it = possibleMoves_.begin();
 
-    while (it != possibleMoves.end()) {
+    while (it != possibleMoves_.end()) {
         int x = (*it).getTarget().second;
         int y = (*it).getTarget().first;
 
         // Store piece occupied by target square
         Piece* temp = getBoardTile(x, y);
 
-        int initialX = selectedPiece->getY();
-        int initialY = selectedPiece->getX();
+        int initialX = pSelectedPiece_->getY();
+        int initialY = pSelectedPiece_->getX();
 
-        setBoardTile(x, y, selectedPiece, false); // Move this piece to target square
+        setBoardTile(x, y, pSelectedPiece_, false); // Move this piece to target square
         setBoardTile(initialX, initialY, nullptr, false); // Set null to selected piece's square
 
-        if (kingIsChecked()) it = possibleMoves.erase(it);
+        if (kingIsChecked()) it = possibleMoves_.erase(it);
         else ++it;
 
-        setBoardTile(initialX, initialY, selectedPiece, false);
+        setBoardTile(initialX, initialY, pSelectedPiece_, false);
         setBoardTile(x, y, temp, false); 
     }
 }

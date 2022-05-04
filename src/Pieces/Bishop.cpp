@@ -1,7 +1,8 @@
 #include "../../include/Pieces/Bishop.hpp"
 
-Bishop::Bishop(Team team, int x, int y): Piece(team, x, y, PieceType::BISHOP, "b") {}
+Bishop::Bishop(Team team_, int x_, int y_):
+Piece(team_, x_, y_, PieceType::BISHOP, "b") {}
 
-vector<Move> Bishop::calcPossibleMoves(Piece* board[8][8]) const {
-    return getDiagonalMovements(board);
+vector<Move> Bishop::calcPossibleMoves(Piece* board_[8][8]) const {
+    return getDiagonalMovements(board_);
 }
