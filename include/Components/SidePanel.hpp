@@ -11,11 +11,11 @@
 using namespace std;
 using namespace sf;
 
-inline constexpr int INIT_WIDTH = BORDER_SIZE + 10;
-inline constexpr int INIT_HEIGHT = 10;
-inline constexpr int ROW_HEIGHT = 35;
-inline constexpr int HORIZONTAL_OFFSET = 30;
-inline const string letters = "abcdefgh";
+inline constexpr int g_INIT_WIDTH = g_BORDER_SIZE + 10;
+inline constexpr int g_INIT_HEIGHT = 10;
+inline constexpr int g_ROW_HEIGHT = 35;
+inline constexpr int g_HORIZONTAL_OFFSET = 30;
+inline const string g_letters = "abcdefgh";
 inline vector<MoveBox> moveBoxes;
 
 
@@ -23,7 +23,7 @@ class SidePanel {
     RenderWindow& m_window;
     MoveList& m_moveList;
     MoveTree& m_moveTree;
-    coor2d m_nextPos = { BORDER_SIZE + 10, 10 };
+    coor2d m_nextPos = { g_BORDER_SIZE + 10, 10 };
     int moveBoxCounter = 0;
     int m_row = 0;
     bool& m_showMoveSelectionPanel;
@@ -33,7 +33,7 @@ class SidePanel {
 
     pair<char,int> findLetterCoord(coor2d) const;
     string parseMove(Move&, int, bool, bool = false) const;
-    void resetNextPos() { m_nextPos = {BORDER_SIZE + 10, 10}; }
+    void resetNextPos() { m_nextPos = { g_BORDER_SIZE + 10, 10 }; }
     void goToNextRow(int height);
     void addMove(Move&); 
     void drawMoves(coor2d&);

@@ -6,7 +6,7 @@
 using namespace std;
 
 typedef std::pair<int, int> coor2d;
-inline constexpr int rotation[3][3] = {
+inline constexpr int g_rotation[3][3] = {
         { 225, 180, 135 },
         { 270,   0,  90 },
         { 315,   0,  45 },

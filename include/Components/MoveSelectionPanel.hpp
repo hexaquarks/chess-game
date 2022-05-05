@@ -8,13 +8,13 @@
 using namespace std;
 using namespace sf;
 
-inline constexpr int TOP_PANEL_HEIGHT = 50;
-inline constexpr int PANEL_WIDTH = 200;
-inline constexpr int VARIATION_HEIGHT = 50;
-inline constexpr int INNER_MARGIN = 15;
-inline const Color BLUE{ 102, 178 ,255 };
-inline const Color GRAY{ 211, 211, 211 };
-inline const Color LIGHT_WHITE{ 240, 248, 255 };
+inline constexpr int g_TOP_PANEL_HEIGHT = 50;
+inline constexpr int g_PANEL_WIDTH = 200;
+inline constexpr int g_VARIATION_HEIGHT = 50;
+inline constexpr int g_INNER_MARGIN = 15;
+inline const Color g_BLUE{ 102, 178 ,255 };
+inline const Color g_GRAY{ 211, 211, 211 };
+inline const Color g_LIGHT_WHITE{ 240, 248, 255 };
 
 class MoveSelectionPanel {
     RenderWindow& m_window;
