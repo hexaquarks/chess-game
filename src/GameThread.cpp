@@ -139,7 +139,7 @@ void GameThread::startGame() {
             if (event.type == Event::MouseButtonReleased) {
                 if (event.mouseButton.button == Mouse::Left) {
                     // Handle menu bar buttons
-                    [[unlikely]] if (mousePos.second < MENUBAR_HEIGHT)
+                    [[unlikely]] if (mousePos.second < g_MENUBAR_HEIGHT)
                         for (MenuButton& m: menuBar)
                             if (m.isClicked(mousePos))
                                 if(m.performClick(game, moveList) == 1) {
@@ -267,12 +267,12 @@ void GameThread::initializeMenuBar() {
 
 void GameThread::drawSidePanel(SidePanel& sidePanel_) {
     // Draw the main panels
-    RectangleShape mainPanel(Vector2f(PANEL_SIZE - 2*BORDER_SIZE, MAIN_PANEL_HEIGHT - 2*BORDER_SIZE));
-    RectangleShape southPanel(Vector2f(PANEL_SIZE - 2*BORDER_SIZE, SOUTH_PANEL_HEIGHT));
+    RectangleShape mainPanel(Vector2f(g_PANEL_SIZE - 2*g_BORDER_SIZE, g_MAIN_PANEL_HEIGHT - 2*g_BORDER_SIZE));
+    RectangleShape southPanel(Vector2f(g_PANEL_SIZE - 2*g_BORDER_SIZE, g_SOUTH_PANEL_HEIGHT));
     mainPanel.setFillColor(Color(50,50,50)); // cjarcoal
     southPanel.setFillColor(Color(50,50,50));
-    mainPanel.setPosition(WINDOW_SIZE+BORDER_SIZE, MENUBAR_HEIGHT);
-    southPanel.setPosition(WINDOW_SIZE+BORDER_SIZE, MENUBAR_HEIGHT+MAIN_PANEL_HEIGHT-BORDER_SIZE);
+    mainPanel.setPosition(g_WINDOW_SIZE + g_BORDER_SIZE, g_MENUBAR_HEIGHT);
+    southPanel.setPosition(g_WINDOW_SIZE + g_BORDER_SIZE, g_MENUBAR_HEIGHT + g_MAIN_PANEL_HEIGHT - g_BORDER_SIZE);
     
     window.draw(mainPanel);
     window.draw(southPanel);
@@ -284,9 +284,9 @@ void GameThread::drawSidePanel(SidePanel& sidePanel_) {
 }
 
 void GameThread::drawGrayCover() {
-    RectangleShape cover{ Vector2f(WINDOW_SIZE + PANEL_SIZE, WINDOW_SIZE) };
+    RectangleShape cover{ Vector2f(g_WINDOW_SIZE + g_PANEL_SIZE, g_WINDOW_SIZE) };
     cover.setFillColor(Color(220,220,220,75));
-    cover.setPosition(0, MENUBAR_HEIGHT);
+    cover.setPosition(0, g_MENUBAR_HEIGHT);
     window.draw(cover);
 }
 
@@ -350,7 +350,7 @@ void GameThread::drawCaptureCircles(Piece* pSelectedPiece_) {
         shared_ptr<Texture> t = RessourceManager::getTexture(isEmpty? "circle.png": "empty_circle.png");
         if (t == nullptr) return;
         Sprite circle(*t);
-        if (isEmpty) circle.setScale(SPRITE_SCALE, SPRITE_SCALE);
+        if (isEmpty) circle.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
         if (isFlipped) {i = 7-i; j = 7-j;}
         circle.setPosition(getWindowXPos(i), getWindowYPos(j));
         window.draw(circle);
@@ -365,7 +365,7 @@ void GameThread::drawPieces() {
             shared_ptr<Texture> t = RessourceManager::getTexture(piece);
             if (t == nullptr) return;
             Sprite s(*t);
-            s.setScale(SPRITE_SCALE, SPRITE_SCALE);
+            s.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
             s.setPosition(getWindowXPos(isFlipped? (7-i): i), getWindowYPos(isFlipped? (7-j): j));
             window.draw(s);
         }
@@ -379,14 +379,14 @@ void GameThread::drawDraggedPiece(Piece* pSelectedPiece_, coor2d& mousePos_) {
 
     if (t == nullptr || tBefore == nullptr) return;
     Sprite s(*t), sBefore(*tBefore); 
-    s.setScale(SPRITE_SCALE, SPRITE_SCALE);
-    sBefore.setScale(SPRITE_SCALE, SPRITE_SCALE);
+    s.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
+    sBefore.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
     s.setPosition(mousePos_.first, mousePos_.second);
     sBefore.setPosition(
-        (isFlipped? 7-pSelectedPiece_->getY(): pSelectedPiece_->getY()) * CELL_SIZE, 
-        (isFlipped? 7-pSelectedPiece_->getX(): pSelectedPiece_->getX()) * CELL_SIZE + MENUBAR_HEIGHT
+        (isFlipped? 7-pSelectedPiece_->getY(): pSelectedPiece_->getY()) * g_CELL_SIZE, 
+        (isFlipped? 7-pSelectedPiece_->getX(): pSelectedPiece_->getX()) * g_CELL_SIZE + g_MENUBAR_HEIGHT
     );
-    s.setOrigin(SPRITE_SIZE/2, SPRITE_SIZE/2);
+    s.setOrigin(g_SPRITE_SIZE/2, g_SPRITE_SIZE/2);
     sBefore.setColor({ 255, 255, 255, 100 });
 
     window.draw(sBefore);
@@ -406,7 +406,7 @@ void GameThread::drawAllArrows(vector<Arrow>& arrows_, Arrow& currArrow_) {
         coor2d arrowOrigin = arrow.getFormattedOrigin();
 
         if(arrow.isLArrow()) {
-            s.setOrigin(CELL_SIZE/2 , s.getLocalBounds().height - CELL_SIZE/2);
+            s.setOrigin(g_CELL_SIZE/2 , s.getLocalBounds().height - g_CELL_SIZE/2);
             s.setPosition(arrowOrigin.first, arrowOrigin.second);
         }else {
             s.setOrigin(0, s.getLocalBounds().height / 2);
@@ -424,7 +424,7 @@ void GameThread::drawKingCheckCircle() {
     shader.setUniform("windowHeight", static_cast<float>(window.getSize().y)); 
 
     King* king = game.getKing();
-    CircleShape c(CELL_SIZE/2);
+    CircleShape c(g_CELL_SIZE/2);
     
     c.setFillColor(Color::Transparent);
     int x = isFlipped? 7-king->getY(): king->getY();
@@ -449,7 +449,7 @@ void GameThread::drawEndResults() {
         checkmate.setScale(0.5, 0.5);
         checkmate.setOrigin(40, 40);
         checkmate.setPosition(
-            getWindowXPos(isFlipped? 7-losing->getY(): losing->getY())+CELL_SIZE,
+            getWindowXPos(isFlipped? 7-losing->getY(): losing->getY())+g_CELL_SIZE,
             getWindowYPos(isFlipped? 7-losing->getX(): losing->getX())
         );
         window.draw(checkmate);
@@ -462,7 +462,7 @@ void GameThread::drawEndResults() {
 void GameThread::setTransitioningPiece(Piece* p_, int xTarget_, int yTarget_, PieceTransition& trans_) {
     trans_.setTransitioningPiece(p_);
     coor2d destination = { xTarget_, yTarget_ };
-    coor2d currPos = { p_->getY() * CELL_SIZE, p_->getX() * CELL_SIZE };
+    coor2d currPos = { p_->getY() * g_CELL_SIZE, p_->getX() * g_CELL_SIZE };
     trans_.setDestination(destination);
     trans_.setCurrPos(currPos);
     trans_.setIsTransitioning(true);
@@ -474,8 +474,8 @@ void GameThread::drawTransitioningPiece(PieceTransition& piece_) {
     shared_ptr<Texture> t = RessourceManager::getTexture(piece_.getPiece());   
     if (t == nullptr) return;
     Sprite s(*t);
-    s.setScale(SPRITE_SCALE, SPRITE_SCALE);
-    s.setPosition(piece_.getCurrPos().first, piece_.getCurrPos().second + MENUBAR_HEIGHT);
+    s.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
+    s.setPosition(piece_.getCurrPos().first, piece_.getCurrPos().second + g_MENUBAR_HEIGHT);
     window.draw(s);
     piece_.setHasArrived(piece_.pieceIsInBounds(), game);
 }

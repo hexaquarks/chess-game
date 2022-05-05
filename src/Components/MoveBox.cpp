@@ -16,20 +16,20 @@ void MoveBox::handleText() {
 
 void MoveBox::handleRectangle() {
     Vector2f recSize(m_textBounds.width, m_textsf.getCharacterSize());
-    m_rectangle.setPosition(WINDOW_SIZE + m_position.first, MENUBAR_HEIGHT + m_position.second);
+    m_rectangle.setPosition(g_WINDOW_SIZE + m_position.first, g_MENUBAR_HEIGHT + m_position.second);
     m_rectangle.setSize(recSize);
     m_rectangle.setFillColor({ 50, 50, 50 });
 
-    float positionalShift = ((BOX_HORIZONTAL_SCALE - 1.f)*m_rectangle.getLocalBounds().width)/2.f;
+    float positionalShift = ((g_BOX_HORIZONTAL_SCALE - 1.f)*m_rectangle.getLocalBounds().width)/2.f;
 
-    m_rectangle.setScale(BOX_HORIZONTAL_SCALE, BOX_VERTICAL_SCALE);
-    m_textsf.setPosition(WINDOW_SIZE + m_position.first + positionalShift,
-                         MENUBAR_HEIGHT + m_position.second);
+    m_rectangle.setScale(g_BOX_HORIZONTAL_SCALE, g_BOX_VERTICAL_SCALE);
+    m_textsf.setPosition(g_WINDOW_SIZE + m_position.first + positionalShift,
+                         g_MENUBAR_HEIGHT + m_position.second);
 }
 
 bool MoveBox::isHowered(coor2d& mousePos_) const {
-    int x = mousePos_.first - WINDOW_SIZE;
-    int y = mousePos_.second - MENUBAR_HEIGHT;
+    int x = mousePos_.first - g_WINDOW_SIZE;
+    int y = mousePos_.second - g_MENUBAR_HEIGHT;
 
     return ((x > getPosition().first && x <= getPosition().first +  getScaledWidth()) 
          && (y > getPosition().second && y <= getPosition().second +  getScaledHeight()));

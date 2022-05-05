@@ -13,28 +13,28 @@ Arrow::Arrow(coor2d origin_, coor2d destination_, int rotation_, string filename
 void Arrow::setOrigin(coor2d& origin_) {
     // need to format the origin to be at the center of the tile
     m_origin.first = origin_.first;
-    m_origin.second = origin_.second - MENUBAR_HEIGHT;
+    m_origin.second = origin_.second - g_MENUBAR_HEIGHT;
 }
 
 coor2d Arrow::getFormattedOrigin() {
-    int x = (m_origin.first / CELL_SIZE) * CELL_SIZE + CELL_SIZE/2;
-    int y = (m_origin.second / CELL_SIZE) * CELL_SIZE + CELL_SIZE/2 + MENUBAR_HEIGHT;
+    int x = (m_origin.first / g_CELL_SIZE) * g_CELL_SIZE + g_CELL_SIZE/2;
+    int y = (m_origin.second / g_CELL_SIZE) * g_CELL_SIZE + g_CELL_SIZE/2 + g_MENUBAR_HEIGHT;
     return {x,y};
 }
 
 void Arrow::setDestination(coor2d& destination_) {
     m_destination.first = destination_.first;
-    m_destination.second =  destination_.second - MENUBAR_HEIGHT;
+    m_destination.second =  destination_.second - g_MENUBAR_HEIGHT;
 
     // tile coordinates 
-    m_dx = (m_destination.first/(int)CELL_SIZE - m_origin.first/(int)CELL_SIZE);
-    m_dy = (m_destination.second/(int)CELL_SIZE - m_origin.second/(int)CELL_SIZE);
+    m_dx = (m_destination.first/(int)g_CELL_SIZE - m_origin.first/(int)g_CELL_SIZE);
+    m_dy = (m_destination.second/(int)g_CELL_SIZE - m_origin.second/(int)g_CELL_SIZE);
 }
 
 void Arrow::updateArrow() {
     // check if arrow is feasible 
     if ((m_dx == 0 && m_dy == 0)) return;
-    if (m_dx != 0 || m_dy != 0) m_rotation = rotation[1 + sign(m_dx)][1 + sign(m_dy)];
+    if (m_dx != 0 || m_dy != 0) m_rotation = g_rotation[1 + sign(m_dx)][1 + sign(m_dy)];
     
     int size = std::max(abs(m_dx), abs(m_dy));
     if (size == 0) return; // do nothing, arrow too short
@@ -51,8 +51,8 @@ void Arrow::updateArrow() {
 }
 
 bool Arrow::checkOutOfBounds() {
-    return m_destination.first < 0 || m_destination.first > WINDOW_SIZE ||
-           m_destination.second < 0 || m_destination.second > WINDOW_SIZE;
+    return m_destination.first < 0 || m_destination.first > g_WINDOW_SIZE ||
+           m_destination.second < 0 || m_destination.second > g_WINDOW_SIZE;
 }
 
 void Arrow::checkKnightSquares() {

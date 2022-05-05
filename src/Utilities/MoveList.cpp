@@ -152,7 +152,7 @@ void MoveList::applyMove(Move& move_, bool addToList_, bool enableTransition_, v
 
             // enable piece visual transition
             GameThread::setTransitioningPiece(pSelectedPiece,
-                x*CELL_SIZE, y*CELL_SIZE, getTransitioningPiece()
+                x*g_CELL_SIZE, y*g_CELL_SIZE, getTransitioningPiece()
             ); 
         } else {
             game.setBoardTile(x, y, pSelectedPiece);
@@ -208,8 +208,8 @@ void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_) {
 
         // Enable transition movement
         GameThread::setTransitioningPiece(
-            m.getSelectedPiece(), m.getInit().first * CELL_SIZE, 
-            m.getInit().second * CELL_SIZE, getTransitioningPiece()
+            m.getSelectedPiece(), m.getInit().first * g_CELL_SIZE, 
+            m.getInit().second * g_CELL_SIZE, getTransitioningPiece()
         );
     } else {
         game.setBoardTile(m.getInit().first, m.getInit().second, m.getSelectedPiece());

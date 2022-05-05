@@ -10,25 +10,25 @@ void MoveSelectionPanel::handleTitleText() {
 }
 
 void MoveSelectionPanel::handlePanelRectangle() {
-    m_height = TOP_PANEL_HEIGHT + (m_numberOfVariations * VARIATION_HEIGHT) + (2 * INNER_MARGIN);
+    m_height = g_TOP_PANEL_HEIGHT + (m_numberOfVariations * g_VARIATION_HEIGHT) + (2 * g_INNER_MARGIN);
 
     // draw all the panel
-    m_panel.setSize(Vector2f(PANEL_WIDTH, m_height));
-    m_panel.setFillColor(GRAY); 
-    m_panel.setPosition(WINDOW_SIZE + PANEL_SIZE / 3, PANEL_SIZE / 3);
+    m_panel.setSize(Vector2f(g_PANEL_WIDTH, m_height));
+    m_panel.setFillColor(g_GRAY); 
+    m_panel.setPosition(g_WINDOW_SIZE + g_PANEL_SIZE / 3, g_PANEL_SIZE / 3);
 }
 
 void MoveSelectionPanel::handleSubPanels() {
     // draw top left rectangle and title text
-    m_topRect.setSize(Vector2f(PANEL_WIDTH,TOP_PANEL_HEIGHT));
-    m_topRect.setFillColor(LIGHT_WHITE);
+    m_topRect.setSize(Vector2f(g_PANEL_WIDTH, g_TOP_PANEL_HEIGHT));
+    m_topRect.setFillColor(g_LIGHT_WHITE);
     m_topRect.setPosition(m_panel.getPosition());
 
     // draw bottom rectangle for the set of variation (buttons)
-    const int h = m_height - (2 * INNER_MARGIN) - TOP_PANEL_HEIGHT;
-    Vector2f panelPos{ INNER_MARGIN, TOP_PANEL_HEIGHT + INNER_MARGIN };
-    m_variationsPanel.setSize(Vector2f(PANEL_WIDTH - (2 * INNER_MARGIN), h));
-    m_variationsPanel.setFillColor(LIGHT_WHITE);
+    const int h = m_height - (2 * g_INNER_MARGIN) - g_TOP_PANEL_HEIGHT;
+    Vector2f panelPos{ g_INNER_MARGIN, g_TOP_PANEL_HEIGHT + g_INNER_MARGIN };
+    m_variationsPanel.setSize(Vector2f(g_PANEL_WIDTH - (2 * g_INNER_MARGIN), h));
+    m_variationsPanel.setFillColor(g_LIGHT_WHITE);
     m_variationsPanel.setPosition(m_panel.getPosition() + panelPos);
     m_variationsPanel.setOutlineColor(Color::Black);
     m_variationsPanel.setOutlineThickness(2.f);
@@ -38,9 +38,9 @@ void MoveSelectionPanel::handleVariations(vector<std::string>& variations_) {
     int counter = 0;
     for (auto& text : variations_) {
         // Draw the rectangle container for the variation text
-        RectangleShape variationRect{Vector2f(PANEL_WIDTH - 2 * INNER_MARGIN, VARIATION_HEIGHT)};
-        Vector2f newPos{ 0, float(counter) * VARIATION_HEIGHT };
-        variationRect.setFillColor((counter == m_selectionIndex)? BLUE: LIGHT_WHITE);
+        RectangleShape variationRect{Vector2f(g_PANEL_WIDTH - 2 * g_INNER_MARGIN, g_VARIATION_HEIGHT)};
+        Vector2f newPos{ 0, float(counter) * g_VARIATION_HEIGHT };
+        variationRect.setFillColor((counter == m_selectionIndex)? g_BLUE: g_LIGHT_WHITE);
         variationRect.setPosition(m_variationsPanel.getPosition() + newPos);
         variationRect.setOutlineColor(Color::Black);
         variationRect.setOutlineThickness(2.f);
@@ -103,24 +103,24 @@ bool MoveSelectionPanel::isHowered(coor2d& mousePos_) const {
 
 void MoveSelectionPanel::goToNextVariation() {
     // set the blue variation back to normal color
-    m_variationRectangles.at(m_selectionIndex).setFillColor(LIGHT_WHITE);
+    m_variationRectangles.at(m_selectionIndex).setFillColor(g_LIGHT_WHITE);
 
     // increment the selected variation
     if (m_selectionIndex != m_numberOfVariations-1) ++m_selectionIndex;
     
     // Set the new variation to selected color
-    m_variationRectangles.at(m_selectionIndex).setFillColor(BLUE);
+    m_variationRectangles.at(m_selectionIndex).setFillColor(g_BLUE);
 }
 
 void MoveSelectionPanel::goToPreviousVariation() {
     // set the blue variation back to normal color
-    m_variationRectangles.at(m_selectionIndex).setFillColor(LIGHT_WHITE);
+    m_variationRectangles.at(m_selectionIndex).setFillColor(g_LIGHT_WHITE);
     
     // decrement the selected variation
     if (m_selectionIndex != 0) --m_selectionIndex;
     
     // Set the new variation to selected color
-    m_variationRectangles.at(m_selectionIndex).setFillColor(BLUE);
+    m_variationRectangles.at(m_selectionIndex).setFillColor(g_BLUE);
 }
 
 void MoveSelectionPanel::reset() {

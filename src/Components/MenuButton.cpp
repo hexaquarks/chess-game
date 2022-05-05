@@ -16,24 +16,24 @@ MenuButton::MenuButton(uint8_t index_, const std::string& name_, bool isRotatabl
 }
 
 void MenuButton::handleRectangle(uint8_t i_) {
-    m_rectangle.setPosition(BUTTON_POS*i_, 0);
-    m_rectangle.setSize({ BUTTON_POS, MENUBAR_HEIGHT });
+    m_rectangle.setPosition(g_BUTTON_POS*i_, 0);
+    m_rectangle.setSize({ g_BUTTON_POS, g_MENUBAR_HEIGHT });
     m_rectangle.setFillColor({ 23,23,23 });
     m_rectangle.setOutlineThickness(2.f);
     m_rectangle.setOutlineColor({ 239, 242, 249 });
 }
 
 void MenuButton::handleSprite(uint8_t i_) {
-    m_sprite.setOrigin(BUTTON_SIZE/2, BUTTON_SIZE/2);
-    m_sprite.setPosition(BUTTON_POS*i_ + 20, MENUBAR_HEIGHT/2);
-    m_sprite.setScale(SPRITE_SCALE, SPRITE_SCALE);
+    m_sprite.setOrigin(g_BUTTON_SIZE/2, g_BUTTON_SIZE/2);
+    m_sprite.setPosition(g_BUTTON_POS*i_ + 20, g_MENUBAR_HEIGHT/2);
+    m_sprite.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
 }
 
 void MenuButton::handleText(uint8_t i) {
     m_text.setStyle(Text::Bold);
     m_text.setFillColor(Color(240, 248, 255));
-    m_text.setOrigin(BUTTON_SIZE/2 - BUTTON_POS/3, BUTTON_SIZE/1.75);
-    m_text.setPosition(BUTTON_POS*i + BUTTON_POS/3, MENUBAR_HEIGHT);
+    m_text.setOrigin(g_BUTTON_SIZE/2 - g_BUTTON_POS/3, g_BUTTON_SIZE/1.75);
+    m_text.setPosition(g_BUTTON_POS*i + g_BUTTON_POS/3, g_MENUBAR_HEIGHT);
 }
 
 void MenuButton::rotateIcon() {

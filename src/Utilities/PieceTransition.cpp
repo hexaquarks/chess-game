@@ -6,8 +6,8 @@ void PieceTransition::setIncrement() {
     if (m_piece == nullptr) return; 
 
     // piece should arrive at destination in one second
-    m_increment.first = (m_destination.first - m_currPos.first) / (FPS / 6);
-    m_increment.second = (m_destination.second - m_currPos.second) / (FPS / 6);
+    m_increment.first = (m_destination.first - m_currPos.first) / (g_FPS / 6);
+    m_increment.second = (m_destination.second - m_currPos.second) / (g_FPS / 6);
 
     // divide by 6 so the  increment is in base 10 , that is 60 / 10
     // avoiding any piece to jump a square in a game tick
@@ -38,7 +38,7 @@ void PieceTransition::setHasArrived(bool b_, Board& board_) {
         m_xArrived = false;
         m_yArrived = false;
         m_increment = { 0, 0 };
-        board_.setBoardTile(m_currPos.first / CELL_SIZE , m_currPos.second / CELL_SIZE, m_piece);
+        board_.setBoardTile(m_currPos.first / g_CELL_SIZE , m_currPos.second / g_CELL_SIZE, m_piece);
         //  m_piece = nullptr;
     }
 }
