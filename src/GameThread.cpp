@@ -320,7 +320,7 @@ void GameThread::initializeBoard() {
     }
 }
 
-void GameThread::highlightHoveredSquare(Piece* pSelectedPiece_, coor2d& mousePos_) {
+void GameThread::highlightHoveredSquare(const Piece* pSelectedPiece_, const coor2d& mousePos_) {
     const Color colours[2] = { { 173, 176, 134 }, { 100, 111, 64 } };
 
     for (Move& move: possibleMoves) {
@@ -340,14 +340,15 @@ void GameThread::highlightHoveredSquare(Piece* pSelectedPiece_, coor2d& mousePos
     }
 }
 
-void GameThread::drawCaptureCircles(Piece* pSelectedPiece_) {
+void GameThread::drawCaptureCircles(const Piece* pSelectedPiece_) {
     for (Move& move: possibleMoves) {
         int i = move.getTarget().second;
         int j = move.getTarget().first;
 
         if (move.getSelectedPiece() != pSelectedPiece_) continue;
         bool isEmpty = game.getBoardTile(i, j) == nullptr;
-        shared_ptr<Texture> t = RessourceManager::getTexture(isEmpty? "circle.png": "empty_circle.png");
+        const shared_ptr<Texture> t = RessourceManager::getTexture(isEmpty? "circle.png": "empty_circle.png");
+        
         if (t == nullptr) return;
         Sprite circle(*t);
         if (isEmpty) circle.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
@@ -372,7 +373,7 @@ void GameThread::drawPieces() {
     }
 }
 
-void GameThread::drawDraggedPiece(Piece* pSelectedPiece_, coor2d& mousePos_) {
+void GameThread::drawDraggedPiece(const Piece* pSelectedPiece_, const coor2d& mousePos_) {
     if (pSelectedPiece_ == nullptr) return; // Safety check
     shared_ptr<Texture> t = RessourceManager::getTexture(pSelectedPiece_);
     shared_ptr<Texture> tBefore = RessourceManager::getTexture(pSelectedPiece_);
@@ -393,7 +394,7 @@ void GameThread::drawDraggedPiece(Piece* pSelectedPiece_, coor2d& mousePos_) {
     window.draw(s);
 }
 
-void GameThread::drawAllArrows(vector<Arrow>& arrows_, Arrow& currArrow_) {
+void GameThread::drawAllArrows(vector<Arrow>& arrows_, const Arrow& currArrow_) {
     if (arrows_.empty()) return;
     arrows_.emplace_back(currArrow_);
 
@@ -403,7 +404,7 @@ void GameThread::drawAllArrows(vector<Arrow>& arrows_, Arrow& currArrow_) {
         shared_ptr<Texture> t = RessourceManager::getTexture(arrow.getFilename());
         if (t == nullptr) return;
         Sprite s(*t);
-        coor2d arrowOrigin = arrow.getFormattedOrigin();
+        const coor2d arrowOrigin = arrow.getFormattedOrigin();
 
         if(arrow.isLArrow()) {
             s.setOrigin(g_CELL_SIZE/2 , s.getLocalBounds().height - g_CELL_SIZE/2);
@@ -459,7 +460,7 @@ void GameThread::drawEndResults() {
     // Stalemate
 }
 
-void GameThread::setTransitioningPiece(Piece* p_, int xTarget_, int yTarget_, PieceTransition& trans_) {
+void GameThread::setTransitioningPiece(Piece* p_, const int xTarget_, const int yTarget_, PieceTransition& trans_) {
     trans_.setTransitioningPiece(p_);
     coor2d destination = { xTarget_, yTarget_ };
     coor2d currPos = { p_->getY() * g_CELL_SIZE, p_->getX() * g_CELL_SIZE };
@@ -480,7 +481,7 @@ void GameThread::drawTransitioningPiece(PieceTransition& piece_) {
     piece_.setHasArrived(piece_.pieceIsInBounds(), game);
 }
 
-void GameThread::handleKeyPressed(Event& event_, MoveSelectionPanel& moveSelectionPanel_,
+void GameThread::handleKeyPressed(const Event& event_, MoveSelectionPanel& moveSelectionPanel_,
     vector<Arrow>& arrowList_, bool& showMoveSelectionPanel_) {
 
     switch (event_.key.code) {

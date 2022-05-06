@@ -44,17 +44,17 @@ class GameThread {
     inline static MoveTree moveTree;
     inline static MoveTree::Iterator treeIterator = moveTree.begin();
 
-    static void handleKeyPressed(Event&, MoveSelectionPanel&, vector<Arrow>&, bool&);
+    static void handleKeyPressed(const Event&, MoveSelectionPanel&, vector<Arrow>&, bool&);
     static void initializeBoard();
     static void initializeMenuBar();
     static void drawSidePanel(SidePanel&);
-    static void drawCaptureCircles(Piece*);
-    static void highlightHoveredSquare(Piece*, coor2d&);
+    static void drawCaptureCircles(const Piece*);
+    static void highlightHoveredSquare(const Piece*, const coor2d&);
     static void drawMenuBar();
     static void drawPieces();
-    static void drawDraggedPiece(Piece*, coor2d&);
+    static void drawDraggedPiece(const Piece*, const coor2d&);
     static void drawTransitioningPiece(PieceTransition&);
-    static void drawAllArrows(vector<Arrow>&, Arrow&);
+    static void drawAllArrows(vector<Arrow>&, const Arrow&);
     static void drawEndResults();
     static void drawKingCheckCircle();
     static void drawMoveSelectionPanel(int);
@@ -66,15 +66,15 @@ class GameThread {
     GameThread() = delete; // Delete constructor
     static void startGame();
 
-    static int getTileXPos(coor2d& pos_) { return pos_.first / g_CELL_SIZE; }
-    static int getTileYPos(coor2d& pos_) {
+    static int getTileXPos(const coor2d& pos_) { return pos_.first / g_CELL_SIZE; }
+    static int getTileYPos(const coor2d& pos_) {
         if (pos_.second < g_MENUBAR_HEIGHT) return -1;
         return (pos_.second - g_MENUBAR_HEIGHT) / g_CELL_SIZE;
     }
     static int getWindowXPos(int i) { return i * g_CELL_SIZE; }
     static int getWindowYPos(int j) { return j * g_CELL_SIZE + g_MENUBAR_HEIGHT; }
 
-    static void setTransitioningPiece(Piece*, int, int, PieceTransition&);
+    static void setTransitioningPiece(Piece*, const int, const int, PieceTransition&);
 
     static void flipBoard() { isFlipped = !isFlipped; }
     static bool boardFlipped() { return isFlipped; }

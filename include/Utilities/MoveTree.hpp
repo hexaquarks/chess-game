@@ -23,7 +23,7 @@ class MoveTree {
         MoveTreeNode* operator->() { return m_ptr; }
         MoveTreeNode* get() { return m_ptr; }
 
-        void goToChild(int i) { m_ptr = m_ptr->m_children.at(i); }
+        void goToChild(const int i) { m_ptr = m_ptr->m_children.at(i); }
 
         void addChild(MoveTreeNode* child) {
             if (m_ptr == nullptr) {
@@ -93,7 +93,7 @@ class MoveTree {
     Iterator end()   { return Iterator(nullptr); } 
 
     void insertNode(Move&, MoveTree::Iterator&);
-    void goToNextNode(int, MoveTree::Iterator&);
+    void goToNextNode(const int, MoveTree::Iterator&);
     void goToPreviousNode(MoveTree::Iterator&);
     void printTree();
     void printTreeRec(MoveTreeNode*, vector<bool>, int a = 0, bool b = false);

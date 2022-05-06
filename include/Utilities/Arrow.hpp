@@ -11,8 +11,8 @@ inline constexpr int g_rotation[3][3] = {
         { 270,   0,  90 },
         { 315,   0,  45 },
 };
-inline vector<coor2d> urCoords = { { 1,-2 }, { 2,1 }, { -1,2 }, { -2,-1 } };
-inline vector<coor2d> ruCoords = { { 2,-1 }, { 1,2 }, { -2,1 }, { -1,-2 } };
+const inline vector<coor2d> urCoords = { { 1,-2 }, { 2,1 }, { -1,2 }, { -2,-1 } };
+const inline vector<coor2d> ruCoords = { { 2,-1 }, { 1,2 }, { -2,1 }, { -1,-2 } };
 
 class Arrow {
     coor2d m_origin; // origin absolute coordinate
@@ -29,19 +29,19 @@ class Arrow {
 
     string getFilename() { return m_filename; }
     coor2d getOrigin() { return m_origin; }
-    coor2d getFormattedOrigin();
+    coor2d getFormattedOrigin() const;
     coor2d getDestination() { return m_destination; }
     int getRotation() { return m_rotation; }
     
-    void setCoordinates(coor2d&,coor2d&);
-    void setDestination(coor2d&);
-    void setOrigin(coor2d&); 
+    void setCoordinates(const coor2d&,const coor2d&);
+    void setDestination(const coor2d&);
+    void setOrigin(const coor2d&); 
     void checkKnightSquares();
-    bool checkOutOfBounds();
+    bool checkOutOfBounds() const;
     void updateArrow();
     void resetParameters();
-    bool removeArrow(vector<Arrow>&);
-    bool isDrawable();
-    bool compare(Arrow&);
+    bool removeArrow(vector<Arrow>&) const;
+    bool isDrawable() const;
+    bool compare(Arrow&) const;
     bool isLArrow() { return m_isLArrow; }
 };

@@ -10,19 +10,19 @@ template <typename T> int sign(T val_) {
 Arrow::Arrow(coor2d origin_, coor2d destination_, int rotation_, string filename_)
 : m_origin(origin_), m_destination(destination_), m_rotation(rotation_), m_filename(filename_) {};
 
-void Arrow::setOrigin(coor2d& origin_) {
+void Arrow::setOrigin(const coor2d& origin_) {
     // need to format the origin to be at the center of the tile
     m_origin.first = origin_.first;
     m_origin.second = origin_.second - g_MENUBAR_HEIGHT;
 }
 
-coor2d Arrow::getFormattedOrigin() {
+coor2d Arrow::getFormattedOrigin() const {
     int x = (m_origin.first / g_CELL_SIZE) * g_CELL_SIZE + g_CELL_SIZE/2;
     int y = (m_origin.second / g_CELL_SIZE) * g_CELL_SIZE + g_CELL_SIZE/2 + g_MENUBAR_HEIGHT;
     return {x,y};
 }
 
-void Arrow::setDestination(coor2d& destination_) {
+void Arrow::setDestination(const coor2d& destination_) {
     m_destination.first = destination_.first;
     m_destination.second =  destination_.second - g_MENUBAR_HEIGHT;
 
@@ -50,7 +50,7 @@ void Arrow::updateArrow() {
     }
 }
 
-bool Arrow::checkOutOfBounds() {
+bool Arrow::checkOutOfBounds() const {
     return m_destination.first < 0 || m_destination.first > g_WINDOW_SIZE ||
            m_destination.second < 0 || m_destination.second > g_WINDOW_SIZE;
 }
@@ -81,11 +81,11 @@ void Arrow::resetParameters() {
     m_dx = 0, m_dy = 0;
 }
 
-bool Arrow::isDrawable() {
+bool Arrow::isDrawable() const {
     return abs(m_dx) > 0 || abs(m_dy) > 0;
 }
 
-bool Arrow::removeArrow(vector<Arrow>& arrows_) {
+bool Arrow::removeArrow(vector<Arrow>& arrows_) const {
     vector<Arrow>::iterator it = arrows_.begin();
     bool removed = false;
 
@@ -96,7 +96,7 @@ bool Arrow::removeArrow(vector<Arrow>& arrows_) {
     return removed;
 }
 
-bool Arrow::compare(Arrow& arrow_){
+bool Arrow::compare(Arrow& arrow_) const {
     return arrow_.getFormattedOrigin() == getFormattedOrigin() &&
     arrow_.getFilename() == m_filename && arrow_.getRotation() == m_rotation;
 }

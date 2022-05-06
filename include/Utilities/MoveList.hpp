@@ -14,9 +14,9 @@ class MoveList {
     PieceTransition& m_transitioningPiece;
     Board& game;
 
-    void applyMove(Move&, bool, bool, vector<Arrow>&); // called inside GameThread ?
-    void applyMove(bool, vector<Arrow>&); 
-    void undoMove(bool, vector<Arrow>&);
+    void applyMove(Move&, const bool, const bool, vector<Arrow>&); // called inside GameThread ?
+    void applyMove(const bool, vector<Arrow>&); 
+    void undoMove(const bool, vector<Arrow>&);
 
     public:
     MoveList(Board&, PieceTransition&);

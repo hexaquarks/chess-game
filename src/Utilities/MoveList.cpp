@@ -32,7 +32,7 @@ void MoveList::highlightLastMove(RenderWindow& window_) const {
     window_.draw(squareAfter);
 }
 
-void MoveList::goToPreviousMove(bool enableTransition_, vector<Arrow>& arrowList_) {
+void MoveList::goToPreviousMove(const bool enableTransition_, vector<Arrow>& arrowList_) {
     if (hasMovesBefore()) {
         undoMove(enableTransition_, arrowList_);
         ++m_moveIterator; // Go to previous move
@@ -40,7 +40,7 @@ void MoveList::goToPreviousMove(bool enableTransition_, vector<Arrow>& arrowList
     }
 }
 
-void MoveList::goToNextMove(bool enableTransition_, vector<Arrow>& arrowList_) { 
+void MoveList::goToNextMove(const bool enableTransition_, vector<Arrow>& arrowList_) { 
     if (hasMovesAfter()) {
         --m_moveIterator; // Go to previous move
         applyMove(enableTransition_, arrowList_);
@@ -53,12 +53,12 @@ void MoveList::addMove(Move& move_, vector<Arrow>& arrowList_) {
     m_moveIterator = m_moves.begin();
 }
 
-void MoveList::applyMove(bool enableTransition_, vector<Arrow>& arrowList_) {
+void MoveList::applyMove(const bool enableTransition_, vector<Arrow>& arrowList_) {
     Move& m = *m_moveIterator;
     applyMove(m, false, enableTransition_, arrowList_);
 }
 
-void MoveList::applyMove(Move& move_, bool addToList_, bool enableTransition_, vector<Arrow>& arrowList_) {
+void MoveList::applyMove(Move& move_, const bool addToList_, const  bool enableTransition_, vector<Arrow>& arrowList_) {
     const int castleRow = (game.getTurn() == Team::WHITE)? 7: 0;
     Piece* pOldPiece = nullptr;
     Piece* pSelectedPiece = move_.getSelectedPiece();
@@ -160,7 +160,7 @@ void MoveList::applyMove(Move& move_, bool addToList_, bool enableTransition_, v
     }
 }
 
-void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_) {
+void MoveList::undoMove(const bool enableTransition_, vector<Arrow>& arrowList_) {
     Move& m = *m_moveIterator;
     Piece* pCaptured = m.getCapturedPiece();
     int x = m.getTarget().first;
