@@ -6,7 +6,7 @@ Rook::Rook(Team team_, int x_, int y_)
 {
 }
 
-vector<Move> Rook::calcPossibleMoves(shared_ptr<Piece> pBoard_[8][8]) const
+vector<Move> Rook::calcPossibleMoves(Board& board_) const
 {
-    return getHorizontalAndVerticalMovements(pBoard_);
+    return getHorizontalAndVerticalMovements(board_);
 }

@@ -210,15 +210,20 @@ void GameThread::startGame()
                         pMove->setMoveArrows(arrowList);
                         moveList.addMove(*pMove, arrowList);
                         // sidePanel.addMove(*move);
-                       
+
+                        game.switchTurn();
+                        possibleMoves = game.calculateAllMoves();
+                        if (game.kingIsChecked()) {
+                            pMove->setChecked();
+                            if (possibleMoves.empty()) pMove->setCheckmate();
+                        }
+
                         moveTree.insertNode(*pMove, treeIterator);
                         moveTree.printTree();
 
                         pLastMove = pSelectedPiece;
                         pLastMove->setLastMove(pSelectedMove->getMoveType());
                         Piece::setLastMovedPiece(pLastMove);
-                        game.switchTurn();
-                        possibleMoves = game.calculateAllMoves();
                         arrowList.clear();
                     }
 

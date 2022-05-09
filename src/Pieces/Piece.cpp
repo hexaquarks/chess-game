@@ -8,22 +8,24 @@ Piece::Piece(Team team_, int x_, int y_, PieceType type_, string pieceType_)
     m_filename = String(pieceType_ + getColorCode() + fileExt);
 }
 
-vector<Move> Piece::getHorizontalAndVerticalMovements(shared_ptr<Piece> pBoard_[8][8]) const
+vector<Move> Piece::getHorizontalAndVerticalMovements(Board& board_) const
 {
     vector<Move> moves;
     int xPos = getX();
     int yPos = getY();
+    shared_ptr<Piece> piece = board_.getBoardTile(yPos, xPos);
 
     // Vertical up movement check
     for (int i = xPos-1; i >= 0; --i)
     {
-        if (!pBoard_[i][yPos])
+        if (!board_.getBoardTile(yPos, i))
         {
-            moves.push_back(Move(make_pair(i, yPos), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::NORMAL));
+            moves.push_back(Move(make_pair(i, yPos), make_pair(xPos, yPos), piece, MoveType::NORMAL));
         }
-        else if (pBoard_[i][yPos]->getTeam() != getTeam())
+        else if (board_.getBoardTile(yPos, i)->getTeam() != getTeam())
         {
-            moves.push_back(Move(make_pair(i, yPos), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::CAPTURE, pBoard_[i][yPos]));
+            shared_ptr<Piece> p = board_.getBoardTile(yPos, i);
+            moves.push_back(Move(make_pair(i, yPos), make_pair(xPos, yPos), piece, MoveType::CAPTURE, p));
             break;
         }
         else
@@ -35,13 +37,14 @@ vector<Move> Piece::getHorizontalAndVerticalMovements(shared_ptr<Piece> pBoard_[
     // Vertical down movement check
     for (int i = xPos+1; i < 8; ++i)
     {
-        if (!pBoard_[i][yPos])
+        if (!board_.getBoardTile(yPos, i))
         {
-            moves.push_back(Move(make_pair(i, yPos), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::NORMAL));
+            moves.push_back(Move(make_pair(i, yPos), make_pair(xPos, yPos), piece, MoveType::NORMAL));
         }
-        else if (pBoard_[i][yPos]->getTeam() != getTeam())
+        else if (board_.getBoardTile(yPos, i)->getTeam() != getTeam())
         {
-            moves.push_back(Move(make_pair(i, yPos), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::CAPTURE, pBoard_[i][yPos]));
+            shared_ptr<Piece> p = board_.getBoardTile(yPos, i);
+            moves.push_back(Move(make_pair(i, yPos), make_pair(xPos, yPos), piece, MoveType::CAPTURE, p));
             break;
         }
         else
@@ -52,10 +55,11 @@ vector<Move> Piece::getHorizontalAndVerticalMovements(shared_ptr<Piece> pBoard_[
 
     // Horizontal left movement check
     for (int j = yPos-1; j >= 0; --j) {
-        if (!pBoard_[xPos][j]) {
-            moves.push_back(Move(make_pair(xPos, j), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::NORMAL));
-        } else if (pBoard_[xPos][j]->getTeam() != getTeam()) {
-            moves.push_back(Move(make_pair(xPos, j), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::CAPTURE, pBoard_[xPos][j]));
+        if (!board_.getBoardTile(j, xPos)) {
+            moves.push_back(Move(make_pair(xPos, j), make_pair(xPos, yPos), piece, MoveType::NORMAL));
+        } else if (board_.getBoardTile(j, xPos)->getTeam() != getTeam()) {
+            shared_ptr<Piece> p = board_.getBoardTile(j, xPos);
+            moves.push_back(Move(make_pair(xPos, j), make_pair(xPos, yPos), piece, MoveType::CAPTURE, p));
             break;
         } else {
             break;
@@ -64,10 +68,11 @@ vector<Move> Piece::getHorizontalAndVerticalMovements(shared_ptr<Piece> pBoard_[
 
     // Horizontal right movement check
     for (int j = yPos+1; j < 8; ++j) {
-        if (!pBoard_[xPos][j]) {
-            moves.push_back(Move(make_pair(xPos, j), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::NORMAL));
-        } else if (pBoard_[xPos][j]->getTeam() != getTeam()) {
-            moves.push_back(Move(make_pair(xPos, j), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::CAPTURE, pBoard_[xPos][j]));
+        if (!board_.getBoardTile(j, xPos)) {
+            moves.push_back(Move(make_pair(xPos, j), make_pair(xPos, yPos), piece, MoveType::NORMAL));
+        } else if (board_.getBoardTile(j, xPos)->getTeam() != getTeam()) {
+            shared_ptr<Piece> p = board_.getBoardTile(j, xPos);
+            moves.push_back(Move(make_pair(xPos, j), make_pair(xPos, yPos), piece, MoveType::CAPTURE, p));
             break;
         } else {
             break;
@@ -77,19 +82,21 @@ vector<Move> Piece::getHorizontalAndVerticalMovements(shared_ptr<Piece> pBoard_[
     return moves;
 }
 
-vector<Move> Piece::getDiagonalMovements(shared_ptr<Piece> pBoard_[8][8]) const {
+vector<Move> Piece::getDiagonalMovements(Board& board_) const {
     vector<Move> moves;
     int xPos = getX();
     int yPos = getY();
+    shared_ptr<Piece> piece = board_.getBoardTile(yPos, xPos);
 
     // Up left diagonal
     int i = xPos-1, j = yPos-1;
     while (i >= 0 && j >= 0) {
-        if (!pBoard_[i][j]) {
-            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::NORMAL));
+        shared_ptr<Piece> p = board_.getBoardTile(j, i);
+        if (!p) {
+            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), piece, MoveType::NORMAL));
             --i; --j;
-        } else if (pBoard_[i][j]->getTeam() != getTeam()) {
-            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::CAPTURE, pBoard_[i][j]));
+        } else if (p->getTeam() != getTeam()) {
+            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), piece, MoveType::CAPTURE, p));
             break;
         } else {
             break;
@@ -99,11 +106,12 @@ vector<Move> Piece::getDiagonalMovements(shared_ptr<Piece> pBoard_[8][8]) const 
     // Up right diagonal
     i = xPos-1; j = yPos+1;
     while (i >= 0 && j < 8) {
-        if (!pBoard_[i][j]) {
-            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::NORMAL));
+        shared_ptr<Piece> p = board_.getBoardTile(j, i);
+        if (!p) {
+            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), piece, MoveType::NORMAL));
             --i; ++j;
-        } else if (pBoard_[i][j]->getTeam() != getTeam()) {
-            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::CAPTURE, pBoard_[i][j]));
+        } else if (p->getTeam() != getTeam()) {
+            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), piece, MoveType::CAPTURE, p));
             break;
         } else {
             break;
@@ -113,11 +121,12 @@ vector<Move> Piece::getDiagonalMovements(shared_ptr<Piece> pBoard_[8][8]) const 
     // Down left diagonal
     i = xPos+1; j = yPos-1;
     while (i < 8 && j >= 0) {
-        if (!pBoard_[i][j]) {
-            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::NORMAL));
+        shared_ptr<Piece> p = board_.getBoardTile(j, i);
+        if (!p) {
+            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), piece, MoveType::NORMAL));
             ++i; --j;
-        } else if (pBoard_[i][j]->getTeam() != getTeam()) {
-            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::CAPTURE, pBoard_[i][j]));
+        } else if (p->getTeam() != getTeam()) {
+            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), piece, MoveType::CAPTURE, p));
             break;
         } else {
             break;
@@ -127,11 +136,12 @@ vector<Move> Piece::getDiagonalMovements(shared_ptr<Piece> pBoard_[8][8]) const 
     // Down right diagonal
     i = xPos+1; j = yPos+1;
     while (i < 8 && j < 8) {
-        if (!pBoard_[i][j]) {
-            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::NORMAL));
+        shared_ptr<Piece> p = board_.getBoardTile(j, i);
+        if (!p) {
+            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), piece, MoveType::NORMAL));
             ++i; ++j;
-        } else if (pBoard_[i][j]->getTeam() != getTeam()) {
-            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::CAPTURE, pBoard_[i][j]));
+        } else if (p->getTeam() != getTeam()) {
+            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), piece, MoveType::CAPTURE, p));
             break;
         } else {
             break;

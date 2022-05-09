@@ -5,5 +5,5 @@
 struct Knight: public Piece
 {
     Knight(Team, int, int); // Constructor
-    vector<Move> calcPossibleMoves(shared_ptr<Piece>[8][8]) const override;
+    vector<Move> calcPossibleMoves(Board&) const override;
 };

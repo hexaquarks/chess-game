@@ -1,13 +1,14 @@
 #pragma once
 #include <list>
+#include "memory"
 #include "../Pieces/Piece.hpp"
-#include "../Pieces/Pawn.hpp"
-#include "../Pieces/Rook.hpp"
-#include "../Pieces/Knight.hpp"
-#include "../Pieces/Bishop.hpp"
-#include "../Pieces/King.hpp"
-#include "../Pieces/Queen.hpp"
+using namespace std;
 
+enum class Team;
+
+class King;
+
+class Move;
 
 class Board
 {
@@ -24,20 +25,20 @@ class Board
     void removeIllegalMoves(vector<Move>&, shared_ptr<Piece>&);
 
     public:
-    Board(): m_turn(Team::WHITE) { reset(); } // Constructor
+    Board(); // Constructor
     void reset(); // Resets the board
 
     // Getters and setters
     shared_ptr<Piece> getBoardTile(int x, int y) const { return m_board[y][x]; }
-    shared_ptr<King> getKing() const { return (m_turn == Team::WHITE)? m_whiteKing: m_blackKing; }
+    shared_ptr<King> getKing() const;
     Team getTurn() const { return m_turn; }
     void setBoardTile(int, int, shared_ptr<Piece>&, bool record = true);
     void resetBoardTile(int, int, bool record_ = true);
-    void switchTurn() { m_turn = (m_turn == Team::WHITE)? Team::BLACK: Team::WHITE; }
+    void switchTurn();
 
     // Utility functions
-    vector<Move> possibleMovesFor(shared_ptr<Piece>& piece) { return piece->calcPossibleMoves(m_board); }
+    vector<Move> possibleMovesFor(shared_ptr<Piece>&);
     vector<Move> calculateAllMoves();
-    bool kingIsChecked() { return getKing()->isChecked(m_board); }
+    bool kingIsChecked();
     void addPiece(shared_ptr<Piece>&);
 };

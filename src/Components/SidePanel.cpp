@@ -30,7 +30,7 @@ pair<char,int> SidePanel::findLetterCoord(coor2d target_) const
     return make_pair(letter, 8-target_.second);
 }
 
-string SidePanel::parseMove(Move& move_, int moveNumber_, bool showNumber_, bool showDots_) const
+string SidePanel::parseMoveHelper(Move& move_, int moveNumber_, bool showNumber_, bool showDots_) const
 {
     string text = (showNumber_)
         ? to_string(moveNumber_) + "."
@@ -43,7 +43,7 @@ string SidePanel::parseMove(Move& move_, int moveNumber_, bool showNumber_, bool
 
     coor2d coord = move_.getTarget();
     pair<char, int> letterCoord = findLetterCoord(coord);
-    string letterCoordString = to_string(letterCoord.first) + to_string(letterCoord.second);
+    string letterCoordString = (1, letterCoord.first) + to_string(letterCoord.second);
 
     switch (move_.getSelectedPiece()->getType())
     {
@@ -58,9 +58,17 @@ string SidePanel::parseMove(Move& move_, int moveNumber_, bool showNumber_, bool
         case PieceType::BISHOP: text += "B"; break;
         case PieceType::ROOK: text += "R"; break;
         case PieceType::QUEEN: text += "Q"; break;
-        case PieceType::KING: text += "k"; break;
+        case PieceType::KING: text += "K"; break;
     }
     return text + string((moveType == MoveType::CAPTURE)? "x" : "") + letterCoordString;
+}
+
+string SidePanel::parseMove(Move& move_, int moveNumber_, bool showNumber_, bool showDots_) const
+{
+    string text = parseMoveHelper(move_, moveNumber_, showNumber_, showDots_);
+    if (move_.kingIsCheckmated()) return text + string("#");
+    if (move_.kingIsChecked()) return text + string("+");
+    return text;
 }
 
 void SidePanel::goToNextRow(int height_)

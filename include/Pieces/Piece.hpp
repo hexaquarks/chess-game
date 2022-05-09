@@ -12,6 +12,7 @@ enum class PieceType { PAWN, ROOK, KNIGHT, BISHOP, KING, QUEEN };
 typedef tuple<pair<int, int>, MoveType> moveType;
 typedef vector<moveType> moveTypes;
 
+class Board;
 
 // Represents a piece
 class Piece
@@ -45,15 +46,15 @@ class Piece
     int getY() const { return m_yPos; }
     bool hasMoved() const { return m_moved; }
     void setAsFirstMovement() { m_moved = false; }
-    vector<Move> getHorizontalAndVerticalMovements(shared_ptr<Piece>[8][8]) const;
-    vector<Move> getDiagonalMovements(shared_ptr<Piece>[8][8]) const;
+    vector<Move> getHorizontalAndVerticalMovements(Board&) const;
+    vector<Move> getDiagonalMovements(Board&) const;
 
     /* Setters */
     void setLastMove(MoveType newMove) { m_lastMove = newMove; }
     static void setLastMovedPiece(shared_ptr<Piece>& piece) { m_lastPiece = piece; }
 
     /* Utility functions */
-    virtual vector<Move> calcPossibleMoves(shared_ptr<Piece>[8][8]) const = 0; // Pure virtual function
+    virtual vector<Move> calcPossibleMoves(Board&) const = 0; // Pure virtual function
     void move(int x, int y, bool record = true)
     {
         if (record && (m_xPos != x || m_yPos != y)) m_moved = true;

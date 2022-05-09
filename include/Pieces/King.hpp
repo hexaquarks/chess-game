@@ -1,24 +1,25 @@
 #pragma once
 #include "Piece.hpp"
+#include "../../include/Components/Board.hpp"
 
 
 // Represents a king
 class King: public Piece
 {
-    vector<Move> possibleMovesNoCheck(shared_ptr<Piece>[8][8]) const;
-    bool isChecked(shared_ptr<Piece>[8][8], int, int) const;
-    bool canCastleKingSide(shared_ptr<Piece>[8][8]) const;
-    bool canCastleQueenSide(shared_ptr<Piece>[8][8]) const;
+    vector<Move> possibleMovesNoCheck(Board&) const;
+    bool canCastleKingSide(Board&) const;
+    bool canCastleQueenSide(Board&) const;
 
     public:
     King(Team, int, int); // Constructor
-    vector<Move> calcPossibleMoves(shared_ptr<Piece>[8][8]) const override;
-    bool isChecked(shared_ptr<Piece> board[8][8]) const { return isChecked(board, getX(), getY()); }
+    vector<Move> calcPossibleMoves(Board&) const override;
+    bool isChecked(Board& board_) const;
    
-    static void swapPieces(shared_ptr<Piece> board[8][8], int x, int y, int X, int Y)
+    static void swapPieces(Board& board_, int x, int y, int X, int Y)
     {
-        shared_ptr<Piece> first = board[x][y];
-        board[x][y] = board[X][Y];
-        board[X][Y] = first;
+        shared_ptr<Piece> first = board_.getBoardTile(y, x);
+        shared_ptr<Piece> second = board_.getBoardTile(Y, X);
+        board_.setBoardTile(y, x, second, false);
+        board_.setBoardTile(Y, X, first, false);
     }
 };

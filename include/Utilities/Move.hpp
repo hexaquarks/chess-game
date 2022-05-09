@@ -10,6 +10,8 @@ class Piece;
 
 enum class MoveType { NORMAL, CASTLE_KINGSIDE, CASTLE_QUEENSIDE, ENPASSANT, NEWPIECE, CAPTURE, INIT_SPECIAL };
 
+class Board;
+
 class Move
 {
     shared_ptr<Piece> m_selectedPiece; // Piece that is being selected
@@ -19,9 +21,11 @@ class Move
     coor2d m_init; // Initial square of the piece moved
     coor2d m_special; // En passant information
     vector<Arrow> m_arrows; // List of arrows drawn at that move
+    bool kingChecked = false;
+    bool kingMated = false;
 
     public:
-    Move(coor2d, coor2d, shared_ptr<Piece>&, MoveType, shared_ptr<Piece>& secondPiece);
+    Move(coor2d, coor2d, shared_ptr<Piece>&, MoveType, shared_ptr<Piece>&);
     Move(coor2d, coor2d, shared_ptr<Piece>&, MoveType);
     Move(Move&, shared_ptr<Piece>&, coor2d capturedPawn = make_pair(-1, -1)); // Constructor for CAPTURE, EN PASSANT
     vector<Arrow> getMoveArrows() { return m_arrows; }
@@ -31,6 +35,10 @@ class Move
     coor2d getTarget() const { return m_target; }
     coor2d getInit() const { return m_init; }
     coor2d getSpecial() const { return m_special; }
+    bool kingIsChecked() const { return kingChecked; }
+    bool kingIsCheckmated() const { return kingMated; }
+    void setChecked() { kingChecked = true; }
+    void setCheckmate() { kingMated = true; }
     void setTarget(coor2d& target) { m_target = target; }
     void setMoveType(MoveType moveType) { m_MoveType = moveType; }
     void setCapturedPiece(shared_ptr<Piece>& capturedPiece) { m_capturedPiece = capturedPiece; }

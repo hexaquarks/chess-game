@@ -6,5 +6,5 @@
 struct Bishop: public Piece
 {
     Bishop(Team, int, int); // Constructor
-    vector<Move> calcPossibleMoves(shared_ptr<Piece>[8][8]) const override;
+    vector<Move> calcPossibleMoves(Board& board_) const override;
 };

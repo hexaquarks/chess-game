@@ -1,6 +1,17 @@
 #include "../../include/Components/Board.hpp"
+#include "../../include/Pieces/Pawn.hpp"
+#include "../../include/Pieces/Rook.hpp"
+#include "../../include/Pieces/Knight.hpp"
+#include "../../include/Pieces/Bishop.hpp"
 #include "../../include/Pieces/King.hpp"
+#include "../../include/Pieces/Queen.hpp"
+#include "../../include/Pieces/Piece.hpp"
+#include "../../include/Utilities/Move.hpp"
 
+Board::Board(): m_turn(Team::WHITE)
+{
+    reset();
+}
 
 void Board::reset()
 {
@@ -48,10 +59,23 @@ void Board::reset()
     m_turn = Team::WHITE; // Reset the first move to be for white
 }
 
+vector<Move> Board::possibleMovesFor(shared_ptr<Piece>& piece) {
+    return piece->calcPossibleMoves(*this);
+}
+
+bool Board::kingIsChecked() {
+    return getKing()->isChecked(*this);
+}
+
 void Board::addPiece(shared_ptr<Piece>& pPiece_)
 {
     (pPiece_->getTeam() == Team::WHITE)? m_whitePieces.push_back(pPiece_)
                                      : m_blackPieces.push_back(pPiece_);
+}
+
+shared_ptr<King> Board::getKing() const
+{
+    return (m_turn == Team::WHITE)? m_whiteKing: m_blackKing;
 }
 
 void Board::setBoardTile(int x_, int y_, shared_ptr<Piece>& pPiece_, bool record_)
@@ -82,9 +106,7 @@ vector<Move> Board::calculateAllMoves()
         vector<Move> pieceMoves = possibleMovesFor(piece);
         removeIllegalMoves(pieceMoves, piece);
         for (auto& move: pieceMoves)
-        {
             moves.push_back(move);
-        }
     }
     return moves;
 }
@@ -113,4 +135,9 @@ void Board::removeIllegalMoves(vector<Move>& possibleMoves_, shared_ptr<Piece>& 
         setBoardTile(initialX, initialY, pSelectedPiece_, false);
         setBoardTile(x, y, temp, false);
     }
+}
+
+void Board::switchTurn()
+{
+    m_turn = (m_turn == Team::WHITE)? Team::BLACK: Team::WHITE;
 }

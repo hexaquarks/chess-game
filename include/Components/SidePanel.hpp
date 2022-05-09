@@ -29,6 +29,8 @@ class SidePanel
     int m_row = 0;
     bool& m_showMoveSelectionPanel;
 
+    string parseMoveHelper(Move&, int, bool, bool) const;
+
     public:
     SidePanel(RenderWindow&, MoveList&, MoveTree&, bool&);
 
