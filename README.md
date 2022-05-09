@@ -64,7 +64,7 @@ One can the compile the project from `[PATH]/chess_game/src/` by invoking `g++ -
          - [ ] Represent file structure [requires file system and pgn parser]
      - [ ] Fix sound buffer
      - [ ] Modularize further `GameThread.cpp`, and clean up code over all
-     - [ ] implement an *opening trainer*, similar to [puzzle rush](https://www.chess.com/puzzles/rush) and [puzzle storm]](https://lichess.org/storm) [end goal]
+     - [ ] implement an *opening trainer*, similar to [puzzle rush](https://www.chess.com/puzzles/rush) and [puzzle storm](https://lichess.org/storm) [end goal]
  - [ ] Utilities
      - [ ] Implement [Stockfish](https://github.com/official-stockfish/Stockfish) in the application
      - [ ] Implement [pgn](https://en.wikipedia.org/wiki/Portable_Game_Notation) file parser and reader
