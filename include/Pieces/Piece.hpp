@@ -43,6 +43,7 @@ class Piece {
     int getX() const { return m_xPos; }
     int getY() const { return m_yPos; }
     bool hasMoved() const { return m_moved; }
+    void setAsFirstMovement() { m_moved = false; }
     vector<Move> getHorizontalAndVerticalMovements(Piece*[8][8]) const;
     vector<Move> getDiagonalMovements(Piece*[8][8]) const;
 

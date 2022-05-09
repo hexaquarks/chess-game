@@ -183,11 +183,13 @@ void MoveList::undoMove(const bool enableTransition_, vector<Arrow>& arrowList_)
             game.setBoardTile(m.getSpecial().first, m.getSpecial().second, pCaptured);
             break;
         case MoveType::CASTLE_KINGSIDE:
+            game.getKing()->setAsFirstMovement();
             game.setBoardTile(5, castleRow, nullptr);
             game.setBoardTile(6, castleRow, nullptr);
             game.setBoardTile(7, castleRow, pCaptured);
             break;
         case MoveType::CASTLE_QUEENSIDE:
+            game.getKing()->setAsFirstMovement();
             game.setBoardTile(3, castleRow, nullptr);
             game.setBoardTile(2, castleRow, nullptr);
             game.setBoardTile(0, castleRow, pCaptured);
