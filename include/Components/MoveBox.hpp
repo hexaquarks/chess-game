@@ -8,7 +8,8 @@ inline constexpr float g_BOX_HORIZONTAL_SCALE = 1.25;
 inline constexpr float g_BOX_VERTICAL_SCALE = 1.25;
 inline constexpr float g_BOX_TEXT_HORIZONTAL_SHIFT = 1.05;
 
-class MoveBox {
+class MoveBox 
+{
     bool m_isSelected = false;
     RectangleShape m_rectangle;
     FloatRect m_textBounds;

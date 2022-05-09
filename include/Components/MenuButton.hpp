@@ -7,11 +7,14 @@ typedef std::pair<int, int> coor2d;
 class Board; // foward declaration
 class MoveList; // foward declaration
 
-inline const Color m_transitionColors[5] = { 
+inline const Color m_transitionColors[5] = 
+{ 
     { 218, 224, 242 }, { 218, 224, 145 }, { 218, 224, 200 }, 
-    { 218, 224, 45 }, { 218, 224, 242 } };
+    { 218, 224, 45 }, { 218, 224, 242 } 
+};
 
-class MenuButton {
+class MenuButton 
+{
     int m_index;
     Sprite m_sprite;
     RectangleShape m_rectangle;

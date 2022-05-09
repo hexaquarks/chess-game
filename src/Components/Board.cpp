@@ -2,7 +2,8 @@
 #include "../../include/Pieces/King.hpp"
 #include <algorithm>
 
-void Board::freeMemory() {
+void Board::freeMemory() 
+{
     for (uint8_t i = 0; i < 8; ++i)
         for (uint8_t j = 0; j < 8; ++j)
             m_board[i][j] = nullptr;
@@ -12,7 +13,8 @@ void Board::freeMemory() {
     m_blackPieces.clear();
 }
 
-void Board::reset() {
+void Board::reset() 
+{
     freeMemory(); // Free up memory
 
     // Set the kings
@@ -40,7 +42,8 @@ void Board::reset() {
     m_board[7][7] = new Rook(Team::WHITE, 7, 7);
 
     // Fill in white and black pawns
-    for (uint8_t col = 0; col < 8; ++col) {
+    for (uint8_t col = 0; col < 8; ++col) 
+    {
         m_board[1][col] = new Pawn(Team::BLACK, 1, col); // Black pawn on row 1
         m_board[6][col] = new Pawn(Team::WHITE, 6, col); // White pawn on row 6
     }
@@ -58,37 +61,45 @@ void Board::reset() {
     m_turn = Team::WHITE; // reset the first move to be for white
 }
 
-void Board::addPiece(Piece* pPiece_) {
+void Board::addPiece(Piece* pPiece_) 
+{
     (pPiece_->getTeam() == Team::WHITE)? m_whitePieces.push_back(pPiece_)
                                      : m_blackPieces.push_back(pPiece_); 
 }
 
-void Board::setBoardTile(int x_, int y_, Piece* pPiece_, bool record_) {
-    if (record_ && m_board[y_][x_] != nullptr) {
+void Board::setBoardTile(int x_, int y_, Piece* pPiece_, bool record_) 
+{
+    if (record_ && m_board[y_][x_] != nullptr) 
+    {
         m_board[y_][x_]->move(-1, -1);
     }
     m_board[y_][x_] = pPiece_;
     if (pPiece_ != nullptr) pPiece_->move(y_, x_, record_);
 }
 
-vector<Move> Board::calculateAllMoves() {
+vector<Move> Board::calculateAllMoves() 
+{
     vector<Move> moves;
     vector<Piece*> playerPieces = (m_turn == Team::WHITE)? m_whitePieces: m_blackPieces;
-    for (Piece* piece: playerPieces) {
+    for (Piece* piece: playerPieces) 
+    {
         if (piece->getX() == -1 || piece->getY() == -1) continue;
         vector<Move> pieceMoves = possibleMovesFor(piece);
         removeIllegalMoves(pieceMoves, piece);
-        for (auto& move: pieceMoves) {
+        for (auto& move: pieceMoves) 
+        {
             moves.push_back(move);
         }
     }
     return moves;
 }
 
-void Board::removeIllegalMoves(vector<Move>& possibleMoves_, Piece* pSelectedPiece_) {
+void Board::removeIllegalMoves(vector<Move>& possibleMoves_, Piece* pSelectedPiece_) 
+{
     vector<Move>::const_iterator it = possibleMoves_.begin();
 
-    while (it != possibleMoves_.end()) {
+    while (it != possibleMoves_.end()) 
+    {
         int x = (*it).getTarget().second;
         int y = (*it).getTarget().first;
 

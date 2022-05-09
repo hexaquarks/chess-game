@@ -8,7 +8,8 @@
 using namespace sf;
 
 
-class MoveList {
+class MoveList 
+{
     list<Move> m_moves;
     list<Move>::iterator m_moveIterator = m_moves.begin();
     PieceTransition& m_transitioningPiece;
