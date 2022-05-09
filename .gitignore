@@ -2,3 +2,5 @@
 main
 .DS_Store
 build/
+obj/
+Chess
