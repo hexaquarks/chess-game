@@ -21,6 +21,7 @@ $(APP): $(OBJS) | $(BIN)
 $(OBJ)%.o: $(SRC)%.cpp | $(OBJ)
 	$(MKDIR) -p $(@D)
 	$(CMD) -o $@ -c $< $(FLAGS)
+	@echo "Finished building object file for $<"
 
 $(BIN) $(OBJ):
 	$(MKDIR) $@
