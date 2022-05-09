@@ -66,7 +66,6 @@ void GameThread::startGame()
     Event event;
     while (window.isOpen()) 
     {
-        // window.clear(Color(218, 224, 241));
         window.clear(Color(23, 23, 23));
 
         // We use a while loop for the pending events in case there were multiple events occured
@@ -82,7 +81,6 @@ void GameThread::startGame()
             {
                 if (event.mouseButton.button == Mouse::Left) 
                 {
-                    possibleMoves = game.calculateAllMoves();
                     // Get the tile of the click
                     mousePos = { event.mouseButton.x, event.mouseButton.y }; 
 
@@ -142,7 +140,7 @@ void GameThread::startGame()
                 if (isRightClicking) 
                 {
                     arrow.setDestination(mousePos);
-                    arrow.updateArrow(); // update the type and rotation
+                    arrow.updateArrow(); // Update the type and rotation
                 }
             }
 
@@ -152,7 +150,7 @@ void GameThread::startGame()
                 if (event.mouseButton.button == Mouse::Left) 
                 {
                     // Handle menu bar buttons
-                    [[unlikely]] if (mousePos.second < g_MENUBAR_HEIGHT)
+                    if (mousePos.second < g_MENUBAR_HEIGHT)
                         for (MenuButton& m: menuBar)
                             if (m.isClicked(mousePos))
                                 if(m.performClick(game, moveList) == 1) 
@@ -220,6 +218,7 @@ void GameThread::startGame()
                         pLastMove->setLastMove(pSelectedMove->getMoveType());
                         Piece::setLastMovedPiece(pLastMove);
                         game.switchTurn();
+                        possibleMoves = game.calculateAllMoves();
                         arrowList.clear();
                     }
 

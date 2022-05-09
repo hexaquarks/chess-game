@@ -25,7 +25,7 @@ shared_ptr<sf::Texture> RessourceManager::getTexture(const string& name_)
         if (it->first == name_) return it->second;
     }
     return nullptr;
-};
+}
 
 shared_ptr<sf::Font> RessourceManager::getFont(const string& name_) 
 {
@@ -34,7 +34,7 @@ shared_ptr<sf::Font> RessourceManager::getFont(const string& name_)
         if (it->first == name_) return it->second;
     }
     return nullptr;
-};
+}
 
 void RessourceManager::loadRessources() 
 {
