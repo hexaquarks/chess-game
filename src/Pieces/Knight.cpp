@@ -6,7 +6,7 @@ Knight::Knight(Team team, int x, int y)
 {
 }
 
-vector<Move> Knight::calcPossibleMoves(Piece* board_[8][8]) const 
+vector<Move> Knight::calcPossibleMoves(shared_ptr<Piece> board_[8][8]) const 
 {
     vector<Move> moves;
     int xPos = getX(); 
@@ -23,7 +23,7 @@ vector<Move> Knight::calcPossibleMoves(Piece* board_[8][8]) const
 
         if (x >= 0 && y >= 0 && x < 8 && y < 8) 
         {
-            if (board_[x][y] == nullptr)
+            if (!board_[x][y])
                 moves.push_back(Move(make_pair(x, y), make_pair(xPos, yPos), board_[xPos][yPos], MoveType::NORMAL));
             else if (board_[x][y]->getTeam() != getTeam())
                 moves.push_back(Move(make_pair(x, y), make_pair(xPos, yPos), board_[xPos][yPos], MoveType::CAPTURE));

@@ -43,13 +43,13 @@ string SidePanel::parseMove(Move& move_, int moveNumber_, bool showNumber_, bool
 
     coor2d coord = move_.getTarget();
     pair<char, int> letterCoord = findLetterCoord(coord);
-    string letterCoordString = (1, letterCoord.first) + to_string(letterCoord.second);
+    string letterCoordString = to_string(letterCoord.first) + to_string(letterCoord.second);
 
     switch (move_.getSelectedPiece()->getType()) 
     {
         case PieceType::PAWN:
             // TODO fix promotion
-            if(moveType == MoveType::CAPTURE || moveType == MoveType::ENPASSANT)
+            if (moveType == MoveType::CAPTURE || moveType == MoveType::ENPASSANT)
             {
                 text += string(1, g_letters.at(coord.first-1)) + "x";
                 return text + letterCoordString;

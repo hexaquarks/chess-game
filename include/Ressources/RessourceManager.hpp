@@ -43,7 +43,7 @@ class RessourceManager
     static void addTexture(const string& name);
     static void addFont(const string& name);
     static shared_ptr<sf::Texture> getTexture(const string &name);
-    static shared_ptr<sf::Texture> getTexture(const Piece* piece) {
+    static shared_ptr<sf::Texture> getTexture(const shared_ptr<Piece>& piece) {
         return getTexture(piece->getFileName());
     }
     static shared_ptr<sf::Font> getFont(const string &name);

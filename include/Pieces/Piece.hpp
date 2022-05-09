@@ -18,7 +18,7 @@ class Piece
 {
     /* Static members */
     inline const static string fileExt = ".png"; // Pieces file extension
-    inline static Piece* m_lastPiece = nullptr; // Last moved piece
+    inline static shared_ptr<Piece> m_lastPiece; // Last moved piece
 
     /* Class members */
     string m_filename; // Filename for this piece
@@ -40,20 +40,20 @@ class Piece
     PieceType getType() const { return m_type; }
     string getFileName() const { return m_filename; }
     MoveType getLastMove() const { return m_lastMove; }
-    static Piece* getLastMovedPiece() { return m_lastPiece; }
+    static shared_ptr<Piece> getLastMovedPiece() { return m_lastPiece; }
     int getX() const { return m_xPos; }
     int getY() const { return m_yPos; }
     bool hasMoved() const { return m_moved; }
     void setAsFirstMovement() { m_moved = false; }
-    vector<Move> getHorizontalAndVerticalMovements(Piece*[8][8]) const;
-    vector<Move> getDiagonalMovements(Piece*[8][8]) const;
+    vector<Move> getHorizontalAndVerticalMovements(shared_ptr<Piece>[8][8]) const;
+    vector<Move> getDiagonalMovements(shared_ptr<Piece>[8][8]) const;
 
     /* Setters */
     void setLastMove(MoveType newMove) { m_lastMove = newMove; }
-    static void setLastMovedPiece(Piece* piece) { m_lastPiece = piece; }
+    static void setLastMovedPiece(shared_ptr<Piece>& piece) { m_lastPiece = piece; }
 
     /* Utility functions */
-    virtual vector<Move> calcPossibleMoves(Piece*[8][8]) const = 0; // Pure virtual function
+    virtual vector<Move> calcPossibleMoves(shared_ptr<Piece>[8][8]) const = 0; // Pure virtual function
     void move(int x, int y, bool record = true) 
     {
         if (record && (m_xPos != x || m_yPos != y)) m_moved = true;

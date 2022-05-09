@@ -5,7 +5,7 @@ Piece(team_, x_, y_, PieceType::BISHOP, "b")
 {
 }
 
-vector<Move> Bishop::calcPossibleMoves(Piece* board_[8][8]) const
+vector<Move> Bishop::calcPossibleMoves(shared_ptr<Piece> board_[8][8]) const
 {
     return getDiagonalMovements(board_);
 }

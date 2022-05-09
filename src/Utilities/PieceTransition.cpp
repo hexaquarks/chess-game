@@ -10,7 +10,7 @@ void PieceTransition::setIncrement()
     m_increment.first = (m_destination.first - m_currPos.first) / (g_FPS / 6);
     m_increment.second = (m_destination.second - m_currPos.second) / (g_FPS / 6);
 
-    // divide by 6 so the  increment is in base 10 , that is 60 / 10
+    // Divide by 6 so the  increment is in base 10 , that is 60 / 10
     // avoiding any piece to jump a square in a game tick
 }
 

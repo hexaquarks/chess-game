@@ -6,5 +6,5 @@
 struct Queen: public Piece 
 {
     Queen(Team, int, int); // Constructor
-    vector<Move> calcPossibleMoves(Piece*[8][8]) const override;
+    vector<Move> calcPossibleMoves(shared_ptr<Piece>[8][8]) const override;
 };

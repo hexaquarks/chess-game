@@ -8,7 +8,7 @@ Piece::Piece(Team team_, int x_, int y_, PieceType type_, string pieceType_)
     m_filename = String(pieceType_ + getColorCode() + fileExt);
 }
 
-vector<Move> Piece::getHorizontalAndVerticalMovements(Piece* pBoard_[8][8]) const 
+vector<Move> Piece::getHorizontalAndVerticalMovements(shared_ptr<Piece> pBoard_[8][8]) const 
 {
     vector<Move> moves;
     int xPos = getX();
@@ -17,7 +17,7 @@ vector<Move> Piece::getHorizontalAndVerticalMovements(Piece* pBoard_[8][8]) cons
     // Vertical up movement check
     for (int i = xPos-1; i >= 0; --i) 
     {
-        if (pBoard_[i][yPos] == nullptr) 
+        if (!pBoard_[i][yPos]) 
         {
             moves.push_back(Move(make_pair(i, yPos), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::NORMAL));
         } 
@@ -26,7 +26,7 @@ vector<Move> Piece::getHorizontalAndVerticalMovements(Piece* pBoard_[8][8]) cons
             moves.push_back(Move(make_pair(i, yPos), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::CAPTURE, pBoard_[i][yPos]));
             break;
         } 
-        else 
+        else
         {
             break;
         }
@@ -35,7 +35,7 @@ vector<Move> Piece::getHorizontalAndVerticalMovements(Piece* pBoard_[8][8]) cons
     // Vertical down movement check
     for (int i = xPos+1; i < 8; ++i) 
     {
-        if (pBoard_[i][yPos] == nullptr) 
+        if (!pBoard_[i][yPos]) 
         {
             moves.push_back(Move(make_pair(i, yPos), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::NORMAL));
         } 
@@ -44,7 +44,7 @@ vector<Move> Piece::getHorizontalAndVerticalMovements(Piece* pBoard_[8][8]) cons
             moves.push_back(Move(make_pair(i, yPos), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::CAPTURE, pBoard_[i][yPos]));
             break;
         } 
-        else 
+        else
         {
             break;
         }
@@ -52,7 +52,7 @@ vector<Move> Piece::getHorizontalAndVerticalMovements(Piece* pBoard_[8][8]) cons
 
     // Horizontal left movement check
     for (int j = yPos-1; j >= 0; --j) {
-        if (pBoard_[xPos][j] == nullptr) {
+        if (!pBoard_[xPos][j]) {
             moves.push_back(Move(make_pair(xPos, j), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::NORMAL));
         } else if (pBoard_[xPos][j]->getTeam() != getTeam()) {
             moves.push_back(Move(make_pair(xPos, j), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::CAPTURE, pBoard_[xPos][j]));
@@ -64,7 +64,7 @@ vector<Move> Piece::getHorizontalAndVerticalMovements(Piece* pBoard_[8][8]) cons
 
     // Horizontal right movement check
     for (int j = yPos+1; j < 8; ++j) {
-        if (pBoard_[xPos][j] == nullptr) {
+        if (!pBoard_[xPos][j]) {
             moves.push_back(Move(make_pair(xPos, j), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::NORMAL));
         } else if (pBoard_[xPos][j]->getTeam() != getTeam()) {
             moves.push_back(Move(make_pair(xPos, j), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::CAPTURE, pBoard_[xPos][j]));
@@ -77,7 +77,7 @@ vector<Move> Piece::getHorizontalAndVerticalMovements(Piece* pBoard_[8][8]) cons
     return moves;
 }
 
-vector<Move> Piece::getDiagonalMovements(Piece* pBoard_[8][8]) const {
+vector<Move> Piece::getDiagonalMovements(shared_ptr<Piece> pBoard_[8][8]) const {
     vector<Move> moves;
     int xPos = getX();
     int yPos = getY();
@@ -85,7 +85,7 @@ vector<Move> Piece::getDiagonalMovements(Piece* pBoard_[8][8]) const {
     // Up left diagonal
     int i = xPos-1, j = yPos-1;
     while (i >= 0 && j >= 0) {
-        if (pBoard_[i][j] == nullptr) {
+        if (!pBoard_[i][j]) {
             moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::NORMAL));
             --i; --j;
         } else if (pBoard_[i][j]->getTeam() != getTeam()) {
@@ -99,7 +99,7 @@ vector<Move> Piece::getDiagonalMovements(Piece* pBoard_[8][8]) const {
     // Up right diagonal
     i = xPos-1; j = yPos+1;
     while (i >= 0 && j < 8) {
-        if (pBoard_[i][j] == nullptr) {
+        if (!pBoard_[i][j]) {
             moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::NORMAL));
             --i; ++j;
         } else if (pBoard_[i][j]->getTeam() != getTeam()) {
@@ -113,7 +113,7 @@ vector<Move> Piece::getDiagonalMovements(Piece* pBoard_[8][8]) const {
     // Down left diagonal
     i = xPos+1; j = yPos-1;
     while (i < 8 && j >= 0) {
-        if (pBoard_[i][j] == nullptr) {
+        if (!pBoard_[i][j]) {
             moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::NORMAL));
             ++i; --j;
         } else if (pBoard_[i][j]->getTeam() != getTeam()) {
@@ -127,7 +127,7 @@ vector<Move> Piece::getDiagonalMovements(Piece* pBoard_[8][8]) const {
     // Down right diagonal
     i = xPos+1; j = yPos+1;
     while (i < 8 && j < 8) {
-        if (pBoard_[i][j] == nullptr) {
+        if (!pBoard_[i][j]) {
             moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::NORMAL));
             ++i; ++j;
         } else if (pBoard_[i][j]->getTeam() != getTeam()) {

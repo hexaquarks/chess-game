@@ -50,11 +50,11 @@ class GameThread
     static void initializeBoard();
     static void initializeMenuBar();
     static void drawSidePanel(SidePanel&);
-    static void drawCaptureCircles(const Piece*);
-    static void highlightHoveredSquare(const Piece*, const coor2d&);
+    static void drawCaptureCircles(const shared_ptr<Piece>&);
+    static void highlightHoveredSquare(const shared_ptr<Piece>&, const coor2d&);
     static void drawMenuBar();
     static void drawPieces();
-    static void drawDraggedPiece(const Piece*, const coor2d&);
+    static void drawDraggedPiece(const shared_ptr<Piece>&, const coor2d&);
     static void drawTransitioningPiece(PieceTransition&);
     static void drawAllArrows(vector<Arrow>&, const Arrow&);
     static void drawEndResults();
@@ -77,7 +77,7 @@ class GameThread
     static int getWindowXPos(int i) { return i * g_CELL_SIZE; }
     static int getWindowYPos(int j) { return j * g_CELL_SIZE + g_MENUBAR_HEIGHT; }
 
-    static void setTransitioningPiece(Piece*, const int, const int, PieceTransition&);
+    static void setTransitioningPiece(shared_ptr<Piece>&, const int, const int, PieceTransition&);
 
     static void flipBoard() { isFlipped = !isFlipped; }
     static bool boardFlipped() { return isFlipped; }

@@ -67,12 +67,12 @@ void MoveList::applyMove(const bool enableTransition_, vector<Arrow>& arrowList_
     applyMove(m, false, enableTransition_, arrowList_);
 }
 
-void MoveList::applyMove(Move& move_, const bool addToList_, const  bool enableTransition_, vector<Arrow>& arrowList_) 
+void MoveList::applyMove(Move& move_, const bool addToList_, const bool enableTransition_, vector<Arrow>& arrowList_) 
 {
     const int castleRow = (game.getTurn() == Team::WHITE)? 7: 0;
-    Piece* pOldPiece = nullptr;
-    Piece* pSelectedPiece = move_.getSelectedPiece();
-    Piece* pCapturedPiece = move_.getCapturedPiece();
+    shared_ptr<Piece> pOldPiece;
+    shared_ptr<Piece> pSelectedPiece = move_.getSelectedPiece();
+    shared_ptr<Piece> pCapturedPiece = move_.getCapturedPiece();
 
     coor2d oldCoors;
     int prevX = move_.getInit().first;
@@ -81,7 +81,7 @@ void MoveList::applyMove(Move& move_, const bool addToList_, const  bool enableT
     int y = move_.getTarget().second;
 
     // Set the current tile of the piece null. Necessary for navigating back to current move through goToNextMove()
-    game.setBoardTile(prevX, prevY, nullptr); 
+    game.resetBoardTile(prevX, prevY); 
     arrowList_ = move_.getMoveArrows();
     // TODO smooth piece transition for castle 
     switch (move_.getMoveType()) 
@@ -107,7 +107,7 @@ void MoveList::applyMove(Move& move_, const bool addToList_, const  bool enableT
 
         case MoveType::ENPASSANT:
             oldCoors = { pCapturedPiece->getY(), pCapturedPiece->getX() };
-            game.setBoardTile(oldCoors.first, oldCoors.second, nullptr);
+            game.resetBoardTile(oldCoors.first, oldCoors.second);
             if (addToList_) 
             {
                 game.setBoardTile(x, y, pSelectedPiece);
@@ -117,7 +117,7 @@ void MoveList::applyMove(Move& move_, const bool addToList_, const  bool enableT
 
         case MoveType::CASTLE_KINGSIDE:
             pOldPiece = game.getBoardTile(7, castleRow);
-            game.setBoardTile(7, castleRow, nullptr);
+            game.resetBoardTile(7, castleRow);
             game.setBoardTile(5, castleRow, pOldPiece);
             game.setBoardTile(6, castleRow, pSelectedPiece);
             if (addToList_) 
@@ -130,7 +130,7 @@ void MoveList::applyMove(Move& move_, const bool addToList_, const  bool enableT
 
         case MoveType::CASTLE_QUEENSIDE:
             pOldPiece = game.getBoardTile(0, castleRow);
-            game.setBoardTile(0, castleRow, nullptr);
+            game.resetBoardTile(0, castleRow);
             game.setBoardTile(3, castleRow, pOldPiece);
             game.setBoardTile(2, castleRow, pSelectedPiece);
             if (addToList_) 
@@ -149,10 +149,9 @@ void MoveList::applyMove(Move& move_, const bool addToList_, const  bool enableT
             }
             break;
 
-        case MoveType::NEWPIECE:
-            // Possible leaking memory here actually ? 
+        case MoveType::NEWPIECE: 
             pOldPiece = game.getBoardTile(x, y);
-            Queen* queen = new Queen(pSelectedPiece->getTeam(), y, x);
+            shared_ptr<Piece> queen = make_shared<Queen>(pSelectedPiece->getTeam(), y, x);
             Piece::setLastMovedPiece(queen);
             game.setBoardTile(x, y, queen);
             if (addToList_) 
@@ -162,7 +161,7 @@ void MoveList::applyMove(Move& move_, const bool addToList_, const  bool enableT
             break;
     }
 
-    if (!addToList_ && pSelectedPiece != nullptr) 
+    if (!addToList_ && pSelectedPiece) 
     {
         if (enableTransition_) 
         {
@@ -185,7 +184,7 @@ void MoveList::applyMove(Move& move_, const bool addToList_, const  bool enableT
 void MoveList::undoMove(const bool enableTransition_, vector<Arrow>& arrowList_) 
 {
     Move& m = *m_moveIterator;
-    Piece* pCaptured = m.getCapturedPiece();
+    shared_ptr<Piece> pCaptured = m.getCapturedPiece();
     int x = m.getTarget().first;
     int y = m.getTarget().second;
     int prevX = m.getInit().first;
@@ -197,50 +196,52 @@ void MoveList::undoMove(const bool enableTransition_, vector<Arrow>& arrowList_)
     switch (m.getMoveType()) 
     {
         case MoveType::NORMAL:
-            game.setBoardTile(x, y, nullptr);
+            game.resetBoardTile(x, y);
             break;
         case MoveType::CAPTURE:
             game.setBoardTile(x, y, pCaptured);
             break;
         case MoveType::ENPASSANT:
-            game.setBoardTile(x, y, nullptr);
+            game.resetBoardTile(x, y);
             game.setBoardTile(m.getSpecial().first, m.getSpecial().second, pCaptured);
             break;
         case MoveType::CASTLE_KINGSIDE:
             game.getKing()->setAsFirstMovement();
-            game.setBoardTile(5, castleRow, nullptr);
-            game.setBoardTile(6, castleRow, nullptr);
+            game.resetBoardTile(5, castleRow);
+            game.resetBoardTile(6, castleRow);
             game.setBoardTile(7, castleRow, pCaptured);
             break;
         case MoveType::CASTLE_QUEENSIDE:
             game.getKing()->setAsFirstMovement();
-            game.setBoardTile(3, castleRow, nullptr);
-            game.setBoardTile(2, castleRow, nullptr);
+            game.resetBoardTile(3, castleRow);
+            game.resetBoardTile(2, castleRow);
             game.setBoardTile(0, castleRow, pCaptured);
             break;
         case MoveType::INIT_SPECIAL:
-            game.setBoardTile(x, y, nullptr);
+            game.resetBoardTile(x, y);
             break;
         case MoveType::NEWPIECE:
-            Piece* queen = game.getBoardTile(x, y);
+            shared_ptr<Piece> pawn = make_shared<Pawn>(m.getSelectedPiece()->getTeam(), prevY, prevX);
             game.setBoardTile(x, y, pCaptured);
-            delete queen;
+            game.setBoardTile(prevX, prevY, pawn);
     }
 
-    if (enableTransition_) 
+    shared_ptr<Piece> selected = m.getSelectedPiece();
+
+    if (enableTransition_)
     {
         // move the piece from the (-1,-1) hidden location back to the square 
         // where it begins it's transition
-        m.getSelectedPiece()->move(y, x); 
+        selected->move(y, x);
 
         // Enable transition movement
         GameThread::setTransitioningPiece(
-            m.getSelectedPiece(), m.getInit().first * g_CELL_SIZE, 
+            selected, m.getInit().first * g_CELL_SIZE, 
             m.getInit().second * g_CELL_SIZE, getTransitioningPiece()
         );
-    } 
-    else 
+    }
+    else
     {
-        game.setBoardTile(m.getInit().first, m.getInit().second, m.getSelectedPiece());
+        game.setBoardTile(m.getInit().first, m.getInit().second, selected);
     }
 }

@@ -32,8 +32,8 @@ void GameThread::startGame()
     bool pieceIsMoving = false;
     bool pieceIsClicked = false;
     bool isRightClicking = false;
-    Piece* pSelectedPiece = nullptr;
-    Piece* pMovingPiece = nullptr; // Piece transition
+    shared_ptr<Piece> pSelectedPiece;
+    shared_ptr<Piece> pMovingPiece; // Piece transition
     coor2d mousePos = { 0, 0 };
     coor2d rightClickAnchor = { 0, 0 };
     int lastXPos = 0;
@@ -41,15 +41,15 @@ void GameThread::startGame()
     possibleMoves = game.calculateAllMoves();
 
     // Additional board state variables
-    Piece* pLastMove = nullptr;
+    shared_ptr<Piece> pLastMove;
     vector<Arrow> arrowList;
     Arrow arrow;
 
     // Window parameters
     initializeMenuBar();
     bool showMoveSelectionPanel = false; 
-    SidePanel sidePanel{ window, moveList,moveTree, showMoveSelectionPanel };
-    MoveSelectionPanel moveSelectionPanel{ window, sidePanel };
+    SidePanel sidePanel(window, moveList,moveTree, showMoveSelectionPanel);
+    MoveSelectionPanel moveSelectionPanel(window, sidePanel);
 
     // Sounds for piece movement
     SoundBuffer bufferMove;
@@ -67,7 +67,7 @@ void GameThread::startGame()
     while (window.isOpen()) 
     {
         // window.clear(Color(218, 224, 241));
-        window.clear(Color(23,23,23));
+        window.clear(Color(23, 23, 23));
 
         // We use a while loop for the pending events in case there were multiple events occured
         while (window.pollEvent(event)) 
@@ -98,10 +98,10 @@ void GameThread::startGame()
 
                     int xPos = isFlipped? 7-getTileXPos(mousePos): getTileXPos(mousePos);
                     if (isFlipped) yPos = 7-yPos;
-                    Piece* pPiece = game.getBoardTile(xPos, yPos);
+                    shared_ptr<Piece> pPiece = game.getBoardTile(xPos, yPos);
 
                     // If piece is not null and has the right color
-                    if (pPiece != nullptr && pPiece->getTeam() == game.getTurn()) 
+                    if (pPiece && pPiece->getTeam() == game.getTurn()) 
                     {
                         // Unselect clicked piece
                         if (pPiece == pSelectedPiece) 
@@ -117,7 +117,7 @@ void GameThread::startGame()
                         lastXPos = isFlipped? 7-getTileXPos(mousePos): getTileXPos(mousePos); lastYPos = yPos;
 
                         // Set the tile on the board where the piece is selected to null
-                        game.setBoardTile(lastXPos, lastYPos, nullptr, false); 
+                        game.resetBoardTile(lastXPos, lastYPos, false); 
                     }
                 }
                 if (event.mouseButton.button == Mouse::Right) 
@@ -158,7 +158,7 @@ void GameThread::startGame()
                                 if(m.performClick(game, moveList) == 1) 
                                 {
                                     // TODO fix bug (reset at beggining)
-                                    pSelectedPiece = nullptr;
+                                    pSelectedPiece.reset();
                                     arrowList.clear();
                                     mousePos = { 0, 0 };
                                 }
@@ -166,7 +166,7 @@ void GameThread::startGame()
                     if (!showMoveSelectionPanel) sidePanel.handleMoveBoxClicked(mousePos);
                     // ^^^ Possible bug here when moveboxe and moveselection panel overlap
 
-                    if (pSelectedPiece == nullptr) continue;
+                    if (!pSelectedPiece) continue;
 
                     // If clicked and mouse remained on the same square
                     int xPos = isFlipped? 7-getTileXPos(mousePos): getTileXPos(mousePos);
@@ -301,8 +301,8 @@ void GameThread::drawSidePanel(SidePanel& sidePanel_)
     // Draw the main panels
     RectangleShape mainPanel(Vector2f(g_PANEL_SIZE - 2*g_BORDER_SIZE, g_MAIN_PANEL_HEIGHT - 2*g_BORDER_SIZE));
     RectangleShape southPanel(Vector2f(g_PANEL_SIZE - 2*g_BORDER_SIZE, g_SOUTH_PANEL_HEIGHT));
-    mainPanel.setFillColor(Color(50,50,50)); // cjarcoal
-    southPanel.setFillColor(Color(50,50,50));
+    mainPanel.setFillColor(Color(50, 50, 50)); // Charcoal
+    southPanel.setFillColor(Color(50, 50, 50));
     mainPanel.setPosition(g_WINDOW_SIZE + g_BORDER_SIZE, g_MENUBAR_HEIGHT);
     southPanel.setPosition(g_WINDOW_SIZE + g_BORDER_SIZE, g_MENUBAR_HEIGHT + g_MAIN_PANEL_HEIGHT - g_BORDER_SIZE);
     
@@ -318,7 +318,7 @@ void GameThread::drawSidePanel(SidePanel& sidePanel_)
 void GameThread::drawGrayCover() 
 {
     RectangleShape cover{ Vector2f(g_WINDOW_SIZE + g_PANEL_SIZE, g_WINDOW_SIZE) };
-    cover.setFillColor(Color(220,220,220,75));
+    cover.setFillColor(Color(220, 220, 220, 75));
     cover.setPosition(0, g_MENUBAR_HEIGHT);
     window.draw(cover);
 }
@@ -358,7 +358,7 @@ void GameThread::initializeBoard()
     }
 }
 
-void GameThread::highlightHoveredSquare(const Piece* pSelectedPiece_, const coor2d& mousePos_) 
+void GameThread::highlightHoveredSquare(const shared_ptr<Piece>& pSelectedPiece_, const coor2d& mousePos_) 
 {
     const Color colours[2] = { { 173, 176, 134 }, { 100, 111, 64 } };
 
@@ -381,7 +381,7 @@ void GameThread::highlightHoveredSquare(const Piece* pSelectedPiece_, const coor
     }
 }
 
-void GameThread::drawCaptureCircles(const Piece* pSelectedPiece_) 
+void GameThread::drawCaptureCircles(const shared_ptr<Piece>& pSelectedPiece_) 
 {
     for (Move& move: possibleMoves) 
     {
@@ -389,10 +389,10 @@ void GameThread::drawCaptureCircles(const Piece* pSelectedPiece_)
         int j = move.getTarget().first;
 
         if (move.getSelectedPiece() != pSelectedPiece_) continue;
-        bool isEmpty = game.getBoardTile(i, j) == nullptr;
+        bool isEmpty = game.getBoardTile(i, j).get() == nullptr;
         const shared_ptr<Texture> t = RessourceManager::getTexture(isEmpty? "circle.png": "empty_circle.png");
         
-        if (t == nullptr) return;
+        if (!t) return;
         Sprite circle(*t);
         if (isEmpty) circle.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
         if (isFlipped) {i = 7-i; j = 7-j;}
@@ -407,10 +407,10 @@ void GameThread::drawPieces()
     {
         for (uint8_t j = 0; j < 8; ++j) 
         {
-            Piece* piece = game.getBoardTile(i, j);
-            if (piece == nullptr) continue;
+            shared_ptr<Piece> piece = game.getBoardTile(i, j);
+            if (!piece) continue;
             shared_ptr<Texture> t = RessourceManager::getTexture(piece);
-            if (t == nullptr) return;
+            if (!t) return;
             Sprite s(*t);
             s.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
             s.setPosition(getWindowXPos(isFlipped? (7-i): i), getWindowYPos(isFlipped? (7-j): j));
@@ -419,13 +419,13 @@ void GameThread::drawPieces()
     }
 }
 
-void GameThread::drawDraggedPiece(const Piece* pSelectedPiece_, const coor2d& mousePos_) 
+void GameThread::drawDraggedPiece(const shared_ptr<Piece>& pSelectedPiece_, const coor2d& mousePos_) 
 {
-    if (pSelectedPiece_ == nullptr) return; // Safety check
+    if (!pSelectedPiece_) return; // Safety check
     shared_ptr<Texture> t = RessourceManager::getTexture(pSelectedPiece_);
     shared_ptr<Texture> tBefore = RessourceManager::getTexture(pSelectedPiece_);
 
-    if (t == nullptr || tBefore == nullptr) return;
+    if (!t || !tBefore) return;
     Sprite s(*t), sBefore(*tBefore); 
     s.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
     sBefore.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
@@ -496,7 +496,7 @@ void GameThread::drawKingCheckCircle()
 void GameThread::drawEndResults() 
 {
     // Checkmate
-    if (game.kingIsChecked()) 
+    if (game.kingIsChecked())
     {
         King* losing = game.getKing();
         Texture t; t.loadFromFile(RessourceManager::getIconPath("checkmate.png"));
@@ -515,7 +515,7 @@ void GameThread::drawEndResults()
     // Stalemate
 }
 
-void GameThread::setTransitioningPiece(Piece* p_, const int xTarget_, const int yTarget_, PieceTransition& trans_) 
+void GameThread::setTransitioningPiece(shared_ptr<Piece>& p_, const int xTarget_, const int yTarget_, PieceTransition& trans_) 
 {
     trans_.setTransitioningPiece(p_);
     coor2d destination = { xTarget_, yTarget_ };

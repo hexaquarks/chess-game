@@ -12,34 +12,32 @@
 class Board 
 {
     // Member variables
-    Piece* m_board[8][8];
+    shared_ptr<Piece> m_board[8][8];
     Team m_turn; // White or black player's turn
-    vector<Piece*> m_whitePieces;
-    vector<Piece*> m_blackPieces;
-    King* m_whiteKing;
-    King* m_blackKing;
+    vector<shared_ptr<Piece>> m_whitePieces;
+    vector<shared_ptr<Piece>> m_blackPieces;
+    shared_ptr<King> m_whiteKing;
+    shared_ptr<King> m_blackKing;
     bool m_isFlipped = false;
 
     // Private functions
-    void freeMemory();
-    void removeIllegalMoves(vector<Move>&, Piece*);
+    void removeIllegalMoves(vector<Move>&, shared_ptr<Piece>&);
 
     public:
     Board(): m_turn(Team::WHITE) { reset(); } // Constructor
-    ~Board() { freeMemory(); } // Destructor
-
     void reset(); // Resets the board
 
     // Getters and setters 
-    Piece* getBoardTile(int x, int y) const { return m_board[y][x]; }
-    King* getKing() const { return (m_turn == Team::WHITE)? m_whiteKing: m_blackKing; }
+    shared_ptr<Piece> getBoardTile(int x, int y) const { return m_board[y][x]; }
+    King* getKing() const { return (m_turn == Team::WHITE)? m_whiteKing.get(): m_blackKing.get(); }
     Team getTurn() const { return m_turn; }
-    void setBoardTile(int, int, Piece*, bool record = true);
+    void setBoardTile(int, int, shared_ptr<Piece>&, bool record = true);
+    void resetBoardTile(int, int, bool record_ = true);
     void switchTurn() { m_turn = (m_turn == Team::WHITE)? Team::BLACK: Team::WHITE; }
 
     // Utility functions
-    vector<Move> possibleMovesFor(Piece* piece) { return piece->calcPossibleMoves(m_board); }
+    vector<Move> possibleMovesFor(shared_ptr<Piece>& piece) { return piece->calcPossibleMoves(m_board); }
     vector<Move> calculateAllMoves();
     bool kingIsChecked() { return getKing()->isChecked(m_board); }
-    void addPiece(Piece*);
+    void addPiece(shared_ptr<Piece>&);
 };
