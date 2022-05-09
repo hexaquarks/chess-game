@@ -19,7 +19,7 @@ inline const string g_letters = "abcdefgh";
 inline vector<MoveBox> moveBoxes;
 
 
-class SidePanel 
+class SidePanel
 {
     RenderWindow& m_window;
     MoveList& m_moveList;
@@ -36,7 +36,7 @@ class SidePanel
     string parseMove(Move&, int, bool, bool = false) const;
     void resetNextPos() { m_nextPos = { g_BORDER_SIZE + 10, 10 }; }
     void goToNextRow(int height);
-    void addMove(Move&); 
+    void addMove(Move&);
     void drawMoves(coor2d&);
     void drawSquareBracket(coor2d&, int, bool) const;
     coor2d drawMove(Move&, int, int, coor2d, coor2d&);

@@ -10,7 +10,7 @@ class Piece;
 
 enum class MoveType { NORMAL, CASTLE_KINGSIDE, CASTLE_QUEENSIDE, ENPASSANT, NEWPIECE, CAPTURE, INIT_SPECIAL };
 
-class Move 
+class Move
 {
     shared_ptr<Piece> m_selectedPiece; // Piece that is being selected
     shared_ptr<Piece> m_capturedPiece; // Captured piece, the moved rook in castling, or taken pawn in en passant
@@ -36,7 +36,7 @@ class Move
     void setCapturedPiece(shared_ptr<Piece>& capturedPiece) { m_capturedPiece = capturedPiece; }
     void setSelectedPiece(shared_ptr<Piece>& p) { m_selectedPiece = p; }
     void setMoveArrows(vector<Arrow> arrows) { m_arrows = arrows; }
-    bool operator ==(Move& other) 
+    bool operator ==(Move& other)
     {
         return m_selectedPiece == other.m_selectedPiece &&
         m_MoveType == other.m_MoveType &&

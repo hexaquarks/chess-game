@@ -16,7 +16,7 @@ inline const Color g_BLUE{ 102, 178 ,255 };
 inline const Color g_GRAY{ 211, 211, 211 };
 inline const Color g_LIGHT_WHITE{ 240, 248, 255 };
 
-class MoveSelectionPanel 
+class MoveSelectionPanel
 {
     RenderWindow& m_window;
     SidePanel& m_sidePanel;
@@ -33,11 +33,11 @@ class MoveSelectionPanel
 
     public:
     MoveSelectionPanel(RenderWindow& window, SidePanel& panel)
-    : m_window(window), m_sidePanel(panel) 
+    : m_window(window), m_sidePanel(panel)
     {
     }
 
-    bool isHowered(coor2d&) const; 
+    bool isHowered(coor2d&) const;
     int getSelection() const { return m_selectionIndex; }
     void handleTitleText();
     void handlePanelRectangle();

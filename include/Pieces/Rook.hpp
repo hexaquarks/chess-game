@@ -3,7 +3,7 @@
 
 
 // Represents a rook
-struct Rook: public Piece 
+struct Rook: public Piece
 {
     Rook(Team, int, int); // Constructor
     vector<Move> calcPossibleMoves(shared_ptr<Piece>[8][8]) const override;

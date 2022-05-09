@@ -2,7 +2,7 @@
 #include "../../include/Pieces/King.hpp"
 
 
-void Board::reset() 
+void Board::reset()
 {
     // Set the kings
     m_blackKing = make_shared<King>(Team::BLACK, 0, 4);
@@ -29,7 +29,7 @@ void Board::reset()
     m_board[7][7] = make_shared<Rook>(Team::WHITE, 7, 7);
 
     // Fill in white and black pawns
-    for (uint8_t col = 0; col < 8; ++col) 
+    for (uint8_t col = 0; col < 8; ++col)
     {
         m_board[1][col] = make_shared<Pawn>(Team::BLACK, 1, col); // Black pawn on row 1
         m_board[6][col] = make_shared<Pawn>(Team::WHITE, 6, col); // White pawn on row 6
@@ -39,7 +39,7 @@ void Board::reset()
     for (uint8_t row = 0; row < 2; ++row)
         for (uint8_t col = 0; col < 8; ++col)
             m_blackPieces.push_back(m_board[row][col]);
-    
+   
     // Add every white piece to the list of white pieces
     for (uint8_t row = 6; row < 8; ++row)
         for (uint8_t col = 0; col < 8; ++col)
@@ -48,15 +48,15 @@ void Board::reset()
     m_turn = Team::WHITE; // Reset the first move to be for white
 }
 
-void Board::addPiece(shared_ptr<Piece>& pPiece_) 
+void Board::addPiece(shared_ptr<Piece>& pPiece_)
 {
     (pPiece_->getTeam() == Team::WHITE)? m_whitePieces.push_back(pPiece_)
-                                     : m_blackPieces.push_back(pPiece_); 
+                                     : m_blackPieces.push_back(pPiece_);
 }
 
-void Board::setBoardTile(int x_, int y_, shared_ptr<Piece>& pPiece_, bool record_) 
+void Board::setBoardTile(int x_, int y_, shared_ptr<Piece>& pPiece_, bool record_)
 {
-    if (record_ && m_board[y_][x_]) 
+    if (record_ && m_board[y_][x_])
     {
         m_board[y_][x_]->move(-1, -1);
     }
@@ -65,23 +65,23 @@ void Board::setBoardTile(int x_, int y_, shared_ptr<Piece>& pPiece_, bool record
 }
 
 void Board::resetBoardTile(int x_, int y_, bool record_) {
-    if (record_ && m_board[y_][x_]) 
+    if (record_ && m_board[y_][x_])
     {
         m_board[y_][x_]->move(-1, -1);
     }
     m_board[y_][x_].reset();
 }
 
-vector<Move> Board::calculateAllMoves() 
+vector<Move> Board::calculateAllMoves()
 {
     vector<Move> moves;
     vector<shared_ptr<Piece>> playerPieces = (m_turn == Team::WHITE)? m_whitePieces: m_blackPieces;
-    for (shared_ptr<Piece> piece: playerPieces) 
+    for (shared_ptr<Piece> piece: playerPieces)
     {
         if (piece->getX() == -1 || piece->getY() == -1) continue;
         vector<Move> pieceMoves = possibleMovesFor(piece);
         removeIllegalMoves(pieceMoves, piece);
-        for (auto& move: pieceMoves) 
+        for (auto& move: pieceMoves)
         {
             moves.push_back(move);
         }
@@ -89,11 +89,11 @@ vector<Move> Board::calculateAllMoves()
     return moves;
 }
 
-void Board::removeIllegalMoves(vector<Move>& possibleMoves_, shared_ptr<Piece>& pSelectedPiece_) 
+void Board::removeIllegalMoves(vector<Move>& possibleMoves_, shared_ptr<Piece>& pSelectedPiece_)
 {
     vector<Move>::const_iterator it = possibleMoves_.begin();
 
-    while (it != possibleMoves_.end()) 
+    while (it != possibleMoves_.end())
     {
         int x = (*it).getTarget().second;
         int y = (*it).getTarget().first;
@@ -111,6 +111,6 @@ void Board::removeIllegalMoves(vector<Move>& possibleMoves_, shared_ptr<Piece>& 
         else ++it;
 
         setBoardTile(initialX, initialY, pSelectedPiece_, false);
-        setBoardTile(x, y, temp, false); 
+        setBoardTile(x, y, temp, false);
     }
 }

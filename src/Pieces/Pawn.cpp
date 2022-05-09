@@ -2,17 +2,17 @@
 #include <vector>
 
 Pawn::Pawn(Team team_, int xPos_, int yPos_):
-Piece(team_, xPos_, yPos_, PieceType::PAWN, "p") 
+Piece(team_, xPos_, yPos_, PieceType::PAWN, "p")
 {
 }
 
-vector<Move> Pawn::calcPossibleMoves(shared_ptr<Piece> board_[8][8]) const 
+vector<Move> Pawn::calcPossibleMoves(shared_ptr<Piece> board_[8][8]) const
 {
     vector<Move> moves;
     int dir = (getTeam() == Team::WHITE)? -1 : 1;
     int xPos = getX();
     int yPos = getY();
-    
+   
     generateCaptureMoves(moves, board_, dir);
     generateForwardMoves(moves, board_, dir);
     generateEnPassantMoves(moves, board_);
@@ -20,9 +20,9 @@ vector<Move> Pawn::calcPossibleMoves(shared_ptr<Piece> board_[8][8]) const
     return moves;
 }
 
-void Pawn::generateCaptureMoves(vector<Move>& moves_, shared_ptr<Piece> pBoard_[8][8], int dir_) const 
+void Pawn::generateCaptureMoves(vector<Move>& moves_, shared_ptr<Piece> pBoard_[8][8], int dir_) const
 {
-    int xPos = getX(); 
+    int xPos = getX();
     int yPos = getY();
     coor2d pawnCoor = { xPos, yPos };
     shared_ptr<Piece> pPawnPos = pBoard_[xPos][yPos];
@@ -32,8 +32,8 @@ void Pawn::generateCaptureMoves(vector<Move>& moves_, shared_ptr<Piece> pBoard_[
         if (pBoard_[xPos+dir_][yPos+1] && pBoard_[xPos+dir_][yPos+1]->getTeam() != getTeam())
         {
             if ((xPos+dir_ == 0 || xPos+dir_ == 7))
-                moves_.push_back(Move(make_pair(xPos+dir_, yPos+1), pawnCoor, pPawnPos, MoveType::NEWPIECE));        
-            else 
+                moves_.push_back(Move(make_pair(xPos+dir_, yPos+1), pawnCoor, pPawnPos, MoveType::NEWPIECE));       
+            else
                 moves_.push_back(Move(make_pair(xPos+dir_, yPos+1), pawnCoor, pPawnPos, MoveType::CAPTURE));
         }
 
@@ -42,13 +42,13 @@ void Pawn::generateCaptureMoves(vector<Move>& moves_, shared_ptr<Piece> pBoard_[
         if (pBoard_[xPos+dir_][yPos-1] && pBoard_[xPos+dir_][yPos-1]->getTeam() != getTeam())
         {
             if ((xPos+dir_ == 0 || xPos+dir_ == 7))
-                moves_.push_back(Move(make_pair(xPos+dir_, yPos-1), pawnCoor, pPawnPos, MoveType::NEWPIECE));        
+                moves_.push_back(Move(make_pair(xPos+dir_, yPos-1), pawnCoor, pPawnPos, MoveType::NEWPIECE));       
             else
                 moves_.push_back(Move(make_pair(xPos+dir_, yPos-1), pawnCoor, pPawnPos, MoveType::CAPTURE));
         }
 }
 
-void Pawn::generateForwardMoves(vector<Move>& moves_, shared_ptr<Piece> pBoard_[8][8], int dir_) const 
+void Pawn::generateForwardMoves(vector<Move>& moves_, shared_ptr<Piece> pBoard_[8][8], int dir_) const
 {
     int xPos = getX();
     int yPos = getY();
@@ -59,7 +59,7 @@ void Pawn::generateForwardMoves(vector<Move>& moves_, shared_ptr<Piece> pBoard_[
     // Forward move
     if ((xPos+dir_ == 0 || xPos+dir_ == 7) && !pBoard_[xPos+dir_][yPos])
         moves_.push_back(Move(make_pair(xPos+dir_, yPos), pawnCoor, pPawnPos, MoveType::NEWPIECE));
-    else if (!pBoard_[xPos+dir_][yPos])  
+    else if (!pBoard_[xPos+dir_][yPos]) 
     {
         moves_.push_back(Move(make_pair(xPos+dir_, yPos), pawnCoor, pPawnPos, MoveType::NORMAL));
         // Double square initial move
@@ -69,9 +69,9 @@ void Pawn::generateForwardMoves(vector<Move>& moves_, shared_ptr<Piece> pBoard_[
 
 }
 
-void Pawn::generateEnPassantMoves(vector<Move>& moves_, shared_ptr<Piece> pBoard_[8][8]) const 
+void Pawn::generateEnPassantMoves(vector<Move>& moves_, shared_ptr<Piece> pBoard_[8][8]) const
 {
-    int xPos = getX(); 
+    int xPos = getX();
     int yPos = getY();
     int dir = (getTeam() == Team::WHITE)? -1: 1;
     coor2d pawnCoor = { xPos, yPos };
@@ -81,12 +81,12 @@ void Pawn::generateEnPassantMoves(vector<Move>& moves_, shared_ptr<Piece> pBoard
     if (xPos+dir < 0 || xPos+dir > 7) return;
 
     // Left En Passant
-    if (yPos > 0) 
+    if (yPos > 0)
     {
         shared_ptr<Piece> leftPiece = pBoard_[xPos][yPos-1];
-        if (leftPiece && leftPiece->getType() == PieceType::PAWN && leftPiece->getTeam() != getTeam()) 
+        if (leftPiece && leftPiece->getType() == PieceType::PAWN && leftPiece->getTeam() != getTeam())
         {
-            if (getLastMovedPiece() == leftPiece && leftPiece->getLastMove() == MoveType::INIT_SPECIAL) 
+            if (getLastMovedPiece() == leftPiece && leftPiece->getLastMove() == MoveType::INIT_SPECIAL)
             {
                 moves_.push_back(Move(make_pair(xPos+dir, yPos-1), pawnCoor, pPawnPos, MoveType::ENPASSANT, leftPiece));
             }
@@ -94,12 +94,12 @@ void Pawn::generateEnPassantMoves(vector<Move>& moves_, shared_ptr<Piece> pBoard
     }
 
     // Right En Passant
-    if (yPos < 7) 
+    if (yPos < 7)
     {
         shared_ptr<Piece> rightPiece = pBoard_[xPos][yPos+1];
-        if (rightPiece && rightPiece->getType() == PieceType::PAWN && rightPiece->getTeam() != getTeam()) 
+        if (rightPiece && rightPiece->getType() == PieceType::PAWN && rightPiece->getTeam() != getTeam())
         {
-            if (getLastMovedPiece() == rightPiece && rightPiece->getLastMove() == MoveType::INIT_SPECIAL) 
+            if (getLastMovedPiece() == rightPiece && rightPiece->getLastMove() == MoveType::INIT_SPECIAL)
             {
                 moves_.push_back(Move(make_pair(xPos+dir, yPos+1), pawnCoor, pPawnPos, MoveType::ENPASSANT, rightPiece));
             }

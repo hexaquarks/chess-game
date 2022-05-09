@@ -8,7 +8,7 @@
 using namespace sf;
 
 
-class MoveList 
+class MoveList
 {
     list<Move> m_moves;
     list<Move>::iterator m_moveIterator = m_moves.begin();
@@ -16,7 +16,7 @@ class MoveList
     Board& game;
 
     void applyMove(Move&, const bool, const bool, vector<Arrow>&); // called inside GameThread ?
-    void applyMove(const bool, vector<Arrow>&); 
+    void applyMove(const bool, vector<Arrow>&);
     void undoMove(const bool, vector<Arrow>&);
 
     public:

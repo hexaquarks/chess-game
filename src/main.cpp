@@ -2,7 +2,7 @@
 #include <iostream>
 
 
-int main() 
+int main()
 {
     GameThread::startGame();
     return 0;

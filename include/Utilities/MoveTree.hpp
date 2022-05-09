@@ -4,9 +4,9 @@
 
 using namespace std;
 
-class MoveTree 
+class MoveTree
 {
-    public: 
+    public:
     unique_ptr<MoveTreeNode> m_root = make_unique<MoveTreeNode>(); // Root of the tree
     int numberOfMoves = 0;
 
@@ -14,12 +14,12 @@ class MoveTree
     MoveTreeNode* getNode();
     MoveTreeNode* getRoot() { return m_root.get(); }
 
-    struct Iterator 
+    struct Iterator
     {
         using iterator_category = bidirectional_iterator_tag;
         using difference_type   = ptrdiff_t;
 
-        Iterator(MoveTreeNode* ptr): m_ptr(ptr) 
+        Iterator(MoveTreeNode* ptr): m_ptr(ptr)
         {
         }
 
@@ -29,13 +29,13 @@ class MoveTree
 
         void goToChild(const int i) { m_ptr = m_ptr->m_children.at(i); }
 
-        void addChild(MoveTreeNode* child) 
+        void addChild(MoveTreeNode* child)
         {
-            if (m_ptr == nullptr) 
+            if (m_ptr == nullptr)
             {
                 m_ptr = child;
-            } 
-            else 
+            }
+            else
             {
                 m_ptr->m_children.emplace_back(child);
                 child->m_parent = m_ptr;
@@ -49,7 +49,7 @@ class MoveTree
         int getNodeLevel() {
             MoveTreeNode* temp = m_ptr;
             int i = 0;
-            while (temp->m_parent != nullptr) 
+            while (temp->m_parent != nullptr)
             {
                 temp = temp->m_parent;
                 ++i;
@@ -58,19 +58,19 @@ class MoveTree
         }
 
         // Prefix increment
-        MoveTreeNode* operator++() 
+        MoveTreeNode* operator++()
         {
             goToChild(0); return m_ptr;
         }
 
         // Postfix increment
-        MoveTreeNode* operator++(int) 
-        { 
+        MoveTreeNode* operator++(int)
+        {
             MoveTreeNode* res = m_ptr; goToChild(0); return res;
         }
 
         // Shift child number
-        MoveTreeNode* operator>>(int n) 
+        MoveTreeNode* operator>>(int n)
         {
             int childNumber = m_ptr->childNumber;
             goToParent();
@@ -79,7 +79,7 @@ class MoveTree
         }
 
         // Shift child number
-        MoveTreeNode* operator<<(int n) 
+        MoveTreeNode* operator<<(int n)
         {
             int childNumber = m_ptr->childNumber;
             goToParent();
@@ -93,11 +93,11 @@ class MoveTree
         // Postfix decrement
         MoveTreeNode* operator--(int) { MoveTreeNode* res = m_ptr; goToParent(); return res; }
 
-        friend bool operator ==(const Iterator& a, const Iterator& b) { 
-            return a.m_ptr == b.m_ptr; 
+        friend bool operator ==(const Iterator& a, const Iterator& b) {
+            return a.m_ptr == b.m_ptr;
         };
-        friend bool operator !=(const Iterator& a, const Iterator& b) { 
-            return a.m_ptr != b.m_ptr; 
+        friend bool operator !=(const Iterator& a, const Iterator& b) {
+            return a.m_ptr != b.m_ptr;
         };
 
         private:
@@ -105,7 +105,7 @@ class MoveTree
     };
 
     Iterator begin() { return Iterator(getRoot()); }
-    Iterator end()   { return Iterator(nullptr); } 
+    Iterator end()   { return Iterator(nullptr); }
 
     void insertNode(Move&, MoveTree::Iterator&);
     void goToNextNode(const int, MoveTree::Iterator&);

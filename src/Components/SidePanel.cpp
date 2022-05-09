@@ -1,12 +1,12 @@
 #include "../../include/Components/SidePanel.hpp"
 
 SidePanel::SidePanel(RenderWindow& window_, MoveList& moveList_, MoveTree& moveTree_, bool& b_)
-: m_window(window_), m_moveList(moveList_), 
-m_moveTree(moveTree_), m_showMoveSelectionPanel(b_) 
+: m_window(window_), m_moveList(moveList_),
+m_moveTree(moveTree_), m_showMoveSelectionPanel(b_)
 {
-}; 
+};
 
-void SidePanel::addMove(Move& move_) 
+void SidePanel::addMove(Move& move_)
 {
     // get the text coordinates information for a Move Box
     int moveListSize = m_moveList.getMoveListSize();
@@ -24,16 +24,16 @@ void SidePanel::addMove(Move& move_)
     ++moveBoxCounter;
 }
 
-pair<char,int> SidePanel::findLetterCoord(coor2d target_) const 
+pair<char,int> SidePanel::findLetterCoord(coor2d target_) const
 {
     char letter = g_letters.at(target_.first);
     return make_pair(letter, 8-target_.second);
 }
 
-string SidePanel::parseMove(Move& move_, int moveNumber_, bool showNumber_, bool showDots_) const 
+string SidePanel::parseMove(Move& move_, int moveNumber_, bool showNumber_, bool showDots_) const
 {
     string text = (showNumber_)
-        ? to_string(moveNumber_) + "." 
+        ? to_string(moveNumber_) + "."
         : (showDots_)? to_string(moveNumber_-1) + "..." : "";
     MoveType moveType = move_.getMoveType();
 
@@ -45,7 +45,7 @@ string SidePanel::parseMove(Move& move_, int moveNumber_, bool showNumber_, bool
     pair<char, int> letterCoord = findLetterCoord(coord);
     string letterCoordString = to_string(letterCoord.first) + to_string(letterCoord.second);
 
-    switch (move_.getSelectedPiece()->getType()) 
+    switch (move_.getSelectedPiece()->getType())
     {
         case PieceType::PAWN:
             // TODO fix promotion
@@ -63,17 +63,17 @@ string SidePanel::parseMove(Move& move_, int moveNumber_, bool showNumber_, bool
     return text + string((moveType == MoveType::CAPTURE)? "x" : "") + letterCoordString;
 }
 
-void SidePanel::goToNextRow(int height_) 
+void SidePanel::goToNextRow(int height_)
 {
      m_nextPos = { g_BORDER_SIZE + 10, m_nextPos.second + height_ + 20 };
 }
 
-void SidePanel::checkOutOfBounds(MoveBox& moveBox_, int offset_) 
+void SidePanel::checkOutOfBounds(MoveBox& moveBox_, int offset_)
 {
     int newPos = g_WINDOW_SIZE + offset_ + m_nextPos.first + moveBox_.getTextBounds().width;
-    if (newPos >= g_WINDOW_SIZE + g_PANEL_SIZE - g_BORDER_SIZE) 
+    if (newPos >= g_WINDOW_SIZE + g_PANEL_SIZE - g_BORDER_SIZE)
     {
-        goToNextRow(moveBox_.getTextBounds().height); // change next position 
+        goToNextRow(moveBox_.getTextBounds().height); // change next position
         moveBox_.setPosition(m_nextPos); // update the new position
     }
 }
@@ -82,45 +82,45 @@ void SidePanel::handleMoveBoxClicked(coor2d& mousePos_) const
 {
     int newMoveIndex = 0;
 
-    for(auto& moveBox : moveBoxes) 
+    for(auto& moveBox : moveBoxes)
     {
         float width = moveBox.getScaledWidth();
         float height = moveBox.getScaledHeight();
         int xPos = moveBox.getPosition().first;
         int yPos = moveBox.getPosition().second;
 
-        int x = mousePos_.first - g_WINDOW_SIZE; 
+        int x = mousePos_.first - g_WINDOW_SIZE;
         int y = mousePos_.second - g_MENUBAR_HEIGHT;
-        
-        if ((x >= xPos && x < xPos + width) && (y >= yPos && y < yPos + height)) 
+       
+        if ((x >= xPos && x < xPos + width) && (y >= yPos && y < yPos + height))
         {
             int currMoveIndex = m_moveList.getMoveListSize() - m_moveList.getIteratorIndex() -1;
-            vector<Arrow> temp{}; // for testing 
-            if (newMoveIndex > currMoveIndex) 
+            vector<Arrow> temp{}; // for testing
+            if (newMoveIndex > currMoveIndex)
             {
-                while (newMoveIndex > currMoveIndex) 
+                while (newMoveIndex > currMoveIndex)
                 {
                     m_moveList.goToNextMove(false, temp);
                     --newMoveIndex;
                 }
-            } 
-            else if (newMoveIndex < currMoveIndex) 
+            }
+            else if (newMoveIndex < currMoveIndex)
             {
-                while (newMoveIndex < currMoveIndex) 
+                while (newMoveIndex < currMoveIndex)
                 {
                     m_moveList.goToPreviousMove(false, temp);
                     ++newMoveIndex;
                 }
-            } 
+            }
             break;
         }
         ++newMoveIndex;
     }
 }
 
-void SidePanel::drawSquareBracket(coor2d& nextPos_, int offset_, bool open_) const 
+void SidePanel::drawSquareBracket(coor2d& nextPos_, int offset_, bool open_) const
 {
-    nextPos_.first += offset_; 
+    nextPos_.first += offset_;
 
     shared_ptr<Font> font =  RessourceManager::getFont("Arial.ttf");
     Text textsf;
@@ -146,10 +146,10 @@ void SidePanel::drawSquareBracket(coor2d& nextPos_, int offset_, bool open_) con
     nextPos_.first -= offset_;
 }
 
-void SidePanel::drawFromNode(MoveTreeNode*& node_, int level_, int offset_, coor2d nextPos_, coor2d& mousePos) 
+void SidePanel::drawFromNode(MoveTreeNode*& node_, int level_, int offset_, coor2d nextPos_, coor2d& mousePos)
 {
     // base case leaf
-    if (node_->m_move.get() == nullptr && node_->m_parent != nullptr) 
+    if (node_->m_move.get() == nullptr && node_->m_parent != nullptr)
     {
         // close the open bracket for sub variation
         if (offset_ != 0) drawSquareBracket(nextPos_, offset_ + 10 , false);
@@ -157,27 +157,27 @@ void SidePanel::drawFromNode(MoveTreeNode*& node_, int level_, int offset_, coor
     }
 
     // draw the node
-    if (node_->m_move.get() != nullptr) 
+    if (node_->m_move.get() != nullptr)
     {
         nextPos_ = drawMove(*(node_->m_move), level_, offset_, nextPos_, mousePos);
-    }   
+    }  
 
     // reccursive step
-    for (int i = 0; i < node_->childNumber; ++i) 
+    for (int i = 0; i < node_->childNumber; ++i)
     {
         if (i == 0) drawFromNode(node_->m_children.at(0), level_+1, offset_, nextPos_, mousePos);
-        else 
+        else
         {
             ++m_row;
             nextPos_ = { g_INIT_WIDTH, g_INIT_HEIGHT + (m_row * g_ROW_HEIGHT) };
             drawSquareBracket(nextPos_, offset_ + g_HORIZONTAL_OFFSET - 10, true);
             drawFromNode(node_->m_children.at(i), level_+1,
-                         offset_ + g_HORIZONTAL_OFFSET, nextPos_, mousePos);  
+                         offset_ + g_HORIZONTAL_OFFSET, nextPos_, mousePos); 
         }
     }
 }
 
-coor2d SidePanel::drawMove(Move& move_, int level_, int offset_, coor2d nextPos_, coor2d& mousePos_) 
+coor2d SidePanel::drawMove(Move& move_, int level_, int offset_, coor2d nextPos_, coor2d& mousePos_)
 {
     // iterate through all the move list from begining to end
     // get the text coordinates information for a Move Box
@@ -186,7 +186,7 @@ coor2d SidePanel::drawMove(Move& move_, int level_, int offset_, coor2d nextPos_
     string text = parseMove(move_, moveNumber, showNumber);
 
     // construct the Move Box
-    nextPos_.first += offset_; 
+    nextPos_.first += offset_;
     MoveBox moveBox(nextPos_, text); // Make the text box
     moveBox.handleText(); // Create the Text, and pass the font ressource
 
@@ -194,10 +194,10 @@ coor2d SidePanel::drawMove(Move& move_, int level_, int offset_, coor2d nextPos_
     // m_nextPos.first += (moveBox.getScaledWidth()); // increment for next move box
 
     moveBox.handleRectangle();
-    if (!m_showMoveSelectionPanel) 
+    if (!m_showMoveSelectionPanel)
     {
         // Change the color of the Move Box if it is howered
-        if (moveBox.isHowered(mousePos_)) moveBox.setIsSelected(); 
+        if (moveBox.isHowered(mousePos_)) moveBox.setIsSelected();
         else moveBox.setDefault();
     }
     m_window.draw(moveBox.getRectangle());
@@ -206,20 +206,20 @@ coor2d SidePanel::drawMove(Move& move_, int level_, int offset_, coor2d nextPos_
     return {nextPos_.first += (moveBox.getScaledWidth()-offset_), nextPos_.second};
 }
 
-void SidePanel::drawMoves(coor2d& mousePos_) 
+void SidePanel::drawMoves(coor2d& mousePos_)
 {
     MoveTreeNode* root = m_moveTree.getRoot();
-    drawFromNode(root, 0, 0, { g_INIT_WIDTH, g_INIT_HEIGHT }, mousePos_); 
-    m_row = 0; // reset to 0 for next iteration 
+    drawFromNode(root, 0, 0, { g_INIT_WIDTH, g_INIT_HEIGHT }, mousePos_);
+    m_row = 0; // reset to 0 for next iteration
     // if (moveBoxes.size() == 0) return; // no moves added yet, return
 
     // int counter = 0;
     // for (auto& moveBox : moveBoxes) {
     //     moveBox.handleRectangle();
-        
+       
     //     if (!m_showMoveSelectionPanel) {
     //         // Change the color of the Move Box if it is howered
-    //         if (moveBox.isHowered(mousePos_)) moveBox.setIsSelected(); 
+    //         if (moveBox.isHowered(mousePos_)) moveBox.setIsSelected();
     //         else moveBox.setDefault();
     //     }
 

@@ -4,7 +4,7 @@
 
 using namespace std;
 
-class MoveTreeNode 
+class MoveTreeNode
 {
     static inline int numberOfMoves = 0;
 

@@ -14,7 +14,7 @@ project(chess_game)
 
 # Set project specifications
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_POSITION_INDEPENDENT_CODE) 
+set(CMAKE_POSITION_INDEPENDENT_CODE)
 
 enable_testing()
 set(Headers

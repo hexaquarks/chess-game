@@ -29,12 +29,12 @@ constexpr float g_SPRITE_SIZE = 128;
 constexpr float g_BUTTON_SIZE = 40;
 
 // Utility function
-inline RectangleShape createSquare() 
+inline RectangleShape createSquare()
 {
     return RectangleShape({ g_CELL_SIZE, g_CELL_SIZE });
 }
 
-class GameThread 
+class GameThread
 {
     inline static Board game;
     inline static RenderWindow window = { VideoMode(g_WINDOW_SIZE + g_PANEL_SIZE, g_WINDOW_SIZE + g_MENUBAR_HEIGHT),
@@ -69,7 +69,7 @@ class GameThread
     static void startGame();
 
     static int getTileXPos(const coor2d& pos_) { return pos_.first / g_CELL_SIZE; }
-    static int getTileYPos(const coor2d& pos_) 
+    static int getTileYPos(const coor2d& pos_)
     {
         if (pos_.second < g_MENUBAR_HEIGHT) return -1;
         return (pos_.second - g_MENUBAR_HEIGHT) / g_CELL_SIZE;
