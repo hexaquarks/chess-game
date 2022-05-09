@@ -29,7 +29,7 @@ void Pawn::generateCaptureMoves(vector<Move>& moves_, shared_ptr<Piece> pBoard_[
 
     // Taking piece on the right
     if (yPos+1 < 8 && (xPos+dir_ < 8 && xPos+dir_ >= 0))
-        if (pBoard_[xPos+dir_][yPos+1] != nullptr && pBoard_[xPos+dir_][yPos+1]->getTeam() != getTeam())
+        if (pBoard_[xPos+dir_][yPos+1] && pBoard_[xPos+dir_][yPos+1]->getTeam() != getTeam())
         {
             if ((xPos+dir_ == 0 || xPos+dir_ == 7))
                 moves_.push_back(Move(make_pair(xPos+dir_, yPos+1), pawnCoor, pPawnPos, MoveType::NEWPIECE));        

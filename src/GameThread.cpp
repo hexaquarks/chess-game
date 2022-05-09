@@ -230,7 +230,7 @@ void GameThread::startGame()
                 }
                 if (event.mouseButton.button == Mouse::Right) 
                 {
-                    if (pSelectedPiece != nullptr && pieceIsMoving) 
+                    if (pSelectedPiece && pieceIsMoving) 
                     {
                         // Reset the piece back
                         game.setBoardTile(lastXPos, lastYPos, pSelectedPiece, false);
@@ -263,7 +263,7 @@ void GameThread::startGame()
         moveList.highlightLastMove(window);
         if (game.kingIsChecked()) drawKingCheckCircle();
 
-        if ((pieceIsMoving || pieceIsClicked) && pSelectedPiece != nullptr) 
+        if ((pieceIsMoving || pieceIsClicked) && pSelectedPiece) 
         {
             drawCaptureCircles(pSelectedPiece);
             highlightHoveredSquare(pSelectedPiece, mousePos);
@@ -451,7 +451,7 @@ void GameThread::drawAllArrows(vector<Arrow>& arrows_, const Arrow& currArrow_)
         if (!arrow.isDrawable()) continue;
 
         shared_ptr<Texture> t = RessourceManager::getTexture(arrow.getFilename());
-        if (t == nullptr) return;
+        if (!t) return;
         Sprite s(*t);
         const coor2d arrowOrigin = arrow.getFormattedOrigin();
 
@@ -530,7 +530,7 @@ void GameThread::drawTransitioningPiece(PieceTransition& piece_)
 {
     piece_.move();
     shared_ptr<Texture> t = RessourceManager::getTexture(piece_.getPiece());   
-    if (t == nullptr) return;
+    if (!t) return;
     Sprite s(*t);
     s.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
     s.setPosition(piece_.getCurrPos().first, piece_.getCurrPos().second + g_MENUBAR_HEIGHT);

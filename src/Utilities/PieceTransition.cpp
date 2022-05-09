@@ -4,7 +4,7 @@
 
 void PieceTransition::setIncrement() 
 { 
-    if (m_piece == nullptr) return; 
+    if (!m_piece) return; 
 
     // piece should arrive at destination in one second
     m_increment.first = (m_destination.first - m_currPos.first) / (g_FPS / 6);
@@ -16,7 +16,7 @@ void PieceTransition::setIncrement()
 
 bool PieceTransition::pieceIsInBounds() 
 {
-    if (m_piece == nullptr) return false;
+    if (!m_piece) return false;
 
     // stop if arrived in the tile for temporary logical simplicity
     if (m_currPos.first == m_destination.first )  m_xArrived = true;
@@ -27,7 +27,7 @@ bool PieceTransition::pieceIsInBounds()
 
 void PieceTransition::move() 
 { 
-    if (m_piece == nullptr) return; 
+    if (!m_piece) return; 
     // move the piece only if piece is not in destinantion bounds yet.
     if (!m_xArrived) m_currPos.first += m_increment.first;
     if (!m_yArrived) m_currPos.second += m_increment.second;
