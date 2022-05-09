@@ -6,7 +6,8 @@
 typedef std::pair<int, int> coor2d;
 constexpr uint16_t g_FPS = 60;
 
-class PieceTransition {
+class PieceTransition 
+{
     Piece* m_piece;
     coor2d m_currPos{ 0, 0 };
     coor2d m_destination; 

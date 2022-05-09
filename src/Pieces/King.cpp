@@ -1,8 +1,11 @@
 #include "../../include/Pieces/King.hpp"
 
-King::King(Team team, int x, int y): Piece(team, x, y, PieceType::KING, "k") {}
+King::King(Team team, int x, int y): Piece(team, x, y, PieceType::KING, "k") 
+{
+}
 
-vector<Move> King::calcPossibleMoves(Piece* board_[8][8]) const {
+vector<Move> King::calcPossibleMoves(Piece* board_[8][8]) const 
+{
     vector<Move> moves;
     int x = getX();
     int y = getY();
@@ -15,20 +18,24 @@ vector<Move> King::calcPossibleMoves(Piece* board_[8][8]) const {
     if (canCastleQueenSide(board_))
         moves.push_back(Move(make_pair(x, 2), kingCoor, pKingPos, MoveType::CASTLE_QUEENSIDE));
 
-    for (int i = max(0, x-1); i <= min(7, x+1); ++i) {
-        for (int j = max(0, y-1); j <= min(7, y+1); ++j) {
+    for (int i = max(0, x-1); i <= min(7, x+1); ++i) 
+    {
+        for (int j = max(0, y-1); j <= min(7, y+1); ++j) 
+        {
             // King cannot stay in same place
             if (x == i && y == j) continue;
 
             // If position is empty or piece on it is of the opposite colour
             Piece* piece = board_[i][j];
-            if (piece == nullptr || piece->getTeam() != getTeam()) {
+            if (piece == nullptr || piece->getTeam() != getTeam()) 
+            {
                 board_[x][y] = nullptr; board_[i][j] = (Piece*) this; // Move king to test
                 bool checked = isChecked(board_, i, j); // Check if king is checked in this position
                 board_[x][y] = (Piece*) this; board_[i][j] = piece; // Put king back
 
                 // If king is not checked, we can add move
-                if (!checked) {
+                if (!checked) 
+                {
                     if (piece == nullptr) moves.push_back(Move(make_pair(i, j), kingCoor, pKingPos, MoveType::NORMAL));
                     else moves.push_back(Move(make_pair(i, j), kingCoor, pKingPos, MoveType::CAPTURE));
                 }

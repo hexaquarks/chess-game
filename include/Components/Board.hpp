@@ -9,7 +9,8 @@
 #include "../Pieces/Queen.hpp"
 
 
-class Board {
+class Board 
+{
     // Member variables
     Piece* m_board[8][8];
     Team m_turn; // White or black player's turn

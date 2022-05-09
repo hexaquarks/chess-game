@@ -11,7 +11,8 @@ typedef unordered_map<string, shared_ptr<sf::Texture>> textureMap;
 typedef unordered_map<string, shared_ptr<sf::SoundBuffer>> audioMap;
 typedef unordered_map<string, shared_ptr<sf::Font>> fontsMap;
 
-class RessourceManager {  
+class RessourceManager 
+{  
     inline const static string iconsPath = "../assets/icons/";
     inline const static string audioPath = "../assets/sounds/";
     inline const static string fontPath = "../assets/fonts/";

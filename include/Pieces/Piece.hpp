@@ -14,7 +14,8 @@ typedef vector<moveType> moveTypes;
 
 
 // Represents a piece
-class Piece {
+class Piece 
+{
     /* Static members */
     inline const static string fileExt = ".png"; // Pieces file extension
     inline static Piece* m_lastPiece = nullptr; // Last moved piece
@@ -52,7 +53,8 @@ class Piece {
 
     /* Utility functions */
     virtual vector<Move> calcPossibleMoves(Piece*[8][8]) const = 0; // Pure virtual function
-    void move(int x, int y, bool record = true) {
+    void move(int x, int y, bool record = true) 
+    {
         if (record && (m_xPos != x || m_yPos != y)) m_moved = true;
         m_xPos = x;
         m_yPos = y;

@@ -1,6 +1,7 @@
 #include "../../include/Components/MoveSelectionPanel.hpp"
 
-void MoveSelectionPanel::handleTitleText() {
+void MoveSelectionPanel::handleTitleText() 
+{
     shared_ptr<Font> f = RessourceManager::getFont("Arial.ttf");
     m_title.setFont(*f);
     m_title.setString("Select a variation");
@@ -9,7 +10,8 @@ void MoveSelectionPanel::handleTitleText() {
     m_title.setPosition(m_panel.getPosition() + Vector2f(10.f,10.f));
 }
 
-void MoveSelectionPanel::handlePanelRectangle() {
+void MoveSelectionPanel::handlePanelRectangle() 
+{
     m_height = g_TOP_PANEL_HEIGHT + (m_numberOfVariations * g_VARIATION_HEIGHT) + (2 * g_INNER_MARGIN);
 
     // draw all the panel
@@ -18,7 +20,8 @@ void MoveSelectionPanel::handlePanelRectangle() {
     m_panel.setPosition(g_WINDOW_SIZE + g_PANEL_SIZE / 3, g_PANEL_SIZE / 3);
 }
 
-void MoveSelectionPanel::handleSubPanels() {
+void MoveSelectionPanel::handleSubPanels() 
+{
     // draw top left rectangle and title text
     m_topRect.setSize(Vector2f(g_PANEL_WIDTH, g_TOP_PANEL_HEIGHT));
     m_topRect.setFillColor(g_LIGHT_WHITE);
@@ -34,9 +37,11 @@ void MoveSelectionPanel::handleSubPanels() {
     m_variationsPanel.setOutlineThickness(2.f);
 }
 
-void MoveSelectionPanel::handleVariations(vector<std::string>& variations_) { 
+void MoveSelectionPanel::handleVariations(vector<std::string>& variations_) 
+{ 
     int counter = 0;
-    for (auto& text : variations_) {
+    for (auto& text : variations_) 
+    {
         // Draw the rectangle container for the variation text
         RectangleShape variationRect{Vector2f(g_PANEL_WIDTH - 2 * g_INNER_MARGIN, g_VARIATION_HEIGHT)};
         Vector2f newPos{ 0, float(counter) * g_VARIATION_HEIGHT };
@@ -60,14 +65,16 @@ void MoveSelectionPanel::handleVariations(vector<std::string>& variations_) {
     }
 }
 
-void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it_) {
+void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it_) 
+{
     // construct the strings
     int moveListSize = it_.getNodeLevel() + 2;  // +2 because initial is nullptr
     int moveNumber = (moveListSize / 2) + 1;
     bool showNumber = moveListSize % 2 != 0;
     vector<string> variations; 
     
-    for (int i = 0; i < it_.get()->childNumber; ++i) {
+    for (int i = 0; i < it_.get()->childNumber; ++i) 
+    {
         variations.emplace_back(
             m_sidePanel.parseMove(
                 *(it_.get()->m_children.at(i)->m_move), moveNumber, showNumber, true
@@ -91,7 +98,8 @@ void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it_) {
     reset();
 }
 
-bool MoveSelectionPanel::isHowered(coor2d& mousePos_) const {
+bool MoveSelectionPanel::isHowered(coor2d& mousePos_) const 
+{
     int x = m_panel.getPosition().x;
     int y = m_panel.getPosition().y;
     
@@ -101,7 +109,8 @@ bool MoveSelectionPanel::isHowered(coor2d& mousePos_) const {
      && mousePos_.second <= y + m_panel.getLocalBounds().height);
 }
 
-void MoveSelectionPanel::goToNextVariation() {
+void MoveSelectionPanel::goToNextVariation() 
+{
     // set the blue variation back to normal color
     m_variationRectangles.at(m_selectionIndex).setFillColor(g_LIGHT_WHITE);
 
@@ -112,7 +121,8 @@ void MoveSelectionPanel::goToNextVariation() {
     m_variationRectangles.at(m_selectionIndex).setFillColor(g_BLUE);
 }
 
-void MoveSelectionPanel::goToPreviousVariation() {
+void MoveSelectionPanel::goToPreviousVariation() 
+{
     // set the blue variation back to normal color
     m_variationRectangles.at(m_selectionIndex).setFillColor(g_LIGHT_WHITE);
     
@@ -123,7 +133,8 @@ void MoveSelectionPanel::goToPreviousVariation() {
     m_variationRectangles.at(m_selectionIndex).setFillColor(g_BLUE);
 }
 
-void MoveSelectionPanel::reset() {
+void MoveSelectionPanel::reset() 
+{
     // m_variationRectangles.clear();
     m_variationTexts.clear();
 }

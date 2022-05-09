@@ -2,36 +2,50 @@
 #include "../../include/GameThread.hpp"
 #include <iostream>
 
-Piece::Piece(Team team_, int x_, int y_, PieceType type_, string pieceType_):
-    m_team(team_), m_xPos(x_), m_yPos(y_), m_type(type_) {
+Piece::Piece(Team team_, int x_, int y_, PieceType type_, string pieceType_)
+: m_team(team_), m_xPos(x_), m_yPos(y_), m_type(type_) 
+{
     m_filename = String(pieceType_ + getColorCode() + fileExt);
 }
 
-vector<Move> Piece::getHorizontalAndVerticalMovements(Piece* pBoard_[8][8]) const {
+vector<Move> Piece::getHorizontalAndVerticalMovements(Piece* pBoard_[8][8]) const 
+{
     vector<Move> moves;
     int xPos = getX();
     int yPos = getY();
 
     // Vertical up movement check
-    for (int i = xPos-1; i >= 0; --i) {
-        if (pBoard_[i][yPos] == nullptr) {
+    for (int i = xPos-1; i >= 0; --i) 
+    {
+        if (pBoard_[i][yPos] == nullptr) 
+        {
             moves.push_back(Move(make_pair(i, yPos), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::NORMAL));
-        } else if (pBoard_[i][yPos]->getTeam() != getTeam()) {
+        } 
+        else if (pBoard_[i][yPos]->getTeam() != getTeam()) 
+        {
             moves.push_back(Move(make_pair(i, yPos), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::CAPTURE, pBoard_[i][yPos]));
             break;
-        } else {
+        } 
+        else 
+        {
             break;
         }
     }
 
     // Vertical down movement check
-    for (int i = xPos+1; i < 8; ++i) {
-        if (pBoard_[i][yPos] == nullptr) {
+    for (int i = xPos+1; i < 8; ++i) 
+    {
+        if (pBoard_[i][yPos] == nullptr) 
+        {
             moves.push_back(Move(make_pair(i, yPos), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::NORMAL));
-        } else if (pBoard_[i][yPos]->getTeam() != getTeam()) {
+        } 
+        else if (pBoard_[i][yPos]->getTeam() != getTeam()) 
+        {
             moves.push_back(Move(make_pair(i, yPos), make_pair(xPos, yPos), pBoard_[xPos][yPos], MoveType::CAPTURE, pBoard_[i][yPos]));
             break;
-        } else {
+        } 
+        else 
+        {
             break;
         }
     }

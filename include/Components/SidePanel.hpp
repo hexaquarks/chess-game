@@ -19,7 +19,8 @@ inline const string g_letters = "abcdefgh";
 inline vector<MoveBox> moveBoxes;
 
 
-class SidePanel {
+class SidePanel 
+{
     RenderWindow& m_window;
     MoveList& m_moveList;
     MoveTree& m_moveTree;

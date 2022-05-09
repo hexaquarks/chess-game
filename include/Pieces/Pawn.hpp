@@ -4,7 +4,8 @@
 
 
 // Represents a pawn
-struct Pawn: public Piece {
+struct Pawn: public Piece 
+{
     public:
     Pawn(Team, int, int); // Constructor
 
