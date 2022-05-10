@@ -204,11 +204,11 @@ void GameThread::startGame()
                     {
                         coor2d target = make_pair(xPos, yPos);
                         coor2d initial = make_pair(lastXPos, lastYPos);
+                        shared_ptr<Move> pMove = make_shared<Move>(target, initial, pSelectedPiece, pSelectedMove->getMoveType());
 
-                        Move* pMove = new Move(target, initial, pSelectedPiece, pSelectedMove->getMoveType());
                         pMove->setCapturedPiece(pLastMove);
                         pMove->setMoveArrows(arrowList);
-                        moveList.addMove(*pMove, arrowList);
+                        moveList.addMove(pMove, arrowList);
 
                         pLastMove = pSelectedPiece;
                         pLastMove->setLastMove(pSelectedMove->getMoveType());

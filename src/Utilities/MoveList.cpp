@@ -10,25 +10,25 @@ MoveList::MoveList(Board& board_, PieceTransition& p_)
 void MoveList::highlightLastMove(RenderWindow& window_) const
 {
     if (m_moves.empty()) return;
-    Move& move = *m_moveIterator;
+    shared_ptr<Move> move = *m_moveIterator;
 
     RectangleShape squareBefore = createSquare();
     RectangleShape squareAfter = createSquare();
 
-    Color colorInit = ((move.getInit().first+move.getInit().second) % 2)
+    Color colorInit = ((move->getInit().first+move->getInit().second) % 2)
                     ? Color(170, 162, 58): Color(205, 210, 106);
-    Color colorTarget = ((move.getTarget().first+move.getTarget().second) % 2)
+    Color colorTarget = ((move->getTarget().first+move->getTarget().second) % 2)
                     ? Color(170, 162, 58): Color(205, 210, 106);
     squareBefore.setFillColor(colorInit);
     squareAfter.setFillColor(colorTarget);
 
     squareBefore.setPosition(
-        GameThread::getWindowXPos(GameThread::boardFlipped()? 7-move.getInit().first: move.getInit().first),
-        GameThread::getWindowYPos(GameThread::boardFlipped()? 7-move.getInit().second: move.getInit().second)
+        GameThread::getWindowXPos(GameThread::boardFlipped()? 7-move->getInit().first: move->getInit().first),
+        GameThread::getWindowYPos(GameThread::boardFlipped()? 7-move->getInit().second: move->getInit().second)
     );
     squareAfter.setPosition(
-        GameThread::getWindowXPos(GameThread::boardFlipped()? 7-move.getTarget().first: move.getTarget().first),
-        GameThread::getWindowYPos(GameThread::boardFlipped()? 7-move.getTarget().second: move.getTarget().second)
+        GameThread::getWindowXPos(GameThread::boardFlipped()? 7-move->getTarget().first: move->getTarget().first),
+        GameThread::getWindowYPos(GameThread::boardFlipped()? 7-move->getTarget().second: move->getTarget().second)
     );
 
     window_.draw(squareBefore);
@@ -55,7 +55,7 @@ void MoveList::goToNextMove(const bool enableTransition_, vector<Arrow>& arrowLi
     }
 }
 
-void MoveList::addMove(Move& move_, vector<Arrow>& arrowList_)
+void MoveList::addMove(shared_ptr<Move>& move_, vector<Arrow>& arrowList_)
 {
     applyMove(move_, true, true, arrowList_);
     m_moveIterator = m_moves.begin();
@@ -63,28 +63,28 @@ void MoveList::addMove(Move& move_, vector<Arrow>& arrowList_)
 
 void MoveList::applyMove(const bool enableTransition_, vector<Arrow>& arrowList_)
 {
-    Move& m = *m_moveIterator;
+    shared_ptr<Move> m = *m_moveIterator;
     applyMove(m, false, enableTransition_, arrowList_);
 }
 
-void MoveList::applyMove(Move& move_, const bool addToList_, const bool enableTransition_, vector<Arrow>& arrowList_)
+void MoveList::applyMove(shared_ptr<Move>& move_, const bool addToList_, const bool enableTransition_, vector<Arrow>& arrowList_)
 {
     const int castleRow = (game.getTurn() == Team::WHITE)? 7: 0;
     shared_ptr<Piece> pOldPiece;
-    shared_ptr<Piece> pSelectedPiece = move_.getSelectedPiece();
-    shared_ptr<Piece> pCapturedPiece = move_.getCapturedPiece();
+    shared_ptr<Piece> pSelectedPiece = move_->getSelectedPiece();
+    shared_ptr<Piece> pCapturedPiece = move_->getCapturedPiece();
 
     coor2d oldCoors;
-    int prevX = move_.getInit().first;
-    int prevY = move_.getInit().second;
-    int x = move_.getTarget().first;
-    int y = move_.getTarget().second;
+    int prevX = move_->getInit().first;
+    int prevY = move_->getInit().second;
+    int x = move_->getTarget().first;
+    int y = move_->getTarget().second;
 
     // Set the current tile of the piece null. Necessary for navigating back to current move through goToNextMove()
     game.resetBoardTile(prevX, prevY);
-    arrowList_ = move_.getMoveArrows();
+    arrowList_ = move_->getMoveArrows();
     // TODO smooth piece transition for castle
-    switch (move_.getMoveType())
+    switch (move_->getMoveType())
     {
         case MoveType::NORMAL:
             if (addToList_)
@@ -100,7 +100,7 @@ void MoveList::applyMove(Move& move_, const bool addToList_, const bool enableTr
             if (addToList_)
             {
                 game.setBoardTile(x, y, pSelectedPiece);
-                m_moves.emplace_front(Move(move_, pOldPiece));
+                m_moves.emplace_front(make_shared<Move>(*move_, pOldPiece));
             }
             // soundCapture.play();
             break;
@@ -111,7 +111,7 @@ void MoveList::applyMove(Move& move_, const bool addToList_, const bool enableTr
             if (addToList_)
             {
                 game.setBoardTile(x, y, pSelectedPiece);
-                m_moves.emplace_front(Move(move_, pCapturedPiece, oldCoors));
+                m_moves.emplace_front(make_shared<Move>(*move_, pCapturedPiece, oldCoors));
             }
             break;
 
@@ -123,8 +123,8 @@ void MoveList::applyMove(Move& move_, const bool addToList_, const bool enableTr
             if (addToList_)
             {
                 coor2d target = make_pair(6, castleRow);
-                move_.setTarget(target);
-                m_moves.emplace_front(Move(move_, pOldPiece));
+                move_->setTarget(target);
+                m_moves.emplace_front(make_shared<Move>(*move_, pOldPiece));
             }
             break;
 
@@ -136,8 +136,8 @@ void MoveList::applyMove(Move& move_, const bool addToList_, const bool enableTr
             if (addToList_)
             {
                 coor2d target = make_pair(2, castleRow);
-                move_.setTarget(target);
-                m_moves.emplace_front(Move(move_, pOldPiece));
+                move_->setTarget(target);
+                m_moves.emplace_front(make_shared<Move>(*move_, pOldPiece));
             }
             break;
 
@@ -156,7 +156,7 @@ void MoveList::applyMove(Move& move_, const bool addToList_, const bool enableTr
             game.setBoardTile(x, y, queen);
             if (addToList_)
             {
-                m_moves.emplace_front(Move(move_, pOldPiece));
+                m_moves.emplace_front(make_shared<Move>(*move_, pOldPiece));
             }
             break;
     }
@@ -183,17 +183,17 @@ void MoveList::applyMove(Move& move_, const bool addToList_, const bool enableTr
 
 void MoveList::undoMove(const bool enableTransition_, vector<Arrow>& arrowList_)
 {
-    Move& m = *m_moveIterator;
-    shared_ptr<Piece> pCaptured = m.getCapturedPiece();
-    int x = m.getTarget().first;
-    int y = m.getTarget().second;
-    int prevX = m.getInit().first;
-    int prevY = m.getInit().second;
+    shared_ptr<Move> m = *m_moveIterator;
+    shared_ptr<Piece> pCaptured = m->getCapturedPiece();
+    int x = m->getTarget().first;
+    int y = m->getTarget().second;
+    int prevX = m->getInit().first;
+    int prevY = m->getInit().second;
 
-    int castleRow = (m.getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0;
-    arrowList_ = m.getMoveArrows();
+    int castleRow = (m->getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0;
+    arrowList_ = m->getMoveArrows();
     // TODO smooth transition for castle
-    switch (m.getMoveType())
+    switch (m->getMoveType())
     {
         case MoveType::NORMAL:
             game.resetBoardTile(x, y);
@@ -203,7 +203,7 @@ void MoveList::undoMove(const bool enableTransition_, vector<Arrow>& arrowList_)
             break;
         case MoveType::ENPASSANT:
             game.resetBoardTile(x, y);
-            game.setBoardTile(m.getSpecial().first, m.getSpecial().second, pCaptured);
+            game.setBoardTile(m->getSpecial().first, m->getSpecial().second, pCaptured);
             break;
         case MoveType::CASTLE_KINGSIDE:
             game.getKing()->setAsFirstMovement();
@@ -221,12 +221,12 @@ void MoveList::undoMove(const bool enableTransition_, vector<Arrow>& arrowList_)
             game.resetBoardTile(x, y);
             break;
         case MoveType::NEWPIECE:
-            shared_ptr<Piece> pawn = make_shared<Pawn>(m.getSelectedPiece()->getTeam(), prevY, prevX);
+            shared_ptr<Piece> pawn = make_shared<Pawn>(m->getSelectedPiece()->getTeam(), prevY, prevX);
             game.setBoardTile(x, y, pCaptured);
             game.setBoardTile(prevX, prevY, pawn);
     }
 
-    shared_ptr<Piece> selected = m.getSelectedPiece();
+    shared_ptr<Piece> selected = m->getSelectedPiece();
 
     if (enableTransition_)
     {
@@ -236,12 +236,12 @@ void MoveList::undoMove(const bool enableTransition_, vector<Arrow>& arrowList_)
 
         // Enable transition movement
         GameThread::setTransitioningPiece(
-            selected, m.getInit().first * g_CELL_SIZE,
-            m.getInit().second * g_CELL_SIZE, getTransitioningPiece()
+            selected, m->getInit().first * g_CELL_SIZE,
+            m->getInit().second * g_CELL_SIZE, getTransitioningPiece()
         );
     }
     else
     {
-        game.setBoardTile(m.getInit().first, m.getInit().second, selected);
+        game.setBoardTile(m->getInit().first, m->getInit().second, selected);
     }
 }
