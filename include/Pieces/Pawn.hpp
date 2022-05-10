@@ -12,5 +12,5 @@ struct Pawn: public Piece
     vector<Move> calcPossibleMoves(Board&) const override;
     void generateCaptureMoves(vector<Move>&, Board&, int) const;
     void generateForwardMoves(vector<Move>&, Board&, int) const;
-    void generateEnPassantMoves(vector<Move>&, Board&) const;
+    void generateEnPassantMoves(vector<Move>&, Board&, int) const;
 };

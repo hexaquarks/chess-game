@@ -209,7 +209,10 @@ void GameThread::startGame()
                         pMove->setCapturedPiece(pLastMove);
                         pMove->setMoveArrows(arrowList);
                         moveList.addMove(*pMove, arrowList);
-                        // sidePanel.addMove(*move);
+
+                        pLastMove = pSelectedPiece;
+                        pLastMove->setLastMove(pSelectedMove->getMoveType());
+                        Piece::setLastMovedPiece(pLastMove);
 
                         game.switchTurn();
                         possibleMoves = game.calculateAllMoves();
@@ -221,9 +224,6 @@ void GameThread::startGame()
                         moveTree.insertNode(*pMove, treeIterator);
                         moveTree.printTree();
 
-                        pLastMove = pSelectedPiece;
-                        pLastMove->setLastMove(pSelectedMove->getMoveType());
-                        Piece::setLastMovedPiece(pLastMove);
                         arrowList.clear();
                     }
 

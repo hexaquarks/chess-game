@@ -16,7 +16,7 @@ vector<Move> Pawn::calcPossibleMoves(Board& board_) const
 
     generateCaptureMoves(moves, board_, dir);
     generateForwardMoves(moves, board_, dir);
-    generateEnPassantMoves(moves, board_);
+    generateEnPassantMoves(moves, board_, dir);
 
     return moves;
 }
@@ -67,14 +67,12 @@ void Pawn::generateForwardMoves(vector<Move>& moves_, Board& board_, int dir_) c
         if (hasNotMoved && !board_.getBoardTile(yPos, xPos+2*dir_))
             moves_.push_back(Move(make_pair(xPos+2*dir_, yPos), pawnCoor, pPawnPos, MoveType::INIT_SPECIAL));
     }
-
 }
 
-void Pawn::generateEnPassantMoves(vector<Move>& moves_, Board& board_) const
+void Pawn::generateEnPassantMoves(vector<Move>& moves_, Board& board_, int dir) const
 {
     int xPos = getX();
     int yPos = getY();
-    int dir = (getTeam() == Team::WHITE)? -1: 1;
     coor2d pawnCoor = { xPos, yPos };
     shared_ptr<Piece> pPawnPos = board_.getBoardTile(yPos, xPos);
 
