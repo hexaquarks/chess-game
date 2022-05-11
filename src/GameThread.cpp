@@ -39,6 +39,7 @@ void GameThread::startGame()
     int lastXPos = 0;
     int lastYPos = 0; // Last position of the piece before being dragged
     possibleMoves = game.calculateAllMoves();
+    bool kingChecked = false;
 
     // Additional board state variables
     shared_ptr<Piece> pLastMove;
@@ -216,9 +217,15 @@ void GameThread::startGame()
 
                         game.switchTurn();
                         refreshMoves();
-                        if (game.kingIsChecked()) {
+                        if (game.kingIsChecked())
+                        {
+                            kingChecked = true;
                             pMove->setChecked();
                             if (possibleMoves.empty()) pMove->setCheckmate();
+                        }
+                        else
+                        {
+                            kingChecked = false;
                         }
 
                         moveTree.insertNode(pMove, treeIterator);
@@ -229,7 +236,7 @@ void GameThread::startGame()
                     pSelectedPiece.reset();
                     pieceIsMoving = false;
                     pieceIsClicked = false;
-                    mousePos = { 0, 0 };
+                    mousePos = {0, 0};
                 }
                 if (event.mouseButton.button == Mouse::Right)
                 {
@@ -264,7 +271,7 @@ void GameThread::startGame()
         drawSidePanel(sidePanel);
         initializeBoard();
         moveList.highlightLastMove(window);
-        if (game.kingIsChecked()) drawKingCheckCircle();
+        if (kingChecked) drawKingCheckCircle();
 
         if ((pieceIsMoving || pieceIsClicked) && pSelectedPiece)
         {
