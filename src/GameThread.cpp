@@ -154,7 +154,7 @@ void GameThread::startGame()
                     if (mousePos.second < g_MENUBAR_HEIGHT)
                         for (MenuButton& m: menuBar)
                             if (m.isClicked(mousePos))
-                                if(m.performClick(game, moveList) == 1)
+                                if (m.performClick(game, moveList) == 1)
                                 {
                                     // TODO fix bug (reset at beggining)
                                     pSelectedPiece.reset();
