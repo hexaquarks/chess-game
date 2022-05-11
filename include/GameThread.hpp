@@ -88,4 +88,5 @@ class GameThread
 
     static void flipBoard() { isFlipped = !isFlipped; }
     static bool boardFlipped() { return isFlipped; }
+    static void refreshMoves() { possibleMoves = game.calculateAllMoves(); }
 };

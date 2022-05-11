@@ -10,9 +10,9 @@ class MoveTreeNode
 
     public:
     int childNumber = 0;
-    MoveTreeNode* m_parent = nullptr; // To go to previous move
-    MoveTreeNode(const Move&);   // public for now for debbuging
-    MoveTreeNode(): m_move(nullptr) {}
-    unique_ptr<Move> m_move; // Key   // public for now for debbuging
-    vector<MoveTreeNode*> m_children;   // To to go to next move
+    shared_ptr<MoveTreeNode> m_parent; // To go to previous move
+    MoveTreeNode(shared_ptr<Move>&);   // public for now for debbuging
+    MoveTreeNode() {}
+    shared_ptr<Move> m_move; // Key   // public for now for debbuging
+    vector<shared_ptr<MoveTreeNode>> m_children;   // To to go to next move
 };

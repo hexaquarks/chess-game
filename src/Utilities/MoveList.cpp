@@ -2,14 +2,13 @@
 #include "../../include/Utilities/PieceTransition.hpp"
 #include "../../include/GameThread.hpp"
 
-MoveList::MoveList(Board& board_, PieceTransition& p_)
-: game(board_), m_transitioningPiece(p_)
+MoveList::MoveList(Board& board_, PieceTransition& p_): game(board_), m_transitioningPiece(p_)
 {
 }
 
 void MoveList::highlightLastMove(RenderWindow& window_) const
 {
-    if (m_moves.empty()) return;
+    if (!hasMovesBefore()) return;
     shared_ptr<Move> move = *m_moveIterator;
 
     RectangleShape squareBefore = createSquare();
@@ -42,6 +41,7 @@ void MoveList::goToPreviousMove(const bool enableTransition_, vector<Arrow>& arr
         undoMove(enableTransition_, arrowList_);
         ++m_moveIterator; // Go to previous move
         game.switchTurn();
+        //GameThread::refreshMoves();
     }
 }
 
@@ -52,6 +52,7 @@ void MoveList::goToNextMove(const bool enableTransition_, vector<Arrow>& arrowLi
         --m_moveIterator; // Go to previous move
         applyMove(enableTransition_, arrowList_);
         game.switchTurn();
+        //GameThread::refreshMoves();
     }
 }
 
@@ -242,6 +243,6 @@ void MoveList::undoMove(const bool enableTransition_, vector<Arrow>& arrowList_)
     }
     else
     {
-        game.setBoardTile(m->getInit().first, m->getInit().second, selected);
+        game.setBoardTile(prevY, prevX, selected);
     }
 }

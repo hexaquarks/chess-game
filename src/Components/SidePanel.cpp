@@ -154,10 +154,10 @@ void SidePanel::drawSquareBracket(coor2d& nextPos_, int offset_, bool open_) con
     nextPos_.first -= offset_;
 }
 
-void SidePanel::drawFromNode(MoveTreeNode*& node_, int level_, int offset_, coor2d nextPos_, coor2d& mousePos)
+void SidePanel::drawFromNode(shared_ptr<MoveTreeNode>& node_, int level_, int offset_, coor2d nextPos_, coor2d& mousePos)
 {
     // base case leaf
-    if (node_->m_move.get() == nullptr && node_->m_parent != nullptr)
+    if (!node_->m_move && node_->m_parent)
     {
         // close the open bracket for sub variation
         if (offset_ != 0) drawSquareBracket(nextPos_, offset_ + 10 , false);
@@ -179,8 +179,10 @@ void SidePanel::drawFromNode(MoveTreeNode*& node_, int level_, int offset_, coor
             ++m_row;
             nextPos_ = { g_INIT_WIDTH, g_INIT_HEIGHT + (m_row * g_ROW_HEIGHT) };
             drawSquareBracket(nextPos_, offset_ + g_HORIZONTAL_OFFSET - 10, true);
-            drawFromNode(node_->m_children.at(i), level_+1,
-                         offset_ + g_HORIZONTAL_OFFSET, nextPos_, mousePos); 
+            drawFromNode(
+                node_->m_children.at(i), level_+1,
+                offset_ + g_HORIZONTAL_OFFSET, nextPos_, mousePos
+            ); 
         }
     }
 }
@@ -216,7 +218,7 @@ coor2d SidePanel::drawMove(Move& move_, int level_, int offset_, coor2d nextPos_
 
 void SidePanel::drawMoves(coor2d& mousePos_)
 {
-    MoveTreeNode* root = m_moveTree.getRoot();
+    shared_ptr<MoveTreeNode> root = m_moveTree.getRoot();
     drawFromNode(root, 0, 0, { g_INIT_WIDTH, g_INIT_HEIGHT }, mousePos_);
     m_row = 0; // reset to 0 for next iteration
     // if (moveBoxes.size() == 0) return; // no moves added yet, return

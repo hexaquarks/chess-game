@@ -215,15 +215,14 @@ void GameThread::startGame()
                         Piece::setLastMovedPiece(pLastMove);
 
                         game.switchTurn();
-                        possibleMoves = game.calculateAllMoves();
+                        refreshMoves();
                         if (game.kingIsChecked()) {
                             pMove->setChecked();
                             if (possibleMoves.empty()) pMove->setCheckmate();
                         }
 
-                        moveTree.insertNode(*pMove, treeIterator);
+                        moveTree.insertNode(pMove, treeIterator);
                         moveTree.printTree();
-
                         arrowList.clear();
                     }
 
@@ -543,10 +542,10 @@ void GameThread::drawTransitioningPiece(PieceTransition& piece_)
     piece_.setHasArrived(piece_.pieceIsInBounds(), game);
 }
 
-void GameThread::handleKeyPressed(const Event& event_,
-                                  MoveSelectionPanel& moveSelectionPanel_,
-                                  vector<Arrow>& arrowList_,
-                                  bool& showMoveSelectionPanel_)
+void GameThread::handleKeyPressed(
+    const Event& event_, MoveSelectionPanel& moveSelectionPanel_,
+    vector<Arrow>& arrowList_, bool& showMoveSelectionPanel_
+)
 {
     switch (event_.key.code)
     {

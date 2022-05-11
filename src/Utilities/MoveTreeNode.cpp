@@ -1,6 +1,5 @@
 #include "../../include/Utilities/MoveTreeNode.hpp"
 
-MoveTreeNode::MoveTreeNode(const Move& move_)
-: m_move(make_unique<Move>(move_))
+MoveTreeNode::MoveTreeNode(shared_ptr<Move>& move_): m_move(move_)
 {
 }

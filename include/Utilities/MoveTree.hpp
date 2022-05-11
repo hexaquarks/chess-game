@@ -7,31 +7,36 @@ using namespace std;
 class MoveTree
 {
     public:
-    unique_ptr<MoveTreeNode> m_root = make_unique<MoveTreeNode>(); // Root of the tree
+    shared_ptr<MoveTreeNode> m_root = make_shared<MoveTreeNode>(); // Root of the tree
     int numberOfMoves = 0;
 
-    MoveTreeNode* findNode(MoveTreeNode*&);
-    MoveTreeNode* getNode();
-    MoveTreeNode* getRoot() { return m_root.get(); }
+    shared_ptr<MoveTreeNode>& getRoot() { return m_root; }
 
-    struct Iterator
+    class Iterator
     {
-        using iterator_category = bidirectional_iterator_tag;
-        using difference_type   = ptrdiff_t;
+        shared_ptr<MoveTreeNode> m_ptr;
 
-        Iterator(MoveTreeNode* ptr): m_ptr(ptr)
+        public:
+        using iterator_category = bidirectional_iterator_tag;
+        using difference_type = ptrdiff_t;
+
+        Iterator(shared_ptr<MoveTreeNode>& ptr): m_ptr(ptr)
+        {
+        }
+
+        Iterator()
         {
         }
 
         MoveTreeNode& operator*() const { return *m_ptr; }
-        MoveTreeNode* operator->() { return m_ptr; }
-        MoveTreeNode* get() { return m_ptr; }
+        shared_ptr<MoveTreeNode>& operator->() { return m_ptr; }
+        shared_ptr<MoveTreeNode>& get() { return m_ptr; }
 
-        void goToChild(const int i) { m_ptr = m_ptr->m_children.at(i); }
+        void goToChild(int i) { m_ptr = m_ptr->m_children.at(i); }
 
-        void addChild(MoveTreeNode* child)
+        void addChild(shared_ptr<MoveTreeNode>& child)
         {
-            if (m_ptr == nullptr)
+            if (!m_ptr)
             {
                 m_ptr = child;
             }
@@ -47,9 +52,9 @@ class MoveTree
         void goToParent() { m_ptr = m_ptr->m_parent; }
 
         int getNodeLevel() {
-            MoveTreeNode* temp = m_ptr;
+            shared_ptr<MoveTreeNode> temp = m_ptr;
             int i = 0;
-            while (temp->m_parent != nullptr)
+            while (temp->m_parent)
             {
                 temp = temp->m_parent;
                 ++i;
@@ -58,19 +63,19 @@ class MoveTree
         }
 
         // Prefix increment
-        MoveTreeNode* operator++()
+        shared_ptr<MoveTreeNode> operator++()
         {
             goToChild(0); return m_ptr;
         }
 
         // Postfix increment
-        MoveTreeNode* operator++(int)
+        shared_ptr<MoveTreeNode> operator++(int)
         {
-            MoveTreeNode* res = m_ptr; goToChild(0); return res;
+            shared_ptr<MoveTreeNode> res = m_ptr; goToChild(0); return res;
         }
 
         // Shift child number
-        MoveTreeNode* operator>>(int n)
+        shared_ptr<MoveTreeNode> operator>>(int n)
         {
             int childNumber = m_ptr->childNumber;
             goToParent();
@@ -79,7 +84,7 @@ class MoveTree
         }
 
         // Shift child number
-        MoveTreeNode* operator<<(int n)
+        shared_ptr<MoveTreeNode> operator<<(int n)
         {
             int childNumber = m_ptr->childNumber;
             goToParent();
@@ -88,10 +93,10 @@ class MoveTree
         }
 
         // Prefix decrement
-        MoveTreeNode* operator--() { goToParent(); return m_ptr; }
+        shared_ptr<MoveTreeNode> operator--() { goToParent(); return m_ptr; }
 
         // Postfix decrement
-        MoveTreeNode* operator--(int) { MoveTreeNode* res = m_ptr; goToParent(); return res; }
+        shared_ptr<MoveTreeNode> operator--(int) { shared_ptr<MoveTreeNode> res = m_ptr; goToParent(); return res; }
 
         friend bool operator ==(const Iterator& a, const Iterator& b) {
             return a.m_ptr == b.m_ptr;
@@ -99,20 +104,17 @@ class MoveTree
         friend bool operator !=(const Iterator& a, const Iterator& b) {
             return a.m_ptr != b.m_ptr;
         };
-
-        private:
-        MoveTreeNode* m_ptr;
     };
 
     Iterator begin() { return Iterator(getRoot()); }
-    Iterator end()   { return Iterator(nullptr); }
+    Iterator end() { return Iterator(); }
 
-    void insertNode(Move&, MoveTree::Iterator&);
+    void insertNode(shared_ptr<Move>&, MoveTree::Iterator&);
     void goToNextNode(const int, MoveTree::Iterator&);
     void goToPreviousNode(MoveTree::Iterator&);
     void printTree();
-    void printTreeRec(MoveTreeNode*, vector<bool>, int a = 0, bool b = false);
+    void printTreeRec(shared_ptr<MoveTreeNode>&, vector<bool>, int a = 0, bool b = false);
     int getNumberOfMoves() { return numberOfMoves; }
-    void printPreorder(MoveTreeNode*&);
+    void printPreorder(shared_ptr<MoveTreeNode>&);
     int getNodeLevel(MoveTree::Iterator&);
 };

@@ -44,5 +44,5 @@ class SidePanel
     coor2d drawMove(Move&, int, int, coor2d, coor2d&);
     void checkOutOfBounds(MoveBox&, int);
     void handleMoveBoxClicked(coor2d&) const;
-    void drawFromNode(MoveTreeNode*&, int, int, coor2d, coor2d&);
+    void drawFromNode(shared_ptr<MoveTreeNode>&, int, int, coor2d, coor2d&);
 };
