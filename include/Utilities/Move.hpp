@@ -1,16 +1,18 @@
 #pragma once
 #include <iostream>
 #include <tuple>
+#include <memory>
+
 #include "Arrow.hpp"
+
 using namespace std;
 
-typedef pair<int, int> coor2d;
-
+// Forward declarations
 class Piece;
-
-enum class MoveType { NORMAL, CASTLE_KINGSIDE, CASTLE_QUEENSIDE, ENPASSANT, NEWPIECE, CAPTURE, INIT_SPECIAL };
-
 class Board;
+
+typedef pair<int, int> coor2d;
+enum class MoveType { NORMAL, CASTLE_KINGSIDE, CASTLE_QUEENSIDE, ENPASSANT, NEWPIECE, CAPTURE, INIT_SPECIAL };
 
 class Move
 {
