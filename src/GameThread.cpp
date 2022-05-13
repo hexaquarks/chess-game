@@ -72,7 +72,6 @@ void GameThread::startGame()
         // We use a while loop for the pending events in case there were multiple events occured
         while (window.pollEvent(event))
         {
-
             // Closing the window
             if (event.type == Event::Closed)
                 window.close();
