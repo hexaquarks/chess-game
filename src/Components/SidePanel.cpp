@@ -1,4 +1,5 @@
 #include "../../include/Components/SidePanel.hpp"
+#include "../../include/Utilities/DrawableSf.hpp"
 
 SidePanel::SidePanel(RenderWindow& window_, MoveList& moveList_, MoveTree& moveTree_, bool& b_)
 : m_window(window_), m_moveList(moveList_),
@@ -132,11 +133,15 @@ void SidePanel::drawSquareBracket(coor2d& nextPos_, int offset_, bool open_) con
 
     shared_ptr<Font> font =  RessourceManager::getFont("Arial.ttf");
     Text textsf;
-    textsf.setString(open_ ? "[" : "]"); // string&
-    textsf.setFont(*font); //sf::Font
-    textsf.setCharacterSize(28);
-    textsf.setStyle(Text::Bold); //sf::Text::Style
-    textsf.setFillColor({ 240, 248, 255 }); // sf::Color
+
+    // testing
+    DrawableSf::drawTextSf(textsf, "TESTING", *font, 28, Text::Bold, {240, 248, 255});
+
+    // textsf.setString(open_ ? "[" : "]");
+    // textsf.setFont(*font);
+    // textsf.setCharacterSize(28);
+    // textsf.setStyle(Text::Bold);
+    // textsf.setFillColor({ 240, 248, 255 });
 
     Vector2f recSize(textsf.getGlobalBounds().width, textsf.getCharacterSize());
     RectangleShape rect;
