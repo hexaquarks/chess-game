@@ -133,21 +133,12 @@ void SidePanel::drawSquareBracket(coor2d& nextPos_, int offset_, bool open_) con
 
     shared_ptr<Font> font =  RessourceManager::getFont("Arial.ttf");
     Text textsf;
-
-    // testing
-    DrawableSf::drawTextSf(textsf, "TESTING", *font, 28, Text::Bold, {240, 248, 255});
-
-    // textsf.setString(open_ ? "[" : "]");
-    // textsf.setFont(*font);
-    // textsf.setCharacterSize(28);
-    // textsf.setStyle(Text::Bold);
-    // textsf.setFillColor({ 240, 248, 255 });
+    DrawableSf::drawTextSf(textsf, string(open_ ? "[" : "]"), *font, 28, Text::Bold, {240, 248, 255});
 
     Vector2f recSize(textsf.getGlobalBounds().width, textsf.getCharacterSize());
     RectangleShape rect;
-    rect.setPosition(g_WINDOW_SIZE + nextPos_.first, g_MENUBAR_HEIGHT + nextPos_.second);
-    rect.setSize(recSize);
-    rect.setFillColor({ 50, 50, 50 });
+    DrawableSf::drawRectangleSf(rect, (g_WINDOW_SIZE + nextPos_.first), 
+                               (g_MENUBAR_HEIGHT + nextPos_.second), recSize, { 50, 50, 50 });
 
     float positionalShift = ((g_BOX_HORIZONTAL_SCALE - 1.f) * rect.getLocalBounds().width)/2.f;
     rect.setScale(g_BOX_HORIZONTAL_SCALE, g_BOX_VERTICAL_SCALE);

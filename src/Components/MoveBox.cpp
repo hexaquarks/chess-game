@@ -1,4 +1,5 @@
 #include "../../include/Components/MoveBox.hpp"
+#include "../../include/Utilities/DrawableSf.hpp"
 
 MoveBox::MoveBox(coor2d position_, string text_): m_position(position_), m_text(text_)
 {
@@ -7,12 +8,7 @@ MoveBox::MoveBox(coor2d position_, string text_): m_position(position_), m_text(
 void MoveBox::handleText()
 {
     shared_ptr<Font> font =  RessourceManager::getFont("Arial.ttf");
-
-    m_textsf.setString(m_text);
-    m_textsf.setFont(*font);
-    m_textsf.setCharacterSize(25);
-    m_textsf.setStyle(Text::Bold);
-    m_textsf.setFillColor(Color::Black);
+    DrawableSf::drawTextSf(m_textsf, m_text, *font, 25, Text::Bold, Color::Black);
 
     m_textBounds = m_textsf.getGlobalBounds();
 }
@@ -20,10 +16,8 @@ void MoveBox::handleText()
 void MoveBox::handleRectangle()
 {
     Vector2f recSize(m_textBounds.width, m_textsf.getCharacterSize());
-    m_rectangle.setPosition(g_WINDOW_SIZE + m_position.first, g_MENUBAR_HEIGHT + m_position.second);
-    m_rectangle.setSize(recSize);
-    m_rectangle.setFillColor({ 50, 50, 50 });
-
+    DrawableSf::drawRectangleSf(m_rectangle, (g_WINDOW_SIZE + m_position.first),
+                                ( g_MENUBAR_HEIGHT + m_position.second), recSize, { 50, 50 ,50 });
     float positionalShift = ((g_BOX_HORIZONTAL_SCALE - 1.f)*m_rectangle.getLocalBounds().width)/2.f;
 
     m_rectangle.setScale(g_BOX_HORIZONTAL_SCALE, g_BOX_VERTICAL_SCALE);

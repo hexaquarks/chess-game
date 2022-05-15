@@ -9,3 +9,11 @@ void DrawableSf::drawTextSf(Text& texture_, const std::string& text_, Font& font
     texture_.setStyle(Text::Bold);
     texture_.setFillColor({ 240, 248, 255 });
 }
+
+void DrawableSf::drawRectangleSf(RectangleShape& rect_, const float& posX_, const float& posY_, 
+                         const Vector2f& size_, const Color& color_)
+{
+    rect_.setPosition(posX_, posY_);
+    rect_.setSize(size_);
+    rect_.setFillColor(color_);
+}                         
