@@ -66,7 +66,7 @@ void GameThread::startGame()
     Event event;
     while (window.isOpen())
     {
-        window.clear(Color(23, 23, 23));
+        window.clear({23, 23, 23});
 
         // We use a while loop for the pending events in case there were multiple events occured
         while (window.pollEvent(event))
@@ -262,6 +262,7 @@ void GameThread::startGame()
             if (event.type == Event::KeyPressed)
             {
                 handleKeyPressed(event, moveSelectionPanel, arrowList, showMoveSelectionPanel);
+                // kingChecked = game.kingIsChecked();
             }
         }
 
@@ -309,8 +310,8 @@ void GameThread::drawSidePanel(SidePanel& sidePanel_)
     // Draw the main panels
     RectangleShape mainPanel(Vector2f(g_PANEL_SIZE - 2*g_BORDER_SIZE, g_MAIN_PANEL_HEIGHT - 2*g_BORDER_SIZE));
     RectangleShape southPanel(Vector2f(g_PANEL_SIZE - 2*g_BORDER_SIZE, g_SOUTH_PANEL_HEIGHT));
-    mainPanel.setFillColor(Color(50, 50, 50)); // Charcoal
-    southPanel.setFillColor(Color(50, 50, 50));
+    mainPanel.setFillColor({50, 50, 50}); // Charcoal
+    southPanel.setFillColor({50, 50, 50});
     mainPanel.setPosition(g_WINDOW_SIZE + g_BORDER_SIZE, g_MENUBAR_HEIGHT);
     southPanel.setPosition(g_WINDOW_SIZE + g_BORDER_SIZE, g_MENUBAR_HEIGHT + g_MAIN_PANEL_HEIGHT - g_BORDER_SIZE);
 
@@ -325,8 +326,8 @@ void GameThread::drawSidePanel(SidePanel& sidePanel_)
 
 void GameThread::drawGrayCover()
 {
-    RectangleShape cover {Vector2f(g_WINDOW_SIZE + g_PANEL_SIZE, g_WINDOW_SIZE)};
-    cover.setFillColor(Color(220, 220, 220, 75));
+    RectangleShape cover({g_WINDOW_SIZE + g_PANEL_SIZE, g_WINDOW_SIZE});
+    cover.setFillColor({220, 220, 220, 75});
     cover.setPosition(0, g_MENUBAR_HEIGHT);
     window.draw(cover);
 }
@@ -489,6 +490,7 @@ void GameThread::drawKingCheckCircle()
     CircleShape c(g_CELL_SIZE/2);
 
     c.setFillColor(Color::Transparent);
+    if (transitioningPiece.getIsTransitioning() && transitioningPiece.getPiece() == king) return;
     int x = isFlipped? 7-king->getY(): king->getY();
     int y = isFlipped? 7-king->getX(): king->getX();
     c.setPosition(getWindowXPos(x), getWindowYPos(y));
@@ -550,12 +552,16 @@ void GameThread::handleKeyPressed(
     vector<Arrow>& arrowList_, bool& showMoveSelectionPanel_
 )
 {
+    shared_ptr<Move> move;
     switch (event_.key.code)
     {
         case Keyboard::Left:
             if (transitioningPiece.getIsTransitioning()) break;
             moveList.goToPreviousMove(true, arrowList_);
             moveTree.goToPreviousNode(treeIterator);
+            move = treeIterator.get()->m_move;
+            if (move) kingChecked = move->kingIsChecked();
+            else kingChecked = false;
             break;
         case Keyboard::Right:
             if (treeIterator.get()->childNumber > 1)
@@ -564,12 +570,14 @@ void GameThread::handleKeyPressed(
                 {
                     moveList.goToNextMove(true, arrowList_);
                     moveTree.goToNextNode(moveSelectionPanel_.getSelection(), treeIterator);
+                    kingChecked = treeIterator.get()->m_move->kingIsChecked();
                 }
                 showMoveSelectionPanel_ = !showMoveSelectionPanel_;
                 return;
             }
             moveList.goToNextMove(true, arrowList_);
             moveTree.goToNextNode(0, treeIterator);
+            kingChecked = treeIterator.get()->m_move->kingIsChecked();
             break;
         case Keyboard::LControl:
             flipBoard();
@@ -587,7 +595,8 @@ void GameThread::handleKeyPressed(
             {
                 moveList.goToNextMove(true, arrowList_);
                 moveTree.goToNextNode(moveSelectionPanel_.getSelection(), treeIterator);
-                showMoveSelectionPanel_ = false; // close the panel display
+                kingChecked = treeIterator.get()->m_move->kingIsChecked();
+                showMoveSelectionPanel_ = false; // Close the panel display
             }
             break;
         default: break; // Avoid pattern matching not exhaustive warning

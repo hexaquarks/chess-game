@@ -41,7 +41,7 @@ void MoveList::goToPreviousMove(const bool enableTransition_, vector<Arrow>& arr
         undoMove(enableTransition_, arrowList_);
         ++m_moveIterator; // Go to previous move
         game.switchTurn();
-        //GameThread::refreshMoves();
+        // GameThread::refreshMoves();
     }
 }
 
@@ -52,7 +52,7 @@ void MoveList::goToNextMove(const bool enableTransition_, vector<Arrow>& arrowLi
         --m_moveIterator; // Go to previous move
         applyMove(enableTransition_, arrowList_);
         game.switchTurn();
-        //GameThread::refreshMoves();
+        // GameThread::refreshMoves();
     }
 }
 
@@ -231,7 +231,7 @@ void MoveList::undoMove(const bool enableTransition_, vector<Arrow>& arrowList_)
 
     if (enableTransition_)
     {
-        // move the piece from the (-1,-1) hidden location back to the square
+        // Move the piece from the (-1, -1) hidden location back to the square
         // where it begins it's transition
         selected->move(y, x);
 
@@ -242,7 +242,5 @@ void MoveList::undoMove(const bool enableTransition_, vector<Arrow>& arrowList_)
         );
     }
     else
-    {
-        game.setBoardTile(prevY, prevX, selected);
-    }
+        game.setBoardTile(prevX, prevY, selected);
 }
