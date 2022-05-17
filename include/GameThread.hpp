@@ -52,6 +52,7 @@ class GameThread
     inline static MoveList moveList{ game, transitioningPiece };
     inline static MoveTree moveTree;
     inline static MoveTree::Iterator treeIterator = moveTree.begin();
+    inline static bool kingChecked = false;
 
     static void handleKeyPressed(const Event&, MoveSelectionPanel&, vector<Arrow>&, bool&);
     static void initializeBoard();

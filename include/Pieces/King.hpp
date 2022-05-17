@@ -13,8 +13,8 @@ class King: public Piece
     public:
     King(Team, int, int); // Constructor
     vector<Move> calcPossibleMoves(Board&) const override;
-    bool isChecked(Board& board_) const;
-   
+    bool isChecked(Board&) const;
+
     static void swapPieces(Board& board_, int x, int y, int X, int Y)
     {
         shared_ptr<Piece> first = board_.getBoardTile(y, x);

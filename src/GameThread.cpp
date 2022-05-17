@@ -26,7 +26,7 @@ void GameThread::startGame()
     Image icon;
     icon.loadFromFile(RessourceManager::getIconPath("nw.png"));
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
-    window.setPosition({ 300, 300 });
+    window.setPosition({300, 300});
 
     // Parameters to handle a piece being dragged
     bool pieceIsMoving = false;
@@ -34,12 +34,11 @@ void GameThread::startGame()
     bool isRightClicking = false;
     shared_ptr<Piece> pSelectedPiece;
     shared_ptr<Piece> pMovingPiece; // Piece transition
-    coor2d mousePos = { 0, 0 };
-    coor2d rightClickAnchor = { 0, 0 };
+    coor2d mousePos = {0, 0};
+    coor2d rightClickAnchor = {0, 0};
     int lastXPos = 0;
     int lastYPos = 0; // Last position of the piece before being dragged
     possibleMoves = game.calculateAllMoves();
-    bool kingChecked = false;
 
     // Additional board state variables
     shared_ptr<Piece> pLastMove;
@@ -82,7 +81,7 @@ void GameThread::startGame()
                 if (event.mouseButton.button == Mouse::Left)
                 {
                     // Get the tile of the click
-                    mousePos = { event.mouseButton.x, event.mouseButton.y };
+                    mousePos = {event.mouseButton.x, event.mouseButton.y};
 
                     // Allow user to make moves only if they're at the current live position,
                     // and if the click is on the chess board
@@ -122,7 +121,7 @@ void GameThread::startGame()
                 {
                     if (!pieceIsMoving)
                     {
-                        rightClickAnchor = { event.mouseButton.x, event.mouseButton.y };
+                        rightClickAnchor = {event.mouseButton.x, event.mouseButton.y};
                         arrow.setOrigin(rightClickAnchor);
                         arrow.setDestination(rightClickAnchor);
                         isRightClicking = true;
@@ -135,7 +134,7 @@ void GameThread::startGame()
             {
                 // Update the position of the piece that is being moved
                 Vector2i mousePosition = Mouse::getPosition(window);
-                mousePos = { mousePosition.x, mousePosition.y };
+                mousePos = {mousePosition.x, mousePosition.y};
 
                 if (isRightClicking)
                 {
@@ -158,7 +157,7 @@ void GameThread::startGame()
                                     // TODO fix bug (reset at beggining)
                                     pSelectedPiece.reset();
                                     arrowList.clear();
-                                    mousePos = { 0, 0 };
+                                    mousePos = {0, 0};
                                 }
                     // Handle Side Panel Move Box buttons click
                     if (!showMoveSelectionPanel) sidePanel.handleMoveBoxClicked(mousePos);
@@ -254,7 +253,7 @@ void GameThread::startGame()
                             if (!arrow.removeArrow(arrowList)) arrowList.push_back(arrow);
                         }
                         isRightClicking = false;
-                        rightClickAnchor = {0,0};
+                        rightClickAnchor = {0, 0};
                         arrow.resetParameters();
                     }
                 }
@@ -300,7 +299,7 @@ void GameThread::startGame()
 void GameThread::initializeMenuBar()
 {
     constexpr uint16_t menuOptions = 3;
-    const string menuNames[menuOptions] = { "Menu", "Reset", "Flip" };
+    const string menuNames[menuOptions] = {"Menu", "Reset", "Flip"};
 
     for (uint8_t i = 0; i < menuOptions; ++i) menuBar.push_back(MenuButton(i, menuNames[i]));
 }
@@ -314,19 +313,19 @@ void GameThread::drawSidePanel(SidePanel& sidePanel_)
     southPanel.setFillColor(Color(50, 50, 50));
     mainPanel.setPosition(g_WINDOW_SIZE + g_BORDER_SIZE, g_MENUBAR_HEIGHT);
     southPanel.setPosition(g_WINDOW_SIZE + g_BORDER_SIZE, g_MENUBAR_HEIGHT + g_MAIN_PANEL_HEIGHT - g_BORDER_SIZE);
-   
+
     window.draw(mainPanel);
     window.draw(southPanel);
 
     // Draw the content on the panels
     Vector2i position = sf::Mouse::getPosition(window);
-    coor2d mousePos = { position.x , position.y };
+    coor2d mousePos = {position.x , position.y};
     sidePanel_.drawMoves(mousePos);
 }
 
 void GameThread::drawGrayCover()
 {
-    RectangleShape cover{ Vector2f(g_WINDOW_SIZE + g_PANEL_SIZE, g_WINDOW_SIZE) };
+    RectangleShape cover {Vector2f(g_WINDOW_SIZE + g_PANEL_SIZE, g_WINDOW_SIZE)};
     cover.setFillColor(Color(220, 220, 220, 75));
     cover.setPosition(0, g_MENUBAR_HEIGHT);
     window.draw(cover);
@@ -335,7 +334,7 @@ void GameThread::drawGrayCover()
 void GameThread::drawMenuBar()
 {
     constexpr uint16_t menuOptions = 3;
-    const string iconFiles[menuOptions] = { "dropDownWhite.png", "resetWhite.png", "flipWhite.png" };
+    const string iconFiles[menuOptions] = {"dropDownWhite.png", "resetWhite.png", "flipWhite.png"};
 
     for (uint8_t i = 0; i < menuOptions; ++i)
     {
@@ -343,16 +342,16 @@ void GameThread::drawMenuBar()
         MenuButton& option = menuBar[i];
         option.setSpriteTexture(*t);
 
-        // handle color transition of menu button when clicked
+        // Handle color transition of menu button when clicked
         if (option.getIsColorTransitioning()) option.doColorTransition();
-       
+
         option.drawMenuButton(window);
-    }  
+    }
 }
 
 void GameThread::initializeBoard()
 {
-    const Color colours[2] = { { 240, 217, 181 }, { 181, 136, 99 } };
+    const Color colours[2] = {{240, 217, 181}, {181, 136, 99}};
 
     for (uint8_t i = 0; i < 8; ++i)
     {
@@ -369,13 +368,13 @@ void GameThread::initializeBoard()
 
 void GameThread::highlightHoveredSquare(const shared_ptr<Piece>& pSelectedPiece_, const coor2d& mousePos_)
 {
-    const Color colours[2] = { { 173, 176, 134 }, { 100, 111, 64 } };
+    const Color colours[2] = {{173, 176, 134}, {100, 111, 64}};
 
     for (Move& move: possibleMoves)
     {
         int i = move.getTarget().second;
         int j = move.getTarget().first;
-        if (isFlipped) { i = 7-i; j = 7-j; }
+        if (isFlipped) {i = 7-i; j = 7-j;}
         if (move.getSelectedPiece() != pSelectedPiece_) continue;
         int xPos = getTileXPos(mousePos_), yPos = getTileYPos(mousePos_);
 
@@ -444,7 +443,7 @@ void GameThread::drawDraggedPiece(const shared_ptr<Piece>& pSelectedPiece_, cons
         (isFlipped? 7-pSelectedPiece_->getX(): pSelectedPiece_->getX()) * g_CELL_SIZE + g_MENUBAR_HEIGHT
     );
     s.setOrigin(g_SPRITE_SIZE/2, g_SPRITE_SIZE/2);
-    sBefore.setColor({ 255, 255, 255, 100 });
+    sBefore.setColor({255, 255, 255, 100});
 
     window.draw(sBefore);
     window.draw(s);
@@ -484,7 +483,7 @@ void GameThread::drawKingCheckCircle()
 {
     Shader shader;
     shader.loadFromMemory(VertexShader, RadialGradient);
-    shader.setUniform("windowHeight", static_cast<float>(window.getSize().y));
+    shader.setUniform("windowHeight", (float) window.getSize().y);
 
     shared_ptr<King> king = game.getKing();
     CircleShape c(g_CELL_SIZE/2);
@@ -506,12 +505,12 @@ void GameThread::drawKingCheckCircle()
 void GameThread::drawEndResults()
 {
     // Checkmate
-    if (game.kingIsChecked())
+    if (kingChecked)
     {
         shared_ptr<King> losing = game.getKing();
         Texture t; t.loadFromFile(RessourceManager::getIconPath("checkmate.png"));
         Sprite checkmate(t);
-        checkmate.setColor({ 255, 255, 255, 200 });
+        checkmate.setColor({255, 255, 255, 200});
         checkmate.setScale(0.5, 0.5);
         checkmate.setOrigin(40, 40);
         checkmate.setPosition(
@@ -521,15 +520,13 @@ void GameThread::drawEndResults()
         window.draw(checkmate);
         return;
     }
-
-    // Stalemate
 }
 
 void GameThread::setTransitioningPiece(shared_ptr<Piece>& p_, const int xTarget_, const int yTarget_, PieceTransition& trans_)
 {
     trans_.setTransitioningPiece(p_);
-    coor2d destination = { xTarget_, yTarget_ };
-    coor2d currPos = { p_->getY() * g_CELL_SIZE, p_->getX() * g_CELL_SIZE };
+    coor2d destination = {xTarget_, yTarget_ };
+    coor2d currPos = {p_->getY() * g_CELL_SIZE, p_->getX() * g_CELL_SIZE};
     trans_.setDestination(destination);
     trans_.setCurrPos(currPos);
     trans_.setIsTransitioning(true);
