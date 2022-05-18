@@ -44,14 +44,17 @@ inline RectangleShape createSquare()
 class GameThread
 {
     inline static Board game;
-    inline static RenderWindow window = { VideoMode(g_WINDOW_SIZE + g_PANEL_SIZE, g_WINDOW_SIZE + g_MENUBAR_HEIGHT),
-                                        "Chess Game", Style::Titlebar | Style::Close };
+    inline static RenderWindow window = {
+        VideoMode(g_WINDOW_SIZE + g_PANEL_SIZE, g_WINDOW_SIZE + g_MENUBAR_HEIGHT),
+        "Chess Game", Style::Titlebar | Style::Close
+    };
     inline static vector<MenuButton> menuBar;
     inline static vector<Move> possibleMoves;
     inline static PieceTransition transitioningPiece;
-    inline static MoveList moveList{ game, transitioningPiece };
+    inline static MoveList moveList{game, transitioningPiece};
     inline static MoveTree moveTree;
     inline static MoveTree::Iterator treeIterator = moveTree.begin();
+    inline static bool kingChecked = false;
 
     static void handleKeyPressed(const Event&, MoveSelectionPanel&, vector<Arrow>&, bool&);
     static void initializeBoard();

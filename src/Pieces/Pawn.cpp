@@ -53,7 +53,7 @@ void Pawn::generateForwardMoves(vector<Move>& moves_, Board& board_, int dir_) c
 {
     int xPos = getX();
     int yPos = getY();
-    coor2d pawnCoor = { xPos, yPos };
+    coor2d pawnCoor = {xPos, yPos};
     shared_ptr<Piece> pPawnPos = board_.getBoardTile(yPos, xPos);
     bool hasNotMoved = (getTeam() == Team::WHITE && xPos == 6) || (getTeam() == Team::BLACK && xPos == 1);
 

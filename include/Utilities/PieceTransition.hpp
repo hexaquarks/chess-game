@@ -9,7 +9,7 @@ constexpr uint16_t g_FPS = 60;
 class PieceTransition
 {
     shared_ptr<Piece> m_piece;
-    coor2d m_currPos{ 0, 0 };
+    coor2d m_currPos{0, 0};
     coor2d m_destination;
     coor2d m_increment;
     bool m_hasArrived = false;
@@ -18,14 +18,12 @@ class PieceTransition
     bool m_yArrived= false;
 
     public:
-    PieceTransition() { m_piece.reset(); };
-
     shared_ptr<Piece> getPiece() { return m_piece; }
     coor2d getIncrement() { return m_increment; }
     coor2d getDestination() const { return m_destination; }
     coor2d getCurrPos() { return m_currPos; }
 
-    // setters
+    // Setters
     void setCurrPos(coor2d& pos) { m_currPos = pos; }
     void setDestination(coor2d& dest) { m_destination = dest; }
     void resetTransitioningPiece() { m_piece.reset(); }
