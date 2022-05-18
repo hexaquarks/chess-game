@@ -1,6 +1,7 @@
 #include "../../include/Components/MenuButton.hpp"
 #include "../../include/GameThread.hpp"
 #include "../../include/Utilities/MoveList.hpp"
+#include "../../include/Utilities/DrawableSf.hpp"
 
 MenuButton::MenuButton(uint8_t index_, const std::string& name_, bool isRotatable_)
 : m_index(index_), m_isRotatable(isRotatable_)
@@ -8,7 +9,7 @@ MenuButton::MenuButton(uint8_t index_, const std::string& name_, bool isRotatabl
     shared_ptr<Font> font =  RessourceManager::getFont("Arial.ttf");
     m_text.setString(name_);
     m_text.setFont(*font);
-    m_text.setCharacterSize(14);
+    m_text.setCharacterSize(19);
 
     handleRectangle(index_);
     handleSprite(index_);
@@ -17,9 +18,7 @@ MenuButton::MenuButton(uint8_t index_, const std::string& name_, bool isRotatabl
 
 void MenuButton::handleRectangle(uint8_t i_)
 {
-    m_rectangle.setPosition(g_BUTTON_POS*i_, 0);
-    m_rectangle.setSize({ g_BUTTON_POS, g_MENUBAR_HEIGHT });
-    m_rectangle.setFillColor({ 23,23,23 });
+    DrawableSf::drawRectangleSf(m_rectangle, g_BUTTON_POS*i_, 0, { g_BUTTON_POS, g_MENUBAR_HEIGHT }, { 23,23,23 });
     m_rectangle.setOutlineThickness(2.f);
     m_rectangle.setOutlineColor({ 239, 242, 249 });
 }

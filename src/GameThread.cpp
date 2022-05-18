@@ -5,6 +5,7 @@
 #include "../include/Utilities/Move.hpp"
 #include "../include/Components/SidePanel.hpp"
 #include "../include/Components/MoveSelectionPanel.hpp"
+#include "../include/Utilities/DrawableSf.hpp"
 #include "./Ressources/Shader.cpp"
 
 #include <iostream>
@@ -326,9 +327,9 @@ void GameThread::drawSidePanel(SidePanel& sidePanel_)
 
 void GameThread::drawGrayCover()
 {
-    RectangleShape cover{ Vector2f(g_WINDOW_SIZE + g_PANEL_SIZE, g_WINDOW_SIZE) };
-    cover.setFillColor(Color(220, 220, 220, 75));
-    cover.setPosition(0, g_MENUBAR_HEIGHT);
+    RectangleShape cover{};
+    DrawableSf::drawRectangleSf(cover, 0, g_MENUBAR_HEIGHT,  
+        Vector2f(g_WINDOW_SIZE + g_PANEL_SIZE, g_WINDOW_SIZE), Color(220, 220, 220, 75) );
     window.draw(cover);
 }
 
@@ -360,8 +361,7 @@ void GameThread::initializeBoard()
         {
             // Drawing the colored square
             RectangleShape square = createSquare();
-            square.setFillColor(colours[(i+j)%2]);
-            square.setPosition(getWindowXPos(i), getWindowYPos(j));
+            DrawableSf::drawRectangleSf(square, getWindowXPos(i), getWindowYPos(j), square.getSize(), colours[(i+j)%2]);
             window.draw(square);
         }
     }
@@ -383,8 +383,7 @@ void GameThread::highlightHoveredSquare(const shared_ptr<Piece>& pSelectedPiece_
         {
             // Currently hovering a square where the piece can move
             RectangleShape square = createSquare();
-            square.setFillColor(colours[(i+j)%2]);
-            square.setPosition(getWindowXPos(i), getWindowYPos(j));
+            DrawableSf::drawRectangleSf(square, getWindowXPos(i), getWindowYPos(j), square.getSize(), colours[(i+j)%2]);
             window.draw(square);
         }
     }

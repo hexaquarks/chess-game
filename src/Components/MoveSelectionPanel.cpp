@@ -1,13 +1,12 @@
 #include "../../include/Components/MoveSelectionPanel.hpp"
+#include "../../include/Utilities/DrawableSf.hpp"
 
 void MoveSelectionPanel::handleTitleText()
 {
     shared_ptr<Font> f = RessourceManager::getFont("Arial.ttf");
-    m_title.setFont(*f);
-    m_title.setString("Select a variation");
-    m_title.setCharacterSize(14);
-    m_title.setFillColor(Color::Black);
-    m_title.setPosition(m_panel.getPosition() + Vector2f(10.f,10.f));
+    DrawableSf::drawTextSf(m_title,"Select a variation", *f , 14, 
+                           Text::Style::Regular, Color::Black);
+    m_title.setPosition(m_panel.getPosition() + Vector2f(10.f, 10.f));
 }
 
 void MoveSelectionPanel::handlePanelRectangle()
@@ -15,24 +14,22 @@ void MoveSelectionPanel::handlePanelRectangle()
     m_height = g_TOP_PANEL_HEIGHT + (m_numberOfVariations * g_VARIATION_HEIGHT) + (2 * g_INNER_MARGIN);
 
     // draw all the panel
-    m_panel.setSize(Vector2f(g_PANEL_WIDTH, m_height));
-    m_panel.setFillColor(g_GRAY);
-    m_panel.setPosition(g_WINDOW_SIZE + g_PANEL_SIZE / 3, g_PANEL_SIZE / 3);
+    DrawableSf::drawRectangleSf(m_panel, (g_WINDOW_SIZE + g_PANEL_SIZE /  3), g_PANEL_SIZE / 3,
+                                Vector2f(g_PANEL_WIDTH, m_height), g_GRAY);
 }
 
 void MoveSelectionPanel::handleSubPanels()
 {
     // draw top left rectangle and title text
-    m_topRect.setSize(Vector2f(g_PANEL_WIDTH, g_TOP_PANEL_HEIGHT));
-    m_topRect.setFillColor(g_LIGHT_WHITE);
-    m_topRect.setPosition(m_panel.getPosition());
+    DrawableSf::drawRectangleSf(m_topRect, m_panel.getPosition().x, m_panel.getPosition().y,    
+                                Vector2f(g_PANEL_WIDTH, g_TOP_PANEL_HEIGHT), g_LIGHT_WHITE);
 
     // draw bottom rectangle for the set of variation (buttons)
     const int h = m_height - (2 * g_INNER_MARGIN) - g_TOP_PANEL_HEIGHT;
     Vector2f panelPos{ g_INNER_MARGIN, g_TOP_PANEL_HEIGHT + g_INNER_MARGIN };
-    m_variationsPanel.setSize(Vector2f(g_PANEL_WIDTH - (2 * g_INNER_MARGIN), h));
-    m_variationsPanel.setFillColor(g_LIGHT_WHITE);
-    m_variationsPanel.setPosition(m_panel.getPosition() + panelPos);
+    Vector2f netPos = m_panel.getPosition() + panelPos;
+    DrawableSf::drawRectangleSf(m_variationsPanel, netPos.x, netPos.y,
+                                Vector2f(g_PANEL_WIDTH - (2 * g_INNER_MARGIN), h), g_LIGHT_WHITE);
     m_variationsPanel.setOutlineColor(Color::Black);
     m_variationsPanel.setOutlineThickness(2.f);
 }
@@ -54,10 +51,7 @@ void MoveSelectionPanel::handleVariations(vector<std::string>& variations_)
         // Write the variation texts
         Text variationText;
         shared_ptr<Font> f = RessourceManager::getFont("Arial.ttf");
-        variationText.setFont(*f);
-        variationText.setString(text);
-        variationText.setCharacterSize(16);
-        variationText.setFillColor((counter == m_selectionIndex)? Color::White : Color::Black);
+        DrawableSf::drawTextSf(variationText, text, *f, 16, Text::Regular, Color((counter == m_selectionIndex)? Color::White : Color::Black));
         variationText.setPosition(variationRect.getPosition() + Vector2f(5.f,5.f));
         m_variationTexts.emplace_back(variationText);
 
