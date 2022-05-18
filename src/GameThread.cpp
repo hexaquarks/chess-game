@@ -551,11 +551,12 @@ void GameThread::handleKeyPressed(
     vector<Arrow>& arrowList_, bool& showMoveSelectionPanel_
 )
 {
+    // Disallow movements if a piece is already moving
+    if (transitioningPiece.getIsTransitioning()) return;
     shared_ptr<Move> move;
     switch (event_.key.code)
     {
         case Keyboard::Left:
-            if (transitioningPiece.getIsTransitioning()) break;
             moveList.goToPreviousMove(true, arrowList_);
             moveTree.goToPreviousNode(treeIterator);
             move = treeIterator.get()->m_move;

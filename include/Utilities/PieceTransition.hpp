@@ -14,8 +14,8 @@ class PieceTransition
     coor2d m_increment;
     bool m_hasArrived = false;
     bool m_isTransitioning = false;
-    bool m_xArrived= false;
-    bool m_yArrived= false;
+    bool m_xArrived = false;
+    bool m_yArrived = false;
 
     public:
     shared_ptr<Piece> getPiece() { return m_piece; }
@@ -32,11 +32,11 @@ class PieceTransition
     void setIncrement();
     void setHasArrived(bool b, Board&);
 
-    // getters
+    // Getters
     bool getIsTransitioning() { return m_isTransitioning; }
     bool getHasArrived() { return m_hasArrived; }
 
-    // utilities
+    // Utilities
     bool pieceIsInBounds();
     void move();
 };
