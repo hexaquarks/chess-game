@@ -204,14 +204,16 @@ void GameThread::startGame()
                     {
                         coor2d target = make_pair(xPos, yPos);
                         coor2d initial = make_pair(lastXPos, lastYPos);
-                        shared_ptr<Move> pMove = make_shared<Move>(target, initial, pSelectedPiece, pSelectedMove->getMoveType());
+                        MoveType type = pSelectedMove->getMoveType();
+
+                        shared_ptr<Move> pMove = make_shared<Move>(target, initial, pSelectedPiece, type);
 
                         pMove->setCapturedPiece(pLastMove);
                         pMove->setMoveArrows(arrowList);
                         moveList.addMove(pMove, arrowList);
 
                         pLastMove = pSelectedPiece;
-                        pLastMove->setLastMove(pSelectedMove->getMoveType());
+                        pLastMove->setLastMove(type);
                         Piece::setLastMovedPiece(pLastMove);
 
                         game.switchTurn();
@@ -225,6 +227,8 @@ void GameThread::startGame()
                         else
                         {
                             kingChecked = false;
+                            if (type == MoveType::CAPTURE || type == MoveType::ENPASSANT) soundCapture.play();
+                            else if (type == MoveType::NORMAL || type == MoveType::INIT_SPECIAL) soundMove.play();
                         }
 
                         moveTree.insertNode(pMove, treeIterator);
