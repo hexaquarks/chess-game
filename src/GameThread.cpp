@@ -581,7 +581,9 @@ void GameThread::handleKeyPressed(
             }
             moveList.goToNextMove(true, arrowList_);
             moveTree.goToNextNode(0, treeIterator);
-            kingChecked = treeIterator.get()->m_move->kingIsChecked();
+            move = treeIterator.get()->m_move;
+            if (move) kingChecked = move->kingIsChecked();
+            else kingChecked = false;
             break;
         case Keyboard::LControl:
             flipBoard();
