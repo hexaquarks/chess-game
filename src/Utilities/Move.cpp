@@ -28,9 +28,10 @@ Move::Move(Move& move_, shared_ptr<Piece>& pSecondPiece_, coor2d capturedPawn_):
 }
 
 // Move from string representation
-Move::Move(const char repr[])
+Move::Move(const string& repr)
 {
-    if (strcmp(repr, "0000") == 0) return; // Null move
+    if (repr.length() != 4) return; // Safety check
+    if (repr == "0000") return; // Null move
     m_init = fromRepr(repr[0], repr[1]);
     m_target = fromRepr(repr[2], repr[3]);
 }

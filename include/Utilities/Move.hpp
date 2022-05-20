@@ -33,7 +33,7 @@ class Move
     Move(coor2d, coor2d, shared_ptr<Piece>&, MoveType, shared_ptr<Piece>&);
     Move(coor2d, coor2d, shared_ptr<Piece>&, MoveType);
     Move(Move&, shared_ptr<Piece>&, coor2d capturedPawn = make_pair(-1, -1)); // Constructor for CAPTURE, EN PASSANT
-    Move(const char[]);
+    Move(const string&);
     vector<Arrow> getMoveArrows() { return m_arrows; }
     MoveType getMoveType() const { return m_MoveType; }
     shared_ptr<Piece> getSelectedPiece() { return m_selectedPiece; }
