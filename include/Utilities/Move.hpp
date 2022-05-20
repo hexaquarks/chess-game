@@ -26,10 +26,14 @@ class Move
     bool kingChecked = false;
     bool kingMated = false;
 
+    string coorRepr(const coor2d&) const;
+    coor2d fromRepr(char, char) const;
+
     public:
     Move(coor2d, coor2d, shared_ptr<Piece>&, MoveType, shared_ptr<Piece>&);
     Move(coor2d, coor2d, shared_ptr<Piece>&, MoveType);
     Move(Move&, shared_ptr<Piece>&, coor2d capturedPawn = make_pair(-1, -1)); // Constructor for CAPTURE, EN PASSANT
+    Move(const char[]);
     vector<Arrow> getMoveArrows() { return m_arrows; }
     MoveType getMoveType() const { return m_MoveType; }
     shared_ptr<Piece> getSelectedPiece() { return m_selectedPiece; }
@@ -54,4 +58,5 @@ class Move
         m_init == other.m_init &&
         m_special == other.m_special;
     }
+    string toString() const;
 };

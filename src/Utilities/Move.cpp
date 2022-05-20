@@ -26,3 +26,24 @@ Move::Move(Move& move_, shared_ptr<Piece>& pSecondPiece_, coor2d capturedPawn_):
     m_MoveType(move_.getMoveType()), kingChecked(move_.kingChecked), kingMated(move_.kingMated)
 {
 }
+
+// Move from string representation
+Move::Move(const char repr[])
+{
+    if (strcmp(repr, "0000") == 0) return; // Null move
+    m_init = fromRepr(repr[0], repr[1]);
+    m_target = fromRepr(repr[2], repr[3]);
+}
+
+coor2d Move::fromRepr(char first, char second) const {
+    return {first - 'a', 8 - (second - '0')};
+}
+
+string Move::coorRepr(const coor2d& pos) const {
+    char move[] {static_cast<char>('a' + pos.first), static_cast<char>('8' - pos.second), '\0'};
+    return string(move);
+}
+
+string Move::toString() const {
+    return coorRepr(m_init) + coorRepr(m_target);
+}

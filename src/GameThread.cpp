@@ -195,7 +195,7 @@ void GameThread::startGame()
                         }
                     }
 
-                    // If move is not allowed or king is checked, place piece back, else apply the move
+                    // If move is not allowed, place piece back, else apply the move
                     if (pSelectedMove == nullptr)
                     {
                         game.setBoardTile(lastXPos, lastYPos, pSelectedPiece, false); // Cancel the move
