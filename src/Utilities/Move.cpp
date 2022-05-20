@@ -35,11 +35,11 @@ Move::Move(const char repr[])
     m_target = fromRepr(repr[2], repr[3]);
 }
 
-coor2d Move::fromRepr(char first, char second) const {
+coor2d Move::fromRepr(char first, char second) {
     return {first - 'a', 8 - (second - '0')};
 }
 
-string Move::coorRepr(const coor2d& pos) const {
+string Move::coorRepr(const coor2d& pos) {
     char move[] {static_cast<char>('a' + pos.first), static_cast<char>('8' - pos.second), '\0'};
     return string(move);
 }

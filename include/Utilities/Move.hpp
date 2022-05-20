@@ -26,8 +26,8 @@ class Move
     bool kingChecked = false;
     bool kingMated = false;
 
-    string coorRepr(const coor2d&) const;
-    coor2d fromRepr(char, char) const;
+    static string coorRepr(const coor2d&);
+    static coor2d fromRepr(char, char);
 
     public:
     Move(coor2d, coor2d, shared_ptr<Piece>&, MoveType, shared_ptr<Piece>&);

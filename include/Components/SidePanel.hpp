@@ -15,7 +15,6 @@ inline constexpr int g_INIT_WIDTH = g_BORDER_SIZE + 10;
 inline constexpr int g_INIT_HEIGHT = 10;
 inline constexpr int g_ROW_HEIGHT = 35;
 inline constexpr int g_HORIZONTAL_OFFSET = 30;
-inline const string g_letters = "abcdefgh";
 inline vector<MoveBox> moveBoxes;
 
 

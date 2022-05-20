@@ -25,9 +25,9 @@ void SidePanel::addMove(Move& move_)
     ++moveBoxCounter;
 }
 
-pair<char,int> SidePanel::findLetterCoord(coor2d target_) const
+pair<char, int> SidePanel::findLetterCoord(coor2d target_) const
 {
-    char letter = g_letters.at(target_.first);
+    char letter = 'a' + target_.first;
     return make_pair(letter, 8-target_.second);
 }
 
@@ -38,13 +38,13 @@ string SidePanel::parseMoveHelper(Move& move_, int moveNumber_, bool showNumber_
         : (showDots_)? to_string(moveNumber_-1) + "..." : "";
     MoveType moveType = move_.getMoveType();
 
-    // side cases
+    // Side cases
     if (moveType == MoveType::CASTLE_KINGSIDE) { return text + "O-O"; }
     if (moveType == MoveType::CASTLE_QUEENSIDE) { return text + "O-O-O"; }
 
     coor2d coord = move_.getTarget();
     pair<char, int> letterCoord = findLetterCoord(coord);
-    string letterCoordString = (1, letterCoord.first) + to_string(letterCoord.second);
+    string letterCoordString = static_cast<char>(letterCoord.first) + to_string(letterCoord.second);
 
     switch (move_.getSelectedPiece()->getType())
     {
@@ -52,8 +52,7 @@ string SidePanel::parseMoveHelper(Move& move_, int moveNumber_, bool showNumber_
             // TODO fix promotion
             if (moveType == MoveType::CAPTURE || moveType == MoveType::ENPASSANT)
             {
-                text += string(1, g_letters.at(coord.first-1)) + "x";
-                return text + letterCoordString;
+                return text + (static_cast<char>('a' + move_.getInit().first)) + "x" + letterCoordString;
             } break;
         case PieceType::KNIGHT: text += "N"; break;
         case PieceType::BISHOP: text += "B"; break;
@@ -152,21 +151,21 @@ void SidePanel::drawSquareBracket(coor2d& nextPos_, int offset_, bool open_) con
 
 void SidePanel::drawFromNode(shared_ptr<MoveTreeNode>& node_, int level_, int offset_, coor2d nextPos_, coor2d& mousePos)
 {
-    // base case leaf
+    // Base case leaf
     if (!node_->m_move && node_->m_parent)
     {
-        // close the open bracket for sub variation
+        // Close the open bracket for sub variation
         if (offset_ != 0) drawSquareBracket(nextPos_, offset_ + 10 , false);
         return;
     }
 
-    // draw the node
-    if (node_->m_move.get() != nullptr)
+    // Draw the node
+    if (node_->m_move)
     {
         nextPos_ = drawMove(*(node_->m_move), level_, offset_, nextPos_, mousePos);
-    }  
+    }
 
-    // reccursive step
+    // Recursive step
     for (int i = 0; i < node_->childNumber; ++i)
     {
         if (i == 0) drawFromNode(node_->m_children.at(0), level_+1, offset_, nextPos_, mousePos);
