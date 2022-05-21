@@ -12,17 +12,19 @@ inline constexpr int g_rotation[3][3] =
         { 270, 0, 90 },
         { 315, 0, 45 },
 };
-const inline vector<coor2d> urCoords = { { 1,-2 }, { 2,1 }, { -1,2 }, { -2,-1 } };
-const inline vector<coor2d> ruCoords = { { 2,-1 }, { 1,2 }, { -2,1 }, { -1,-2 } };
+
+const inline vector<coor2d> urCoords = {{1, -2}, {2, 1}, {-1, 2}, {-2, -1}};
+const inline vector<coor2d> ruCoords = {{2, -1}, {1, 2}, {-2, 1}, {-1, -2}};
+
 
 class Arrow
 {
-    coor2d m_origin; // origin absolute coordinate
-    coor2d m_destination; // destination absolute coordinate
-    string m_filename; // file name for the arrow
-    int m_dx, m_dy; // tile differential coordinates
-    int m_rotation; // multiples of 45 degrees
-    int m_size; // size of the arrow (0 to 7)
+    coor2d m_origin; // Origin absolute coordinate
+    coor2d m_destination; // Destination absolute coordinate
+    string m_filename; // File name for the arrow
+    int m_dx, m_dy; // Tile differential coordinates
+    int m_rotation; // Multiples of 45 degrees
+    int m_size; // Size of the arrow (0 to 7)
     bool m_isLArrow = false;
 
     public:

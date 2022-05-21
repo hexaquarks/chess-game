@@ -43,6 +43,6 @@ void PieceTransition::setHasArrived(bool b_, Board& board_)
         m_xArrived = false;
         m_yArrived = false;
         m_increment = { 0, 0 };
-        board_.setBoardTile(m_currPos.first / g_CELL_SIZE , m_currPos.second / g_CELL_SIZE, m_piece);
+        board_.setBoardTile(m_currPos.first / g_CELL_SIZE, m_currPos.second / g_CELL_SIZE, m_piece);
     }
 }

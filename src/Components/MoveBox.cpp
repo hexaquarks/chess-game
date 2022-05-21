@@ -16,13 +16,17 @@ void MoveBox::handleText()
 void MoveBox::handleRectangle()
 {
     Vector2f recSize(m_textBounds.width, m_textsf.getCharacterSize());
-    DrawableSf::drawRectangleSf(m_rectangle, (g_WINDOW_SIZE + m_position.first),
-                                ( g_MENUBAR_HEIGHT + m_position.second), recSize, { 50, 50 ,50 });
-    float positionalShift = ((g_BOX_HORIZONTAL_SCALE - 1.f)*m_rectangle.getLocalBounds().width)/2.f;
+    DrawableSf::drawRectangleSf(
+        m_rectangle, g_WINDOW_SIZE + m_position.first,
+        g_MENUBAR_HEIGHT + m_position.second, recSize, {50, 50, 50}
+    );
 
+    float positionalShift = ((g_BOX_HORIZONTAL_SCALE - 1.f)*m_rectangle.getLocalBounds().width) / 2.f;
     m_rectangle.setScale(g_BOX_HORIZONTAL_SCALE, g_BOX_VERTICAL_SCALE);
-    m_textsf.setPosition(g_WINDOW_SIZE + m_position.first + positionalShift,
-                         g_MENUBAR_HEIGHT + m_position.second);
+    m_textsf.setPosition(
+        g_WINDOW_SIZE + m_position.first + positionalShift,
+        g_MENUBAR_HEIGHT + m_position.second
+    );
 }
 
 bool MoveBox::isHowered(coor2d& mousePos_) const

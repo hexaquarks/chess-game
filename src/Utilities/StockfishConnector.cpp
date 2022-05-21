@@ -1,26 +1,29 @@
 #include "../../include/Utilities/StockfishConnector.hpp"
 
 
-StockfishConnector& StockfishConnector::get() {
+StockfishConnector& StockfishConnector::get()
+{
     static StockfishConnector instance;
     return instance;
 }
 
 
-void StockfishConnector::fetchResult() {
+void StockfishConnector::fetchResult()
+{
     char* data = buffer.data();
-    if (fgets(data, MAX_DATA_LENGTH, pipe)) {
+    if (fgets(data, MAX_DATA_LENGTH, pipe))
         result = data;
-    }
 }
 
 
-void StockfishConnector::connectToEngine() {
+void StockfishConnector::connectToEngine()
+{
     std::string command = "stockfish";
 
     std::cout << "Opening reading pipe" << std::endl;
     pipe = popen(command.c_str(), "r+");
-    if (!pipe) {
+    if (!pipe)
+    {
         std::cerr << "Couldn't start stockfish" << std::endl;
         return;
     }
@@ -31,8 +34,10 @@ void StockfishConnector::connectToEngine() {
 }
 
 
-void StockfishConnector::checkIfReady() {
-    if (!connected) {
+void StockfishConnector::checkIfReady()
+{
+    if (!connected)
+    {
         std::cerr << "Cannot call checkIfReady since stockfish is not connected" << std::endl;
         isready = false;
         return;
@@ -44,8 +49,10 @@ void StockfishConnector::checkIfReady() {
 }
 
 
-std::string StockfishConnector::getNextMove(std::string& position, int depth) {
-    if (!isready) {
+std::string StockfishConnector::getNextMove(std::string& position, int depth)
+{
+    if (!isready)
+    {
         std::cerr << "Cannot call getNextMove since stockfish is not ready" << std::endl;
         return "error";
     }
@@ -54,7 +61,8 @@ std::string StockfishConnector::getNextMove(std::string& position, int depth) {
     fwrite(command.c_str(), sizeof(char), command.length(), pipe);
 
     int bestmoveIndex;
-    do {
+    do
+    {
         fetchResult();
         bestmoveIndex = result.find("bestmove");
     } while (bestmoveIndex == -1);
@@ -63,7 +71,8 @@ std::string StockfishConnector::getNextMove(std::string& position, int depth) {
 }
 
 
-void StockfishConnector::closeConnection() {
+void StockfishConnector::closeConnection()
+{
     if (!connected) return;
     connected = pclose(pipe);
     isready = connected;

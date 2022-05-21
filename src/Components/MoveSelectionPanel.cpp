@@ -5,7 +5,7 @@ void MoveSelectionPanel::handleTitleText()
 {
     shared_ptr<Font> f = RessourceManager::getFont("Arial.ttf");
     DrawableSf::drawTextSf(
-        m_title,"Select a variation", *f , 14,
+        m_title, "Select a variation", *f, 14,
         Text::Style::Regular, Color::Black
     );
     m_title.setPosition(m_panel.getPosition() + Vector2f(10.f, 10.f));
@@ -15,9 +15,9 @@ void MoveSelectionPanel::handlePanelRectangle()
 {
     m_height = g_TOP_PANEL_HEIGHT + (m_numberOfVariations * g_VARIATION_HEIGHT) + (2 * g_INNER_MARGIN);
 
-    // draw all the panel
+    // Draw all the panel
     DrawableSf::drawRectangleSf(
-        m_panel, (g_WINDOW_SIZE + g_PANEL_SIZE / 3), g_PANEL_SIZE / 3,
+        m_panel, g_WINDOW_SIZE + g_PANEL_SIZE / 3, g_PANEL_SIZE / 3,
         Vector2f(g_PANEL_WIDTH, m_height), g_GRAY
     );
 }

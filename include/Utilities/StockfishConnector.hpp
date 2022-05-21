@@ -2,7 +2,8 @@
 #include "array"
 
 
-class StockfishConnector {
+class StockfishConnector
+{
     inline static constexpr int MAX_DATA_LENGTH = 1024;
 
     FILE* pipe = nullptr;

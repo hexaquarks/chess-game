@@ -325,7 +325,7 @@ void GameThread::drawSidePanel(SidePanel& sidePanel_)
 
     // Draw the content on the panels
     Vector2i position = sf::Mouse::getPosition(window);
-    coor2d mousePos = {position.x , position.y};
+    coor2d mousePos = {position.x, position.y};
     sidePanel_.drawMoves(mousePos);
 }
 
@@ -471,7 +471,7 @@ void GameThread::drawAllArrows(vector<Arrow>& arrows_, const Arrow& currArrow_)
 
         if (arrow.isLArrow())
         {
-            s.setOrigin(g_CELL_SIZE/2 , s.getLocalBounds().height - g_CELL_SIZE/2);
+            s.setOrigin(g_CELL_SIZE/2, s.getLocalBounds().height - g_CELL_SIZE/2);
             s.setPosition(arrowOrigin.first, arrowOrigin.second);
         }
         else
