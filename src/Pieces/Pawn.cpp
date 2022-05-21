@@ -3,7 +3,7 @@
 #include <vector>
 
 Pawn::Pawn(Team team_, int xPos_, int yPos_):
-Piece(team_, xPos_, yPos_, PieceType::PAWN, "p")
+    Piece(team_, xPos_, yPos_, PieceType::PAWN, "p")
 {
 }
 

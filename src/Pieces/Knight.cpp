@@ -2,8 +2,8 @@
 #include "../../include/Components/Board.hpp"
 #include <vector>
 
-Knight::Knight(Team team, int x, int y)
-: Piece(team, x, y, PieceType::KNIGHT, "n")
+Knight::Knight(Team team, int x, int y):
+    Piece(team, x, y, PieceType::KNIGHT, "n")
 {
 }
 
@@ -13,9 +13,9 @@ vector<Move> Knight::calcPossibleMoves(Board& board_) const
     int xPos = getX();
     int yPos = getY();
 
-    // The possible moves
-    int X[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
-    int Y[8] = { 1, 2, 2, 1, -1, -2, -2, -1 };
+    // All possible moves
+    int X[8] = {2, 1, -1, -2, -2, -1, 1, 2};
+    int Y[8] = {1, 2, 2, 1, -1, -2, -2, -1};
 
     for (int i = 0; i < 8; ++i)
     {

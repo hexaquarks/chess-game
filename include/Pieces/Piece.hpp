@@ -46,8 +46,8 @@ class Piece
     int getY() const { return m_yPos; }
     bool hasMoved() const { return m_moved; }
     void setAsFirstMovement() { m_moved = false; }
-    vector<Move> getHorizontalAndVerticalMovements(Board&) const;
-    vector<Move> getDiagonalMovements(Board&) const;
+    void addHorizontalAndVerticalMovements(Board&, vector<Move>&) const;
+    void addDiagonalMovements(Board&, vector<Move>&) const;
 
     /* Setters */
     void setLastMove(MoveType newMove) { m_lastMove = newMove; }

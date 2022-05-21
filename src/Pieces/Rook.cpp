@@ -8,5 +8,7 @@ Rook::Rook(Team team_, int x_, int y_)
 
 vector<Move> Rook::calcPossibleMoves(Board& board_) const
 {
-    return getHorizontalAndVerticalMovements(board_);
+    vector<Move> moves;
+    addHorizontalAndVerticalMovements(board_, moves);
+    return moves;
 }
