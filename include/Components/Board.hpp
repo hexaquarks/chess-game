@@ -32,8 +32,8 @@ class Board
     shared_ptr<Piece> getBoardTile(int x, int y) const { return m_board[y][x]; }
     shared_ptr<King> getKing() const;
     Team getTurn() const { return m_turn; }
-    void setBoardTile(int, int, shared_ptr<Piece>&, bool record = true);
-    void resetBoardTile(int, int, bool record_ = true);
+    void setBoardTile(int, int, shared_ptr<Piece>&, bool = true);
+    void resetBoardTile(int, int, bool = true);
     void switchTurn();
 
     // Utility functions

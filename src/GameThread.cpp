@@ -218,11 +218,14 @@ void GameThread::startGame()
 
                         game.switchTurn();
                         refreshMoves();
+
+                        noMoves = possibleMoves.empty();
+                        if (noMoves) pMove->setNoMoves();
+
                         if (game.kingIsChecked())
                         {
                             kingChecked = true;
                             pMove->setChecked();
-                            if (possibleMoves.empty()) pMove->setCheckmate();
                         }
                         else
                         {
@@ -267,7 +270,6 @@ void GameThread::startGame()
             if (event.type == Event::KeyPressed)
             {
                 handleKeyPressed(event, moveSelectionPanel, arrowList, showMoveSelectionPanel);
-                // kingChecked = game.kingIsChecked();
             }
         }
 
@@ -290,7 +292,7 @@ void GameThread::startGame()
         drawAllArrows(arrowList, arrow);
 
         // End conditions
-        if (possibleMoves.empty()) drawEndResults();
+        if (noMoves) drawEndResults();
 
         if (showMoveSelectionPanel)
         {
@@ -566,8 +568,16 @@ void GameThread::handleKeyPressed(
             moveList.goToPreviousMove(true, arrowList_);
             moveTree.goToPreviousNode(treeIterator);
             move = treeIterator.get()->m_move;
-            if (move) kingChecked = move->kingIsChecked();
-            else kingChecked = false;
+            if (move)
+            {
+                kingChecked = move->kingIsChecked();
+                noMoves = move->hasNoMoves();
+            }
+            else
+            {
+                kingChecked = false;
+                noMoves = false;
+            }
             break;
         case Keyboard::Right:
             if (treeIterator.get()->childNumber > 1)
@@ -576,7 +586,17 @@ void GameThread::handleKeyPressed(
                 {
                     moveList.goToNextMove(true, arrowList_);
                     moveTree.goToNextNode(moveSelectionPanel_.getSelection(), treeIterator);
-                    kingChecked = treeIterator.get()->m_move->kingIsChecked();
+                    move = treeIterator.get()->m_move;
+                    if (move)
+                    {
+                        kingChecked = move->kingIsChecked();
+                        noMoves = move->hasNoMoves();
+                    }
+                    else
+                    {
+                        kingChecked = false;
+                        noMoves = false;
+                    }
                 }
                 showMoveSelectionPanel_ = !showMoveSelectionPanel_;
                 return;
@@ -584,8 +604,16 @@ void GameThread::handleKeyPressed(
             moveList.goToNextMove(true, arrowList_);
             moveTree.goToNextNode(0, treeIterator);
             move = treeIterator.get()->m_move;
-            if (move) kingChecked = move->kingIsChecked();
-            else kingChecked = false;
+            if (move)
+            {
+                kingChecked = move->kingIsChecked();
+                noMoves = move->hasNoMoves();
+            }
+            else
+            {
+                kingChecked = false;
+                noMoves = false;
+            }
             break;
         case Keyboard::LControl:
             flipBoard();

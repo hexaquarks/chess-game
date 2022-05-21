@@ -16,8 +16,8 @@ class MoveList
     Board& game;
 
     void applyMove(shared_ptr<Move>&, const bool, const bool, vector<Arrow>&); // called inside GameThread ?
-    void applyMove(const bool, vector<Arrow>&);
-    void undoMove(const bool, vector<Arrow>&);
+    void applyMove(bool, vector<Arrow>&);
+    void undoMove(bool, vector<Arrow>&);
 
     public:
     MoveList(Board&, PieceTransition&);

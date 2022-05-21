@@ -24,7 +24,7 @@ class Move
     coor2d m_special; // En passant information
     vector<Arrow> m_arrows; // List of arrows drawn at that move
     bool kingChecked = false;
-    bool kingMated = false;
+    bool noMoves = false;
 
     static string coorRepr(const coor2d&);
     static coor2d fromRepr(char, char);
@@ -32,7 +32,7 @@ class Move
     public:
     Move(coor2d, coor2d, shared_ptr<Piece>&, MoveType, shared_ptr<Piece>&);
     Move(coor2d, coor2d, shared_ptr<Piece>&, MoveType);
-    Move(Move&, shared_ptr<Piece>&, coor2d capturedPawn = make_pair(-1, -1)); // Constructor for CAPTURE, EN PASSANT
+    Move(Move&, shared_ptr<Piece>&, coor2d = make_pair(-1, -1)); // Constructor for CAPTURE, EN PASSANT
     Move(const string&);
     vector<Arrow> getMoveArrows() { return m_arrows; }
     MoveType getMoveType() const { return m_MoveType; }
@@ -42,9 +42,10 @@ class Move
     coor2d getInit() const { return m_init; }
     coor2d getSpecial() const { return m_special; }
     bool kingIsChecked() const { return kingChecked; }
-    bool kingIsCheckmated() const { return kingMated; }
+    bool hasNoMoves() const { return noMoves; }
+    bool kingIsCheckmated() const { return kingChecked && noMoves; }
     void setChecked() { kingChecked = true; }
-    void setCheckmate() { kingMated = true; }
+    void setNoMoves() { noMoves = true; }
     void setTarget(coor2d& target) { m_target = target; }
     void setMoveType(MoveType moveType) { m_MoveType = moveType; }
     void setCapturedPiece(shared_ptr<Piece>& capturedPiece) { m_capturedPiece = capturedPiece; }

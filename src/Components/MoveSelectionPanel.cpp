@@ -68,7 +68,7 @@ void MoveSelectionPanel::handleVariations(vector<std::string>& variations_)
 void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it_)
 {
     // construct the strings
-    int moveListSize = it_.getNodeLevel() + 2;  // +2 because initial is nullptr
+    int moveListSize = it_.getNodeLevel() + 2; // +2 because initial is nullptr
     int moveNumber = (moveListSize / 2) + 1;
     bool showNumber = moveListSize % 2 != 0;
     vector<string> variations;

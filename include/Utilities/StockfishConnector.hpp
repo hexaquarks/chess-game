@@ -22,7 +22,7 @@ class StockfishConnector
     void connectToEngine();
     void checkIfReady();
 
-    std::string getNextMove(std::string& position, int depth = 10);
+    std::string getNextMove(std::string& position, int = 10);
 
     void closeConnection();
 
