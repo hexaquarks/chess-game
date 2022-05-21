@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include "../src/GameThread.cpp"
-#include "../src/Components/Board.cpp"
-#include "../src/Pieces/Piece.cpp"
+#include "../include/GameThread.hpp"
+#include "../include/Components/Board.hpp"
+#include "../include/Pieces/Piece.hpp"
 
 TEST(BoardResetTests, BoardReset) 
 {

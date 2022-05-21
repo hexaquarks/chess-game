@@ -13,6 +13,7 @@ target_link_libraries(${This} PUBLIC
     sfml-graphics
     sfml-window
     sfml-system
+    sfml-audio
 )
 
 add_test(
