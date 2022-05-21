@@ -7,7 +7,7 @@ MoveBox::MoveBox(coor2d position_, string text_): m_position(position_), m_text(
 
 void MoveBox::handleText()
 {
-    shared_ptr<Font> font =  RessourceManager::getFont("Arial.ttf");
+    shared_ptr<Font> font = RessourceManager::getFont("Arial.ttf");
     DrawableSf::drawTextSf(m_textsf, m_text, *font, 25, Text::Bold, Color::Black);
 
     m_textBounds = m_textsf.getGlobalBounds();
@@ -30,25 +30,26 @@ bool MoveBox::isHowered(coor2d& mousePos_) const
     int x = mousePos_.first - g_WINDOW_SIZE;
     int y = mousePos_.second - g_MENUBAR_HEIGHT;
 
-    return ((x > getPosition().first && x <= getPosition().first +  getScaledWidth())
-         && (y > getPosition().second && y <= getPosition().second +  getScaledHeight()));
+    return (
+        (x > getPosition().first && x <= getPosition().first + getScaledWidth())
+        && (y > getPosition().second && y <= getPosition().second + getScaledHeight())
+    );
 }
 
 void MoveBox::setDefault()
 {
-    m_textsf.setFillColor({ 240, 248, 255 }); // aliceblue
-    m_rectangle.setFillColor({ 50, 50, 50 }); // charcoal
+    m_textsf.setFillColor({240, 248, 255}); // aliceblue
+    m_rectangle.setFillColor({50, 50, 50}); // charcoal
 }
 
 void MoveBox::setIsSelected()
 {
-    m_textsf.setFillColor({ 240, 248, 255 });  // charcoal
-    m_rectangle.setFillColor({ 139, 148, 158 }); // aliceblue
+    m_textsf.setFillColor({240, 248, 255});  // charcoal
+    m_rectangle.setFillColor({139, 148, 158}); // aliceblue
 }
 
 void MoveBox::setIsCurrentMove()
 {
-    m_textsf.setFillColor({ 50, 50, 50 });  // charcoal
-    m_rectangle.setFillColor({ 240, 248, 255 }); // aliceblue
+    m_textsf.setFillColor({50, 50, 50});  // charcoal
+    m_rectangle.setFillColor({240, 248, 255}); // aliceblue
 }
-

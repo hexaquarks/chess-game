@@ -50,7 +50,7 @@ void Board::reset()
     for (uint8_t row = 0; row < 2; ++row)
         for (uint8_t col = 0; col < 8; ++col)
             m_blackPieces.push_back(m_board[row][col]);
-   
+
     // Add every white piece to the list of white pieces
     for (uint8_t row = 6; row < 8; ++row)
         for (uint8_t col = 0; col < 8; ++col)
@@ -59,12 +59,12 @@ void Board::reset()
     m_turn = Team::WHITE; // Reset the first move to be for white
 }
 
-vector<Move> Board::possibleMovesFor(shared_ptr<Piece>& piece) 
+vector<Move> Board::possibleMovesFor(shared_ptr<Piece>& piece)
 {
     return piece->calcPossibleMoves(*this);
 }
 
-bool Board::kingIsChecked() 
+bool Board::kingIsChecked()
 {
     return getKing()->isChecked(*this);
 }
@@ -90,7 +90,7 @@ void Board::setBoardTile(int x_, int y_, shared_ptr<Piece>& pPiece_, bool record
     if (pPiece_) pPiece_->move(y_, x_, record_);
 }
 
-void Board::resetBoardTile(int x_, int y_, bool record_) 
+void Board::resetBoardTile(int x_, int y_, bool record_)
 {
     if (record_ && m_board[y_][x_])
     {

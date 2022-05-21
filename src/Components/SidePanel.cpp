@@ -99,7 +99,7 @@ void SidePanel::handleMoveBoxClicked(coor2d& mousePos_) const
 
         int x = mousePos_.first - g_WINDOW_SIZE;
         int y = mousePos_.second - g_MENUBAR_HEIGHT;
-       
+
         if ((x >= xPos && x < xPos + width) && (y >= yPos && y < yPos + height))
         {
             int currMoveIndex = m_moveList.getMoveListSize() - m_moveList.getIteratorIndex() -1;
@@ -130,14 +130,16 @@ void SidePanel::drawSquareBracket(coor2d& nextPos_, int offset_, bool open_) con
 {
     nextPos_.first += offset_;
 
-    shared_ptr<Font> font =  RessourceManager::getFont("Arial.ttf");
+    shared_ptr<Font> font = RessourceManager::getFont("Arial.ttf");
     Text textsf;
     DrawableSf::drawTextSf(textsf, string(open_ ? "[" : "]"), *font, 28, Text::Bold, {240, 248, 255});
 
     Vector2f recSize(textsf.getGlobalBounds().width, textsf.getCharacterSize());
     RectangleShape rect;
-    DrawableSf::drawRectangleSf(rect, (g_WINDOW_SIZE + nextPos_.first), 
-                               (g_MENUBAR_HEIGHT + nextPos_.second), recSize, { 50, 50, 50 });
+    DrawableSf::drawRectangleSf(
+        rect, (g_WINDOW_SIZE + nextPos_.first),
+        (g_MENUBAR_HEIGHT + nextPos_.second), recSize, Color(50, 50, 50)
+    );
 
     float positionalShift = ((g_BOX_HORIZONTAL_SCALE - 1.f) * rect.getLocalBounds().width)/2.f;
     rect.setScale(g_BOX_HORIZONTAL_SCALE, g_BOX_VERTICAL_SCALE);
@@ -155,7 +157,7 @@ void SidePanel::drawFromNode(shared_ptr<MoveTreeNode>& node_, int level_, int of
     if (!node_->m_move && node_->m_parent)
     {
         // Close the open bracket for sub variation
-        if (offset_ != 0) drawSquareBracket(nextPos_, offset_ + 10 , false);
+        if (offset_ != 0) drawSquareBracket(nextPos_, offset_ + 10, false);
         return;
     }
 
@@ -177,7 +179,7 @@ void SidePanel::drawFromNode(shared_ptr<MoveTreeNode>& node_, int level_, int of
             drawFromNode(
                 node_->m_children.at(i), level_+1,
                 offset_ + g_HORIZONTAL_OFFSET, nextPos_, mousePos
-            ); 
+            );
         }
     }
 }
@@ -221,7 +223,7 @@ void SidePanel::drawMoves(coor2d& mousePos_)
     // int counter = 0;
     // for (auto& moveBox : moveBoxes) {
     //     moveBox.handleRectangle();
-       
+
     //     if (!m_showMoveSelectionPanel) {
     //         // Change the color of the Move Box if it is howered
     //         if (moveBox.isHowered(mousePos_)) moveBox.setIsSelected();

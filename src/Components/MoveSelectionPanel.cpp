@@ -4,8 +4,10 @@
 void MoveSelectionPanel::handleTitleText()
 {
     shared_ptr<Font> f = RessourceManager::getFont("Arial.ttf");
-    DrawableSf::drawTextSf(m_title,"Select a variation", *f , 14, 
-                           Text::Style::Regular, Color::Black);
+    DrawableSf::drawTextSf(
+        m_title,"Select a variation", *f , 14,
+        Text::Style::Regular, Color::Black
+    );
     m_title.setPosition(m_panel.getPosition() + Vector2f(10.f, 10.f));
 }
 
@@ -14,17 +16,21 @@ void MoveSelectionPanel::handlePanelRectangle()
     m_height = g_TOP_PANEL_HEIGHT + (m_numberOfVariations * g_VARIATION_HEIGHT) + (2 * g_INNER_MARGIN);
 
     // draw all the panel
-    DrawableSf::drawRectangleSf(m_panel, (g_WINDOW_SIZE + g_PANEL_SIZE /  3), g_PANEL_SIZE / 3,
-                                Vector2f(g_PANEL_WIDTH, m_height), g_GRAY);
+    DrawableSf::drawRectangleSf(
+        m_panel, (g_WINDOW_SIZE + g_PANEL_SIZE / 3), g_PANEL_SIZE / 3,
+        Vector2f(g_PANEL_WIDTH, m_height), g_GRAY
+    );
 }
 
 void MoveSelectionPanel::handleSubPanels()
 {
-    // draw top left rectangle and title text
-    DrawableSf::drawRectangleSf(m_topRect, m_panel.getPosition().x, m_panel.getPosition().y,    
-                                Vector2f(g_PANEL_WIDTH, g_TOP_PANEL_HEIGHT), g_LIGHT_WHITE);
+    // Draw top left rectangle and title text
+    DrawableSf::drawRectangleSf(
+        m_topRect, m_panel.getPosition().x, m_panel.getPosition().y,
+        Vector2f(g_PANEL_WIDTH, g_TOP_PANEL_HEIGHT), g_LIGHT_WHITE
+    );
 
-    // draw bottom rectangle for the set of variation (buttons)
+    // Draw bottom rectangle for the set of variation (buttons)
     const int h = m_height - (2 * g_INNER_MARGIN) - g_TOP_PANEL_HEIGHT;
     Vector2f panelPos{ g_INNER_MARGIN, g_TOP_PANEL_HEIGHT + g_INNER_MARGIN };
     Vector2f netPos = m_panel.getPosition() + panelPos;
@@ -66,7 +72,7 @@ void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it_)
     int moveNumber = (moveListSize / 2) + 1;
     bool showNumber = moveListSize % 2 != 0;
     vector<string> variations;
-   
+
     for (int i = 0; i < it_.get()->childNumber; ++i)
     {
         variations.emplace_back(
@@ -96,7 +102,7 @@ bool MoveSelectionPanel::isHowered(coor2d& mousePos_) const
 {
     int x = m_panel.getPosition().x;
     int y = m_panel.getPosition().y;
-   
+
     return (mousePos_.first >= x
      && mousePos_.first <= x + m_panel.getLocalBounds().width
      && mousePos_.second >= y
@@ -110,7 +116,7 @@ void MoveSelectionPanel::goToNextVariation()
 
     // increment the selected variation
     if (m_selectionIndex != m_numberOfVariations-1) ++m_selectionIndex;
-   
+
     // Set the new variation to selected color
     m_variationRectangles.at(m_selectionIndex).setFillColor(g_BLUE);
 }
@@ -119,10 +125,10 @@ void MoveSelectionPanel::goToPreviousVariation()
 {
     // set the blue variation back to normal color
     m_variationRectangles.at(m_selectionIndex).setFillColor(g_LIGHT_WHITE);
-   
+
     // decrement the selected variation
     if (m_selectionIndex != 0) --m_selectionIndex;
-   
+
     // Set the new variation to selected color
     m_variationRectangles.at(m_selectionIndex).setFillColor(g_BLUE);
 }

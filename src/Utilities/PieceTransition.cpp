@@ -10,7 +10,7 @@ void PieceTransition::setIncrement()
     m_increment.first = (m_destination.first - m_currPos.first) / (g_FPS / 6);
     m_increment.second = (m_destination.second - m_currPos.second) / (g_FPS / 6);
 
-    // Divide by 6 so the  increment is in base 10, that is 60 / 10
+    // Divide by 6 so the increment is in base 10, that is 60 / 10
     // Avoiding any piece to jump a square in a game tick
 }
 
@@ -19,7 +19,7 @@ bool PieceTransition::pieceIsInBounds()
     if (!m_piece) return false;
 
     // Stop if arrived in the tile for temporary logical simplicity
-    if (m_currPos.first == m_destination.first )  m_xArrived = true;
+    if (m_currPos.first == m_destination.first ) m_xArrived = true;
     if (m_currPos.second == m_destination.second ) m_yArrived = true;
 
     return m_xArrived && m_yArrived;

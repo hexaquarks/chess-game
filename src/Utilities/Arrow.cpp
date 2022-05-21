@@ -30,7 +30,7 @@ coor2d Arrow::getFormattedOrigin() const
 void Arrow::setDestination(const coor2d& destination_)
 {
     m_destination.first = destination_.first;
-    m_destination.second =  destination_.second - g_MENUBAR_HEIGHT;
+    m_destination.second = destination_.second - g_MENUBAR_HEIGHT;
 
     // tile coordinates
     m_dx = (m_destination.first/(int)g_CELL_SIZE - m_origin.first/(int)g_CELL_SIZE);
@@ -42,7 +42,7 @@ void Arrow::updateArrow()
     // check if arrow is feasible
     if ((m_dx == 0 && m_dy == 0)) return;
     if (m_dx != 0 || m_dy != 0) m_rotation = g_rotation[1 + sign(m_dx)][1 + sign(m_dy)];
-   
+
     int size = std::max(abs(m_dx), abs(m_dy));
     if (size == 0) return; // do nothing, arrow too short
     if (checkOutOfBounds()) return; // do nothing, arrow out of window

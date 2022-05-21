@@ -33,7 +33,7 @@ void Pawn::generateCaptureMoves(vector<Move>& moves_, Board& board_, int dir_) c
         if (board_.getBoardTile(yPos+1, xPos+dir_) && board_.getBoardTile(yPos+1, xPos+dir_)->getTeam() != getTeam())
         {
             if ((xPos+dir_ == 0 || xPos+dir_ == 7))
-                moves_.push_back(Move(make_pair(xPos+dir_, yPos+1), pawnCoor, pPawnPos, MoveType::NEWPIECE));       
+                moves_.push_back(Move(make_pair(xPos+dir_, yPos+1), pawnCoor, pPawnPos, MoveType::NEWPIECE));
             else
                 moves_.push_back(Move(make_pair(xPos+dir_, yPos+1), pawnCoor, pPawnPos, MoveType::CAPTURE));
         }
@@ -43,7 +43,7 @@ void Pawn::generateCaptureMoves(vector<Move>& moves_, Board& board_, int dir_) c
         if (board_.getBoardTile(yPos-1, xPos+dir_) && board_.getBoardTile(yPos-1, xPos+dir_)->getTeam() != getTeam())
         {
             if ((xPos+dir_ == 0 || xPos+dir_ == 7))
-                moves_.push_back(Move(make_pair(xPos+dir_, yPos-1), pawnCoor, pPawnPos, MoveType::NEWPIECE));       
+                moves_.push_back(Move(make_pair(xPos+dir_, yPos-1), pawnCoor, pPawnPos, MoveType::NEWPIECE));
             else
                 moves_.push_back(Move(make_pair(xPos+dir_, yPos-1), pawnCoor, pPawnPos, MoveType::CAPTURE));
         }

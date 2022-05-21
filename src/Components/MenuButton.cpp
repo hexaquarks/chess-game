@@ -6,7 +6,7 @@
 MenuButton::MenuButton(uint8_t index_, const std::string& name_, bool isRotatable_)
 : m_index(index_), m_isRotatable(isRotatable_)
 {
-    shared_ptr<Font> font =  RessourceManager::getFont("Arial.ttf");
+    shared_ptr<Font> font = RessourceManager::getFont("Arial.ttf");
     m_text.setString(name_);
     m_text.setFont(*font);
     m_text.setCharacterSize(14);

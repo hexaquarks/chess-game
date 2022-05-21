@@ -332,8 +332,10 @@ void GameThread::drawSidePanel(SidePanel& sidePanel_)
 void GameThread::drawGrayCover()
 {
     RectangleShape cover{};
-    DrawableSf::drawRectangleSf(cover, 0, g_MENUBAR_HEIGHT,  
-        Vector2f(g_WINDOW_SIZE + g_PANEL_SIZE, g_WINDOW_SIZE), Color(220, 220, 220, 75) );
+    DrawableSf::drawRectangleSf(
+        cover, 0, g_MENUBAR_HEIGHT,
+        Vector2f(g_WINDOW_SIZE + g_PANEL_SIZE, g_WINDOW_SIZE), Color(220, 220, 220, 75)
+    );
     window.draw(cover);
 }
 
@@ -403,7 +405,7 @@ void GameThread::drawCaptureCircles(const shared_ptr<Piece>& pSelectedPiece_)
         if (move.getSelectedPiece() != pSelectedPiece_) continue;
         bool isEmpty = game.getBoardTile(i, j).get() == nullptr;
         const shared_ptr<Texture> t = RessourceManager::getTexture(isEmpty? "circle.png": "empty_circle.png");
-       
+
         if (!t) return;
         Sprite circle(*t);
         if (isEmpty) circle.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
@@ -541,7 +543,7 @@ void GameThread::setTransitioningPiece(shared_ptr<Piece>& p_, const int xTarget_
 void GameThread::drawTransitioningPiece(PieceTransition& piece_)
 {
     piece_.move();
-    shared_ptr<Texture> t = RessourceManager::getTexture(piece_.getPiece());  
+    shared_ptr<Texture> t = RessourceManager::getTexture(piece_.getPiece());
     if (!t) return;
     Sprite s(*t);
     s.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);

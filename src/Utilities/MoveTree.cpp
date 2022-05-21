@@ -24,7 +24,7 @@ void MoveTree::goToNextNode(const int slectedMoveIndex_, MoveTree::Iterator& it_
 }
 
 void MoveTree::goToPreviousNode(MoveTree::Iterator& it_)
-{  
+{
     // Go to previous move only if it is not NULL
     if (it_->m_parent) --it_;
 }
@@ -54,7 +54,7 @@ void MoveTree::printTreeRec(shared_ptr<MoveTreeNode>& root_, vector<bool> flag_,
     for (auto i = root_->m_children.begin(); i != root_->m_children.end(); ++i, ++it)
         printTreeRec(*i, flag_, depth_ + 1, it == (root_->m_children.size()) - 1);
 
-    flag_[depth_] = true;  
+    flag_[depth_] = true;
 }
 
 void MoveTree::printTree()
@@ -73,7 +73,7 @@ void MoveTree::printPreorder(shared_ptr<MoveTreeNode>& m_root)
     int i = 0;
     shared_ptr<MoveTreeNode> temp;
     coor2d tar = m_root->m_move->getTarget();
-    cout << "  " << "(" << tar.first << "," << tar.second << ")";
+    cout << " " << "(" << tar.first << "," << tar.second << ")";
     // Iterating the child of given node
     while (i < m_root->m_children.size())
     {

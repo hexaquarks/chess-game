@@ -38,7 +38,7 @@ constexpr float g_BUTTON_SIZE = 40;
 // Utility function
 inline RectangleShape createSquare()
 {
-    return RectangleShape({ g_CELL_SIZE, g_CELL_SIZE });
+    return RectangleShape({g_CELL_SIZE, g_CELL_SIZE});
 }
 
 class GameThread
