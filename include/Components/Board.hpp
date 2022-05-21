@@ -29,16 +29,18 @@ class Board
     void reset(); // Resets the board
 
     // Getters and setters
+    vector<shared_ptr<Piece>> getWhitePieces() { return m_whitePieces; }
+    vector<shared_ptr<Piece>> getBlackPieces() { return m_blackPieces; }
     shared_ptr<Piece> getBoardTile(int x, int y) const { return m_board[y][x]; }
     shared_ptr<King> getKing() const;
     Team getTurn() const { return m_turn; }
     void setBoardTile(int, int, shared_ptr<Piece>&, bool = true);
     void resetBoardTile(int, int, bool = true);
-    void switchTurn();
 
     // Utility functions
     vector<Move> possibleMovesFor(shared_ptr<Piece>&);
     vector<Move> calculateAllMoves();
+    void switchTurn();
     bool kingIsChecked();
     void addPiece(shared_ptr<Piece>&);
 };
