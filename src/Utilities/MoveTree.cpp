@@ -16,7 +16,7 @@ void MoveTree::insertNode(shared_ptr<Move>& newMove_, MoveTree::Iterator& it_)
     ++numberOfMoves;
 }
 
-void MoveTree::goToNextNode(const int slectedMoveIndex_, MoveTree::Iterator& it_)
+void MoveTree::goToNextNode(int slectedMoveIndex_, MoveTree::Iterator& it_)
 {
     // Go to next move only if it is not a Leaf node
     if (!it_->m_children.empty())

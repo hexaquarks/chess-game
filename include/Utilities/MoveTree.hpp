@@ -110,7 +110,7 @@ class MoveTree
     Iterator end() { return Iterator(); }
 
     void insertNode(shared_ptr<Move>&, MoveTree::Iterator&);
-    void goToNextNode(const int, MoveTree::Iterator&);
+    void goToNextNode(int, MoveTree::Iterator&);
     void goToPreviousNode(MoveTree::Iterator&);
     void printTree();
     void printTreeRec(shared_ptr<MoveTreeNode>&, vector<bool>, int a = 0, bool b = false);

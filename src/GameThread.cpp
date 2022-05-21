@@ -531,7 +531,7 @@ void GameThread::drawEndResults()
     }
 }
 
-void GameThread::setTransitioningPiece(shared_ptr<Piece>& p_, const int xTarget_, const int yTarget_, PieceTransition& trans_)
+void GameThread::setTransitioningPiece(shared_ptr<Piece>& p_, int xTarget_, int yTarget_, PieceTransition& trans_)
 {
     trans_.setTransitioningPiece(p_);
     coor2d destination = {xTarget_, yTarget_ };
