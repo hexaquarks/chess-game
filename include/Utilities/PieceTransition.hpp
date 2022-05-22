@@ -19,6 +19,12 @@ class PieceTransition
     bool m_isTransitioning = false;
     bool m_xArrived = false;
     bool m_yArrived = false;
+    double distance_to_dest = 0.0;
+    double original_dest = 1.0;
+    bool undoMove = true;
+
+    bool pieceIsInBounds();
+    void updateDistToDest();
 
     public:
     // Getters
@@ -31,18 +37,20 @@ class PieceTransition
     coor2d getCurrPos() const { return m_currPos; }
     int getCapturedX() const { return capturedXPos; }
     int getCapturedY() const { return capturedYPos; }
+    double getPercentageLeft() const { return distance_to_dest / original_dest; }
+    bool isUndo() const { return undoMove; }
 
     // Setters
-    void setCurrPos(coor2d& pos) { m_currPos = pos; }
-    void setDestination(coor2d& dest) { m_destination = dest; }
+    void setCurrPos(coor2d&&);
+    void setDestination(coor2d&& dest) { m_destination = dest; }
     void resetTransitioningPiece() { m_piece.reset(); }
     void setTransitioningPiece(shared_ptr<Piece>& p) { m_piece = p; }
     void setIsTransitioning(bool b) { m_isTransitioning = b; }
     void setCapturedPiece(shared_ptr<Piece>&, int, int);
     void setIncrement();
     void setHasArrived(Board&);
+    void setUndo(bool value_) { undoMove = value_; }
 
     // Utilities
-    bool pieceIsInBounds();
-    void move();
+    void move(Board&);
 };

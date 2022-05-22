@@ -88,8 +88,10 @@ class GameThread
     static int getWindowXPos(int i) { return i * g_CELL_SIZE; }
     static int getWindowYPos(int j) { return j * g_CELL_SIZE + g_MENUBAR_HEIGHT; }
 
-    static void setTransitioningPiece(shared_ptr<Piece>&, int, int, int, int, PieceTransition&);
-    static void setTransitioningPiece(shared_ptr<Piece>&, int, int, int, int, shared_ptr<Piece>&, int, int, PieceTransition&);
+    static void setTransitioningPiece(
+        bool, shared_ptr<Piece>&, int, int, int, int,
+        shared_ptr<Piece>&, int, int, PieceTransition&
+    );
 
     static void flipBoard() { isFlipped = !isFlipped; }
     static bool boardFlipped() { return isFlipped; }

@@ -448,8 +448,8 @@ void GameThread::drawDraggedPiece(const shared_ptr<Piece>& pSelectedPiece_, cons
     sBefore.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
     s.setPosition(mousePos_.first, mousePos_.second);
     sBefore.setPosition(
-        (isFlipped? 7-pSelectedPiece_->getY(): pSelectedPiece_->getY()) * g_CELL_SIZE,
-        (isFlipped? 7-pSelectedPiece_->getX(): pSelectedPiece_->getX()) * g_CELL_SIZE + g_MENUBAR_HEIGHT
+        getWindowXPos(isFlipped? 7-pSelectedPiece_->getY(): pSelectedPiece_->getY()),
+        getWindowYPos(isFlipped? 7-pSelectedPiece_->getX(): pSelectedPiece_->getX())
     );
     s.setOrigin(g_SPRITE_SIZE/2, g_SPRITE_SIZE/2);
     sBefore.setColor({255, 255, 255, 100});
@@ -474,7 +474,7 @@ void GameThread::drawAllArrows(vector<Arrow>& arrows_, const Arrow& currArrow_)
 
         if (arrow.isLArrow())
         {
-            s.setOrigin(g_CELL_SIZE/2, s.getLocalBounds().height - g_CELL_SIZE/2);
+            s.setOrigin(g_CELL_SIZE / 2, s.getLocalBounds().height - g_CELL_SIZE / 2);
             s.setPosition(arrowOrigin.first, arrowOrigin.second);
         }
         else
@@ -495,7 +495,7 @@ void GameThread::drawKingCheckCircle()
     shader.setUniform("windowHeight", (float) window.getSize().y);
 
     shared_ptr<King> king = game.getKing();
-    CircleShape c(g_CELL_SIZE/2);
+    CircleShape c(g_CELL_SIZE / 2);
 
     c.setFillColor(Color::Transparent);
     if (transitioningPiece.getIsTransitioning() && transitioningPiece.getPiece() == king) return;
@@ -503,7 +503,7 @@ void GameThread::drawKingCheckCircle()
     int y = isFlipped? 7-king->getX(): king->getX();
     c.setPosition(getWindowXPos(x), getWindowYPos(y));
     shader.setUniform("color", Glsl::Vec4(1.f, 0.f, 0.f, 1.f));
-    shader.setUniform("center", sf::Vector2f(
+    shader.setUniform("center", Vector2f(
         c.getPosition().x + c.getRadius(), c.getPosition().y + + c.getRadius()
     ));
     shader.setUniform("radius", c.getRadius());
@@ -524,7 +524,7 @@ void GameThread::drawEndResults()
         checkmate.setScale(0.5, 0.5);
         checkmate.setOrigin(40, 40);
         checkmate.setPosition(
-            getWindowXPos(isFlipped? 7-losing->getY(): losing->getY())+g_CELL_SIZE,
+            getWindowXPos(isFlipped? 7-losing->getY(): losing->getY()) + g_CELL_SIZE,
             getWindowYPos(isFlipped? 7-losing->getX(): losing->getX())
         );
         window.draw(checkmate);
@@ -533,33 +533,23 @@ void GameThread::drawEndResults()
 }
 
 void GameThread::setTransitioningPiece(
-    shared_ptr<Piece>& p_, int initialX_, int initialY_,
-    int xTarget_, int yTarget_, PieceTransition& trans_
-)
-{
-    trans_.setTransitioningPiece(p_);
-    coor2d destination = {xTarget_, yTarget_ };
-    coor2d currPos = {initialX_, initialY_};
-    trans_.setDestination(destination);
-    trans_.setCurrPos(currPos);
-    trans_.setIsTransitioning(true);
-    trans_.setIncrement();
-}
-
-void GameThread::setTransitioningPiece(
-    shared_ptr<Piece>& p_, int initialX_, int initialY_,
+    bool isUndo_, shared_ptr<Piece>& p_, int initialX_, int initialY_,
     int xTarget_, int yTarget_, shared_ptr<Piece>& captured_,
     int capturedXPos_, int capturedYPos_, PieceTransition& trans_
 )
 {
-    setTransitioningPiece(p_, initialX_, initialY_, xTarget_, yTarget_, trans_);
-    trans_.setCapturedPiece(captured_, capturedXPos_, capturedYPos_);
+    trans_.setTransitioningPiece(p_);
+    trans_.setDestination({getWindowXPos(xTarget_), getWindowYPos(yTarget_)});
+    trans_.setCurrPos({getWindowXPos(initialX_), getWindowYPos(initialY_)});
+    trans_.setCapturedPiece(captured_, getWindowXPos(capturedXPos_), getWindowYPos(capturedYPos_));
+    trans_.setUndo(isUndo_);
+    trans_.setIsTransitioning(true);
+    trans_.setIncrement();
 }
 
 void GameThread::drawTransitioningPiece(PieceTransition& piece_)
 {
-    piece_.move();
-    if (piece_.pieceIsInBounds()) piece_.setHasArrived(game);
+    piece_.move(game);
     shared_ptr<Texture> t = RessourceManager::getTexture(piece_.getPiece());
     if (!t) return;
     Sprite s(*t);
@@ -569,14 +559,20 @@ void GameThread::drawTransitioningPiece(PieceTransition& piece_)
     {
         shared_ptr<Texture> t2 = RessourceManager::getTexture(piece_.getCapturedPiece());
         if (!t2) return;
+
         Sprite s2(*t2);
         s2.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
-        s2.setPosition(piece_.getCapturedX(), piece_.getCapturedY() + g_MENUBAR_HEIGHT);
+        s2.setPosition(piece_.getCapturedX(), piece_.getCapturedY());
+
+        cout << piece_.getPercentageLeft() << endl;
+        Uint8 percentage = static_cast<Uint8>(piece_.getPercentageLeft() * 255);
+        if (piece_.isUndo()) percentage = static_cast<Uint8>(255-percentage);
+        s2.setColor({255, 255, 255, percentage});
         window.draw(s2);
     }
 
     s.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
-    s.setPosition(piece_.getCurrPos().first, piece_.getCurrPos().second + g_MENUBAR_HEIGHT);
+    s.setPosition(piece_.getCurrPos().first, piece_.getCurrPos().second);
     window.draw(s);
 }
 
