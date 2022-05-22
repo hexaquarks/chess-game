@@ -3,7 +3,8 @@
 #include "../include/Components/Board.hpp"
 #include "../include/Pieces/Piece.hpp"
 
-TEST(BoardResetTests, BoardReset) 
+
+TEST(BoardResetTests, BoardReset)
 {
     Board board;
 
@@ -15,5 +16,4 @@ TEST(BoardResetTests, BoardReset)
 
     size_t blackPiecesSize = board.getBlackPieces().size();
     ASSERT_EQ(blackPiecesSize, 16);
-
 }

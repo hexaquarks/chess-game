@@ -19,8 +19,8 @@ bool PieceTransition::pieceIsInBounds()
     if (!m_piece) return false;
 
     // Stop if arrived in the tile for temporary logical simplicity
-    if (m_currPos.first == m_destination.first ) m_xArrived = true;
-    if (m_currPos.second == m_destination.second ) m_yArrived = true;
+    if (m_currPos.first == m_destination.first) m_xArrived = true;
+    if (m_currPos.second == m_destination.second) m_yArrived = true;
 
     return m_xArrived && m_yArrived;
 }
@@ -28,21 +28,19 @@ bool PieceTransition::pieceIsInBounds()
 void PieceTransition::move()
 {
     if (!m_piece) return;
+
     // Move the piece only if piece is not in destinantion bounds yet.
     if (!m_xArrived) m_currPos.first += m_increment.first;
     if (!m_yArrived) m_currPos.second += m_increment.second;
 }
 
-void PieceTransition::setHasArrived(bool b_, Board& board_)
+void PieceTransition::setHasArrived(Board& board_)
 {
-    m_hasArrived = b_;
-    if (m_hasArrived)
-    {
-        // Piece has arrived at destination
-        m_isTransitioning = false;
-        m_xArrived = false;
-        m_yArrived = false;
-        m_increment = { 0, 0 };
-        board_.setBoardTile(m_currPos.first / g_CELL_SIZE, m_currPos.second / g_CELL_SIZE, m_piece);
-    }
+    // Piece has arrived at destination
+    m_hasArrived = true;
+    m_isTransitioning = false;
+    m_xArrived = false;
+    m_yArrived = false;
+    m_increment = {0, 0};
+    board_.setBoardTile(m_destination.first / g_CELL_SIZE, m_destination.second / g_CELL_SIZE, m_piece);
 }

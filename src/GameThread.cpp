@@ -552,7 +552,7 @@ void GameThread::drawTransitioningPiece(PieceTransition& piece_)
     s.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
     s.setPosition(piece_.getCurrPos().first, piece_.getCurrPos().second + g_MENUBAR_HEIGHT);
     window.draw(s);
-    piece_.setHasArrived(piece_.pieceIsInBounds(), game);
+    if (piece_.pieceIsInBounds()) piece_.setHasArrived(game);
 }
 
 void GameThread::handleKeyPressed(
@@ -560,8 +560,10 @@ void GameThread::handleKeyPressed(
     vector<Arrow>& arrowList_, bool& showMoveSelectionPanel_
 )
 {
-    // Disallow movements if a piece is already moving
-    if (transitioningPiece.getIsTransitioning()) return;
+    // If a piece is already moving, make it arrive
+    if (transitioningPiece.getIsTransitioning())
+        transitioningPiece.setHasArrived(game);
+
     shared_ptr<Move> move;
     switch (event_.key.code)
     {

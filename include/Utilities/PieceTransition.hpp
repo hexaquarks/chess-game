@@ -30,7 +30,7 @@ class PieceTransition
     void setTransitioningPiece(shared_ptr<Piece>& p) { m_piece = p; }
     void setIsTransitioning(bool b) { m_isTransitioning = b; }
     void setIncrement();
-    void setHasArrived(bool b, Board&);
+    void setHasArrived(Board&);
 
     // Getters
     bool getIsTransitioning() { return m_isTransitioning; }

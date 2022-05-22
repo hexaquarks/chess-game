@@ -226,8 +226,6 @@ void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
 
     if (enableTransition_)
     {
-        game.setBoardTile(prevX, prevY, selected);
-
         // Enable transition movement
         GameThread::setTransitioningPiece(
             selected, x * g_CELL_SIZE, y * g_CELL_SIZE,
