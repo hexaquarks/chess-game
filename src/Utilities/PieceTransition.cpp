@@ -2,6 +2,8 @@
 #include "../../include/Utilities/PieceTransition.hpp"
 #include "../../include/GameThread.hpp"
 
+#include <math.h>
+
 void PieceTransition::setIncrement()
 {
     if (!m_piece) return;
