@@ -425,9 +425,16 @@ void GameThread::drawPieces()
         {
             shared_ptr<Piece> piece = game.getBoardTile(i, j);
             if (!piece) continue;
-            if (transitioningPiece.getPiece() == piece && transitioningPiece.getIsTransitioning()) continue;
+
+            // Do not draw transitioning pieces
+            if (transitioningPiece.getIsTransitioning()) {
+                if (piece == transitioningPiece.getPiece() || piece == transitioningPiece.getCapturedPiece())
+                    continue;
+            }
+
             shared_ptr<Texture> t = RessourceManager::getTexture(piece);
             if (!t) return;
+
             Sprite s(*t);
             s.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
             s.setPosition(getWindowXPos(isFlipped? (7-i): i), getWindowYPos(isFlipped? (7-j): j));
@@ -496,9 +503,8 @@ void GameThread::drawKingCheckCircle()
 
     shared_ptr<King> king = game.getKing();
     CircleShape c(g_CELL_SIZE / 2);
-
     c.setFillColor(Color::Transparent);
-    if (transitioningPiece.getIsTransitioning() && transitioningPiece.getPiece() == king) return;
+
     int x = isFlipped? 7-king->getY(): king->getY();
     int y = isFlipped? 7-king->getX(): king->getX();
     c.setPosition(getWindowXPos(x), getWindowYPos(y));
@@ -549,14 +555,15 @@ void GameThread::setTransitioningPiece(
 
 void GameThread::drawTransitioningPiece(PieceTransition& piece_)
 {
+    shared_ptr<Piece> captured = piece_.getCapturedPiece();
     piece_.move(game);
     shared_ptr<Texture> t = RessourceManager::getTexture(piece_.getPiece());
     if (!t) return;
 
     // Draw captured piece while transition is happening
-    if (piece_.getCapturedPiece())
+    if (captured)
     {
-        shared_ptr<Texture> t2 = RessourceManager::getTexture(piece_.getCapturedPiece());
+        shared_ptr<Texture> t2 = RessourceManager::getTexture(captured);
         if (!t2) return;
 
         Sprite s2(*t2);

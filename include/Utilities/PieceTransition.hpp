@@ -23,7 +23,6 @@ class PieceTransition
     double original_dest = 1.0;
     bool undoMove = true;
 
-    bool pieceIsInBounds();
     void updateDistToDest();
 
     public:
@@ -53,4 +52,5 @@ class PieceTransition
 
     // Utilities
     void move(Board&);
+    bool pieceIsInBounds();
 };

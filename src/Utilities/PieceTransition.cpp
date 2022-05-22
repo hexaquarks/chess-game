@@ -28,15 +28,15 @@ void PieceTransition::move(Board& game)
 {
     if (!m_piece) return;
 
+    // Move the piece only if piece is not in destinantion bounds yet.
+    if (!m_xArrived) m_currPos.first += m_increment.first;
+    if (!m_yArrived) m_currPos.second += m_increment.second;
+
     if (pieceIsInBounds())
     {
         setHasArrived(game);
         return;
     }
-
-    // Move the piece only if piece is not in destinantion bounds yet.
-    if (!m_xArrived) m_currPos.first += m_increment.first;
-    if (!m_yArrived) m_currPos.second += m_increment.second;
     updateDistToDest();
 }
 
