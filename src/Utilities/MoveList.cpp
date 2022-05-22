@@ -73,7 +73,8 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
     const int castleRow = (game.getTurn() == Team::WHITE)? 7: 0;
     shared_ptr<Piece> pOldPiece;
     shared_ptr<Piece> pSelectedPiece = move_->getSelectedPiece();
-    shared_ptr<Piece> pCapturedPiece = move_->getCapturedPiece();
+    shared_ptr<Piece> pCapturedPiece;
+    int capturedX = 0, capturedY = 0;
 
     coor2d oldCoors;
     int prevX = move_->getInit().first;
@@ -97,6 +98,9 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             break;
 
         case MoveType::CAPTURE:
+            pCapturedPiece = move_->getCapturedPiece();
+            capturedX = x;
+            capturedY = y;
             pOldPiece = game.getBoardTile(x, y);
             if (addToList_)
             {
@@ -107,7 +111,10 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             break;
 
         case MoveType::ENPASSANT:
-            oldCoors = { pCapturedPiece->getY(), pCapturedPiece->getX() };
+            pCapturedPiece = move_->getCapturedPiece();
+            capturedX = pCapturedPiece->getY();
+            capturedY = pCapturedPiece->getX();
+            oldCoors = {capturedX, capturedY};
             game.resetBoardTile(oldCoors.first, oldCoors.second);
             if (addToList_)
             {
@@ -170,7 +177,8 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             // Enable piece visual transition
             GameThread::setTransitioningPiece(
                 pSelectedPiece, prevX * g_CELL_SIZE, prevY * g_CELL_SIZE,
-                x * g_CELL_SIZE, y * g_CELL_SIZE, getTransitioningPiece()
+                x * g_CELL_SIZE, y * g_CELL_SIZE, pCapturedPiece,
+                capturedX * g_CELL_SIZE, capturedY * g_CELL_SIZE, getTransitioningPiece()
             );
         }
     }

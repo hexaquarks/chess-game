@@ -532,7 +532,10 @@ void GameThread::drawEndResults()
     }
 }
 
-void GameThread::setTransitioningPiece(shared_ptr<Piece>& p_, int initialX_, int initialY_, int xTarget_, int yTarget_, PieceTransition& trans_)
+void GameThread::setTransitioningPiece(
+    shared_ptr<Piece>& p_, int initialX_, int initialY_,
+    int xTarget_, int yTarget_, PieceTransition& trans_
+)
 {
     trans_.setTransitioningPiece(p_);
     coor2d destination = {xTarget_, yTarget_ };
@@ -543,16 +546,38 @@ void GameThread::setTransitioningPiece(shared_ptr<Piece>& p_, int initialX_, int
     trans_.setIncrement();
 }
 
+void GameThread::setTransitioningPiece(
+    shared_ptr<Piece>& p_, int initialX_, int initialY_,
+    int xTarget_, int yTarget_, shared_ptr<Piece>& captured_,
+    int capturedXPos_, int capturedYPos_, PieceTransition& trans_
+)
+{
+    setTransitioningPiece(p_, initialX_, initialY_, xTarget_, yTarget_, trans_);
+    trans_.setCapturedPiece(captured_, capturedXPos_, capturedYPos_);
+}
+
 void GameThread::drawTransitioningPiece(PieceTransition& piece_)
 {
     piece_.move();
+    if (piece_.pieceIsInBounds()) piece_.setHasArrived(game);
     shared_ptr<Texture> t = RessourceManager::getTexture(piece_.getPiece());
     if (!t) return;
     Sprite s(*t);
+
+    // Draw captured piece while transition is happening
+    if (piece_.getCapturedPiece())
+    {
+        shared_ptr<Texture> t2 = RessourceManager::getTexture(piece_.getCapturedPiece());
+        if (!t2) return;
+        Sprite s2(*t2);
+        s2.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
+        s2.setPosition(piece_.getCapturedX(), piece_.getCapturedY() + g_MENUBAR_HEIGHT);
+        window.draw(s2);
+    }
+
     s.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
     s.setPosition(piece_.getCurrPos().first, piece_.getCurrPos().second + g_MENUBAR_HEIGHT);
     window.draw(s);
-    if (piece_.pieceIsInBounds()) piece_.setHasArrived(game);
 }
 
 void GameThread::handleKeyPressed(

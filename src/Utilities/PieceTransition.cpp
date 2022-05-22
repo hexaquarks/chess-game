@@ -38,9 +38,18 @@ void PieceTransition::setHasArrived(Board& board_)
 {
     // Piece has arrived at destination
     m_hasArrived = true;
+    m_captured.reset();
     m_isTransitioning = false;
     m_xArrived = false;
     m_yArrived = false;
     m_increment = {0, 0};
-    board_.setBoardTile(m_destination.first / g_CELL_SIZE, m_destination.second / g_CELL_SIZE, m_piece);
+}
+
+void PieceTransition::setCapturedPiece(shared_ptr<Piece>& captured, int x, int y)
+{
+    m_captured = captured;
+    if (m_captured) {
+        capturedXPos = x;
+        capturedYPos = y;
+    }
 }
