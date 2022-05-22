@@ -4,6 +4,8 @@ set(This BoardReset)
 
 set(Sources
     BoardReset.cpp
+    PieceCapture.cpp
+    MoveListTraversal.cpp
 )
 
 add_executable(${This} ${Sources})
