@@ -552,7 +552,6 @@ void GameThread::drawTransitioningPiece(PieceTransition& piece_)
     piece_.move(game);
     shared_ptr<Texture> t = RessourceManager::getTexture(piece_.getPiece());
     if (!t) return;
-    Sprite s(*t);
 
     // Draw captured piece while transition is happening
     if (piece_.getCapturedPiece())
@@ -570,6 +569,7 @@ void GameThread::drawTransitioningPiece(PieceTransition& piece_)
         window.draw(s2);
     }
 
+    Sprite s(*t);
     s.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
     s.setPosition(piece_.getCurrPos().first, piece_.getCurrPos().second);
     window.draw(s);

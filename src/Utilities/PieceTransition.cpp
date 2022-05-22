@@ -1,7 +1,6 @@
 #include "../../include/Pieces/Piece.hpp"
 #include "../../include/Utilities/PieceTransition.hpp"
 #include "../../include/GameThread.hpp"
-
 #include <math.h>
 
 void PieceTransition::setIncrement()
