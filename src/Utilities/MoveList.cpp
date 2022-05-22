@@ -74,7 +74,7 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
     shared_ptr<Piece> pOldPiece;
     shared_ptr<Piece> pSelectedPiece = move_->getSelectedPiece();
     shared_ptr<Piece> pCapturedPiece;
-    int capturedX = 0, capturedY = 0;
+    int capturedX = -1, capturedY = -1;
 
     coor2d oldCoors;
     int prevX = move_->getInit().first;
@@ -176,9 +176,8 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
         {
             // Enable piece visual transition
             GameThread::setTransitioningPiece(
-                pSelectedPiece, prevX * g_CELL_SIZE, prevY * g_CELL_SIZE,
-                x * g_CELL_SIZE, y * g_CELL_SIZE, pCapturedPiece,
-                capturedX * g_CELL_SIZE, capturedY * g_CELL_SIZE, getTransitioningPiece()
+                false, pSelectedPiece, prevX, prevY, x, y, pCapturedPiece,
+                capturedX, capturedY, getTransitioningPiece()
             );
         }
     }
@@ -188,10 +187,12 @@ void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
 {
     shared_ptr<Move> m = *m_moveIterator;
     shared_ptr<Piece> pCaptured = m->getCapturedPiece();
+    shared_ptr<Piece> pUndoPiece;
     int x = m->getTarget().first;
     int y = m->getTarget().second;
     int prevX = m->getInit().first;
     int prevY = m->getInit().second;
+    int capturedX = -1, capturedY = -1;
 
     int castleRow = (m->getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0;
     arrowList_ = m->getMoveArrows();
@@ -202,11 +203,17 @@ void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
             game.resetBoardTile(x, y);
             break;
         case MoveType::CAPTURE:
+            pUndoPiece = pCaptured;
+            capturedX = x;
+            capturedY = y;
             game.setBoardTile(x, y, pCaptured);
             break;
         case MoveType::ENPASSANT:
+            pUndoPiece = pCaptured;
+            capturedX = m->getSpecial().first;
+            capturedY = m->getSpecial().second;
             game.resetBoardTile(x, y);
-            game.setBoardTile(m->getSpecial().first, m->getSpecial().second, pCaptured);
+            game.setBoardTile(capturedX, capturedY, pCaptured);
             break;
         case MoveType::CASTLE_KINGSIDE:
             game.getKing()->setAsFirstMovement();
@@ -236,8 +243,8 @@ void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
     {
         // Enable transition movement
         GameThread::setTransitioningPiece(
-            selected, x * g_CELL_SIZE, y * g_CELL_SIZE,
-            prevX * g_CELL_SIZE, prevY * g_CELL_SIZE, getTransitioningPiece()
+            true, selected, x, y, prevX, prevY, pUndoPiece,
+            capturedX, capturedY, getTransitioningPiece()
         );
     }
 }
