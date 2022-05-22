@@ -427,7 +427,8 @@ void GameThread::drawPieces()
             if (!piece) continue;
 
             // Do not draw transitioning pieces
-            if (transitioningPiece.getIsTransitioning()) {
+            if (transitioningPiece.getIsTransitioning())
+            {
                 if (piece == transitioningPiece.getPiece() || piece == transitioningPiece.getCapturedPiece())
                     continue;
             }
@@ -470,7 +471,7 @@ void GameThread::drawAllArrows(vector<Arrow>& arrows_, const Arrow& currArrow_)
     if (arrows_.empty()) return;
     arrows_.emplace_back(currArrow_);
 
-    for (auto& arrow: arrows_)
+    for (Arrow& arrow: arrows_)
     {
         if (!arrow.isDrawable()) continue;
 
