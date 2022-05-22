@@ -15,6 +15,10 @@ Board::Board(): m_turn(Team::WHITE)
 
 void Board::reset()
 {
+    // Reset piece lists
+    m_whitePieces.clear();
+    m_blackPieces.clear();
+
     // Set the kings
     m_blackKing = make_shared<King>(Team::BLACK, 0, 4);
     m_whiteKing = make_shared<King>(Team::WHITE, 7, 4);
