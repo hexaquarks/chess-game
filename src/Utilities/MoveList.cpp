@@ -41,7 +41,7 @@ void MoveList::goToPreviousMove(bool enableTransition_, vector<Arrow>& arrowList
         undoMove(enableTransition_, arrowList_);
         ++m_moveIterator; // Go to previous move
         game.switchTurn();
-        // GameThread::refreshMoves();
+        GameThread::refreshMoves();
     }
 }
 
@@ -52,7 +52,7 @@ void MoveList::goToNextMove(bool enableTransition_, vector<Arrow>& arrowList_)
         --m_moveIterator; // Go to previous move
         applyMove(enableTransition_, arrowList_);
         game.switchTurn();
-        // GameThread::refreshMoves();
+        GameThread::refreshMoves();
     }
 }
 
@@ -162,22 +162,16 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             break;
     }
 
+    game.setBoardTile(x, y, pSelectedPiece);
     if (!addToList_ && pSelectedPiece)
     {
         if (enableTransition_)
         {
-            // move the piece from the (-1, -1) hidden location back to the square
-            // where it begins it's transition
-            pSelectedPiece->move(prevY, prevX);
-
-            // enable piece visual transition
-            GameThread::setTransitioningPiece(pSelectedPiece,
-                x*g_CELL_SIZE, y*g_CELL_SIZE, getTransitioningPiece()
+            // Enable piece visual transition
+            GameThread::setTransitioningPiece(
+                pSelectedPiece, prevX * g_CELL_SIZE, prevY * g_CELL_SIZE,
+                x * g_CELL_SIZE, y * g_CELL_SIZE, getTransitioningPiece()
             );
-        }
-        else
-        {
-            game.setBoardTile(x, y, pSelectedPiece);
         }
     }
 }
@@ -228,19 +222,16 @@ void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
     }
 
     shared_ptr<Piece> selected = m->getSelectedPiece();
+    game.setBoardTile(prevX, prevY, selected);
 
     if (enableTransition_)
     {
-        // Move the piece from the (-1, -1) hidden location back to the square
-        // where it begins it's transition
-        selected->move(y, x);
+        game.setBoardTile(prevX, prevY, selected);
 
         // Enable transition movement
         GameThread::setTransitioningPiece(
-            selected, m->getInit().first * g_CELL_SIZE,
-            m->getInit().second * g_CELL_SIZE, getTransitioningPiece()
+            selected, x * g_CELL_SIZE, y * g_CELL_SIZE,
+            prevX * g_CELL_SIZE, prevY * g_CELL_SIZE, getTransitioningPiece()
         );
     }
-    else
-        game.setBoardTile(prevX, prevY, selected);
 }

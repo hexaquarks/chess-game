@@ -425,6 +425,7 @@ void GameThread::drawPieces()
         {
             shared_ptr<Piece> piece = game.getBoardTile(i, j);
             if (!piece) continue;
+            if (transitioningPiece.getPiece() == piece && transitioningPiece.getIsTransitioning()) continue;
             shared_ptr<Texture> t = RessourceManager::getTexture(piece);
             if (!t) return;
             Sprite s(*t);
@@ -531,11 +532,11 @@ void GameThread::drawEndResults()
     }
 }
 
-void GameThread::setTransitioningPiece(shared_ptr<Piece>& p_, int xTarget_, int yTarget_, PieceTransition& trans_)
+void GameThread::setTransitioningPiece(shared_ptr<Piece>& p_, int initialX_, int initialY_, int xTarget_, int yTarget_, PieceTransition& trans_)
 {
     trans_.setTransitioningPiece(p_);
     coor2d destination = {xTarget_, yTarget_ };
-    coor2d currPos = {p_->getY() * g_CELL_SIZE, p_->getX() * g_CELL_SIZE};
+    coor2d currPos = {initialX_, initialY_};
     trans_.setDestination(destination);
     trans_.setCurrPos(currPos);
     trans_.setIsTransitioning(true);
