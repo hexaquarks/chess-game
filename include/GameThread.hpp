@@ -24,14 +24,23 @@ class MoveSelectionPanel; // Forward declaration
 // Constants
 constexpr uint32_t g_MENUBAR_HEIGHT = 30;
 constexpr uint32_t g_NUMBER_BUTTONS = 6;
-constexpr uint32_t g_WINDOW_SIZE = 640;
+
+#ifdef __APPLE__
+    constexpr uint32_t g_WINDOW_SIZE = 1200;
+    constexpr float g_SPRITE_SCALE = 1.125;
+    constexpr float g_SPECIAL_SCALE = 1.875;
+#else
+    constexpr uint32_t g_WINDOW_SIZE = 640;
+    constexpr float g_SPRITE_SCALE = 0.6;
+    constexpr float g_SPECIAL_SCALE = 1.0;
+#endif
+
 constexpr uint32_t g_CELL_SIZE = g_WINDOW_SIZE / 8;
 constexpr uint32_t g_BUTTON_POS = g_WINDOW_SIZE / g_NUMBER_BUTTONS;
 constexpr uint32_t g_PANEL_SIZE = 640;
 constexpr uint32_t g_BORDER_SIZE = 10;
 constexpr uint32_t g_SOUTH_PANEL_HEIGHT = g_MENUBAR_HEIGHT;
 constexpr uint32_t g_MAIN_PANEL_HEIGHT = g_PANEL_SIZE - g_SOUTH_PANEL_HEIGHT;
-constexpr float g_SPRITE_SCALE = 0.6;
 constexpr float g_SPRITE_SIZE = 128;
 constexpr float g_BUTTON_SIZE = 40;
 

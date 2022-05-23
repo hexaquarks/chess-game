@@ -411,6 +411,7 @@ void GameThread::drawCaptureCircles(const shared_ptr<Piece>& pSelectedPiece_)
         if (!t) return;
         Sprite circle(*t);
         if (isEmpty) circle.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
+        else circle.setScale(g_SPECIAL_SCALE, g_SPECIAL_SCALE);
         if (isFlipped) {i = 7-i; j = 7-j;}
         circle.setPosition(getWindowXPos(i), getWindowYPos(j));
         window.draw(circle);
@@ -528,7 +529,7 @@ void GameThread::drawEndResults()
         Texture t; t.loadFromFile(RessourceManager::getIconPath("checkmate.png"));
         Sprite checkmate(t);
         checkmate.setColor({255, 255, 255, 200});
-        checkmate.setScale(0.5, 0.5);
+        checkmate.setScale(g_SPECIAL_SCALE / 2, g_SPECIAL_SCALE / 2);
         checkmate.setOrigin(40, 40);
         checkmate.setPosition(
             getWindowXPos(isFlipped? 7-losing->getY(): losing->getY()) + g_CELL_SIZE,
