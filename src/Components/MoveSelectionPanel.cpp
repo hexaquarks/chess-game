@@ -103,10 +103,12 @@ bool MoveSelectionPanel::isHowered(coor2d& mousePos_) const
     int x = m_panel.getPosition().x;
     int y = m_panel.getPosition().y;
 
-    return (mousePos_.first >= x
-     && mousePos_.first <= x + m_panel.getLocalBounds().width
-     && mousePos_.second >= y
-     && mousePos_.second <= y + m_panel.getLocalBounds().height);
+    return (
+        mousePos_.first >= x &&
+        mousePos_.first <= x + m_panel.getLocalBounds().width &&
+        mousePos_.second >= y &&
+        mousePos_.second <= y + m_panel.getLocalBounds().height
+    );
 }
 
 void MoveSelectionPanel::goToNextVariation()
@@ -115,7 +117,7 @@ void MoveSelectionPanel::goToNextVariation()
     m_variationRectangles.at(m_selectionIndex).setFillColor(g_LIGHT_WHITE);
 
     // increment the selected variation
-    if (m_selectionIndex != m_numberOfVariations-1) ++m_selectionIndex;
+    if (m_selectionIndex != m_numberOfVariations - 1) ++m_selectionIndex;
 
     // Set the new variation to selected color
     m_variationRectangles.at(m_selectionIndex).setFillColor(g_BLUE);

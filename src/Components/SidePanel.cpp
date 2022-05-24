@@ -240,4 +240,3 @@ void SidePanel::drawMoves(coor2d& mousePos_)
     // }
     // resetNextPos();
 }
-
