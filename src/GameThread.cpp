@@ -470,7 +470,7 @@ void GameThread::drawDraggedPiece(const shared_ptr<Piece>& pSelectedPiece_, cons
 void GameThread::drawAllArrows(vector<Arrow>& arrows_, const Arrow& currArrow_)
 {
     if (arrows_.empty()) return;
-    arrows_.emplace_back(currArrow_);
+    arrows_.push_back(currArrow_);
 
     for (Arrow& arrow: arrows_)
     {

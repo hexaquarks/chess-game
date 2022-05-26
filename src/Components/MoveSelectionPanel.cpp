@@ -52,14 +52,14 @@ void MoveSelectionPanel::handleVariations(vector<std::string>& variations_)
         variationRect.setPosition(m_variationsPanel.getPosition() + newPos);
         variationRect.setOutlineColor(Color::Black);
         variationRect.setOutlineThickness(2.f);
-        m_variationRectangles.emplace_back(variationRect);
+        m_variationRectangles.push_back(variationRect);
 
         // Write the variation texts
         Text variationText;
         shared_ptr<Font> f = RessourceManager::getFont("Arial.ttf");
         DrawableSf::drawTextSf(variationText, text, *f, 16, Text::Regular, Color((counter == m_selectionIndex)? Color::White : Color::Black));
         variationText.setPosition(variationRect.getPosition() + Vector2f(5.f,5.f));
-        m_variationTexts.emplace_back(variationText);
+        m_variationTexts.push_back(variationText);
 
         ++counter;
     }
@@ -75,7 +75,7 @@ void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it_)
 
     for (int i = 0; i < it_.get()->childNumber; ++i)
     {
-        variations.emplace_back(
+        variations.push_back(
             m_sidePanel.parseMove(
                 *(it_.get()->m_children.at(i)->m_move), moveNumber, showNumber, true
             )

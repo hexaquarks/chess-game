@@ -21,7 +21,7 @@ void SidePanel::addMove(Move& move_)
     checkOutOfBounds(moveBox, 0); // check if object's width goes out of bounds and update
     m_nextPos.first += (moveBox.getScaledWidth()); // increment for next move box
 
-    moveBoxes.emplace_back(moveBox);
+    moveBoxes.push_back(moveBox);
     ++moveBoxCounter;
 }
 
