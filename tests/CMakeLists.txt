@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.16.3)
 
-set(This BoardReset)
+set(This BoardTests)
 
 set(Sources
     BoardReset.cpp
     PieceCapture.cpp
-    MoveListTraversal.cpp
+    EventHandling.cpp
 )
 
 add_executable(${This} ${Sources})
