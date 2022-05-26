@@ -60,6 +60,11 @@ void Board::reset()
         for (uint8_t col = 0; col < 8; ++col)
             m_whitePieces.push_back(m_board[row][col]);
 
+    // Delete pieces that have already moved
+    for (uint8_t row = 0; row < 8; ++row)
+        for (uint8_t col = 2; col < 6; ++col)
+            m_board[col][row] = nullptr;
+
     m_turn = Team::WHITE; // Reset the first move to be for white
 }
 
