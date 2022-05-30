@@ -33,9 +33,9 @@ class SidePanel
     public:
     SidePanel(RenderWindow&, MoveList&, MoveTree&, bool&);
 
-    pair<char,int> findLetterCoord(coor2d) const;
+    pair<char, int> findLetterCoord(coor2d) const;
     string parseMove(Move&, int, bool, bool = false) const;
-    void resetNextPos() { m_nextPos = { g_BORDER_SIZE + 10, 10 }; }
+    void resetNextPos() { m_nextPos = {g_BORDER_SIZE + 10, 10}; }
     void goToNextRow(int height);
     void addMove(Move&);
     void drawMoves(coor2d&);
