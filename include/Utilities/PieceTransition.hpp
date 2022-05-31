@@ -8,25 +8,7 @@ constexpr uint16_t g_FPS = 60;
 
 class PieceTransition
 {
-    shared_ptr<Piece> m_piece;
-    shared_ptr<Piece> m_captured;
-    coor2d m_currPos = {0, 0};
-    coor2d m_destination;
-    coor2d m_increment;
-    int capturedXPos = 0;
-    int capturedYPos = 0;
-    bool m_hasArrived = false;
-    bool m_isTransitioning = false;
-    bool m_xArrived = false;
-    bool m_yArrived = false;
-    double distance_to_dest = 0.0;
-    double original_dest = 1.0;
-    bool undoMove = true;
-
-    void updateDistToDest();
-    bool pieceIsInBounds();
-
-    public:
+public:
     // Getters
     bool getIsTransitioning() const { return m_isTransitioning; }
     bool getHasArrived() const { return m_hasArrived; }
@@ -53,4 +35,24 @@ class PieceTransition
 
     // Utilities
     void move(Board&);
+
+private:
+    shared_ptr<Piece> m_piece;
+    shared_ptr<Piece> m_captured;
+    coor2d m_currPos = {0, 0};
+    coor2d m_destination;
+    coor2d m_increment;
+    int capturedXPos = 0;
+    int capturedYPos = 0;
+    bool m_hasArrived = false;
+    bool m_isTransitioning = false;
+    bool m_xArrived = false;
+    bool m_yArrived = false;
+    double distance_to_dest = 0.0;
+    double original_dest = 1.0;
+    bool undoMove = true;
+
+    void updateDistToDest();
+    bool pieceIsInBounds();
+
 };

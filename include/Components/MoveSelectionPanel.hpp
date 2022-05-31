@@ -18,20 +18,7 @@ inline const Color g_LIGHT_WHITE = {240, 248, 255};
 
 class MoveSelectionPanel
 {
-    RenderWindow& m_window;
-    SidePanel& m_sidePanel;
-    Text m_title;
-    RectangleShape m_panel;
-    RectangleShape m_variationsPanel;
-    RectangleShape m_topRect;
-    vector<RectangleShape> m_variationRectangles;
-    vector<Text> m_variationTexts;
-    int m_height;
-    int m_selectionIndex = 0;
-    int m_numberOfVariations = 0;
-    bool m_isHowered = false;
-
-    public:
+public:
     MoveSelectionPanel(RenderWindow& window, SidePanel& panel)
     : m_window(window), m_sidePanel(panel)
     {
@@ -47,4 +34,19 @@ class MoveSelectionPanel
     void goToNextVariation();
     void goToPreviousVariation();
     void reset();
+
+private:
+    RenderWindow& m_window;
+    SidePanel& m_sidePanel;
+    Text m_title;
+    RectangleShape m_panel;
+    RectangleShape m_variationsPanel;
+    RectangleShape m_topRect;
+    vector<RectangleShape> m_variationRectangles;
+    vector<Text> m_variationTexts;
+    int m_height;
+    int m_selectionIndex = 0;
+    int m_numberOfVariations = 0;
+    bool m_isHowered = false;
+
 };

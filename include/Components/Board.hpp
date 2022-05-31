@@ -5,26 +5,12 @@
 using namespace std;
 
 enum class Team;
-
 class King;
-
 class Move;
 
 class Board
 {
-    // Member variables
-    shared_ptr<Piece> m_board[8][8];
-    Team m_turn; // White or black player's turn
-    vector<shared_ptr<Piece>> m_whitePieces;
-    vector<shared_ptr<Piece>> m_blackPieces;
-    shared_ptr<King> m_whiteKing;
-    shared_ptr<King> m_blackKing;
-    bool m_isFlipped = false;
-
-    // Private functions
-    void removeIllegalMoves(vector<Move>&, shared_ptr<Piece>&);
-
-    public:
+public:
     Board(); // Constructor
     void reset(); // Resets the board
 
@@ -43,4 +29,18 @@ class Board
     void switchTurn();
     bool kingIsChecked();
     void addPiece(shared_ptr<Piece>&);
+
+private:
+    // Member variables
+    shared_ptr<Piece> m_board[8][8];
+    Team m_turn; // White or black player's turn
+    vector<shared_ptr<Piece>> m_whitePieces;
+    vector<shared_ptr<Piece>> m_blackPieces;
+    shared_ptr<King> m_whiteKing;
+    shared_ptr<King> m_blackKing;
+    bool m_isFlipped = false;
+
+    // Private functions
+    void removeIllegalMoves(vector<Move>&, shared_ptr<Piece>&);
+
 };

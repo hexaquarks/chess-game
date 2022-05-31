@@ -6,7 +6,7 @@ using namespace std;
 
 class MoveTree
 {
-    public:
+public:
     shared_ptr<MoveTreeNode> m_root = make_shared<MoveTreeNode>(); // Root of the tree
     int numberOfMoves = 0;
 

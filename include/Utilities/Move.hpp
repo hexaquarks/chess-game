@@ -16,6 +16,43 @@ enum class MoveType { NORMAL, CASTLE_KINGSIDE, CASTLE_QUEENSIDE, ENPASSANT, NEWP
 
 class Move
 {
+public:
+    Move(coor2d, coor2d, shared_ptr<Piece>&, MoveType, shared_ptr<Piece>&);
+    Move(coor2d, coor2d, shared_ptr<Piece>&, MoveType);
+    Move(Move&, shared_ptr<Piece>&, coor2d = make_pair(-1, -1)); // Constructor for CAPTURE, EN PASSANT
+    Move(const string&);
+
+    vector<Arrow> getMoveArrows() { return m_arrows; }
+    MoveType getMoveType() const { return m_MoveType; }
+    shared_ptr<Piece> getSelectedPiece() { return m_selectedPiece; }
+    shared_ptr<Piece> getCapturedPiece() { return m_capturedPiece; }
+    coor2d getTarget() const { return m_target; }
+    coor2d getInit() const { return m_init; }
+    coor2d getSpecial() const { return m_special; }
+
+    bool kingIsChecked() const { return kingChecked; }
+    bool hasNoMoves() const { return noMoves; }
+    bool kingIsCheckmated() const { return kingChecked && noMoves; }
+
+    void setChecked() { kingChecked = true; }
+    void setNoMoves() { noMoves = true; }
+    void setTarget(coor2d& target) { m_target = target; }
+    void setMoveType(MoveType moveType) { m_MoveType = moveType; }
+    void setCapturedPiece(shared_ptr<Piece>& capturedPiece) { m_capturedPiece = capturedPiece; }
+    void setSelectedPiece(shared_ptr<Piece>& p) { m_selectedPiece = p; }
+    void setMoveArrows(vector<Arrow> arrows) { m_arrows = arrows; }
+    
+    bool operator ==(Move& other)
+    {
+        return m_selectedPiece == other.m_selectedPiece &&
+        m_MoveType == other.m_MoveType &&
+        m_target == other.m_target &&
+        m_init == other.m_init &&
+        m_special == other.m_special;
+    }
+    string toString() const;
+
+private:
     shared_ptr<Piece> m_selectedPiece; // Piece that is being selected
     shared_ptr<Piece> m_capturedPiece; // Captured piece, the moved rook in castling, or taken pawn in en passant
     MoveType m_MoveType; // Move type
@@ -29,35 +66,4 @@ class Move
     static string coorRepr(const coor2d&);
     static coor2d fromRepr(char, char);
 
-    public:
-    Move(coor2d, coor2d, shared_ptr<Piece>&, MoveType, shared_ptr<Piece>&);
-    Move(coor2d, coor2d, shared_ptr<Piece>&, MoveType);
-    Move(Move&, shared_ptr<Piece>&, coor2d = make_pair(-1, -1)); // Constructor for CAPTURE, EN PASSANT
-    Move(const string&);
-    vector<Arrow> getMoveArrows() { return m_arrows; }
-    MoveType getMoveType() const { return m_MoveType; }
-    shared_ptr<Piece> getSelectedPiece() { return m_selectedPiece; }
-    shared_ptr<Piece> getCapturedPiece() { return m_capturedPiece; }
-    coor2d getTarget() const { return m_target; }
-    coor2d getInit() const { return m_init; }
-    coor2d getSpecial() const { return m_special; }
-    bool kingIsChecked() const { return kingChecked; }
-    bool hasNoMoves() const { return noMoves; }
-    bool kingIsCheckmated() const { return kingChecked && noMoves; }
-    void setChecked() { kingChecked = true; }
-    void setNoMoves() { noMoves = true; }
-    void setTarget(coor2d& target) { m_target = target; }
-    void setMoveType(MoveType moveType) { m_MoveType = moveType; }
-    void setCapturedPiece(shared_ptr<Piece>& capturedPiece) { m_capturedPiece = capturedPiece; }
-    void setSelectedPiece(shared_ptr<Piece>& p) { m_selectedPiece = p; }
-    void setMoveArrows(vector<Arrow> arrows) { m_arrows = arrows; }
-    bool operator ==(Move& other)
-    {
-        return m_selectedPiece == other.m_selectedPiece &&
-        m_MoveType == other.m_MoveType &&
-        m_target == other.m_target &&
-        m_init == other.m_init &&
-        m_special == other.m_special;
-    }
-    string toString() const;
 };

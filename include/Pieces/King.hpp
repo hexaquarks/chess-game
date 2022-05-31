@@ -6,11 +6,7 @@
 // Represents a king
 class King: public Piece
 {
-    vector<Move> possibleMovesNoCheck(Board&) const;
-    bool canCastleKingSide(Board&) const;
-    bool canCastleQueenSide(Board&) const;
-
-    public:
+public:
     King(Team, int, int); // Constructor
     vector<Move> calcPossibleMoves(Board&) const override;
     bool isChecked(Board&) const;
@@ -22,4 +18,10 @@ class King: public Piece
         board_.setBoardTile(y, x, second, false);
         board_.setBoardTile(Y, X, first, false);
     }
+
+private:
+    vector<Move> possibleMovesNoCheck(Board&) const;
+    bool canCastleKingSide(Board&) const;
+    bool canCastleQueenSide(Board&) const;
+
 };

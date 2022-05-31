@@ -6,7 +6,7 @@ using namespace sf;
 
 class DrawableSf
 {
-    public:
+public:
     static void drawTextSf(
         Text&, const std::string&, Font&, int,
         const Text::Style&, const Color&

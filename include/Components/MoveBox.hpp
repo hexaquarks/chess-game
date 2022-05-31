@@ -10,14 +10,7 @@ inline constexpr float g_BOX_TEXT_HORIZONTAL_SHIFT = 1.05;
 
 class MoveBox
 {
-    bool m_isSelected = false;
-    RectangleShape m_rectangle;
-    FloatRect m_textBounds;
-    coor2d m_position;
-    string m_text;
-    Text m_textsf;
-
-    public:
+public:
     MoveBox(coor2d, string);
 
     float getScaledWidth() const { return g_BOX_HORIZONTAL_SCALE * m_textBounds.width; }
@@ -34,4 +27,13 @@ class MoveBox
     void setDefault();
     void handleRectangle();
     void handleText();
+
+private:
+    bool m_isSelected = false;
+    RectangleShape m_rectangle;
+    FloatRect m_textBounds;
+    coor2d m_position;
+    string m_text;
+    Text m_textsf;
+
 };

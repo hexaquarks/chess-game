@@ -17,22 +17,7 @@ class Board;
 // Represents a piece
 class Piece
 {
-    /* Static members */
-    inline const static string fileExt = ".png"; // Pieces file extension
-    inline static shared_ptr<Piece> m_lastPiece; // Last moved piece
-
-    /* Class members */
-    string m_filename; // Filename for this piece
-    Team m_team; // Team this piece plays for
-    PieceType m_type; // Type of this piece
-    MoveType m_lastMove; // Move type of this piece
-    int m_xPos; int m_yPos; // X and Y positions
-    bool m_moved = false; // Whether piece has moved or not
-
-    /* Helper function */
-    string getColorCode() { return m_team == Team::BLACK? "b": "w"; }
-
-    public:
+public:
     Piece(Team, int, int, PieceType, string); // Constructor
     virtual ~Piece() {} // Virtual destructor
 
@@ -61,4 +46,21 @@ class Piece
         m_xPos = x;
         m_yPos = y;
     }
+
+private:
+    /* Static members */
+    inline const static string fileExt = ".png"; // Pieces file extension
+    inline static shared_ptr<Piece> m_lastPiece; // Last moved piece
+
+    /* Class members */
+    string m_filename; // Filename for this piece
+    Team m_team; // Team this piece plays for
+    PieceType m_type; // Type of this piece
+    MoveType m_lastMove; // Move type of this piece
+    int m_xPos; int m_yPos; // X and Y positions
+    bool m_moved = false; // Whether piece has moved or not
+
+    /* Helper function */
+    string getColorCode() { return m_team == Team::BLACK? "b": "w"; }
+
 };

@@ -20,17 +20,7 @@ inline vector<MoveBox> moveBoxes;
 
 class SidePanel
 {
-    RenderWindow& m_window;
-    MoveList& m_moveList;
-    MoveTree& m_moveTree;
-    coor2d m_nextPos = { g_BORDER_SIZE + 10, 10 };
-    int moveBoxCounter = 0;
-    int m_row = 0;
-    bool& m_showMoveSelectionPanel;
-
-    string parseMoveHelper(Move&, int, bool, bool) const;
-
-    public:
+public:
     SidePanel(RenderWindow&, MoveList&, MoveTree&, bool&);
 
     pair<char,int> findLetterCoord(coor2d) const;
@@ -44,4 +34,16 @@ class SidePanel
     void checkOutOfBounds(MoveBox&, int);
     void handleMoveBoxClicked(coor2d&) const;
     void drawFromNode(shared_ptr<MoveTreeNode>&, int, int, coor2d, coor2d&);
+
+private:
+    RenderWindow& m_window;
+    MoveList& m_moveList;
+    MoveTree& m_moveTree;
+    coor2d m_nextPos = { g_BORDER_SIZE + 10, 10 };
+    int moveBoxCounter = 0;
+    int m_row = 0;
+    bool& m_showMoveSelectionPanel;
+
+    string parseMoveHelper(Move&, int, bool, bool) const;
+
 };

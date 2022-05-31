@@ -19,15 +19,7 @@ const inline vector<coor2d> ruCoords = {{2, -1}, {1, 2}, {-2, 1}, {-1, -2}};
 
 class Arrow
 {
-    coor2d m_origin; // Origin absolute coordinate
-    coor2d m_destination; // Destination absolute coordinate
-    string m_filename; // File name for the arrow
-    int m_dx, m_dy; // Tile differential coordinates
-    int m_rotation; // Multiples of 45 degrees
-    int m_size; // Size of the arrow (0 to 7)
-    bool m_isLArrow = false;
-
-    public:
+public:
     Arrow(): m_rotation(0), m_size(0){};
     Arrow(coor2d, coor2d, int, string);
 
@@ -48,4 +40,14 @@ class Arrow
     bool isDrawable() const;
     bool compare(Arrow&) const;
     bool isLArrow() { return m_isLArrow; }
+
+private:
+    coor2d m_origin; // Origin absolute coordinate
+    coor2d m_destination; // Destination absolute coordinate
+    string m_filename; // File name for the arrow
+    int m_dx, m_dy; // Tile differential coordinates
+    int m_rotation; // Multiples of 45 degrees
+    int m_size; // Size of the arrow (0 to 7)
+    bool m_isLArrow = false;
+
 };

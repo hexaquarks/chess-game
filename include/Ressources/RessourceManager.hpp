@@ -13,6 +13,27 @@ typedef unordered_map<string, shared_ptr<sf::Font>> fontsMap;
 
 class RessourceManager
 {
+public:
+    RessourceManager() = delete;
+
+    static sf::SoundBuffer getSound();
+    static void setSounds();
+
+    static void loadRessources();
+
+    static void addTexture(const string& name);
+    static void addFont(const string& name);
+    static shared_ptr<sf::Texture> getTexture(const string &name);
+    static shared_ptr<sf::Texture> getTexture(const shared_ptr<Piece>& piece) {
+        return getTexture(piece->getFileName());
+    }
+    static shared_ptr<sf::Font> getFont(const string &name);
+
+    static string getIconPath(const string& filename) { return iconsPath + filename; }
+    static string getAudioPath(const string& filename) { return audioPath + filename; }
+    static string getFontPath(const string& filename) { return fontPath + filename; }
+
+private:
     inline const static string iconsPath = "./assets/icons/";
     inline const static string audioPath = "./assets/sounds/";
     inline const static string fontPath = "./assets/fonts/";
@@ -32,23 +53,4 @@ class RessourceManager
     inline static textureMap m_textures;
     inline static fontsMap m_fonts;
 
-    public:
-    RessourceManager() = delete;
-
-    static sf::SoundBuffer getSound();
-    static void setSounds();
-
-    static void loadRessources();
-
-    static void addTexture(const string& name);
-    static void addFont(const string& name);
-    static shared_ptr<sf::Texture> getTexture(const string &name);
-    static shared_ptr<sf::Texture> getTexture(const shared_ptr<Piece>& piece) {
-        return getTexture(piece->getFileName());
-    }
-    static shared_ptr<sf::Font> getFont(const string &name);
-
-    static string getIconPath(const string& filename) { return iconsPath + filename; }
-    static string getAudioPath(const string& filename) { return audioPath + filename; }
-    static string getFontPath(const string& filename) { return fontPath + filename; }
 };
