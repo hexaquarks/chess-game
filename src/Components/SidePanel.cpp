@@ -73,7 +73,7 @@ string SidePanel::parseMove(Move& move_, int moveNumber_, bool showNumber_, bool
 
 void SidePanel::goToNextRow(int height_)
 {
-     m_nextPos = { g_BORDER_SIZE + 10, m_nextPos.second + height_ + 20 };
+    m_nextPos = {g_BORDER_SIZE + 10, m_nextPos.second + height_ + 20};
 }
 
 void SidePanel::checkOutOfBounds(MoveBox& moveBox_, int offset_)
@@ -81,8 +81,8 @@ void SidePanel::checkOutOfBounds(MoveBox& moveBox_, int offset_)
     int newPos = g_WINDOW_SIZE + offset_ + m_nextPos.first + moveBox_.getTextBounds().width;
     if (newPos >= g_WINDOW_SIZE + g_PANEL_SIZE - g_BORDER_SIZE)
     {
-        goToNextRow(moveBox_.getTextBounds().height); // change next position
-        moveBox_.setPosition(m_nextPos); // update the new position
+        goToNextRow(moveBox_.getTextBounds().height); // Change next position
+        moveBox_.setPosition(m_nextPos); // Update the new position
     }
 }
 
@@ -103,7 +103,7 @@ void SidePanel::handleMoveBoxClicked(coor2d& mousePos_) const
         if ((x >= xPos && x < xPos + width) && (y >= yPos && y < yPos + height))
         {
             int currMoveIndex = m_moveList.getMoveListSize() - m_moveList.getIteratorIndex() -1;
-            vector<Arrow> temp{}; // for testing
+            vector<Arrow> temp; // For testing
             if (newMoveIndex > currMoveIndex)
             {
                 while (newMoveIndex > currMoveIndex)
@@ -143,8 +143,10 @@ void SidePanel::drawSquareBracket(coor2d& nextPos_, int offset_, bool open_) con
 
     float positionalShift = ((g_BOX_HORIZONTAL_SCALE - 1.f) * rect.getLocalBounds().width)/2.f;
     rect.setScale(g_BOX_HORIZONTAL_SCALE, g_BOX_VERTICAL_SCALE);
-    textsf.setPosition(g_WINDOW_SIZE + nextPos_.first + positionalShift,
-                         g_MENUBAR_HEIGHT + nextPos_.second - 4);
+    textsf.setPosition(
+        g_WINDOW_SIZE + nextPos_.first + positionalShift,
+        g_MENUBAR_HEIGHT + nextPos_.second - 4
+    );
 
     m_window.draw(rect);
     m_window.draw(textsf);
@@ -186,18 +188,18 @@ void SidePanel::drawFromNode(shared_ptr<MoveTreeNode>& node_, int level_, int of
 
 coor2d SidePanel::drawMove(Move& move_, int level_, int offset_, coor2d nextPos_, coor2d& mousePos_)
 {
-    // iterate through all the move list from begining to end
-    // get the text coordinates information for a Move Box
+    // Iterate through all the move list from begining to end
+    // Get the text coordinates information for a Move Box
     int moveNumber = (level_ / 2) + 1;
     bool showNumber = level_ % 2 != 0;
     string text = parseMove(move_, moveNumber, showNumber);
 
-    // construct the Move Box
+    // Construct the Move Box
     nextPos_.first += offset_;
     MoveBox moveBox(nextPos_, text); // Make the text box
     moveBox.handleText(); // Create the Text, and pass the font ressource
 
-    // checkOutOfBounds(moveBox, offset); // check if object's width goes out of bounds and update
+    // CheckOutOfBounds(moveBox, offset); // check if object's width goes out of bounds and update
     // m_nextPos.first += (moveBox.getScaledWidth()); // increment for next move box
 
     moveBox.handleRectangle();
@@ -217,8 +219,8 @@ void SidePanel::drawMoves(coor2d& mousePos_)
 {
     shared_ptr<MoveTreeNode> root = m_moveTree.getRoot();
     drawFromNode(root, 0, 0, { g_INIT_WIDTH, g_INIT_HEIGHT }, mousePos_);
-    m_row = 0; // reset to 0 for next iteration
-    // if (moveBoxes.size() == 0) return; // no moves added yet, return
+    m_row = 0; // Reset to 0 for next iteration
+    // if (moveBoxes.size() == 0) return; // No moves added yet, return
 
     // int counter = 0;
     // for (auto& moveBox : moveBoxes) {
