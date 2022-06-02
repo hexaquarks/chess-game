@@ -7,12 +7,13 @@ void PieceTransition::setIncrement()
 {
     if (!m_piece) return;
 
-    // Piece should arrive at destination in one second
-    m_increment.first = (m_destination.first - m_currPos.first) / (g_FPS / 6);
-    m_increment.second = (m_destination.second - m_currPos.second) / (g_FPS / 6);
-
     // Divide by 6 so the increment is in base 10, that is 60 / 10
     // Avoiding any piece to jump a square in a game tick
+    constexpr uint16_t divisor = g_FPS / 6;
+
+    // Piece should arrive at destination in one second
+    m_increment.first = (m_destination.first - m_currPos.first) / divisor;
+    m_increment.second = (m_destination.second - m_currPos.second) / divisor;
 }
 
 bool PieceTransition::pieceIsInBounds()
