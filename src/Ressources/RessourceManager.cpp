@@ -38,9 +38,12 @@ shared_ptr<sf::Font> RessourceManager::getFont(const string& name_)
 
 void RessourceManager::loadRessources()
 {
-    // create the textures
-    for (size_t i = 0; i < m_numberOfTextures; ++i) addTexture(m_textureNames[i]);
-    // create the sounds
-    // create the fonts
+    // Create the textures
+    for (size_t i = 0; i < m_numberOfTextures; ++i)
+        addTexture(m_textureNames[i]);
+
+    // Create the sounds (not yet implemented)
+
+    // Create the fonts
     addFont(m_fontNames[0]);
 }
