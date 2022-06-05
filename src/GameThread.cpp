@@ -572,8 +572,8 @@ void GameThread::drawTransitioningPiece(PieceTransition& piece_)
         s2.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
         s2.setPosition(piece_.getCapturedX(), piece_.getCapturedY());
 
-        Uint8 percentage = static_cast<Uint8>(piece_.getPercentageLeft() * 255);
-        if (piece_.isUndo()) percentage = static_cast<Uint8>(255-percentage);
+        uint8_t percentage = static_cast<uint8_t>(piece_.getPercentageLeft() * 255);
+        if (piece_.isUndo()) percentage = static_cast<uint8_t>(255-percentage);
         s2.setColor({255, 255, 255, percentage});
         window.draw(s2);
     }
