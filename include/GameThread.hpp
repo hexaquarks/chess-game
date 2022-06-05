@@ -89,6 +89,7 @@ private:
     inline static bool kingChecked = false;
     inline static bool noMovesAvailable = false;
 
+    /* Graphical functions */
     static void handleKeyPressed(const Event&, MoveSelectionPanel&, vector<Arrow>&, bool&);
     static void initializeBoard();
     static void initializeMenuBar();
