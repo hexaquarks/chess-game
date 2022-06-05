@@ -87,7 +87,7 @@ private:
     inline static MoveTree moveTree;
     inline static MoveTree::Iterator treeIterator = moveTree.begin();
     inline static bool kingChecked = false;
-    inline static bool noMoves = false;
+    inline static bool noMovesAvailable = false;
 
     static void handleKeyPressed(const Event&, MoveSelectionPanel&, vector<Arrow>&, bool&);
     static void initializeBoard();

@@ -30,25 +30,25 @@ public:
     coor2d getInit() const { return m_init; }
     coor2d getSpecial() const { return m_special; }
 
-    bool kingIsChecked() const { return kingChecked; }
-    bool hasNoMoves() const { return noMoves; }
-    bool kingIsCheckmated() const { return kingChecked && noMoves; }
+    bool kingIsChecked() const { return m_kingChecked; }
+    bool hasNoMovesAvailable() const { return m_noMovesAvailable; }
+    bool kingIsCheckmated() const { return m_kingChecked && m_noMovesAvailable; }
 
-    void setChecked() { kingChecked = true; }
-    void setNoMoves() { noMoves = true; }
-    void setTarget(coor2d& target) { m_target = target; }
-    void setMoveType(MoveType moveType) { m_MoveType = moveType; }
-    void setCapturedPiece(shared_ptr<Piece>& capturedPiece) { m_capturedPiece = capturedPiece; }
-    void setSelectedPiece(shared_ptr<Piece>& p) { m_selectedPiece = p; }
-    void setMoveArrows(vector<Arrow> arrows) { m_arrows = arrows; }
+    void setChecked(bool checked_ = true) { m_kingChecked = checked_; }
+    void setNoMovesAvailable(bool noMoves_ = true) { m_noMovesAvailable = noMoves_; }
+    void setTarget(coor2d& target_) { m_target = target_; }
+    void setMoveType(MoveType moveType_) { m_MoveType = moveType_; }
+    void setCapturedPiece(shared_ptr<Piece>& capturedPiece_) { m_capturedPiece = capturedPiece_; }
+    void setSelectedPiece(shared_ptr<Piece>& piece_) { m_selectedPiece = piece_; }
+    void setMoveArrows(vector<Arrow> arrows_) { m_arrows = arrows_; }
     
-    bool operator ==(Move& other)
+    bool operator ==(Move& other_)
     {
-        return m_selectedPiece == other.m_selectedPiece &&
-        m_MoveType == other.m_MoveType &&
-        m_target == other.m_target &&
-        m_init == other.m_init &&
-        m_special == other.m_special;
+        return m_selectedPiece == other_.m_selectedPiece &&
+        m_MoveType == other_.m_MoveType &&
+        m_target == other_.m_target &&
+        m_init == other_.m_init &&
+        m_special == other_.m_special;
     }
     string toString() const;
 
@@ -60,8 +60,8 @@ private:
     coor2d m_init; // Initial square of the piece moved
     coor2d m_special; // En passant information
     vector<Arrow> m_arrows; // List of arrows drawn at that move
-    bool kingChecked = false;
-    bool noMoves = false;
+    bool m_kingChecked = false; 
+    bool m_noMovesAvailable = false; // Flag that captures the availablility of possible moves in the position
 
     static string coorRepr(const coor2d&);
     static coor2d fromRepr(char, char);

@@ -219,8 +219,8 @@ void GameThread::startGame()
                         game.switchTurn();
                         refreshMoves();
 
-                        noMoves = possibleMoves.empty();
-                        if (noMoves) pMove->setNoMoves();
+                        noMovesAvailable = possibleMoves.empty();
+                        if (noMovesAvailable) pMove->setNoMovesAvailable();
 
                         if (game.kingIsChecked())
                         {
@@ -292,7 +292,7 @@ void GameThread::startGame()
         drawAllArrows(arrowList, arrow);
 
         // End conditions
-        if (noMoves) drawEndResults();
+        if (noMovesAvailable) drawEndResults();
 
         if (showMoveSelectionPanel)
         {
@@ -603,12 +603,12 @@ void GameThread::handleKeyPressed(
             if (move)
             {
                 kingChecked = move->kingIsChecked();
-                noMoves = move->hasNoMoves();
+                noMovesAvailable = move->hasNoMovesAvailable();
             }
             else
             {
                 kingChecked = false;
-                noMoves = false;
+                noMovesAvailable = false;
             }
             break;
         case Keyboard::Right:
@@ -622,12 +622,12 @@ void GameThread::handleKeyPressed(
                     if (move)
                     {
                         kingChecked = move->kingIsChecked();
-                        noMoves = move->hasNoMoves();
+                        noMovesAvailable = move->hasNoMovesAvailable();
                     }
                     else
                     {
                         kingChecked = false;
-                        noMoves = false;
+                        noMovesAvailable = false;
                     }
                 }
                 showMoveSelectionPanel_ = !showMoveSelectionPanel_;
@@ -639,12 +639,12 @@ void GameThread::handleKeyPressed(
             if (move)
             {
                 kingChecked = move->kingIsChecked();
-                noMoves = move->hasNoMoves();
+                noMovesAvailable = move->hasNoMovesAvailable();
             }
             else
             {
                 kingChecked = false;
-                noMoves = false;
+                noMovesAvailable = false;
             }
             break;
         case Keyboard::LControl:
