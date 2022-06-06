@@ -23,7 +23,8 @@ Move::Move(coor2d target_, coor2d initial_, shared_ptr<Piece>& pSelectedPiece_, 
 Move::Move(Move& move_, shared_ptr<Piece>& pSecondPiece_, coor2d capturedPawn_):
     m_target(move_.getTarget()), m_init(move_.getInit()), m_special(capturedPawn_),
     m_selectedPiece(move_.getSelectedPiece()), m_capturedPiece(pSecondPiece_),
-    m_MoveType(move_.getMoveType()), kingChecked(move_.kingChecked), noMoves(move_.noMoves)
+    m_MoveType(move_.getMoveType()), m_kingChecked(move_.m_kingChecked),
+    m_noMovesAvailable(move_.m_noMovesAvailable)
 {
 }
 
