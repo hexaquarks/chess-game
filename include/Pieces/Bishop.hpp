@@ -1,7 +1,6 @@
 #pragma once
 #include "Piece.hpp"
 
-
 // Represents a bishop
 struct Bishop: public Piece
 {

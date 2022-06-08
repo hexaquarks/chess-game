@@ -1,12 +1,14 @@
 #pragma once
+#include "../Pieces/Piece.hpp"
+
 #include <list>
 #include "memory"
-#include "../Pieces/Piece.hpp"
+
 using namespace std;
 
-enum class Team;
 class King;
 class Move;
+enum class Team;
 
 class Board
 {

@@ -1,9 +1,11 @@
 #pragma once
+#include "../Utilities/Move.hpp"
+
 #include <utility>
 #include <vector>
 #include <tuple>
 #include <iostream>
-#include "../Utilities/Move.hpp"
+
 using namespace std;
 
 enum class Team { WHITE, BLACK };

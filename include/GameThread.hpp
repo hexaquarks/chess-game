@@ -1,6 +1,5 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <vector>
+
 #include "Ressources/RessourceManager.hpp"
 #include "Utilities/PieceTransition.hpp"
 #include "Components/MenuButton.hpp"
@@ -15,6 +14,9 @@
 #include "Pieces/King.hpp"
 #include "Pieces/Queen.hpp"
 #include "Pieces/Piece.hpp"
+
+#include <SFML/Graphics.hpp>
+#include <vector>
 
 using namespace sf;
 

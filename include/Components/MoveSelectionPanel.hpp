@@ -1,9 +1,10 @@
 #pragma once
-#include <SFML/Graphics.hpp>
 #include "../GameThread.hpp"
 #include "../Utilities/MoveTree.hpp"
 #include "SidePanel.hpp"
+
 #include <string>
+#include <SFML/Graphics.hpp>
 
 using namespace std;
 using namespace sf;

@@ -1,10 +1,13 @@
 #pragma once
+#include "../Pieces/Piece.hpp"
+
 #include <vector>
 #include <unordered_map>
+#include <memory>
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include <memory>
-#include "../Pieces/Piece.hpp"
+
 using namespace std;
 
 typedef unordered_map<string, shared_ptr<sf::Texture>> textureMap;

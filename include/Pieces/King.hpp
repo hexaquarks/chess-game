@@ -2,7 +2,6 @@
 #include "Piece.hpp"
 #include "../../include/Components/Board.hpp"
 
-
 // Represents a king
 class King: public Piece
 {

@@ -1,5 +1,6 @@
 #include "../../include/Pieces/Knight.hpp"
 #include "../../include/Components/Board.hpp"
+
 #include <vector>
 
 Knight::Knight(Team team, int x, int y):

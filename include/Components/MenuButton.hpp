@@ -1,6 +1,8 @@
 #pragma once
+
 #include <SFML/Graphics.hpp>
 #include <string>
+
 using namespace sf;
 
 typedef std::pair<int, int> coor2d;

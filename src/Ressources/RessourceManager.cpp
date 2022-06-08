@@ -1,7 +1,9 @@
 #include "../../include/Ressources/RessourceManager.hpp"
+
 #include <vector>
 #include <algorithm>
 #include <iostream>
+
 using namespace std;
 
 void RessourceManager::addTexture(const string& name_)

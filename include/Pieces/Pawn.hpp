@@ -1,7 +1,7 @@
 #pragma once
 #include "Piece.hpp"
-#include <vector>
 
+#include <vector>
 
 // Represents a pawn
 struct Pawn: public Piece

@@ -1,6 +1,6 @@
 #include "../include/GameThread.hpp"
-#include <iostream>
 
+#include <iostream>
 
 int main()
 {

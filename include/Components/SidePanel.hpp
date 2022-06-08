@@ -1,12 +1,13 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
 #include "../Utilities/Move.hpp"
 #include "../Pieces/Piece.hpp"
 #include "../GameThread.hpp"
 #include "../Utilities/MoveList.hpp"
 #include "../Utilities/MoveTree.hpp"
 #include "MoveBox.hpp"
+
+#include <SFML/Graphics.hpp>
 
 using namespace std;
 using namespace sf;

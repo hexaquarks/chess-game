@@ -1,4 +1,5 @@
 #include "../../include/Pieces/Queen.hpp"
+
 #include <vector>
 
 Queen::Queen(Team team_, int x_, int y_): Piece(team_, x_, y_, PieceType::QUEEN, "q")
