@@ -168,9 +168,9 @@ void GameThread::startGame()
                 {
                     // Handle menu bar buttons
                     if (mousePos.second < g_MENUBAR_HEIGHT)
-                        for (MenuButton& m: menuBar)
-                            if (m.isClicked(mousePos))
-                                if (m.performClick(game, moveList) == 1)
+                        for (auto& menuButton: menuBar)
+                            if (menuButton.isClicked(mousePos))
+                                if (menuButton.performClick(game, moveList) == 1)
                                 {
                                     // TODO fix bug (reset at beggining)
                                     pSelectedPiece.reset();
@@ -396,7 +396,7 @@ void GameThread::highlightHoveredSquare(const shared_ptr<Piece>& pSelectedPiece_
 {
     const Color colours[2] = {{173, 176, 134}, {100, 111, 64}};
 
-    for (Move& move: possibleMoves)
+    for (auto& move: possibleMoves)
     {
         int i = move.getTarget().second;
         int j = move.getTarget().first;
@@ -416,7 +416,7 @@ void GameThread::highlightHoveredSquare(const shared_ptr<Piece>& pSelectedPiece_
 
 void GameThread::drawCaptureCircles(const shared_ptr<Piece>& pSelectedPiece_)
 {
-    for (Move& move: possibleMoves)
+    for (auto& move: possibleMoves)
     {
         int i = move.getTarget().second;
         int j = move.getTarget().first;
@@ -489,7 +489,7 @@ void GameThread::drawAllArrows(vector<Arrow>& arrows_, const Arrow& currArrow_)
     if (arrows_.empty()) return;
     arrows_.push_back(currArrow_);
 
-    for (Arrow& arrow: arrows_)
+    for (auto& arrow: arrows_)
     {
         if (!arrow.isDrawable()) continue;
 

@@ -5,7 +5,7 @@ SidePanel::SidePanel(RenderWindow& window_, MoveList& moveList_, MoveTree& moveT
 : m_window(window_), m_moveList(moveList_),
   m_moveTree(moveTree_), m_showMoveSelectionPanel(b_)
 {
-};
+}
 
 void SidePanel::addMove(Move& move_)
 {
@@ -130,7 +130,7 @@ void SidePanel::drawSquareBracket(coor2d& nextPos_, int offset_, bool open_) con
 {
     nextPos_.first += offset_;
 
-    shared_ptr<Font> font = RessourceManager::getFont("Arial.ttf");
+    auto font = RessourceManager::getFont("Arial.ttf");
     Text textsf;
     DrawableSf::drawTextSf(textsf, string(open_ ? "[" : "]"), *font, 28, Text::Bold, {240, 248, 255});
 

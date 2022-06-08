@@ -3,9 +3,9 @@
 
 void MoveSelectionPanel::handleTitleText()
 {
-    shared_ptr<Font> f = RessourceManager::getFont("Arial.ttf");
+    auto font = RessourceManager::getFont("Arial.ttf");
     DrawableSf::drawTextSf(
-        m_title, "Select a variation", *f, 14,
+        m_title, "Select a variation", *font, 14,
         Text::Style::Regular, Color::Black
     );
     m_title.setPosition(m_panel.getPosition() + Vector2f(10.f, 10.f));

@@ -7,7 +7,7 @@ MoveBox::MoveBox(coor2d position_, string text_): m_position(position_), m_text(
 
 void MoveBox::handleText()
 {
-    shared_ptr<Font> font = RessourceManager::getFont("Arial.ttf");
+    auto font = RessourceManager::getFont("Arial.ttf");
     DrawableSf::drawTextSf(m_textsf, m_text, *font, 25, Text::Bold, Color::Black);
 
     m_textBounds = m_textsf.getGlobalBounds();

@@ -112,7 +112,7 @@ vector<Move> Board::calculateAllMoves()
 {
     vector<Move> moves;
     vector<shared_ptr<Piece>> playerPieces = (m_turn == Team::WHITE)? m_whitePieces: m_blackPieces;
-    for (shared_ptr<Piece> piece: playerPieces)
+    for (auto piece: playerPieces)
     {
         if (piece->getX() == -1 || piece->getY() == -1) continue;
         vector<Move> pieceMoves = possibleMovesFor(piece);
