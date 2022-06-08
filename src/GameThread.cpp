@@ -16,7 +16,7 @@
 
 using namespace sf;
 
-namespace Utilities
+namespace utilities
 {
     void checkIfMoveMakesKingChecked(shared_ptr<Move>& move, bool kingChecked, bool noMovesAvailable) 
     {
@@ -31,7 +31,7 @@ namespace Utilities
             noMovesAvailable = false;
         }
     }
-}
+} // namespace utilities
 
 void GameThread::startGame()
 {
@@ -617,7 +617,7 @@ void GameThread::handleKeyPressed(
             moveList.goToPreviousMove(true, arrowList_);
             moveTree.goToPreviousNode(treeIterator);
             move = treeIterator.get()->m_move;
-            Utilities::checkIfMoveMakesKingChecked(move, kingChecked, noMovesAvailable);
+            utilities::checkIfMoveMakesKingChecked(move, kingChecked, noMovesAvailable);
             break;
         case Keyboard::Right:
             if (treeIterator.get()->childNumber > 1)
@@ -627,7 +627,7 @@ void GameThread::handleKeyPressed(
                     moveList.goToNextMove(true, arrowList_);
                     moveTree.goToNextNode(moveSelectionPanel_.getSelection(), treeIterator);
                     move = treeIterator.get()->m_move;
-                    Utilities::checkIfMoveMakesKingChecked(move, kingChecked, noMovesAvailable);
+                    utilities::checkIfMoveMakesKingChecked(move, kingChecked, noMovesAvailable);
                 }
                 showMoveSelectionPanel_ = !showMoveSelectionPanel_;
                 return;
@@ -635,7 +635,7 @@ void GameThread::handleKeyPressed(
             moveList.goToNextMove(true, arrowList_);
             moveTree.goToNextNode(0, treeIterator);
             move = treeIterator.get()->m_move;
-            Utilities::checkIfMoveMakesKingChecked(move, kingChecked, noMovesAvailable);
+            utilities::checkIfMoveMakesKingChecked(move, kingChecked, noMovesAvailable);
             break;
         case Keyboard::LControl:
             flipBoard();
