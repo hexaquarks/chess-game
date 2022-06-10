@@ -7,9 +7,9 @@ using namespace std;
 class MoveTreeNode
 {
 public:
-    MoveTreeNode(shared_ptr<Move>&); // public for now for debbuging
+    MoveTreeNode(shared_ptr<Move>&); // Public for now for debbuging
     MoveTreeNode() {}
-    
+
     int childNumber = 0;
     shared_ptr<MoveTreeNode> m_parent; // To go to previous move
     shared_ptr<Move> m_move; // Key (public for now for debugging)
@@ -17,5 +17,4 @@ public:
 
 private:
     static inline int numberOfMoves = 0;
-
 };
