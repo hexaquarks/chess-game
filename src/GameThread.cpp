@@ -16,22 +16,19 @@
 
 using namespace sf;
 
-namespace utilities
+void GameThread::checkIfMoveMakesKingChecked(shared_ptr<Move>& move)
 {
-    void checkIfMoveMakesKingChecked(shared_ptr<Move>& move, bool kingChecked, bool noMovesAvailable) 
+    if (move)
     {
-        if (move)
-        {
-            kingChecked = move->kingIsChecked();
-            noMovesAvailable = move->hasNoMovesAvailable();
-        }
-        else
-        {
-            kingChecked = false;
-            noMovesAvailable = false;
-        }
+        kingChecked = move->kingIsChecked();
+        noMovesAvailable = move->hasNoMovesAvailable();
     }
-} // namespace utilities
+    else
+    {
+        kingChecked = false;
+        noMovesAvailable = false;
+    }
+}
 
 void GameThread::startGame()
 {
@@ -617,7 +614,7 @@ void GameThread::handleKeyPressed(
             moveList.goToPreviousMove(true, arrowList_);
             moveTree.goToPreviousNode(treeIterator);
             move = treeIterator.get()->m_move;
-            utilities::checkIfMoveMakesKingChecked(move, kingChecked, noMovesAvailable);
+            checkIfMoveMakesKingChecked(move);
             break;
         case Keyboard::Right:
             if (treeIterator.get()->childNumber > 1)
@@ -627,7 +624,7 @@ void GameThread::handleKeyPressed(
                     moveList.goToNextMove(true, arrowList_);
                     moveTree.goToNextNode(moveSelectionPanel_.getSelection(), treeIterator);
                     move = treeIterator.get()->m_move;
-                    utilities::checkIfMoveMakesKingChecked(move, kingChecked, noMovesAvailable);
+                    checkIfMoveMakesKingChecked(move);
                 }
                 showMoveSelectionPanel_ = !showMoveSelectionPanel_;
                 return;
@@ -635,7 +632,7 @@ void GameThread::handleKeyPressed(
             moveList.goToNextMove(true, arrowList_);
             moveTree.goToNextNode(0, treeIterator);
             move = treeIterator.get()->m_move;
-            utilities::checkIfMoveMakesKingChecked(move, kingChecked, noMovesAvailable);
+            checkIfMoveMakesKingChecked(move);
             break;
         case Keyboard::LControl:
             flipBoard();

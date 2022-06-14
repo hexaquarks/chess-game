@@ -107,7 +107,7 @@ private:
     static void drawKingCheckCircle();
     static void drawMoveSelectionPanel(int);
     static void drawGrayCover();
+    static void checkIfMoveMakesKingChecked(shared_ptr<Move>&);
 
     inline static bool isFlipped = false;
-
 };
