@@ -20,7 +20,7 @@ class Board;
 class Piece
 {
 public:
-    Piece(Team, int, int, PieceType, string); // Constructor
+    Piece(Team, int, int, PieceType, const string&); // Constructor
     virtual ~Piece() {} // Virtual destructor
 
     /* Getters */

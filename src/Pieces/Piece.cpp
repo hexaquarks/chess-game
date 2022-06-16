@@ -3,10 +3,10 @@
 
 #include <iostream>
 
-Piece::Piece(Team team_, int x_, int y_, PieceType type_, string pieceType_):
+Piece::Piece(Team team_, int x_, int y_, PieceType type_, const string& pieceType_):
     m_team(team_), m_xPos(x_), m_yPos(y_), m_type(type_)
 {
-    m_filename = String(pieceType_ + getColorCode() + fileExt);
+    m_filename = pieceType_ + getColorCode() + fileExt;
 }
 
 void Piece::addHorizontalAndVerticalMovements(Board& board_, vector<Move>& moves) const
