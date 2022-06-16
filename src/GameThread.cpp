@@ -216,11 +216,8 @@ void GameThread::startGame()
                     }
                     else
                     {
-                        coor2d target = make_pair(xPos, yPos);
-                        coor2d initial = make_pair(lastXPos, lastYPos);
                         MoveType type = pSelectedMove->getMoveType();
-
-                        shared_ptr<Move> pMove = make_shared<Move>(target, initial, pSelectedPiece, type);
+                        shared_ptr<Move> pMove = make_shared<Move>(make_pair(xPos, yPos), make_pair(lastXPos, lastYPos), pSelectedPiece, type);
 
                         pMove->setCapturedPiece(pLastMove);
                         pMove->setMoveArrows(arrowList);

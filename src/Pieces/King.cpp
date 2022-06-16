@@ -15,9 +15,9 @@ vector<Move> King::calcPossibleMoves(Board& board_) const
 
     // Checking castling
     if (canCastleKingSide(board_))
-        moves.push_back(Move(make_pair(x, 6), kingCoor, kingPtr, MoveType::CASTLE_KINGSIDE));
+        moves.push_back(Move({x, 6}, kingCoor, kingPtr, MoveType::CASTLE_KINGSIDE));
     if (canCastleQueenSide(board_))
-        moves.push_back(Move(make_pair(x, 2), kingCoor, kingPtr, MoveType::CASTLE_QUEENSIDE));
+        moves.push_back(Move({x, 2}, kingCoor, kingPtr, MoveType::CASTLE_QUEENSIDE));
 
     for (int i = max(0, x-1); i <= min(7, x+1); ++i)
     {
@@ -44,8 +44,8 @@ vector<Move> King::calcPossibleMoves(Board& board_) const
                 // If king is not checked, we can add move
                 if (!checked)
                 {
-                    if (!piece) moves.push_back(Move(make_pair(i, j), kingCoor, kingPtr, MoveType::NORMAL));
-                    else moves.push_back(Move(make_pair(i, j), kingCoor, kingPtr, MoveType::CAPTURE));
+                    if (!piece) moves.push_back(Move({i, j}, kingCoor, kingPtr, MoveType::NORMAL));
+                    else moves.push_back(Move({i, j}, kingCoor, kingPtr, MoveType::CAPTURE));
                 }
             }
         }
@@ -67,8 +67,8 @@ vector<Move> King::possibleMovesNoCheck(Board& board_) const {
 
             // If position is empty or piece on it is of the opposite colour
             if (!board_.getBoardTile(j, i) || board_.getBoardTile(j, i)->getTeam() != getTeam()) {
-                if (!board_.getBoardTile(j, i)) moves.push_back(Move(make_pair(i, j), kingCoor, kingPtr, MoveType::NORMAL));
-                else moves.push_back(Move(make_pair(i, j), kingCoor, kingPtr, MoveType::CAPTURE));
+                if (!board_.getBoardTile(j, i)) moves.push_back(Move({i, j}, kingCoor, kingPtr, MoveType::NORMAL));
+                else moves.push_back(Move({i, j}, kingCoor, kingPtr, MoveType::CAPTURE));
             }
         }
     }
@@ -83,8 +83,8 @@ bool King::isChecked(Board& board_) const {
 
             // If piece has opposite colour, it is a potential danger
             if (p && p->getTeam() != getTeam()) {
-                vector<Move> positions = (p->getType() == PieceType::KING)
-                    ? ((King*) p.get())->possibleMovesNoCheck(board_): p->calcPossibleMoves(board_);
+                vector<Move> positions = (p->getType() == PieceType::KING)?
+                    ((King*) p.get())->possibleMovesNoCheck(board_): p->calcPossibleMoves(board_);
 
                 // Loop through every possible move to see if king is in danger or not
                 for (auto& move: positions)

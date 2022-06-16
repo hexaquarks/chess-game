@@ -34,9 +34,9 @@ void Pawn::generateCaptureMoves(vector<Move>& moves_, Board& board_, int dir_) c
         if (board_.getBoardTile(yPos+1, xPos+dir_) && board_.getBoardTile(yPos+1, xPos+dir_)->getTeam() != getTeam())
         {
             if ((xPos+dir_ == 0 || xPos+dir_ == 7))
-                moves_.push_back(Move(make_pair(xPos+dir_, yPos+1), pawnCoor, pPawnPos, MoveType::NEWPIECE));
+                moves_.push_back(Move({xPos+dir_, yPos+1}, pawnCoor, pPawnPos, MoveType::NEWPIECE));
             else
-                moves_.push_back(Move(make_pair(xPos+dir_, yPos+1), pawnCoor, pPawnPos, MoveType::CAPTURE));
+                moves_.push_back(Move({xPos+dir_, yPos+1}, pawnCoor, pPawnPos, MoveType::CAPTURE));
         }
 
     // Taking piece on the left
@@ -44,9 +44,9 @@ void Pawn::generateCaptureMoves(vector<Move>& moves_, Board& board_, int dir_) c
         if (board_.getBoardTile(yPos-1, xPos+dir_) && board_.getBoardTile(yPos-1, xPos+dir_)->getTeam() != getTeam())
         {
             if ((xPos+dir_ == 0 || xPos+dir_ == 7))
-                moves_.push_back(Move(make_pair(xPos+dir_, yPos-1), pawnCoor, pPawnPos, MoveType::NEWPIECE));
+                moves_.push_back(Move({xPos+dir_, yPos-1}, pawnCoor, pPawnPos, MoveType::NEWPIECE));
             else
-                moves_.push_back(Move(make_pair(xPos+dir_, yPos-1), pawnCoor, pPawnPos, MoveType::CAPTURE));
+                moves_.push_back(Move({xPos+dir_, yPos-1}, pawnCoor, pPawnPos, MoveType::CAPTURE));
         }
 }
 
@@ -60,13 +60,13 @@ void Pawn::generateForwardMoves(vector<Move>& moves_, Board& board_, int dir_) c
 
     // Forward move
     if ((xPos+dir_ == 0 || xPos+dir_ == 7) && !board_.getBoardTile(yPos, xPos+dir_))
-        moves_.push_back(Move(make_pair(xPos+dir_, yPos), pawnCoor, pPawnPos, MoveType::NEWPIECE));
+        moves_.push_back(Move({xPos+dir_, yPos}, pawnCoor, pPawnPos, MoveType::NEWPIECE));
     else if (!board_.getBoardTile(yPos, xPos+dir_))
     {
-        moves_.push_back(Move(make_pair(xPos+dir_, yPos), pawnCoor, pPawnPos, MoveType::NORMAL));
+        moves_.push_back(Move({xPos+dir_, yPos}, pawnCoor, pPawnPos, MoveType::NORMAL));
         // Double square initial move
         if (hasNotMoved && !board_.getBoardTile(yPos, xPos+2*dir_))
-            moves_.push_back(Move(make_pair(xPos+2*dir_, yPos), pawnCoor, pPawnPos, MoveType::INIT_SPECIAL));
+            moves_.push_back(Move({xPos+2*dir_, yPos}, pawnCoor, pPawnPos, MoveType::INIT_SPECIAL));
     }
 }
 
@@ -88,7 +88,7 @@ void Pawn::generateEnPassantMoves(vector<Move>& moves_, Board& board_, int dir) 
         {
             if (getLastMovedPiece() == leftPiece && leftPiece->getLastMove() == MoveType::INIT_SPECIAL)
             {
-                moves_.push_back(Move(make_pair(xPos+dir, yPos-1), pawnCoor, pPawnPos, MoveType::ENPASSANT, leftPiece));
+                moves_.push_back(Move({xPos+dir, yPos-1}, pawnCoor, pPawnPos, MoveType::ENPASSANT, leftPiece));
             }
         }
     }
@@ -101,7 +101,7 @@ void Pawn::generateEnPassantMoves(vector<Move>& moves_, Board& board_, int dir) 
         {
             if (getLastMovedPiece() == rightPiece && rightPiece->getLastMove() == MoveType::INIT_SPECIAL)
             {
-                moves_.push_back(Move(make_pair(xPos+dir, yPos+1), pawnCoor, pPawnPos, MoveType::ENPASSANT, rightPiece));
+                moves_.push_back(Move({xPos+dir, yPos+1}, pawnCoor, pPawnPos, MoveType::ENPASSANT, rightPiece));
             }
         }
     }

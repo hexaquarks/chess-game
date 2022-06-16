@@ -1,13 +1,15 @@
 #include "../../include/Components/SidePanel.hpp"
 #include "../../include/Utilities/DrawableSf.hpp"
 
-SidePanel::SidePanel(RenderWindow& window_, MoveList& moveList_, MoveTree& moveTree_, bool& b_)
-: m_window(window_), m_moveList(moveList_),
-  m_moveTree(moveTree_), m_showMoveSelectionPanel(b_)
+SidePanel::SidePanel(
+    RenderWindow& window_, MoveList& moveList_, MoveTree& moveTree_, bool& b_
+):
+    m_window(window_), m_moveList(moveList_),
+    m_moveTree(moveTree_), m_showMoveSelectionPanel(b_)
 {
 }
 
-void SidePanel::addMove(Move& move_)
+void SidePanel::addMove(const Move& move_)
 {
     // get the text coordinates information for a Move Box
     int moveListSize = m_moveList.getMoveListSize();
@@ -25,13 +27,13 @@ void SidePanel::addMove(Move& move_)
     ++moveBoxCounter;
 }
 
-pair<char, int> SidePanel::findLetterCoord(coor2d target_) const
+pair<char, int> SidePanel::findLetterCoord(const coor2d& target_) const
 {
     char letter = 'a' + target_.first;
-    return make_pair(letter, 8-target_.second);
+    return {letter, 8-target_.second};
 }
 
-string SidePanel::parseMoveHelper(Move& move_, int moveNumber_, bool showNumber_, bool showDots_) const
+string SidePanel::parseMoveHelper(const Move& move_, int moveNumber_, bool showNumber_, bool showDots_) const
 {
     string text = (showNumber_)
         ? to_string(moveNumber_) + "."
@@ -42,8 +44,7 @@ string SidePanel::parseMoveHelper(Move& move_, int moveNumber_, bool showNumber_
     if (moveType == MoveType::CASTLE_KINGSIDE) { return text + "O-O"; }
     if (moveType == MoveType::CASTLE_QUEENSIDE) { return text + "O-O-O"; }
 
-    coor2d coord = move_.getTarget();
-    pair<char, int> letterCoord = findLetterCoord(coord);
+    pair<char, int> letterCoord = findLetterCoord(move_.getTarget());
     string letterCoordString = static_cast<char>(letterCoord.first) + to_string(letterCoord.second);
 
     switch (move_.getSelectedPiece()->getType())
@@ -63,7 +64,7 @@ string SidePanel::parseMoveHelper(Move& move_, int moveNumber_, bool showNumber_
     return text + string((moveType == MoveType::CAPTURE)? "x" : "") + letterCoordString;
 }
 
-string SidePanel::parseMove(Move& move_, int moveNumber_, bool showNumber_, bool showDots_) const
+string SidePanel::parseMove(const Move& move_, int moveNumber_, bool showNumber_, bool showDots_) const
 {
     string text = parseMoveHelper(move_, moveNumber_, showNumber_, showDots_);
     if (move_.kingIsCheckmated()) return text + string("#");
@@ -86,7 +87,7 @@ void SidePanel::checkOutOfBounds(MoveBox& moveBox_, int offset_)
     }
 }
 
-void SidePanel::handleMoveBoxClicked(coor2d& mousePos_) const
+void SidePanel::handleMoveBoxClicked(const coor2d& mousePos_) const
 {
     int newMoveIndex = 0;
 
@@ -153,7 +154,7 @@ void SidePanel::drawSquareBracket(coor2d& nextPos_, int offset_, bool open_) con
     nextPos_.first -= offset_;
 }
 
-void SidePanel::drawFromNode(shared_ptr<MoveTreeNode>& node_, int level_, int offset_, coor2d nextPos_, coor2d& mousePos)
+void SidePanel::drawFromNode(const shared_ptr<MoveTreeNode>& node_, int level_, int offset_, coor2d& nextPos_, const coor2d& mousePos)
 {
     // Base case leaf
     if (!node_->m_move && node_->m_parent)
@@ -186,7 +187,7 @@ void SidePanel::drawFromNode(shared_ptr<MoveTreeNode>& node_, int level_, int of
     }
 }
 
-coor2d SidePanel::drawMove(Move& move_, int level_, int offset_, coor2d nextPos_, coor2d& mousePos_)
+coor2d SidePanel::drawMove(const Move& move_, int level_, int offset_, coor2d& nextPos_, const coor2d& mousePos_)
 {
     // Iterate through all the move list from begining to end
     // Get the text coordinates information for a Move Box
@@ -215,10 +216,11 @@ coor2d SidePanel::drawMove(Move& move_, int level_, int offset_, coor2d nextPos_
     return {nextPos_.first += (moveBox.getScaledWidth()-offset_), nextPos_.second};
 }
 
-void SidePanel::drawMoves(coor2d& mousePos_)
+void SidePanel::drawMoves(const coor2d& mousePos_)
 {
     shared_ptr<MoveTreeNode> root = m_moveTree.getRoot();
-    drawFromNode(root, 0, 0, { g_INIT_WIDTH, g_INIT_HEIGHT }, mousePos_);
+    coor2d coors = {g_INIT_WIDTH, g_INIT_HEIGHT};
+    drawFromNode(root, 0, 0, coors, mousePos_);
     m_row = 0; // Reset to 0 for next iteration
     // if (moveBoxes.size() == 0) return; // No moves added yet, return
 

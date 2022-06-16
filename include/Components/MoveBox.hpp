@@ -21,7 +21,7 @@ public:
     coor2d getPosition() const { return m_position; }
     string getText() const { return m_text; }
     Text getTextsf() const { return m_textsf; }
-    bool isHowered(coor2d&) const;
+    bool isHowered(const coor2d&) const;
     void setIsCurrentMove();
     void setIsSelected();
     void setDefault();

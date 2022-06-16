@@ -27,9 +27,13 @@ vector<Move> Knight::calcPossibleMoves(Board& board_) const
         {
             shared_ptr<Piece> p = board_.getBoardTile(yPos, xPos);
             if (!board_.getBoardTile(y, x))
-                moves.push_back(Move(make_pair(x, y), make_pair(xPos, yPos), p, MoveType::NORMAL));
+            {
+                moves.push_back(Move({x, y}, {xPos, yPos}, p, MoveType::NORMAL));
+            }
             else if (board_.getBoardTile(y, x)->getTeam() != getTeam())
-                moves.push_back(Move(make_pair(x, y), make_pair(xPos, yPos), p, MoveType::CAPTURE));
+            {
+                moves.push_back(Move({x, y}, {xPos, yPos}, p, MoveType::CAPTURE));
+            }
         }
     }
 

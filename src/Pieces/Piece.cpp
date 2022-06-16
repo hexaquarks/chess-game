@@ -20,12 +20,12 @@ void Piece::addHorizontalAndVerticalMovements(Board& board_, vector<Move>& moves
     {
         if (!board_.getBoardTile(yPos, i))
         {
-            moves.push_back(Move(make_pair(i, yPos), make_pair(xPos, yPos), piece, MoveType::NORMAL));
+            moves.push_back(Move({i, yPos}, {xPos, yPos}, piece, MoveType::NORMAL));
         }
         else if (board_.getBoardTile(yPos, i)->getTeam() != getTeam())
         {
             shared_ptr<Piece> p = board_.getBoardTile(yPos, i);
-            moves.push_back(Move(make_pair(i, yPos), make_pair(xPos, yPos), piece, MoveType::CAPTURE, p));
+            moves.push_back(Move({i, yPos}, {xPos, yPos}, piece, MoveType::CAPTURE, p));
             break;
         }
         else
@@ -39,12 +39,12 @@ void Piece::addHorizontalAndVerticalMovements(Board& board_, vector<Move>& moves
     {
         if (!board_.getBoardTile(yPos, i))
         {
-            moves.push_back(Move(make_pair(i, yPos), make_pair(xPos, yPos), piece, MoveType::NORMAL));
+            moves.push_back(Move({i, yPos}, {xPos, yPos}, piece, MoveType::NORMAL));
         }
         else if (board_.getBoardTile(yPos, i)->getTeam() != getTeam())
         {
             shared_ptr<Piece> p = board_.getBoardTile(yPos, i);
-            moves.push_back(Move(make_pair(i, yPos), make_pair(xPos, yPos), piece, MoveType::CAPTURE, p));
+            moves.push_back(Move({i, yPos}, {xPos, yPos}, piece, MoveType::CAPTURE, p));
             break;
         }
         else
@@ -58,12 +58,12 @@ void Piece::addHorizontalAndVerticalMovements(Board& board_, vector<Move>& moves
     {
         if (!board_.getBoardTile(j, xPos))
         {
-            moves.push_back(Move(make_pair(xPos, j), make_pair(xPos, yPos), piece, MoveType::NORMAL));
+            moves.push_back(Move({xPos, j}, {xPos, yPos}, piece, MoveType::NORMAL));
         }
         else if (board_.getBoardTile(j, xPos)->getTeam() != getTeam())
         {
             shared_ptr<Piece> p = board_.getBoardTile(j, xPos);
-            moves.push_back(Move(make_pair(xPos, j), make_pair(xPos, yPos), piece, MoveType::CAPTURE, p));
+            moves.push_back(Move({xPos, j}, {xPos, yPos}, piece, MoveType::CAPTURE, p));
             break;
         }
         else
@@ -77,12 +77,12 @@ void Piece::addHorizontalAndVerticalMovements(Board& board_, vector<Move>& moves
     {
         if (!board_.getBoardTile(j, xPos))
         {
-            moves.push_back(Move(make_pair(xPos, j), make_pair(xPos, yPos), piece, MoveType::NORMAL));
+            moves.push_back(Move({xPos, j}, {xPos, yPos}, piece, MoveType::NORMAL));
         }
         else if (board_.getBoardTile(j, xPos)->getTeam() != getTeam())
         {
             shared_ptr<Piece> p = board_.getBoardTile(j, xPos);
-            moves.push_back(Move(make_pair(xPos, j), make_pair(xPos, yPos), piece, MoveType::CAPTURE, p));
+            moves.push_back(Move({xPos, j}, {xPos, yPos}, piece, MoveType::CAPTURE, p));
             break;
         }
         else
@@ -105,12 +105,12 @@ void Piece::addDiagonalMovements(Board& board_, vector<Move>& moves) const
         shared_ptr<Piece> p = board_.getBoardTile(j, i);
         if (!p)
         {
-            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), piece, MoveType::NORMAL));
+            moves.push_back(Move({i, j}, {xPos, yPos}, piece, MoveType::NORMAL));
             --i; --j;
         }
         else if (p->getTeam() != getTeam())
         {
-            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), piece, MoveType::CAPTURE, p));
+            moves.push_back(Move({i, j}, {xPos, yPos}, piece, MoveType::CAPTURE, p));
             break;
         }
         else
@@ -126,12 +126,12 @@ void Piece::addDiagonalMovements(Board& board_, vector<Move>& moves) const
         shared_ptr<Piece> p = board_.getBoardTile(j, i);
         if (!p)
         {
-            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), piece, MoveType::NORMAL));
+            moves.push_back(Move({i, j}, {xPos, yPos}, piece, MoveType::NORMAL));
             --i; ++j;
         }
         else if (p->getTeam() != getTeam())
         {
-            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), piece, MoveType::CAPTURE, p));
+            moves.push_back(Move({i, j}, {xPos, yPos}, piece, MoveType::CAPTURE, p));
             break;
         }
         else
@@ -147,12 +147,12 @@ void Piece::addDiagonalMovements(Board& board_, vector<Move>& moves) const
         shared_ptr<Piece> p = board_.getBoardTile(j, i);
         if (!p)
         {
-            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), piece, MoveType::NORMAL));
+            moves.push_back(Move({i, j}, {xPos, yPos}, piece, MoveType::NORMAL));
             ++i; --j;
         }
         else if (p->getTeam() != getTeam())
         {
-            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), piece, MoveType::CAPTURE, p));
+            moves.push_back(Move({i, j}, {xPos, yPos}, piece, MoveType::CAPTURE, p));
             break;
         }
         else
@@ -168,12 +168,12 @@ void Piece::addDiagonalMovements(Board& board_, vector<Move>& moves) const
         shared_ptr<Piece> p = board_.getBoardTile(j, i);
         if (!p)
         {
-            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), piece, MoveType::NORMAL));
+            moves.push_back(Move({i, j}, {xPos, yPos}, piece, MoveType::NORMAL));
             ++i; ++j;
         }
         else if (p->getTeam() != getTeam())
         {
-            moves.push_back(Move(make_pair(i, j), make_pair(xPos, yPos), piece, MoveType::CAPTURE, p));
+            moves.push_back(Move({i, j}, {xPos, yPos}, piece, MoveType::CAPTURE, p));
             break;
         }
         else

@@ -29,7 +29,7 @@ void MoveBox::handleRectangle()
     );
 }
 
-bool MoveBox::isHowered(coor2d& mousePos_) const
+bool MoveBox::isHowered(const coor2d& mousePos_) const
 {
     int x = mousePos_.first - g_WINDOW_SIZE;
     int y = mousePos_.second - g_MENUBAR_HEIGHT;

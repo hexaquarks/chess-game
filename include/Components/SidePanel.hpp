@@ -24,26 +24,26 @@ class SidePanel
 public:
     SidePanel(RenderWindow&, MoveList&, MoveTree&, bool&);
 
-    pair<char, int> findLetterCoord(coor2d) const;
-    string parseMove(Move&, int, bool, bool = false) const;
+    pair<char, int> findLetterCoord(const coor2d&) const;
+    string parseMove(const Move&, int, bool, bool = false) const;
     void resetNextPos() { m_nextPos = {g_BORDER_SIZE + 10, 10}; }
     void goToNextRow(int height);
-    void addMove(Move&);
-    void drawMoves(coor2d&);
+    void addMove(const Move&);
+    void drawMoves(const coor2d&);
     void drawSquareBracket(coor2d&, int, bool) const;
-    coor2d drawMove(Move&, int, int, coor2d, coor2d&);
+    coor2d drawMove(const Move&, int, int, coor2d&, const coor2d&);
     void checkOutOfBounds(MoveBox&, int);
-    void handleMoveBoxClicked(coor2d&) const;
-    void drawFromNode(shared_ptr<MoveTreeNode>&, int, int, coor2d, coor2d&);
+    void handleMoveBoxClicked(const coor2d&) const;
+    void drawFromNode(const shared_ptr<MoveTreeNode>&, int, int, coor2d&, const coor2d&);
 
 private:
     RenderWindow& m_window;
     MoveList& m_moveList;
     MoveTree& m_moveTree;
-    coor2d m_nextPos = { g_BORDER_SIZE + 10, 10 };
+    coor2d m_nextPos = {g_BORDER_SIZE + 10, 10};
     int moveBoxCounter = 0;
     int m_row = 0;
     bool& m_showMoveSelectionPanel;
 
-    string parseMoveHelper(Move&, int, bool, bool) const;
+    string parseMoveHelper(const Move&, int, bool, bool) const;
 };

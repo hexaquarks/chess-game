@@ -17,15 +17,15 @@ enum class MoveType { NORMAL, CASTLE_KINGSIDE, CASTLE_QUEENSIDE, ENPASSANT, NEWP
 class Move
 {
 public:
-    Move(coor2d, coor2d, shared_ptr<Piece>&, MoveType, shared_ptr<Piece>&);
-    Move(coor2d, coor2d, shared_ptr<Piece>&, MoveType);
-    Move(Move&, shared_ptr<Piece>&, coor2d = make_pair(-1, -1)); // Constructor for CAPTURE, EN PASSANT
+    Move(const coor2d&&, const coor2d&, const shared_ptr<Piece>&, MoveType, const shared_ptr<Piece>&);
+    Move(const coor2d&&, const coor2d&, const shared_ptr<Piece>&, MoveType);
+    Move(const Move&, const shared_ptr<Piece>&, const coor2d& = make_pair(-1, -1)); // Constructor for CAPTURE, EN PASSANT
     Move(const string&);
 
     vector<Arrow> getMoveArrows() { return m_arrows; }
     MoveType getMoveType() const { return m_MoveType; }
-    shared_ptr<Piece> getSelectedPiece() { return m_selectedPiece; }
-    shared_ptr<Piece> getCapturedPiece() { return m_capturedPiece; }
+    shared_ptr<Piece> getSelectedPiece() const { return m_selectedPiece; }
+    shared_ptr<Piece> getCapturedPiece() const { return m_capturedPiece; }
     coor2d getTarget() const { return m_target; }
     coor2d getInit() const { return m_init; }
     coor2d getSpecial() const { return m_special; }
@@ -41,15 +41,8 @@ public:
     void setCapturedPiece(shared_ptr<Piece>& capturedPiece_) { m_capturedPiece = capturedPiece_; }
     void setSelectedPiece(shared_ptr<Piece>& piece_) { m_selectedPiece = piece_; }
     void setMoveArrows(vector<Arrow> arrows_) { m_arrows = arrows_; }
-    
-    bool operator ==(Move& other_)
-    {
-        return m_selectedPiece == other_.m_selectedPiece &&
-        m_MoveType == other_.m_MoveType &&
-        m_target == other_.m_target &&
-        m_init == other_.m_init &&
-        m_special == other_.m_special;
-    }
+
+    bool operator ==(const Move&);
     string toString() const;
 
 private:
@@ -65,5 +58,4 @@ private:
 
     static string coorRepr(const coor2d&);
     static coor2d fromRepr(char, char);
-
 };

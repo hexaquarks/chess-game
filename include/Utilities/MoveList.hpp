@@ -15,10 +15,10 @@ public:
 
     list<shared_ptr<Move>>::iterator getNewIterator() { return m_moves.begin(); }
     list<shared_ptr<Move>>::iterator getIterator() { return m_moveIterator; }
-    list<shared_ptr<Move>> getMoves() { return m_moves; }
-    PieceTransition& getTransitioningPiece() { return m_transitioningPiece; }
+    list<shared_ptr<Move>> getMoves() const { return m_moves; }
+    PieceTransition& getTransitioningPiece() const { return m_transitioningPiece; }
     int getIteratorIndex() { return std::distance(m_moves.begin(), m_moveIterator); }
-    int getMoveListSize() { return m_moves.size(); }
+    int getMoveListSize() const { return m_moves.size(); }
     
     void highlightLastMove(RenderWindow&) const;
     void reset() { m_moves.clear(); m_moveIterator = m_moves.begin(); };

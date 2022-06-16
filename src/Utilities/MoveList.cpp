@@ -130,7 +130,7 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             game.setBoardTile(6, castleRow, pSelectedPiece);
             if (addToList_)
             {
-                coor2d target = make_pair(6, castleRow);
+                coor2d target = {6, castleRow};
                 move_->setTarget(target);
                 m_moves.emplace_front(make_shared<Move>(*move_, pOldPiece));
             }
@@ -143,7 +143,7 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             game.setBoardTile(2, castleRow, pSelectedPiece);
             if (addToList_)
             {
-                coor2d target = make_pair(2, castleRow);
+                coor2d target = {2, castleRow};
                 move_->setTarget(target);
                 m_moves.emplace_front(make_shared<Move>(*move_, pOldPiece));
             }
