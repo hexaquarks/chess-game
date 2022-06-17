@@ -16,7 +16,7 @@
 
 using namespace sf;
 
-void GameThread::checkIfMoveMakesKingChecked(shared_ptr<Move>& move)
+void GameThread::checkIfMoveMakesKingChecked(const shared_ptr<Move>& move)
 {
     if (move)
     {
@@ -635,12 +635,12 @@ void GameThread::handleKeyPressed(
             flipBoard();
             break;
         case Keyboard::Up:
-            showMoveSelectionPanel_
-                ? moveSelectionPanel_.goToPreviousVariation(): moveList.goToCurrentMove(arrowList_);
+            showMoveSelectionPanel_?
+                moveSelectionPanel_.goToPreviousVariation(): moveList.goToCurrentMove(arrowList_);
             break;
         case Keyboard::Down:
-            showMoveSelectionPanel_
-                ? moveSelectionPanel_.goToNextVariation(): moveList.goToInitialMove(arrowList_);
+            showMoveSelectionPanel_?
+                moveSelectionPanel_.goToNextVariation(): moveList.goToInitialMove(arrowList_);
             break;
         case Keyboard::Enter:
             if (showMoveSelectionPanel_)

@@ -18,10 +18,8 @@ void StockfishConnector::fetchResult()
 
 void StockfishConnector::connectToEngine()
 {
-    std::string command = "stockfish";
-
     std::cout << "Opening reading pipe" << std::endl;
-    pipe = popen(command.c_str(), "r+");
+    pipe = popen("stockfish", "r+");
     if (!pipe)
     {
         std::cerr << "Couldn't start stockfish" << std::endl;
@@ -42,6 +40,7 @@ void StockfishConnector::checkIfReady()
         isready = false;
         return;
     }
+
     std::string command = "isready\n";
     fwrite(command.c_str(), sizeof(char), command.length(), pipe);
     fetchResult();
