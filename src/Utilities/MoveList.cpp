@@ -89,10 +89,10 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
     switch (move_->getMoveType())
     {
         case MoveType::NORMAL:
+            game.setBoardTile(x, y, pSelectedPiece);
             if (addToList_)
             {
                 m_moves.emplace_front(move_);
-                game.setBoardTile(x, y, pSelectedPiece);
             }
             // soundMove.play();
             break;
@@ -102,9 +102,9 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             capturedX = x;
             capturedY = y;
             pOldPiece = game.getBoardTile(x, y);
+            game.setBoardTile(x, y, pSelectedPiece);
             if (addToList_)
             {
-                game.setBoardTile(x, y, pSelectedPiece);
                 m_moves.emplace_front(make_shared<Move>(*move_, pOldPiece));
             }
             // soundCapture.play();
@@ -116,9 +116,9 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             capturedY = pCapturedPiece->getX();
             oldCoors = {capturedX, capturedY};
             game.resetBoardTile(oldCoors.first, oldCoors.second);
+            game.setBoardTile(x, y, pSelectedPiece);
             if (addToList_)
             {
-                game.setBoardTile(x, y, pSelectedPiece);
                 m_moves.emplace_front(make_shared<Move>(*move_, pCapturedPiece, oldCoors));
             }
             break;
@@ -128,6 +128,7 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             game.resetBoardTile(7, castleRow);
             game.setBoardTile(5, castleRow, pOldPiece);
             game.setBoardTile(6, castleRow, pSelectedPiece);
+            game.setBoardTile(x, y, pSelectedPiece);
             if (addToList_)
             {
                 coor2d target = {6, castleRow};
@@ -141,6 +142,7 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             game.resetBoardTile(0, castleRow);
             game.setBoardTile(3, castleRow, pOldPiece);
             game.setBoardTile(2, castleRow, pSelectedPiece);
+            game.setBoardTile(x, y, pSelectedPiece);
             if (addToList_)
             {
                 coor2d target = {2, castleRow};
@@ -150,9 +152,9 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             break;
 
         case MoveType::INIT_SPECIAL:
+            game.setBoardTile(x, y, pSelectedPiece);
             if (addToList_)
             {
-                game.setBoardTile(x, y, pSelectedPiece);
                 m_moves.emplace_front(move_);
             }
             break;
@@ -162,6 +164,7 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             shared_ptr<Piece> queen = make_shared<Queen>(pSelectedPiece->getTeam(), y, x);
             Piece::setLastMovedPiece(queen);
             game.setBoardTile(x, y, queen);
+            game.addPiece(queen);
             if (addToList_)
             {
                 m_moves.emplace_front(make_shared<Move>(*move_, pOldPiece));
@@ -169,7 +172,6 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             break;
     }
 
-    game.setBoardTile(x, y, pSelectedPiece);
     if (!addToList_ && pSelectedPiece)
     {
         if (enableTransition_)
