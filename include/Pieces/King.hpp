@@ -22,5 +22,4 @@ private:
     vector<Move> possibleMovesNoCheck(Board&) const;
     bool canCastleKingSide(Board&) const;
     bool canCastleQueenSide(Board&) const;
-
 };

@@ -45,6 +45,9 @@ public:
     bool operator ==(const Move&);
     string toString() const;
 
+    static string coorRepr(const coor2d&);
+    static coor2d fromRepr(char, char);
+
 private:
     shared_ptr<Piece> m_selectedPiece; // Piece that is being selected
     shared_ptr<Piece> m_capturedPiece; // Captured piece, the moved rook in castling, or taken pawn in en passant
@@ -55,7 +58,4 @@ private:
     vector<Arrow> m_arrows; // List of arrows drawn at that move
     bool m_kingChecked = false; 
     bool m_noMovesAvailable = false; // Flag that captures the availablility of possible moves in the position
-
-    static string coorRepr(const coor2d&);
-    static coor2d fromRepr(char, char);
 };
