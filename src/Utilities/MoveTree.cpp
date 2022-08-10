@@ -1,11 +1,11 @@
 #include "../../include/Utilities/MoveTree.hpp"
 
 
-void MoveTree::insertNode(shared_ptr<Move>& newMove_, MoveTree::Iterator& it_)
+void MoveTree::insertNode(const shared_ptr<Move>& newMove_, MoveTree::Iterator& it_)
 {
     for (int i = 0; i < it_->m_children.size(); ++i)
     {
-        if (it_->m_children[i]->m_move == newMove_)
+        if (*it_->m_children[i]->m_move == *newMove_)
         {
             it_.goToChild(i);
             return;

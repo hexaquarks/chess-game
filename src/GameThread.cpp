@@ -7,7 +7,6 @@
 #include "../include/Components/MoveSelectionPanel.hpp"
 #include "../include/Utilities/DrawableSf.hpp"
 #include "./Ressources/Shader.cpp"
-
 #include <iostream>
 #include <vector>
 #include <list>
@@ -63,7 +62,7 @@ void GameThread::startGame()
     // Window parameters
     initializeMenuBar();
     bool showMoveSelectionPanel = false;
-    SidePanel sidePanel(window, moveList, moveTree, showMoveSelectionPanel);
+    SidePanel sidePanel(window, moveList, showMoveSelectionPanel);
     MoveSelectionPanel moveSelectionPanel(window, sidePanel);
 
     // Sounds for piece movement
@@ -245,8 +244,8 @@ void GameThread::startGame()
                             else if (type == MoveType::NORMAL || type == MoveType::INIT_SPECIAL) soundMove.play();
                         }
 
-                        moveTree.insertNode(pMove, treeIterator);
-                        moveTree.printTree();
+                        // moveTree.insertNode(pMove, treeIterator);
+                        // moveTree.printTree();
                         arrowList.clear();
                     }
 
@@ -609,7 +608,7 @@ void GameThread::handleKeyPressed(
     {
         case Keyboard::Left:
             moveList.goToPreviousMove(true, arrowList_);
-            moveTree.goToPreviousNode(treeIterator);
+            // moveTree.goToPreviousNode(treeIterator);
             move = treeIterator.get()->m_move;
             checkIfMoveMakesKingChecked(move);
             break;
@@ -619,7 +618,7 @@ void GameThread::handleKeyPressed(
                 if (showMoveSelectionPanel_)
                 {
                     moveList.goToNextMove(true, arrowList_);
-                    moveTree.goToNextNode(moveSelectionPanel_.getSelection(), treeIterator);
+                    // moveTree.goToNextNode(moveSelectionPanel_.getSelection(), treeIterator);
                     move = treeIterator.get()->m_move;
                     checkIfMoveMakesKingChecked(move);
                 }
@@ -627,7 +626,7 @@ void GameThread::handleKeyPressed(
                 return;
             }
             moveList.goToNextMove(true, arrowList_);
-            moveTree.goToNextNode(0, treeIterator);
+            // moveTree.goToNextNode(0, treeIterator);
             move = treeIterator.get()->m_move;
             checkIfMoveMakesKingChecked(move);
             break;
@@ -646,7 +645,7 @@ void GameThread::handleKeyPressed(
             if (showMoveSelectionPanel_)
             {
                 moveList.goToNextMove(true, arrowList_);
-                moveTree.goToNextNode(moveSelectionPanel_.getSelection(), treeIterator);
+                // moveTree.goToNextNode(moveSelectionPanel_.getSelection(), treeIterator);
                 kingChecked = treeIterator.get()->m_move->kingIsChecked();
                 showMoveSelectionPanel_ = false; // Close the panel display
             }

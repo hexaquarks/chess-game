@@ -7,7 +7,7 @@ using namespace std;
 class MoveTreeNode
 {
 public:
-    MoveTreeNode(shared_ptr<Move>&); // Public for now for debbuging
+    MoveTreeNode(const shared_ptr<Move>&); // Public for now for debbuging
     MoveTreeNode() {}
 
     int childNumber = 0;

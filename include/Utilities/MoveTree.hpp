@@ -1,5 +1,4 @@
 #pragma once
-#include "Move.hpp"
 #include "MoveTreeNode.hpp"
 
 using namespace std;
@@ -10,7 +9,7 @@ public:
     shared_ptr<MoveTreeNode> m_root = make_shared<MoveTreeNode>(); // Root of the tree
     int numberOfMoves = 0;
 
-    shared_ptr<MoveTreeNode>& getRoot() { return m_root; }
+    shared_ptr<MoveTreeNode> getRoot() const { return m_root; }
 
     class Iterator
     {
@@ -20,17 +19,21 @@ public:
         using iterator_category = bidirectional_iterator_tag;
         using difference_type = ptrdiff_t;
 
-        Iterator(shared_ptr<MoveTreeNode>& ptr): m_ptr(ptr)
-        {
-        }
-
-        Iterator()
+        Iterator(const shared_ptr<MoveTreeNode>& ptr): m_ptr(ptr)
         {
         }
 
         MoveTreeNode& operator*() const { return *m_ptr; }
         shared_ptr<MoveTreeNode>& operator->() { return m_ptr; }
         shared_ptr<MoveTreeNode>& get() { return m_ptr; }
+
+        bool isAtTheBeginning() const {
+            return !m_ptr->m_parent;
+        }
+
+        bool isAtTheEnd() const {
+            return m_ptr->m_children.empty();
+        }
 
         void goToChild(int i) { m_ptr = m_ptr->m_children.at(i); }
 
@@ -49,7 +52,14 @@ public:
             }
         }
 
-        void goToParent() { m_ptr = m_ptr->m_parent; }
+        bool goToParent() {
+            shared_ptr<MoveTreeNode> parent = m_ptr->m_parent;
+            if (parent) {
+                m_ptr = parent;
+                return true;
+            }
+            return false;
+        }
 
         int getNodeLevel() {
             shared_ptr<MoveTreeNode> temp = m_ptr;
@@ -78,8 +88,7 @@ public:
         shared_ptr<MoveTreeNode> operator>>(int n)
         {
             int childNumber = m_ptr->childNumber;
-            goToParent();
-            goToChild(childNumber+n);
+            if (goToParent()) goToChild(childNumber+n);
             return m_ptr;
         }
 
@@ -87,8 +96,7 @@ public:
         shared_ptr<MoveTreeNode> operator<<(int n)
         {
             int childNumber = m_ptr->childNumber;
-            goToParent();
-            goToChild(childNumber-n);
+            if (goToParent()) goToChild(childNumber-n);
             return m_ptr;
         }
 
@@ -106,15 +114,18 @@ public:
         };
     };
 
-    Iterator begin() { return Iterator(getRoot()); }
-    Iterator end() { return Iterator(); }
+    Iterator begin() const { return Iterator(getRoot()); }
 
-    void insertNode(shared_ptr<Move>&, MoveTree::Iterator&);
+    void insertNode(const shared_ptr<Move>&, MoveTree::Iterator&);
     void goToNextNode(int, MoveTree::Iterator&);
     void goToPreviousNode(MoveTree::Iterator&);
     void printTree();
     void printTreeRec(shared_ptr<MoveTreeNode>&, vector<bool>, int a = 0, bool b = false);
-    int getNumberOfMoves() { return numberOfMoves; }
+    int getNumberOfMoves() const { return numberOfMoves; }
     void printPreorder(shared_ptr<MoveTreeNode>&);
     int getNodeLevel(MoveTree::Iterator&);
+    void clear() {
+        m_root = make_shared<MoveTreeNode>();
+        numberOfMoves = 0;
+    }
 };

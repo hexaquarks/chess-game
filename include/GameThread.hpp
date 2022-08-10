@@ -86,8 +86,8 @@ private:
     inline static vector<Move> possibleMoves;
     inline static PieceTransition transitioningPiece;
     inline static MoveList moveList{game, transitioningPiece};
-    inline static MoveTree moveTree;
-    inline static MoveTree::Iterator treeIterator = moveTree.begin();
+    // inline static MoveTree moveTree;
+    inline static MoveTree::Iterator treeIterator = moveList.getIterator();
     inline static bool kingChecked = false;
     inline static bool noMovesAvailable = false;
 

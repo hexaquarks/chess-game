@@ -49,5 +49,4 @@ private:
     int m_selectionIndex = 0;
     int m_numberOfVariations = 0;
     bool m_isHowered = false;
-
 };

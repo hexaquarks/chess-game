@@ -4,9 +4,7 @@
 #include "../Pieces/Piece.hpp"
 #include "../GameThread.hpp"
 #include "../Utilities/MoveList.hpp"
-#include "../Utilities/MoveTree.hpp"
 #include "MoveBox.hpp"
-
 #include <SFML/Graphics.hpp>
 
 using namespace std;
@@ -18,11 +16,12 @@ inline constexpr int g_ROW_HEIGHT = 35;
 inline constexpr int g_HORIZONTAL_OFFSET = 30;
 inline vector<MoveBox> moveBoxes;
 
+class MoveTreeNode;
 
 class SidePanel
 {
 public:
-    SidePanel(RenderWindow&, MoveList&, MoveTree&, bool&);
+    SidePanel(RenderWindow&, MoveList&, bool&);
 
     pair<char, int> findLetterCoord(const coor2d&) const;
     string parseMove(const Move&, int, bool, bool = false) const;
@@ -39,7 +38,6 @@ public:
 private:
     RenderWindow& m_window;
     MoveList& m_moveList;
-    MoveTree& m_moveTree;
     coor2d m_nextPos = {g_BORDER_SIZE + 10, 10};
     int moveBoxCounter = 0;
     int m_row = 0;

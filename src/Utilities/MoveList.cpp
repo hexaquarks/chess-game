@@ -6,10 +6,10 @@ MoveList::MoveList(Board& board_, PieceTransition& p_): game(board_), m_transiti
 {
 }
 
-void MoveList::highlightLastMove(RenderWindow& window_) const
+void MoveList::highlightLastMove(RenderWindow& window_)
 {
-    if (!hasMovesBefore()) return;
-    shared_ptr<Move> move = *m_moveIterator;
+    shared_ptr<Move> move = m_moveIterator->m_move;
+    if (!move) return;
 
     RectangleShape squareBefore = createSquare();
     RectangleShape squareAfter = createSquare();
@@ -34,42 +34,44 @@ void MoveList::highlightLastMove(RenderWindow& window_) const
     window_.draw(squareAfter);
 }
 
-void MoveList::goToPreviousMove(bool enableTransition_, vector<Arrow>& arrowList_)
+bool MoveList::goToPreviousMove(bool enableTransition_, vector<Arrow>& arrowList_)
 {
-    if (hasMovesBefore())
+    if (!m_moveIterator.isAtTheBeginning())
     {
         undoMove(enableTransition_, arrowList_);
-        ++m_moveIterator; // Go to previous move
         game.switchTurn();
         GameThread::refreshMoves();
+        return true;
     }
+    return false;
 }
 
-void MoveList::goToNextMove(bool enableTransition_, vector<Arrow>& arrowList_)
+bool MoveList::goToNextMove(bool enableTransition_, vector<Arrow>& arrowList_)
 {
-    if (hasMovesAfter())
+    if (!m_moveIterator.isAtTheEnd())
     {
-        --m_moveIterator; // Go to previous move
+        ++m_moveIterator;
         applyMove(enableTransition_, arrowList_);
         game.switchTurn();
         GameThread::refreshMoves();
+        return true;
     }
+    return false;
 }
 
 void MoveList::addMove(shared_ptr<Move>& move_, vector<Arrow>& arrowList_)
 {
     applyMove(move_, true, true, arrowList_);
-    m_moveIterator = m_moves.begin();
 }
 
 void MoveList::applyMove(bool enableTransition_, vector<Arrow>& arrowList_)
 {
-    shared_ptr<Move> m = *m_moveIterator;
-    applyMove(m, false, enableTransition_, arrowList_);
+    applyMove(m_moveIterator->m_move, false, enableTransition_, arrowList_);
 }
 
 void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTransition_, vector<Arrow>& arrowList_)
 {
+    if (!move_) return;
     const int castleRow = (game.getTurn() == Team::WHITE)? 7: 0;
     shared_ptr<Piece> pOldPiece;
     shared_ptr<Piece> pSelectedPiece = move_->getSelectedPiece();
@@ -92,7 +94,7 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             game.setBoardTile(x, y, pSelectedPiece);
             if (addToList_)
             {
-                m_moves.emplace_front(move_);
+                m_moves.insertNode(move_, m_moveIterator);
             }
             // soundMove.play();
             break;
@@ -105,7 +107,7 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             game.setBoardTile(x, y, pSelectedPiece);
             if (addToList_)
             {
-                m_moves.emplace_front(make_shared<Move>(*move_, pOldPiece));
+                m_moves.insertNode(make_shared<Move>(*move_, pOldPiece), m_moveIterator);
             }
             // soundCapture.play();
             break;
@@ -119,7 +121,7 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             game.setBoardTile(x, y, pSelectedPiece);
             if (addToList_)
             {
-                m_moves.emplace_front(make_shared<Move>(*move_, pCapturedPiece, oldCoors));
+                m_moves.insertNode(make_shared<Move>(*move_, pCapturedPiece, oldCoors), m_moveIterator);
             }
             break;
 
@@ -133,7 +135,7 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             {
                 coor2d target = {6, castleRow};
                 move_->setTarget(target);
-                m_moves.emplace_front(make_shared<Move>(*move_, pOldPiece));
+                m_moves.insertNode(make_shared<Move>(*move_, pOldPiece), m_moveIterator);
             }
             break;
 
@@ -147,7 +149,7 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             {
                 coor2d target = {2, castleRow};
                 move_->setTarget(target);
-                m_moves.emplace_front(make_shared<Move>(*move_, pOldPiece));
+                m_moves.insertNode(make_shared<Move>(*move_, pOldPiece), m_moveIterator);
             }
             break;
 
@@ -155,7 +157,7 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             game.setBoardTile(x, y, pSelectedPiece);
             if (addToList_)
             {
-                m_moves.emplace_front(move_);
+                m_moves.insertNode(move_, m_moveIterator);
             }
             break;
 
@@ -167,7 +169,7 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             game.addPiece(queen);
             if (addToList_)
             {
-                m_moves.emplace_front(make_shared<Move>(*move_, pOldPiece));
+                m_moves.insertNode(make_shared<Move>(*move_, pOldPiece), m_moveIterator);
             }
             break;
     }
@@ -187,7 +189,9 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
 
 void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
 {
-    shared_ptr<Move> m = *m_moveIterator;
+    shared_ptr<Move> m = m_moveIterator->m_move;
+    if (!m) return;
+
     shared_ptr<Piece> pCaptured = m->getCapturedPiece();
     shared_ptr<Piece> pUndoPiece;
     int x = m->getTarget().first;
@@ -249,4 +253,6 @@ void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
             capturedX, capturedY, getTransitioningPiece()
         );
     }
+
+    --m_moveIterator;
 }

@@ -2,10 +2,10 @@
 #include "../../include/Utilities/DrawableSf.hpp"
 
 SidePanel::SidePanel(
-    RenderWindow& window_, MoveList& moveList_, MoveTree& moveTree_, bool& b_
+    RenderWindow& window_, MoveList& moveList_, bool& b_
 ):
     m_window(window_), m_moveList(moveList_),
-    m_moveTree(moveTree_), m_showMoveSelectionPanel(b_)
+    m_showMoveSelectionPanel(b_)
 {
 }
 
@@ -218,7 +218,7 @@ coor2d SidePanel::drawMove(const Move& move_, int level_, int offset_, coor2d& n
 
 void SidePanel::drawMoves(const coor2d& mousePos_)
 {
-    shared_ptr<MoveTreeNode> root = m_moveTree.getRoot();
+    shared_ptr<MoveTreeNode> root = m_moveList.getMoves().getRoot();
     coor2d coors = {g_INIT_WIDTH, g_INIT_HEIGHT};
     drawFromNode(root, 0, 0, coors, mousePos_);
     m_row = 0; // Reset to 0 for next iteration
