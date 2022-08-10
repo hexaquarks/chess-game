@@ -72,6 +72,11 @@ public:
         shared_ptr<Piece>&, int, int, PieceTransition&
     );
 
+    static void setSecondTransitioningPiece(
+        shared_ptr<Piece>&, int, int,
+        int, int, PieceTransition&
+    );
+
     static void flipBoard() { isFlipped = !isFlipped; }
     static bool boardFlipped() { return isFlipped; }
     static void refreshMoves() { possibleMoves = game.calculateAllMoves(); }

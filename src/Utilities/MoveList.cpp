@@ -74,6 +74,7 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
     if (!move_) return;
     const int castleRow = (game.getTurn() == Team::WHITE)? 7: 0;
     shared_ptr<Piece> pOldPiece;
+    shared_ptr<Piece> pSecondPiece;
     shared_ptr<Piece> pSelectedPiece = move_->getSelectedPiece();
     shared_ptr<Piece> pCapturedPiece;
     int capturedX = -1, capturedY = -1;
@@ -83,6 +84,7 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
     int prevY = move_->getInit().second;
     int x = move_->getTarget().first;
     int y = move_->getTarget().second;
+    int secondXInit = -1, secondXTarget = -1;
 
     // Set the current tile of the piece null. Necessary for navigating back to current move through goToNextMove()
     game.resetBoardTile(prevX, prevY);
@@ -126,30 +128,34 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             break;
 
         case MoveType::CASTLE_KINGSIDE:
-            pOldPiece = game.getBoardTile(7, castleRow);
-            game.resetBoardTile(7, castleRow);
-            game.setBoardTile(5, castleRow, pOldPiece);
+            secondXInit = 7;
+            secondXTarget = 5;
+            pSecondPiece = game.getBoardTile(secondXInit, castleRow);
+            game.resetBoardTile(secondXInit, castleRow);
+            game.setBoardTile(secondXTarget, castleRow, pSecondPiece);
             game.setBoardTile(6, castleRow, pSelectedPiece);
             game.setBoardTile(x, y, pSelectedPiece);
             if (addToList_)
             {
                 coor2d target = {6, castleRow};
                 move_->setTarget(target);
-                m_moves.insertNode(make_shared<Move>(*move_, pOldPiece), m_moveIterator);
+                m_moves.insertNode(make_shared<Move>(*move_, pSecondPiece), m_moveIterator);
             }
             break;
 
         case MoveType::CASTLE_QUEENSIDE:
-            pOldPiece = game.getBoardTile(0, castleRow);
-            game.resetBoardTile(0, castleRow);
-            game.setBoardTile(3, castleRow, pOldPiece);
+            secondXInit = 0;
+            secondXTarget = 3;
+            pSecondPiece = game.getBoardTile(secondXInit, castleRow);
+            game.resetBoardTile(secondXInit, castleRow);
+            game.setBoardTile(secondXTarget, castleRow, pSecondPiece);
             game.setBoardTile(2, castleRow, pSelectedPiece);
             game.setBoardTile(x, y, pSelectedPiece);
             if (addToList_)
             {
                 coor2d target = {2, castleRow};
                 move_->setTarget(target);
-                m_moves.insertNode(make_shared<Move>(*move_, pOldPiece), m_moveIterator);
+                m_moves.insertNode(make_shared<Move>(*move_, pSecondPiece), m_moveIterator);
             }
             break;
 
@@ -183,6 +189,13 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
                 false, pSelectedPiece, prevX, prevY, x, y, pCapturedPiece,
                 capturedX, capturedY, getTransitioningPiece()
             );
+
+            if (pSecondPiece) {
+                GameThread::setSecondTransitioningPiece(
+                    pSecondPiece, secondXInit, castleRow,
+                    secondXTarget, castleRow, getTransitioningPiece()
+                );
+            }
         }
     }
 }
@@ -193,14 +206,16 @@ void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
     if (!m) return;
 
     shared_ptr<Piece> pCaptured = m->getCapturedPiece();
+    shared_ptr<Piece> pSecondPiece;
     shared_ptr<Piece> pUndoPiece;
     int x = m->getTarget().first;
     int y = m->getTarget().second;
     int prevX = m->getInit().first;
     int prevY = m->getInit().second;
     int capturedX = -1, capturedY = -1;
+    int secondXInit = -1, secondXTarget = -1;
 
-    int castleRow = (m->getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0;
+    const int castleRow = (m->getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0;
     arrowList_ = m->getMoveArrows();
     // TODO smooth transition for castle
     switch (m->getMoveType())
@@ -222,16 +237,22 @@ void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
             game.setBoardTile(capturedX, capturedY, pCaptured);
             break;
         case MoveType::CASTLE_KINGSIDE:
+            secondXInit = 5;
+            secondXTarget = 7;
+            pSecondPiece = pCaptured;
             game.getKing()->setAsFirstMovement();
-            game.resetBoardTile(5, castleRow);
+            game.resetBoardTile(secondXInit, castleRow);
             game.resetBoardTile(6, castleRow);
-            game.setBoardTile(7, castleRow, pCaptured);
+            game.setBoardTile(secondXTarget, castleRow, pSecondPiece);
             break;
         case MoveType::CASTLE_QUEENSIDE:
+            secondXInit = 3;
+            secondXTarget = 0;
+            pSecondPiece = pCaptured;
             game.getKing()->setAsFirstMovement();
-            game.resetBoardTile(3, castleRow);
+            game.resetBoardTile(secondXInit, castleRow);
             game.resetBoardTile(2, castleRow);
-            game.setBoardTile(0, castleRow, pCaptured);
+            game.setBoardTile(secondXTarget, castleRow, pSecondPiece);
             break;
         case MoveType::INIT_SPECIAL:
             game.resetBoardTile(x, y);
@@ -252,6 +273,13 @@ void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
             true, selected, x, y, prevX, prevY, pUndoPiece,
             capturedX, capturedY, getTransitioningPiece()
         );
+
+        if (pSecondPiece) {
+            GameThread::setSecondTransitioningPiece(
+                pSecondPiece, secondXInit, castleRow,
+                secondXTarget, castleRow, getTransitioningPiece()
+            );
+        }
     }
 
     --m_moveIterator;

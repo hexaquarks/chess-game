@@ -440,8 +440,11 @@ void GameThread::drawPieces()
             // Do not draw transitioning pieces
             if (transitioningPiece.getIsTransitioning())
             {
-                if (piece == transitioningPiece.getPiece() || piece == transitioningPiece.getCapturedPiece())
-                    continue;
+                if (
+                    piece == transitioningPiece.getPiece() ||
+                    piece == transitioningPiece.getCapturedPiece() ||
+                    piece == transitioningPiece.getSecondPiece()
+                ) continue;
             }
 
             shared_ptr<Texture> t = RessourceManager::getTexture(piece);
@@ -556,6 +559,7 @@ void GameThread::setTransitioningPiece(
     int capturedXPos_, int capturedYPos_, PieceTransition& trans_
 )
 {
+    trans_.resetPieces();
     trans_.setTransitioningPiece(p_);
     trans_.setDestination({getWindowXPos(xTarget_), getWindowYPos(yTarget_)});
     trans_.setCurrPos({getWindowXPos(initialX_), getWindowYPos(initialY_)});
@@ -563,6 +567,18 @@ void GameThread::setTransitioningPiece(
     trans_.setUndo(isUndo_);
     trans_.setIsTransitioning(true);
     trans_.setIncrement();
+}
+
+void GameThread::setSecondTransitioningPiece(
+    shared_ptr<Piece>& p_, int initialX_, int initialY_,
+    int xTarget_, int yTarget_, PieceTransition& trans_
+)
+{
+    trans_.setSecondTransitioningPiece(p_);
+    trans_.setSecondDestination({getWindowXPos(xTarget_), getWindowYPos(yTarget_)});
+    trans_.setSecondCurrPos({getWindowXPos(initialX_), getWindowYPos(initialY_)});
+    trans_.setSecondIsTransitioning(true);
+    trans_.setSecondIncrement();
 }
 
 void GameThread::drawTransitioningPiece(PieceTransition& piece_)
@@ -585,6 +601,15 @@ void GameThread::drawTransitioningPiece(PieceTransition& piece_)
         uint8_t percentage = static_cast<uint8_t>(piece_.getPercentageLeft() * 255);
         if (piece_.isUndo()) percentage = static_cast<uint8_t>(255-percentage);
         s2.setColor({255, 255, 255, percentage});
+        window.draw(s2);
+    }
+
+    // If we castle, draw the rook first so it appears under the king
+    if (piece_.getSecondPiece()) {
+        shared_ptr<Texture> t2 = RessourceManager::getTexture(piece_.getSecondPiece());
+        Sprite s2(*t2);
+        s2.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
+        s2.setPosition(piece_.getSecondCurrPos().first, piece_.getSecondCurrPos().second);
         window.draw(s2);
     }
 

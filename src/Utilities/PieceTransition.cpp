@@ -3,26 +3,27 @@
 #include "../../include/GameThread.hpp"
 #include <math.h>
 
+// Divide by 6 so the increment is in base 10, that is 60 / 10
+// Avoiding any piece to jump a square in a game tick
+constexpr uint16_t divisor = g_FPS / 6;
+
+
 void PieceTransition::setIncrement()
 {
     if (!m_piece) return;
-
-    // Divide by 6 so the increment is in base 10, that is 60 / 10
-    // Avoiding any piece to jump a square in a game tick
-    constexpr uint16_t divisor = g_FPS / 6;
-
-    // Piece should arrive at destination in one second
     m_increment.first = (m_destination.first - m_currPos.first) / divisor;
     m_increment.second = (m_destination.second - m_currPos.second) / divisor;
 }
 
-bool PieceTransition::pieceIsInBounds()
-{
-    // Stop if arrived in the tile for temporary logical simplicity
-    if (m_currPos.first == m_destination.first) m_xArrived = true;
-    if (m_currPos.second == m_destination.second) m_yArrived = true;
+void PieceTransition::setSecondIncrement() {
+    if (!m_second_piece) return;
+    m_second_increment.first = (m_second_destination.first - m_second_currPos.first) / divisor;
+    m_second_increment.second = (m_second_destination.second - m_second_currPos.second) / divisor;
+}
 
-    return m_xArrived && m_yArrived;
+bool PieceTransition::pieceIsInBounds() const
+{
+    return xArrived() && yArrived() && xSecondArrived() && ySecondArrived();
 }
 
 void PieceTransition::move(Board& game)
@@ -30,14 +31,17 @@ void PieceTransition::move(Board& game)
     if (!m_piece) return;
 
     // Move the piece only if piece is not in destinantion bounds yet.
-    if (!m_xArrived) m_currPos.first += m_increment.first;
-    if (!m_yArrived) m_currPos.second += m_increment.second;
+    if (!xArrived()) m_currPos.first += m_increment.first;
+    if (!yArrived()) m_currPos.second += m_increment.second;
+    if (!xSecondArrived()) m_second_currPos.first += m_second_increment.first;
+    if (!ySecondArrived()) m_second_currPos.second += m_second_increment.second;
 
     if (pieceIsInBounds())
     {
         setHasArrived(game);
         return;
     }
+
     updateDistToDest();
 }
 
@@ -48,9 +52,11 @@ void PieceTransition::setHasArrived(Board& board_)
     m_captured.reset();
     distance_to_dest = 0.0;
     m_isTransitioning = false;
-    m_xArrived = false;
-    m_yArrived = false;
     m_increment = {0, 0};
+
+    m_second_hasArrived = true;
+    m_second_isTransitioning = false;
+    m_second_increment = {0, 0};
 }
 
 void PieceTransition::setCapturedPiece(shared_ptr<Piece>& captured, int x, int y)
@@ -67,6 +73,11 @@ void PieceTransition::setCurrPos(coor2d&& pos)
     m_currPos = pos;
     updateDistToDest();
     original_dest = distance_to_dest;
+}
+
+void PieceTransition::setSecondCurrPos(coor2d&& pos)
+{
+    m_second_currPos = pos;
 }
 
 void PieceTransition::updateDistToDest()
