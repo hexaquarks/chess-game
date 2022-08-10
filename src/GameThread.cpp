@@ -63,7 +63,7 @@ void GameThread::startGame()
     // Window parameters
     initializeMenuBar();
     bool showMoveSelectionPanel = false;
-    SidePanel sidePanel(window, moveList,moveTree, showMoveSelectionPanel);
+    SidePanel sidePanel(window, moveList, moveTree, showMoveSelectionPanel);
     MoveSelectionPanel moveSelectionPanel(window, sidePanel);
 
     // Sounds for piece movement
