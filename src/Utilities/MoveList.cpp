@@ -180,9 +180,9 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             break;
     }
 
-    if (!addToList_ && pSelectedPiece)
+    if (enableTransition_)
     {
-        if (enableTransition_)
+        if (!addToList_ && pSelectedPiece)
         {
             // Enable piece visual transition
             GameThread::setTransitioningPiece(
@@ -196,6 +196,14 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
                     secondXTarget, castleRow, getTransitioningPiece()
                 );
             }
+        }
+        else if (pSecondPiece)
+        {
+            // Enable rook sliding when user just castled
+            GameThread::setTransitioningPiece(
+                false, pSecondPiece, secondXInit, castleRow, secondXTarget, castleRow,
+                pCapturedPiece, capturedX, capturedY, getTransitioningPiece()
+            );
         }
     }
 }
