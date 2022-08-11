@@ -16,7 +16,6 @@ inline constexpr int g_rotation[3][3] =
 const inline vector<coor2d> urCoords = {{1, -2}, {2, 1}, {-1, 2}, {-2, -1}};
 const inline vector<coor2d> ruCoords = {{2, -1}, {1, 2}, {-2, 1}, {-1, -2}};
 
-
 class Arrow
 {
 public:
@@ -32,8 +31,6 @@ public:
     void setCoordinates(const coor2d&,const coor2d&);
     void setDestination(const coor2d&);
     void setOrigin(const coor2d&);
-    void checkKnightSquares();
-    bool checkOutOfBounds() const;
     void updateArrow();
     void resetParameters();
     bool removeArrow(vector<Arrow>&) const;

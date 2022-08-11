@@ -8,6 +8,40 @@ int sign(T val_)
 {
     return (T(0) < val_) - (val_ < T(0));
 }
+namespace // anonymous namespace
+{
+    bool checkOutOfBounds(coor2d& destination_)
+    {
+        return (
+            destination_.first < 0 || destination_.first > g_WINDOW_SIZE ||
+            destination_.second < 0 || destination_.second > g_WINDOW_SIZE
+        );
+    }
+
+    void checkKnightSquares(int dx_, int dy_, int& rotation_, std::string& filename_, bool& isLarrow_)
+    {
+        vector<coor2d>::const_iterator it_ur = urCoords.begin();
+        vector<coor2d>::const_iterator it_ru = ruCoords.begin();
+
+        while (it_ur != urCoords.end())
+        {
+            if (it_ur->first == dx_ && it_ur->second == dy_)
+            {
+                rotation_ = (it_ur - urCoords.begin())*90;
+                filename_ = "arrow_Nur.png";
+                break;
+            }
+            if (it_ru->first == dx_ && it_ru->second == dy_)
+            {
+                rotation_ = (it_ru - ruCoords.begin()) * 90;
+                filename_ = "arrow_Nru.png";
+                break;
+            }
+            ++it_ru; ++it_ur;
+        }
+        isLarrow_ = true;
+    }
+} 
 
 Arrow::Arrow(coor2d origin_, coor2d destination_, int rotation_, string filename_)
 : m_origin(origin_), m_destination(destination_), m_rotation(rotation_), m_filename(filename_)
@@ -46,9 +80,12 @@ void Arrow::updateArrow()
 
     int size = std::max(abs(m_dx), abs(m_dy));
     if (size == 0) return; // Do nothing, arrow too short
-    if (checkOutOfBounds()) return; // Do nothing, arrow out of window
+    if (checkOutOfBounds(m_destination)) return; // Do nothing, arrow out of window
 
-    if (abs(abs(m_dx)-abs(m_dy)) == 1 && abs(m_dx) > 0 && abs(m_dy) > 0) checkKnightSquares();
+    if (abs(abs(m_dx)-abs(m_dy)) == 1 && abs(m_dx) > 0 && abs(m_dy) > 0) 
+    {
+        checkKnightSquares(m_dx, m_dy,m_rotation, m_filename, m_isLArrow);
+    }
     else if (abs(m_dx) == abs(m_dy))
     {
         m_filename = "arrow_d" + to_string(size) + "x.png";
@@ -59,38 +96,6 @@ void Arrow::updateArrow()
         m_filename = "arrow_n" + to_string(size) + "x.png";
         m_isLArrow = false;
     }
-}
-
-bool Arrow::checkOutOfBounds() const
-{
-    return (
-        m_destination.first < 0 || m_destination.first > g_WINDOW_SIZE ||
-        m_destination.second < 0 || m_destination.second > g_WINDOW_SIZE
-    );
-}
-
-void Arrow::checkKnightSquares()
-{
-    vector<coor2d>::const_iterator it_ur = urCoords.begin();
-    vector<coor2d>::const_iterator it_ru = ruCoords.begin();
-
-    while (it_ur != urCoords.end())
-    {
-        if (it_ur->first == m_dx && it_ur->second == m_dy)
-        {
-            m_rotation = (it_ur - urCoords.begin())*90;
-            m_filename = "arrow_Nur.png";
-            break;
-        }
-        if (it_ru->first == m_dx && it_ru->second == m_dy)
-        {
-            m_rotation = (it_ru - ruCoords.begin()) * 90;
-            m_filename = "arrow_Nru.png";
-            break;
-        }
-        ++it_ru; ++it_ur;
-    }
-    m_isLArrow = true;
 }
 
 void Arrow::resetParameters()
