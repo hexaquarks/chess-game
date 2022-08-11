@@ -42,11 +42,7 @@ public:
     void setSelectedPiece(shared_ptr<Piece>& piece_) { m_selectedPiece = piece_; }
     void setMoveArrows(vector<Arrow> arrows_) { m_arrows = arrows_; }
 
-    bool operator ==(const Move&);
-    string toString() const;
-
-    static string coorRepr(const coor2d&);
-    static coor2d fromRepr(char, char);
+    bool operator==(const Move&);
 
 private:
     shared_ptr<Piece> m_selectedPiece; // Piece that is being selected

@@ -1,6 +1,24 @@
 #include "../../include/Utilities/Move.hpp"
 #include "../../include/Components/Board.hpp"
 
+namespace // anonymous namespace
+{
+    coor2d fromRepr(char first_, char second_) 
+    {
+        return {first_ - 'a', 8 - (second_ - '0')};
+    }
+
+    string coorRepr(const coor2d& pos_) 
+    {
+        char move[] {static_cast<char>('a' + pos_.first), static_cast<char>('8' - pos_.second), '\0'};
+        return string(move);
+    }
+
+    string toString(const coor2d& init_, const coor2d& target_)  
+    {
+        return coorRepr(init_) + coorRepr(target_);
+    }
+}
 // For NORMAL, INIT SPECIAL and CASTLE
 Move::Move(
     const coor2d&& target_, const coor2d& initial_, const shared_ptr<Piece>& pSelectedPiece_,
@@ -41,7 +59,7 @@ Move::Move(const string& repr)
     m_target = fromRepr(repr[2], repr[3]);
 }
 
-bool Move::operator ==(const Move& other_)
+bool Move::operator==(const Move& other_)
 {
     return m_selectedPiece == other_.m_selectedPiece &&
     m_MoveType == other_.m_MoveType &&
@@ -50,15 +68,3 @@ bool Move::operator ==(const Move& other_)
     m_special == other_.m_special;
 }
 
-coor2d Move::fromRepr(char first, char second) {
-    return {first - 'a', 8 - (second - '0')};
-}
-
-string Move::coorRepr(const coor2d& pos) {
-    char move[] {static_cast<char>('a' + pos.first), static_cast<char>('8' - pos.second), '\0'};
-    return string(move);
-}
-
-string Move::toString() const {
-    return coorRepr(m_init) + coorRepr(m_target);
-}
