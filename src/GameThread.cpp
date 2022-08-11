@@ -391,8 +391,7 @@ void GameThread::highlightHoveredSquare(const shared_ptr<Piece>& pSelectedPiece_
 
     for (auto& move: possibleMoves)
     {
-        int i = move.getTarget().second;
-        int j = move.getTarget().first;
+        auto [j, i] = move.getTarget();
         if (isFlipped) {i = 7-i; j = 7-j;}
         if (move.getSelectedPiece() != pSelectedPiece_) continue;
         int xPos = getTileXPos(mousePos_), yPos = getTileYPos(mousePos_);
@@ -411,8 +410,7 @@ void GameThread::drawCaptureCircles(const shared_ptr<Piece>& pSelectedPiece_)
 {
     for (auto& move: possibleMoves)
     {
-        int i = move.getTarget().second;
-        int j = move.getTarget().first;
+        auto [j, i] = move.getTarget();
 
         if (move.getSelectedPiece() != pSelectedPiece_) continue;
         bool isEmpty = game.getBoardTile(i, j).get() == nullptr;

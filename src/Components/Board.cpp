@@ -1,11 +1,11 @@
 #include "../../include/Components/Board.hpp"
 #include "../../include/Pieces/Pawn.hpp"
 #include "../../include/Pieces/Rook.hpp"
+#include "../../include/Pieces/Piece.hpp"
 #include "../../include/Pieces/Knight.hpp"
 #include "../../include/Pieces/Bishop.hpp"
 #include "../../include/Pieces/King.hpp"
 #include "../../include/Pieces/Queen.hpp"
-#include "../../include/Pieces/Piece.hpp"
 #include "../../include/Utilities/Move.hpp"
 
 Board::Board(): m_turn(Team::WHITE)
@@ -129,8 +129,7 @@ void Board::removeIllegalMoves(vector<Move>& possibleMoves_, shared_ptr<Piece>& 
 
     while (it != possibleMoves_.end())
     {
-        int x = (*it).getTarget().second;
-        int y = (*it).getTarget().first;
+        const auto [y, x] = (*it).getTarget();
 
         // Store piece occupied by target square
         shared_ptr<Piece> temp = getBoardTile(x, y);

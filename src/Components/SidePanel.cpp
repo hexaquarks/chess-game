@@ -95,8 +95,7 @@ void SidePanel::handleMoveBoxClicked(const coor2d& mousePos_) const
     {
         float width = moveBox.getScaledWidth();
         float height = moveBox.getScaledHeight();
-        int xPos = moveBox.getPosition().first;
-        int yPos = moveBox.getPosition().second;
+        const auto [xPos, yPos] = moveBox.getPosition();
 
         int x = mousePos_.first - g_WINDOW_SIZE;
         int y = mousePos_.second - g_MENUBAR_HEIGHT;

@@ -80,10 +80,8 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
     int capturedX = -1, capturedY = -1;
 
     coor2d oldCoors;
-    int prevX = move_->getInit().first;
-    int prevY = move_->getInit().second;
-    int x = move_->getTarget().first;
-    int y = move_->getTarget().second;
+    const auto [prevX, prevY] = move_->getInit();
+    const auto [x, y] = move_->getTarget();
     int secondXInit = -1, secondXTarget = -1;
 
     // Set the current tile of the piece null. Necessary for navigating back to current move through goToNextMove()
@@ -216,10 +214,8 @@ void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
     shared_ptr<Piece> pCaptured = m->getCapturedPiece();
     shared_ptr<Piece> pSecondPiece;
     shared_ptr<Piece> pUndoPiece;
-    int x = m->getTarget().first;
-    int y = m->getTarget().second;
-    int prevX = m->getInit().first;
-    int prevY = m->getInit().second;
+    const auto [x, y] = m->getTarget();
+    const auto [prevX, prevY] = m->getInit();
     int capturedX = -1, capturedY = -1;
     int secondXInit = -1, secondXTarget = -1;
 
