@@ -38,7 +38,6 @@ public:
     void resetParameters();
     bool removeArrow(vector<Arrow>&) const;
     bool isDrawable() const;
-    bool compare(Arrow&) const;
     bool isLArrow() { return m_isLArrow; }
 
 private:
@@ -50,4 +49,5 @@ private:
     int m_size; // Size of the arrow (0 to 7)
     bool m_isLArrow = false;
 
+    bool operator==(Arrow&) const;
 };

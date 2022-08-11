@@ -113,7 +113,7 @@ bool Arrow::removeArrow(vector<Arrow>& arrows_) const
 
     while (it != arrows_.end())
     {
-        if (compare(*it))
+        if (*this==(*it))
         {
             it = arrows_.erase(it);
             removed = true;
@@ -123,11 +123,11 @@ bool Arrow::removeArrow(vector<Arrow>& arrows_) const
     return removed;
 }
 
-bool Arrow::compare(Arrow& arrow_) const
+bool Arrow::operator==(Arrow& rhs_) const
 {
     return (
-        arrow_.getFormattedOrigin() == getFormattedOrigin() &&
-        arrow_.getFilename() == m_filename &&
-        arrow_.getRotation() == m_rotation
+        rhs_.getFormattedOrigin() == getFormattedOrigin() &&
+        rhs_.getFilename() == m_filename &&
+        rhs_.getRotation() == m_rotation
     );
 }
