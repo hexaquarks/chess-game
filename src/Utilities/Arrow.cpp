@@ -3,11 +3,22 @@
 #include "../../include/Utilities/Arrow.hpp"
 #include "../../include/GameThread.hpp"
 
+constexpr int g_rotation[3][3] =
+{
+        { 225, 180, 135 },
+        { 270, 0, 90 },
+        { 315, 0, 45 },
+};
+
+const vector<coor2d> urCoords = {{1, -2}, {2, 1}, {-1, 2}, {-2, -1}};
+const vector<coor2d> ruCoords = {{2, -1}, {1, 2}, {-2, 1}, {-1, -2}};
+
 template <typename T>
 int sign(T val_)
 {
     return (T(0) < val_) - (val_ < T(0));
 }
+
 namespace // anonymous namespace
 {
     bool checkOutOfBounds(coor2d& destination_)
@@ -57,8 +68,8 @@ void Arrow::setOrigin(const coor2d& origin_)
 
 coor2d Arrow::getFormattedOrigin() const
 {
-    int x = (m_origin.first / g_CELL_SIZE) * g_CELL_SIZE + g_CELL_SIZE/2;
-    int y = (m_origin.second / g_CELL_SIZE) * g_CELL_SIZE + g_CELL_SIZE/2 + g_MENUBAR_HEIGHT;
+    const int x = (m_origin.first / g_CELL_SIZE) * g_CELL_SIZE + g_CELL_SIZE/2;
+    const int y = (m_origin.second / g_CELL_SIZE) * g_CELL_SIZE + g_CELL_SIZE/2 + g_MENUBAR_HEIGHT;
     return {x, y};
 }
 
@@ -78,7 +89,7 @@ void Arrow::updateArrow()
     if (m_dx == 0 && m_dy == 0) return;
     if (m_dx != 0 || m_dy != 0) m_rotation = g_rotation[1 + sign(m_dx)][1 + sign(m_dy)];
 
-    int size = std::max(abs(m_dx), abs(m_dy));
+    const int size = std::max(abs(m_dx), abs(m_dy));
     if (size == 0) return; // Do nothing, arrow too short
     if (checkOutOfBounds(m_destination)) return; // Do nothing, arrow out of window
 

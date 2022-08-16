@@ -6,15 +6,6 @@
 using namespace std;
 
 typedef std::pair<int, int> coor2d;
-inline constexpr int g_rotation[3][3] =
-{
-        { 225, 180, 135 },
-        { 270, 0, 90 },
-        { 315, 0, 45 },
-};
-
-const inline vector<coor2d> urCoords = {{1, -2}, {2, 1}, {-1, 2}, {-2, -1}};
-const inline vector<coor2d> ruCoords = {{2, -1}, {1, 2}, {-2, 1}, {-1, -2}};
 
 class Arrow
 {

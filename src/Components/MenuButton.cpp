@@ -3,6 +3,42 @@
 #include "../../include/Utilities/MoveList.hpp"
 #include "../../include/Utilities/DrawableSf.hpp"
 
+namespace 
+{
+    const Color transitionColors[5] =
+    {
+        { 218, 224, 242 }, { 218, 224, 145 }, { 218, 224, 200 },
+        { 218, 224, 45 }, { 218, 224, 242 }
+    };
+
+    void handleRectangle(uint8_t i_, RectangleShape& rectangle_)
+    {
+        DrawableSf::drawRectangleSf(rectangle_, g_BUTTON_POS*i_, 0, { g_BUTTON_POS, g_MENUBAR_HEIGHT }, { 23,23,23 });
+        rectangle_.setOutlineThickness(2.f);
+        rectangle_.setOutlineColor({ 239, 242, 249 });
+    }
+
+    void handleSprite(uint8_t i_, Sprite& sprite_)
+    {
+        sprite_.setOrigin(g_BUTTON_SIZE/2, g_BUTTON_SIZE/2);
+        sprite_.setPosition(g_BUTTON_POS*i_ + 20, g_MENUBAR_HEIGHT/2);
+        sprite_.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
+    }
+
+    void handleText(uint8_t i, Text& text_)
+    {
+        text_.setStyle(Text::Bold);
+        text_.setFillColor(Color(240, 248, 255));
+        text_.setOrigin(g_BUTTON_SIZE/2 - g_BUTTON_POS/3, g_BUTTON_SIZE/1.75);
+        text_.setPosition(g_BUTTON_POS*i + g_BUTTON_POS/3, g_MENUBAR_HEIGHT);
+    }
+
+    void rotateIcon(Sprite& sprite_)
+    {
+        sprite_.setRotation(sprite_.getRotation() + 180);
+    }
+}
+
 MenuButton::MenuButton(uint8_t index_, const std::string& name_, bool isRotatable_)
 : m_index(index_), m_isRotatable(isRotatable_)
 {
@@ -11,36 +47,9 @@ MenuButton::MenuButton(uint8_t index_, const std::string& name_, bool isRotatabl
     m_text.setFont(*font);
     m_text.setCharacterSize(14);
 
-    handleRectangle(index_);
-    handleSprite(index_);
-    handleText(index_);
-}
-
-void MenuButton::handleRectangle(uint8_t i_)
-{
-    DrawableSf::drawRectangleSf(m_rectangle, g_BUTTON_POS*i_, 0, { g_BUTTON_POS, g_MENUBAR_HEIGHT }, { 23,23,23 });
-    m_rectangle.setOutlineThickness(2.f);
-    m_rectangle.setOutlineColor({ 239, 242, 249 });
-}
-
-void MenuButton::handleSprite(uint8_t i_)
-{
-    m_sprite.setOrigin(g_BUTTON_SIZE/2, g_BUTTON_SIZE/2);
-    m_sprite.setPosition(g_BUTTON_POS*i_ + 20, g_MENUBAR_HEIGHT/2);
-    m_sprite.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
-}
-
-void MenuButton::handleText(uint8_t i)
-{
-    m_text.setStyle(Text::Bold);
-    m_text.setFillColor(Color(240, 248, 255));
-    m_text.setOrigin(g_BUTTON_SIZE/2 - g_BUTTON_POS/3, g_BUTTON_SIZE/1.75);
-    m_text.setPosition(g_BUTTON_POS*i + g_BUTTON_POS/3, g_MENUBAR_HEIGHT);
-}
-
-void MenuButton::rotateIcon()
-{
-    m_sprite.setRotation(m_sprite.getRotation() + 180);
+    handleRectangle(index_, m_rectangle);
+    handleSprite(index_, m_sprite);
+    handleText(index_, m_text);
 }
 
 void MenuButton::drawMenuButton(RenderWindow& window_) const
@@ -77,7 +86,7 @@ int MenuButton::performClick(Board& game_, MoveList& moveList_)
     {
         case 0:
             // Clicked menu button
-            rotateIcon();
+            rotateIcon(m_sprite);
             break;
         case 1:
             // Clicked reset button
