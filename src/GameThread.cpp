@@ -441,7 +441,8 @@ void GameThread::drawPieces()
                 if (
                     piece == transitioningPiece.getPiece() ||
                     piece == transitioningPiece.getCapturedPiece() ||
-                    piece == transitioningPiece.getSecondPiece()
+                    piece == transitioningPiece.getSecondPiece() ||
+                    piece == transitioningPiece.getPromotingPiece()
                 ) continue;
             }
 
