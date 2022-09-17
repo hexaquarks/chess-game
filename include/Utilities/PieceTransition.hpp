@@ -18,6 +18,7 @@ public:
     shared_ptr<Piece> getPiece() const { return m_piece; }
     shared_ptr<Piece> getSecondPiece() const { return m_second_piece; }
     shared_ptr<Piece> getCapturedPiece() const { return m_captured; }
+    shared_ptr<Piece> getPromotingPiece() const { return m_promoting_piece; }
     coor2d getIncrement() const { return m_increment; }
     coor2d getSecondIncrement() const { return m_second_increment; }
     coor2d getDestination() const { return m_destination; }
@@ -40,6 +41,7 @@ public:
     void setIsTransitioning(bool b) { m_isTransitioning = b; }
     void setSecondIsTransitioning(bool b) { m_second_isTransitioning = b; }
     void setCapturedPiece(shared_ptr<Piece>&, int, int);
+    void setPromotingPiece(shared_ptr<Piece>& p) { m_promoting_piece = p; }
     void setIncrement();
     void setSecondIncrement();
     void setHasArrived(Board&);
@@ -52,6 +54,7 @@ private:
     shared_ptr<Piece> m_piece;
     shared_ptr<Piece> m_second_piece;
     shared_ptr<Piece> m_captured;
+    shared_ptr<Piece> m_promoting_piece;
     coor2d m_currPos;
     coor2d m_second_currPos;
     coor2d m_destination;

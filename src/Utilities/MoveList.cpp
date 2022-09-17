@@ -75,6 +75,7 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
     const int castleRow = (game.getTurn() == Team::WHITE)? 7: 0;
     shared_ptr<Piece> pOldPiece;
     shared_ptr<Piece> pSecondPiece;
+    shared_ptr<Piece> pPromotingPiece;
     shared_ptr<Piece> pSelectedPiece = move_->getSelectedPiece();
     shared_ptr<Piece> pCapturedPiece;
     int capturedX = -1, capturedY = -1;
@@ -167,10 +168,10 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
 
         case MoveType::NEWPIECE:
             pOldPiece = game.getBoardTile(x, y);
-            shared_ptr<Piece> queen = make_shared<Queen>(pSelectedPiece->getTeam(), y, x);
-            Piece::setLastMovedPiece(queen);
-            game.setBoardTile(x, y, queen);
-            game.addPiece(queen);
+            pPromotingPiece = make_shared<Queen>(pSelectedPiece->getTeam(), y, x);
+            Piece::setLastMovedPiece(pPromotingPiece);
+            game.setBoardTile(x, y, pPromotingPiece);
+            game.addPiece(pPromotingPiece);
             if (addToList_)
             {
                 m_moves.insertNode(make_shared<Move>(*move_, pOldPiece), m_moveIterator);
@@ -193,6 +194,10 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
                     pSecondPiece, secondXInit, castleRow,
                     secondXTarget, castleRow, getTransitioningPiece()
                 );
+            }
+
+            if (pPromotingPiece) {
+                getTransitioningPiece().setPromotingPiece(pPromotingPiece);
             }
         }
         else if (pSecondPiece)
