@@ -12,7 +12,6 @@
 #include <list>
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
-
 using namespace sf;
 
 void GameThread::checkIfMoveMakesKingChecked(const shared_ptr<Move>& move)
@@ -418,8 +417,10 @@ void GameThread::drawCaptureCircles(const shared_ptr<Piece>& pSelectedPiece_)
 
         if (!t) return;
         Sprite circle(*t);
+
         if (isEmpty) circle.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
         else circle.setScale(g_SPECIAL_SCALE, g_SPECIAL_SCALE);
+
         if (isFlipped) {i = 7-i; j = 7-j;}
         circle.setPosition(getWindowXPos(i), getWindowYPos(j));
         window.draw(circle);
