@@ -12,6 +12,7 @@
 #include <list>
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+
 using namespace sf;
 
 void GameThread::checkIfMoveMakesKingChecked(const shared_ptr<Move>& move)
