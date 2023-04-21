@@ -21,7 +21,15 @@ class Piece
 {
 public:
     Piece(Team, int, int, PieceType, const string&); // Constructor
-    virtual ~Piece() {} // Virtual destructor
+
+    // C.67: A polymorphic class should suppress copying
+    Piece(const Piece&) = delete;
+    Piece(Piece&&) = delete;
+    Piece& operator=(const Piece&) = delete;
+    Piece& operator=(Piece&&) = delete;
+
+    // Rule of five
+    virtual ~Piece() {} 
 
     /* Getters */
     Team getTeam() const { return m_team; };
