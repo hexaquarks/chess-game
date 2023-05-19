@@ -171,6 +171,7 @@ void GameThread::startGame()
                                     pSelectedPiece.reset();
                                     arrowList.clear();
                                     mousePos = {0, 0};
+                                    refreshMoves();
                                 }
                     // Handle Side Panel Move Box buttons click
                     if (!showMoveSelectionPanel) sidePanel.handleMoveBoxClicked(mousePos);
@@ -227,7 +228,7 @@ void GameThread::startGame()
 
                         game.switchTurn();
                         refreshMoves();
-
+                        
                         noMovesAvailable = possibleMoves.empty();
                         if (noMovesAvailable) pMove->setNoMovesAvailable();
 
