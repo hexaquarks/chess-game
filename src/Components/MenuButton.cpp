@@ -3,6 +3,13 @@
 #include "../../include/Utilities/MoveList.hpp"
 #include "../../include/Utilities/DrawableSf.hpp"
 
+enum class MenuButtonType
+{
+    UNFOLD_OPTIONS,
+    RESET_BOARD,
+    FLIP_BOARD        
+};
+
 namespace 
 {
     const Color transitionColors[5] =
@@ -11,21 +18,21 @@ namespace
         { 218, 224, 45 }, { 218, 224, 242 }
     };
 
-    void handleRectangle(uint8_t i_, RectangleShape& rectangle_)
+    void handleRectangle(size_t i_, RectangleShape& rectangle_)
     {
         DrawableSf::drawRectangleSf(rectangle_, g_BUTTON_POS*i_, 0, { g_BUTTON_POS, g_MENUBAR_HEIGHT }, { 23,23,23 });
         rectangle_.setOutlineThickness(2.f);
         rectangle_.setOutlineColor({ 239, 242, 249 });
     }
 
-    void handleSprite(uint8_t i_, Sprite& sprite_)
+    void handleSprite(size_t i_, Sprite& sprite_)
     {
         sprite_.setOrigin(g_BUTTON_SIZE/2, g_BUTTON_SIZE/2);
         sprite_.setPosition(g_BUTTON_POS*i_ + 20, g_MENUBAR_HEIGHT/2);
         sprite_.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
     }
 
-    void handleText(uint8_t i, Text& text_)
+    void handleText(size_t i, Text& text_)
     {
         text_.setStyle(Text::Bold);
         text_.setFillColor(Color(240, 248, 255));
@@ -39,8 +46,9 @@ namespace
     }
 }
 
-MenuButton::MenuButton(uint8_t index_, const std::string& name_, bool isRotatable_)
-: m_index(index_), m_isRotatable(isRotatable_)
+MenuButton::MenuButton(const std::string& name_, size_t index_, bool isRotatable_)
+: m_buttonType(static_cast<MenuButtonType>(index_)), 
+  m_isRotatable(isRotatable_)
 {
     auto font = RessourceManager::getFont("Arial.ttf");
     m_text.setString(name_);
@@ -59,7 +67,7 @@ void MenuButton::drawMenuButton(RenderWindow& window_) const
     window_.draw(m_text);
 }
 
-bool MenuButton::isClicked(coor2d& mousePos_) const
+bool MenuButton::isMouseHovered(coor2d& mousePos_) const
 {
     float xi = m_rectangle.getGlobalBounds().left;
     float xf = xi + m_rectangle.getGlobalBounds().width;
@@ -80,27 +88,27 @@ void MenuButton::doColorTransition()
     }
 }
 
-int MenuButton::performClick(Board& game_, MoveList& moveList_)
+void MenuButton::doMouseClick(Board& game_, MoveList& moveList_)
 {
-    switch (m_index)
+    switch (m_buttonType)
     {
-        case 0:
-            // Clicked menu button
+        case MenuButtonType::UNFOLD_OPTIONS:
             rotateIcon(m_sprite);
             break;
-        case 1:
-            // Clicked reset button
+        case MenuButtonType::RESET_BOARD:
             game_.reset();
             moveList_.reset();
-
             break;
-        case 2:
-            // Clicked flip button
+        case MenuButtonType::FLIP_BOARD:
             GameThread::flipBoard();
             m_isColorTransitioning = true;
             break;
     }
     // make clicking shadow flashing animation
     m_isColorTransitioning = true;
-    return m_index;
+}
+
+bool MenuButton::isBoardReset() const
+{
+    return m_buttonType == MenuButtonType::RESET_BOARD;
 }

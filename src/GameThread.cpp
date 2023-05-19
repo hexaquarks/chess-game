@@ -163,16 +163,20 @@ void GameThread::startGame()
                 {
                     // Handle menu bar buttons
                     if (mousePos.second < g_MENUBAR_HEIGHT)
-                        for (auto& menuButton: menuBar)
-                            if (menuButton.isClicked(mousePos))
-                                if (menuButton.performClick(game, moveList) == 1)
-                                {
-                                    // TODO fix bug (reset at beggining)
-                                    pSelectedPiece.reset();
-                                    arrowList.clear();
-                                    mousePos = {0, 0};
-                                    refreshMoves();
-                                }
+                    {
+                        for (auto& menuButton: menuBar) 
+                        {
+                            if (!menuButton.isMouseHovered(mousePos)) continue;
+                            menuButton.doMouseClick(game, moveList);
+                            if (!menuButton.isBoardReset()) continue;
+                            
+                            pSelectedPiece.reset();
+                            arrowList.clear();
+                            mousePos = {0, 0};
+                            refreshMoves();
+                        }
+                    }
+
                     // Handle Side Panel Move Box buttons click
                     if (!showMoveSelectionPanel) sidePanel.handleMoveBoxClicked(mousePos);
                     // ^^^ Possible bug here when moveboxe and moveselection panel overlap
@@ -316,10 +320,9 @@ void GameThread::startGame()
 
 void GameThread::initializeMenuBar()
 {
-    constexpr uint16_t menuOptions = 3;
-    const string menuNames[menuOptions] = {"Menu", "Reset", "Flip"};
+    const vector<string> menuLabels{"Menu", "Reset", "Flip"};
 
-    for (uint8_t i = 0; i < menuOptions; ++i) menuBar.push_back(MenuButton(i, menuNames[i]));
+    for (size_t i = 0; i < menuLabels.size(); ++i) menuBar.push_back({menuLabels[i], i});
 }
 
 void GameThread::drawSidePanel(SidePanel& sidePanel_)

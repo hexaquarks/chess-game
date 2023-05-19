@@ -6,13 +6,16 @@
 using namespace sf;
 
 typedef std::pair<int, int> coor2d;
-class Board; // foward declaration
-class MoveList; // foward declaration
+
+// foward declarations
+class Board; 
+class MoveList; 
+enum class MenuButtonType;
 
 class MenuButton
 {
 public:
-    MenuButton(uint8_t, const std::string&, bool isRotatable = false);
+    MenuButton(const std::string&, size_t, bool isRotatable = false);
 
     RectangleShape getRectangle() const { return m_rectangle; }
     Sprite getSprite() const { return m_sprite; }
@@ -24,11 +27,12 @@ public:
     
     void drawMenuButton(RenderWindow&) const;
     void doColorTransition();
-    int performClick(Board&, MoveList&);
-    bool isClicked(coor2d&) const;
+    void doMouseClick(Board&, MoveList&);
+    bool isMouseHovered(coor2d&) const;
+    bool isBoardReset() const;
 
 private:
-    int m_index;
+    MenuButtonType m_buttonType;
     Sprite m_sprite;
     RectangleShape m_rectangle;
     Text m_text;
