@@ -3,8 +3,6 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
-using namespace sf;
-
 typedef std::pair<int, int> coor2d;
 
 // foward declarations
@@ -17,15 +15,16 @@ class MenuButton
 public:
     MenuButton(const std::string&, size_t, bool isRotatable = false);
 
-    RectangleShape getRectangle() const { return m_rectangle; }
-    Sprite getSprite() const { return m_sprite; }
-    Text getText() const { return m_text; }
+    sf::RectangleShape getRectangle() const { return m_rectangle; }
+    sf::Sprite getSprite() const { return m_sprite; }
+    sf::Text getText() const { return m_text; }
 
     int getTransitionColorIndex() const { return m_transitionColorIndex; }
     bool getIsColorTransitioning() const { return m_isColorTransitioning; }
-    void setSpriteTexture(Texture& texture) { m_sprite.setTexture(texture); }
+
+    void setSpriteTexture(sf::Texture& texture) { m_sprite.setTexture(texture); }
     
-    void drawMenuButton(RenderWindow&) const;
+    void drawMenuButton(sf::RenderWindow&) const;
     void doColorTransition();
     void doMouseClick(Board&, MoveList&);
     bool isMouseHovered(coor2d&) const;
@@ -33,9 +32,9 @@ public:
 
 private:
     MenuButtonType m_buttonType;
-    Sprite m_sprite;
-    RectangleShape m_rectangle;
-    Text m_text;
+    sf::Sprite m_sprite;
+    sf::RectangleShape m_rectangle;
+    sf::Text m_text;
     std::string m_string;
     bool m_isRotatable;
     bool m_isColorTransitioning = false;

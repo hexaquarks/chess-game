@@ -356,16 +356,15 @@ void GameThread::drawGrayCover()
 
 void GameThread::drawMenuBar()
 {
-    constexpr uint16_t menuOptions = 3;
-    const string iconFiles[menuOptions] = {"dropDownWhite.png", "resetWhite.png", "flipWhite.png"};
+    constexpr int menuOptionsCount = 3;
+    const std::vector<std::string> iconFiles{"dropDownWhite.png", "resetWhite.png", "flipWhite.png"};
 
-    for (uint8_t i = 0; i < menuOptions; ++i)
+    for (size_t i = 0; i < menuOptionsCount; ++i)
     {
-        shared_ptr<Texture> t = RessourceManager::getTexture(iconFiles[i]);
+        auto texture = RessourceManager::getTexture(iconFiles[i]);
         MenuButton& option = menuBar[i];
-        option.setSpriteTexture(*t);
+        option.setSpriteTexture(*texture);
 
-        // Handle color transition of menu button when clicked
         if (option.getIsColorTransitioning()) option.doColorTransition();
 
         option.drawMenuButton(window);
