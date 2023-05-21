@@ -375,9 +375,9 @@ void GameThread::initializeBoard()
 {
     const Color colours[2] = {{240, 217, 181}, {181, 136, 99}};
 
-    for (uint8_t i = 0; i < 8; ++i)
+    for (size_t i = 0; i < 8; ++i)
     {
-        for (uint8_t j = 0; j < 8; ++j)
+        for (size_t j = 0; j < 8; ++j)
         {
             // Drawing the colored square
             RectangleShape square = createSquare();
@@ -432,9 +432,9 @@ void GameThread::drawCaptureCircles(const shared_ptr<Piece>& pSelectedPiece_)
 
 void GameThread::drawPieces()
 {
-    for (uint8_t i = 0; i < 8; ++i)
+    for (size_t i = 0; i < 8; ++i)
     {
-        for (uint8_t j = 0; j < 8; ++j)
+        for (size_t j = 0; j < 8; ++j)
         {
             shared_ptr<Piece> piece = game.getBoardTile(i, j);
             if (!piece) continue;

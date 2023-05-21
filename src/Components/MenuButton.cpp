@@ -79,7 +79,7 @@ bool MenuButton::isMouseHovered(coor2d& mousePos_) const
 
 void MenuButton::doColorTransition()
 {
-    if(m_transitionColorIndex < 5)
+    if (m_transitionColorIndex < 5)
     {
         Color currentColor = transitionColors[m_transitionColorIndex];
         currentColor.a = 255 - m_transitionColorIndex * 50; // Adjust alpha value

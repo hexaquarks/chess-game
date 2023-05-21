@@ -77,8 +77,8 @@ vector<Move> King::possibleMovesNoCheck(Board& board_) const {
 
 bool King::isChecked(Board& board_) const {
     // Looping through every piece
-    for (uint8_t row = 0; row < 8; ++row) {
-        for (uint8_t col = 0; col < 8; ++col) {
+    for (size_t row = 0; row < 8; ++row) {
+        for (size_t col = 0; col < 8; ++col) {
             shared_ptr<Piece> p = board_.getBoardTile(col, row);
 
             // If piece has opposite colour, it is a potential danger

@@ -44,25 +44,25 @@ void Board::reset()
     m_board[7][7] = make_shared<Rook>(Team::WHITE, 7, 7);
 
     // Fill in white and black pawns
-    for (uint8_t col = 0; col < 8; ++col)
+    for (size_t col = 0; col < 8; ++col)
     {
         m_board[1][col] = make_shared<Pawn>(Team::BLACK, 1, col); // Black pawn on row 1
         m_board[6][col] = make_shared<Pawn>(Team::WHITE, 6, col); // White pawn on row 6
     }
 
     // Add every black piece to the list of black pieces
-    for (uint8_t row = 0; row < 2; ++row)
-        for (uint8_t col = 0; col < 8; ++col)
+    for (size_t row = 0; row < 2; ++row)
+        for (size_t col = 0; col < 8; ++col)
             m_blackPieces.push_back(m_board[row][col]);
 
     // Add every white piece to the list of white pieces
-    for (uint8_t row = 6; row < 8; ++row)
-        for (uint8_t col = 0; col < 8; ++col)
+    for (size_t row = 6; row < 8; ++row)
+        for (size_t col = 0; col < 8; ++col)
             m_whitePieces.push_back(m_board[row][col]);
 
     // Delete pieces that have already moved
-    for (uint8_t row = 0; row < 8; ++row)
-        for (uint8_t col = 2; col < 6; ++col)
+    for (size_t row = 0; row < 8; ++row)
+        for (size_t col = 2; col < 6; ++col)
             m_board[col][row].reset();
 
     m_turn = Team::WHITE; // Reset the first move to be for white
