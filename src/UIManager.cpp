@@ -7,8 +7,20 @@ namespace ui {
     UIManager::UIManager(sf::RenderWindow& window_, Board& board_) 
     : m_window(window_), m_board(board_)
     {
+        m_window.setFramerateLimit(60);
+
+        // Load ressources
+        RessourceManager::loadRessources();
+
+        // Setting window icon
+        sf::Image icon;
+        icon.loadFromFile(RessourceManager::getIconPath("nw.png"));
+        m_window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+        m_window.setPosition({300, 300});
+
         drawBoardSquares();
         initializeMenuBar();
+
     };
 
     void UIManager::drawBoardSquares()

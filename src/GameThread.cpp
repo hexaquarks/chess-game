@@ -33,23 +33,11 @@ void GameThread::startGame()
 {
     ui::UIManager uiManager(window, game);
 
-    window.setFramerateLimit(60);
-
-    // Load ressources
-    RessourceManager::loadRessources();
-
-    // Setting window icon
-    Image icon;
-    icon.loadFromFile(RessourceManager::getIconPath("nw.png"));
-    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
-    window.setPosition({300, 300});
-
     // Parameters to handle a piece being dragged
     bool pieceIsMoving = false;
     bool pieceIsClicked = false;
     bool isRightClicking = false;
     shared_ptr<Piece> pSelectedPiece;
-    shared_ptr<Piece> pMovingPiece; // Piece transition
     coor2d mousePos = {0, 0};
     coor2d rightClickAnchor = {0, 0};
     int lastXPos = 0;
@@ -86,22 +74,16 @@ void GameThread::startGame()
         // We use a while loop for the pending events in case there were multiple events occured
         while (window.pollEvent(event))
         {
-            // Closing the window
-            if (event.type == Event::Closed)
-                window.close();
-
-            // Clicking on a piece
+            if (event.type == Event::Closed) window.close();
             if (event.type == Event::MouseButtonPressed)
             {
                 if (event.mouseButton.button == Mouse::Left)
                 {
-                    // Get the tile of the click
                     mousePos = {event.mouseButton.x, event.mouseButton.y};
 
                     // Allow user to make moves only if they're at the current live position,
                     // and if the click is on the chess board
                     int yPos = getTileYPos(mousePos);
-                    // if (yPos < 0 || moveList.hasMovesAfter()) continue;
                     if (yPos < 0) continue;
 
                     // Do not register click if Moveselection panel is activated
@@ -110,20 +92,20 @@ void GameThread::startGame()
 
                     int xPos = isFlipped? 7-getTileXPos(mousePos): getTileXPos(mousePos);
                     if (isFlipped) yPos = 7-yPos;
-                    shared_ptr<Piece> pPiece = game.getBoardTile(xPos, yPos);
+                    auto pPieceAtCurrentMousePos = game.getBoardTile(xPos, yPos);
 
                     // If piece is not null and has the right color
-                    if (pPiece && pPiece->getTeam() == game.getTurn())
+                    if (pPieceAtCurrentMousePos && pPieceAtCurrentMousePos->getTeam() == game.getTurn())
                     {
                         // Unselect clicked piece
-                        if (pPiece == pSelectedPiece)
+                        if (pPieceAtCurrentMousePos == pSelectedPiece)
                         {
                             pSelectedPiece.reset();
                             pieceIsClicked = false;
                             continue;
                         }
 
-                        pSelectedPiece = pPiece;
+                        pSelectedPiece = pPieceAtCurrentMousePos;
                         pieceIsMoving = true;
                         pieceIsClicked = false;
                         lastXPos = isFlipped? 7-getTileXPos(mousePos): getTileXPos(mousePos); lastYPos = yPos;
