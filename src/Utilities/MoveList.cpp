@@ -1,6 +1,7 @@
 #include "../../include/Utilities/MoveList.hpp"
 #include "../../include/Utilities/PieceTransition.hpp"
 #include "../../include/GameThread.hpp"
+#include "../../include/UIManager.hpp"
 
 MoveList::MoveList(Board& board_, PieceTransition& p_): game(board_), m_transitioningPiece(p_)
 {
@@ -10,9 +11,9 @@ void MoveList::highlightLastMove(RenderWindow& window_)
 {
     shared_ptr<Move> move = m_moveIterator->m_move;
     if (!move) return;
-
-    RectangleShape squareBefore = createSquare();
-    RectangleShape squareAfter = createSquare();
+    
+    RectangleShape squareBefore = ui::createSquare();
+    RectangleShape squareAfter = ui::createSquare();
 
     Color colorInit = ((move->getInit().first+move->getInit().second) % 2)
                     ? Color(170, 162, 58): Color(205, 210, 106);

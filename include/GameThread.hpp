@@ -40,11 +40,6 @@ constexpr uint32_t g_MAIN_PANEL_HEIGHT = g_PANEL_SIZE - g_SOUTH_PANEL_HEIGHT;
 constexpr float g_SPRITE_SIZE = 128;
 constexpr float g_BUTTON_SIZE = 40;
 
-// Utility function
-inline RectangleShape createSquare()
-{
-    return RectangleShape({g_CELL_SIZE, g_CELL_SIZE});
-}
 
 class GameThread
 {
