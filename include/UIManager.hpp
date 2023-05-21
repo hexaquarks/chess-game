@@ -68,7 +68,6 @@ namespace ui {
             void drawKingCheckCircle();
             void drawMoveSelectionPanel(int);
             void drawGrayCover();
-            void checkIfMoveMakesKingChecked(const std::shared_ptr<Move>&);
             void drawBoardSquares();
 
         private:
