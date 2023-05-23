@@ -1,5 +1,7 @@
 #pragma once
 
+#include "UIConstants.hpp"
+
 #include <string>
 #include <vector>
 #include <utility>

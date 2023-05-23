@@ -5,6 +5,7 @@
 #include "../Components/Board.hpp"
 #include "Move.hpp"
 #include "PieceTransition.hpp"
+//#include "../GameThread.hpp"
 #include "MoveTree.hpp"
 using namespace sf;
 
@@ -21,7 +22,6 @@ public:
     int getIteratorIndex() { return 0; }
     int getMoveListSize() const { return m_moves.getNumberOfMoves(); }
 
-    void highlightLastMove(RenderWindow&);
     void reset() { m_moves.clear(); m_moveIterator = m_moves.begin(); };
     bool goToPreviousMove(bool, vector<Arrow>&);
     bool goToNextMove(bool, vector<Arrow>&);

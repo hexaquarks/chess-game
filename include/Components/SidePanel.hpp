@@ -2,7 +2,6 @@
 
 #include "../Utilities/Move.hpp"
 #include "../Pieces/Piece.hpp"
-#include "../GameThread.hpp"
 #include "../Utilities/MoveList.hpp"
 #include "MoveBox.hpp"
 #include <SFML/Graphics.hpp>
@@ -10,7 +9,7 @@
 using namespace std;
 using namespace sf;
 
-inline constexpr int g_INIT_WIDTH = g_BORDER_SIZE + 10;
+inline constexpr int g_INIT_WIDTH = ui::g_BORDER_SIZE + 10;
 inline constexpr int g_INIT_HEIGHT = 10;
 inline constexpr int g_ROW_HEIGHT = 35;
 inline constexpr int g_HORIZONTAL_OFFSET = 30;
@@ -25,7 +24,7 @@ public:
 
     pair<char, int> findLetterCoord(const coor2d&) const;
     string parseMove(const Move&, int, bool, bool = false) const;
-    void resetNextPos() { m_nextPos = {g_BORDER_SIZE + 10, 10}; }
+    void resetNextPos() { m_nextPos = {ui::g_BORDER_SIZE + 10, 10}; }
     void goToNextRow(int height);
     void addMove(const Move&);
     void drawMoves(const coor2d&);
@@ -38,7 +37,7 @@ public:
 private:
     RenderWindow& m_window;
     MoveList& m_moveList;
-    coor2d m_nextPos = {g_BORDER_SIZE + 10, 10};
+    coor2d m_nextPos = {ui::g_BORDER_SIZE + 10, 10};
     int moveBoxCounter = 0;
     int m_row = 0;
     bool& m_showMoveSelectionPanel;

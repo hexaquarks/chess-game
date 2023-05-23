@@ -3,9 +3,18 @@
 #include "./Ressources/Shader.cpp"
 #include "../include/Components/SidePanel.hpp"
 
+class MoveList;
+
 namespace ui {
-    UIManager::UIManager(sf::RenderWindow& window_, Board& board_) 
-    : m_window(window_), m_board(board_)
+    UIManager::UIManager(
+    Board& board_, 
+    MoveTree::Iterator& treeIterator_,
+    MoveList& moveList_
+    ) :
+        m_board(board_),
+        m_treeIterator(treeIterator_),
+        m_sidePanel(m_window, moveList_, m_showMoveSelectionPanel),
+        m_moveSelectionPanel(m_window, m_sidePanel)
     {
         m_window.setFramerateLimit(60);
 
@@ -20,8 +29,44 @@ namespace ui {
 
         drawBoardSquares();
         initializeMenuBar();
-
     };
+
+    void UIManager::draw(
+        ClickState& clickState_, 
+        DragState& dragState_, 
+        ArrowsInfo& arrowsInfo_,
+        bool kingChecked_,
+        vector<Move>& possibleMoves_,
+        bool noMovesAvailable_,
+        bool kingIsChecked_)
+    {
+        drawMenuBar();
+        drawBoardSquares();
+        drawSidePanel(m_sidePanel);
+
+        if (kingChecked_) drawKingCheckCircle();
+
+        if ((dragState_.pieceIsMoving || clickState_.pieceIsClicked) && clickState_.pSelectedPiece)
+        {
+            drawCaptureCircles(clickState_.pSelectedPiece, possibleMoves_);
+            highlightHoveredSquare(clickState_.pSelectedPiece, clickState_.mousePos, possibleMoves_);
+        }
+        drawPieces();
+        if (dragState_.pieceIsMoving) drawDraggedPiece(clickState_.pSelectedPiece, clickState_.mousePos);
+        if (m_transitioningPiece.getIsTransitioning()) {
+            drawTransitioningPiece(m_transitioningPiece);
+        }
+        drawAllArrows(arrowsInfo_.arrows, arrowsInfo_.currArrow);
+
+        if (m_showMoveSelectionPanel)
+        {
+            drawGrayCover();
+            m_moveSelectionPanel.drawMoveSelectionPanel(m_treeIterator);
+        }   
+
+        // End conditions
+        if (noMovesAvailable_) drawEndResults(kingChecked_);
+    }
 
     void UIManager::drawBoardSquares()
     {
@@ -303,5 +348,14 @@ namespace ui {
         s.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
         s.setPosition(piece_.getCurrPos().first, piece_.getCurrPos().second);
         m_window.draw(s);
+    }
+
+    void UIManager::handleSidePanelMoveBox(const coor2d& mousePos_)
+    {
+        if (!m_showMoveSelectionPanel) m_sidePanel.handleMoveBoxClicked(mousePos_);
+    }
+    bool UIManager::ignoreInputWhenSelectionPanelIsActive(const coor2d& mousePos_) const
+    {
+        return m_showMoveSelectionPanel && !m_moveSelectionPanel.isHowered(mousePos_);
     }
 };

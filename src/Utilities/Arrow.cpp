@@ -1,7 +1,6 @@
 #include <utility>
 #include <algorithm>
 #include "../../include/Utilities/Arrow.hpp"
-#include "../../include/GameThread.hpp"
 
 constexpr int g_rotation[3][3] =
 {
@@ -24,8 +23,8 @@ namespace // anonymous namespace
     bool checkOutOfBounds(coor2d& destination_)
     {
         return (
-            destination_.first < 0 || destination_.first > g_WINDOW_SIZE ||
-            destination_.second < 0 || destination_.second > g_WINDOW_SIZE
+            destination_.first < 0 || destination_.first > ui::g_WINDOW_SIZE ||
+            destination_.second < 0 || destination_.second > ui::g_WINDOW_SIZE
         );
     }
 
@@ -63,24 +62,24 @@ void Arrow::setOrigin(const coor2d& origin_)
 {
     // Need to format the origin to be at the center of the tile
     m_origin.first = origin_.first;
-    m_origin.second = origin_.second - g_MENUBAR_HEIGHT;
+    m_origin.second = origin_.second - ui::g_MENUBAR_HEIGHT;
 }
 
 coor2d Arrow::getFormattedOrigin() const
 {
-    const int x = (m_origin.first / g_CELL_SIZE) * g_CELL_SIZE + g_CELL_SIZE/2;
-    const int y = (m_origin.second / g_CELL_SIZE) * g_CELL_SIZE + g_CELL_SIZE/2 + g_MENUBAR_HEIGHT;
+    const int x = (m_origin.first / ui::g_CELL_SIZE) * ui::g_CELL_SIZE + ui::g_CELL_SIZE/2;
+    const int y = (m_origin.second / ui::g_CELL_SIZE) * ui::g_CELL_SIZE + ui::g_CELL_SIZE/2 + ui::g_MENUBAR_HEIGHT;
     return {x, y};
 }
 
 void Arrow::setDestination(const coor2d& destination_)
 {
     m_destination.first = destination_.first;
-    m_destination.second = destination_.second - g_MENUBAR_HEIGHT;
+    m_destination.second = destination_.second - ui::g_MENUBAR_HEIGHT;
 
     // Tile coordinates
-    m_dx = (m_destination.first/(int)g_CELL_SIZE - m_origin.first/(int)g_CELL_SIZE);
-    m_dy = (m_destination.second/(int)g_CELL_SIZE - m_origin.second/(int)g_CELL_SIZE);
+    m_dx = (m_destination.first/(int)ui::g_CELL_SIZE - m_origin.first/(int)ui::g_CELL_SIZE);
+    m_dy = (m_destination.second/(int)ui::g_CELL_SIZE - m_origin.second/(int)ui::g_CELL_SIZE);
 }
 
 void Arrow::updateArrow()

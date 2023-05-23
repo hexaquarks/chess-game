@@ -1,5 +1,6 @@
 #include "../../include/Components/MoveSelectionPanel.hpp"
 #include "../../include/Utilities/DrawableSf.hpp"
+#include "../../include/Ressources/RessourceManager.hpp"
 
 void MoveSelectionPanel::handleTitleText()
 {
@@ -17,7 +18,7 @@ void MoveSelectionPanel::handlePanelRectangle()
 
     // Draw all the panel
     DrawableSf::drawRectangleSf(
-        m_panel, g_WINDOW_SIZE + g_PANEL_SIZE / 3, g_PANEL_SIZE / 3,
+        m_panel, ui::g_WINDOW_SIZE + ui::g_PANEL_SIZE / 3, ui::g_PANEL_SIZE / 3,
         Vector2f(g_PANEL_WIDTH, m_height), g_GRAY
     );
 }
@@ -98,7 +99,7 @@ void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it_)
     reset();
 }
 
-bool MoveSelectionPanel::isHowered(coor2d& mousePos_) const
+bool MoveSelectionPanel::isHowered(const coor2d& mousePos_) const
 {
     int x = m_panel.getPosition().x;
     int y = m_panel.getPosition().y;
