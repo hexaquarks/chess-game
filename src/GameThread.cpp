@@ -79,7 +79,7 @@ void GameThread::startGame()
                     // and the mouse is not within the panel's bounds
                     if (uiManager.ignoreInputWhenSelectionPanelIsActive(clickState.mousePos)) continue;
 
-                    int xPos = isFlipped? 7-ui::getTileXPos(clickState.mousePos): ui::getTileXPos(clickState.mousePos);
+                    int xPos = ui::getTileXPos(clickState.mousePos, isFlipped);
                     if (isFlipped) yPos = 7-yPos;
                     auto pPieceAtCurrentMousePos = board.getBoardTile(xPos, yPos);
 
@@ -98,7 +98,7 @@ void GameThread::startGame()
                         clickState.pieceIsClicked = false;
 
                         dragState.pieceIsMoving = true;
-                        dragState.lastXPos = isFlipped? 7-ui::getTileXPos(clickState.mousePos): ui::getTileXPos(clickState.mousePos); 
+                        dragState.lastXPos = ui::getTileXPos(clickState.mousePos, isFlipped);
                         dragState.lastYPos = yPos;
 
                         // Set the tile on the board where the piece is selected to null
@@ -164,8 +164,8 @@ void GameThread::startGame()
                     if (!clickState.pSelectedPiece) continue;
 
                     // If clicked and mouse remained on the same square
-                    int xPos = isFlipped? 7-ui::getTileXPos(clickState.mousePos): ui::getTileXPos(clickState.mousePos);
-                    int yPos = isFlipped? 7-ui::getTileYPos(clickState.mousePos): ui::getTileYPos(clickState.mousePos);
+                    int xPos = ui::getTileXPos(clickState.mousePos, isFlipped);
+                    int yPos = ui::getTileYPos(clickState.mousePos, isFlipped);
                     if (xPos == clickState.pSelectedPiece->getY() && yPos == clickState.pSelectedPiece->getX())
                     {
                         if (!clickState.pieceIsClicked)

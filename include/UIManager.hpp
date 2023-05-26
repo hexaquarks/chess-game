@@ -47,12 +47,8 @@ namespace ui {
 
     inline int getWindowXPos(int i) { return i * g_CELL_SIZE; }
     inline int getWindowYPos(int j) { return j * g_CELL_SIZE + g_MENUBAR_HEIGHT; }
-    inline int getTileXPos(const coor2d& pos_) { return pos_.first / g_CELL_SIZE; }
-    inline int getTileYPos(const coor2d& pos_)
-    {
-        if (pos_.second < g_MENUBAR_HEIGHT) return -1;
-        return (pos_.second - g_MENUBAR_HEIGHT) / g_CELL_SIZE;
-    }
+    int getTileXPos(const coor2d& pos_, bool isFlipped_ = false);
+    int getTileYPos(const coor2d& pos_, bool isFlipped_ = false);
     
     class UIManager {
         public:
