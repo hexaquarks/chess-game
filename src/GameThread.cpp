@@ -79,8 +79,8 @@ void GameThread::startGame()
                     // and the mouse is not within the panel's bounds
                     if (uiManager.ignoreInputWhenSelectionPanelIsActive(clickState.mousePos)) continue;
 
-                    int xPos = ui::getTileXPos(clickState.mousePos, isFlipped);
-                    if (isFlipped) yPos = 7-yPos;
+                    int xPos = ui::getTileXPos(clickState.mousePos, board.isFlipped());
+                    if (board.isFlipped()) yPos = 7-yPos;
                     auto pPieceAtCurrentMousePos = board.getBoardTile(xPos, yPos);
 
                     // If piece is not null and has the right color
@@ -98,7 +98,7 @@ void GameThread::startGame()
                         clickState.pieceIsClicked = false;
 
                         dragState.pieceIsMoving = true;
-                        dragState.lastXPos = ui::getTileXPos(clickState.mousePos, isFlipped);
+                        dragState.lastXPos = ui::getTileXPos(clickState.mousePos, board.isFlipped());
                         dragState.lastYPos = yPos;
 
                         // Set the tile on the board where the piece is selected to null
@@ -164,8 +164,8 @@ void GameThread::startGame()
                     if (!clickState.pSelectedPiece) continue;
 
                     // If clicked and mouse remained on the same square
-                    int xPos = ui::getTileXPos(clickState.mousePos, isFlipped);
-                    int yPos = ui::getTileYPos(clickState.mousePos, isFlipped);
+                    int xPos = ui::getTileXPos(clickState.mousePos, board.isFlipped());
+                    int yPos = ui::getTileYPos(clickState.mousePos, board.isFlipped());
                     if (xPos == clickState.pSelectedPiece->getY() && yPos == clickState.pSelectedPiece->getX())
                     {
                         if (!clickState.pieceIsClicked)
@@ -329,12 +329,12 @@ void GameThread::highlightLastMove(RenderWindow& window_)
     squareAfter.setFillColor(colorTarget);
 
     squareBefore.setPosition(
-        ui::getWindowXPos(GameThread::boardFlipped()? 7-move->getInit().first: move->getInit().first),
-        ui::getWindowYPos(GameThread::boardFlipped()? 7-move->getInit().second: move->getInit().second)
+        ui::getWindowXPos(board.isFlipped() ? 7-move->getInit().first: move->getInit().first),
+        ui::getWindowYPos(board.isFlipped() ? 7-move->getInit().second: move->getInit().second)
     );
     squareAfter.setPosition(
-        ui::getWindowXPos(GameThread::boardFlipped()? 7-move->getTarget().first: move->getTarget().first),
-        ui::getWindowYPos(GameThread::boardFlipped()? 7-move->getTarget().second: move->getTarget().second)
+        ui::getWindowXPos(board.isFlipped() ? 7-move->getTarget().first: move->getTarget().first),
+        ui::getWindowYPos(board.isFlipped() ? 7-move->getTarget().second: move->getTarget().second)
     );
 
     window_.draw(squareBefore);
@@ -379,7 +379,7 @@ void GameThread::handleKeyPressed(
             checkIfMoveMakesKingChecked(move, kingChecked, noMovesAvailable);
             break;
         case Keyboard::LControl:
-            flipBoard();
+            board.flipBoard();
             break;
         case Keyboard::Up:
             showMoveSelectionPanel_?

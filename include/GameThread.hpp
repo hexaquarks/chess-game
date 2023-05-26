@@ -39,9 +39,6 @@ public:
         int, int, PieceTransition&
     );
     static void highlightLastMove(RenderWindow&);
-
-    static void flipBoard() { isFlipped = !isFlipped; }
-    static bool boardFlipped() { return isFlipped; }
     static void refreshMoves() { possibleMoves = board.calculateAllMoves(); }
 
 private:

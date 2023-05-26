@@ -148,7 +148,7 @@ namespace ui {
         for (auto& move: possibleMoves_)
         {
             auto [j, i] = move.getTarget();
-            if (m_isFlipped) {i = 7-i; j = 7-j;}
+            if (m_board.isFlipped()) {i = 7-i; j = 7-j;}
             if (move.getSelectedPiece() != pSelectedPiece_) continue;
             int xPos = getTileXPos(mousePos_), yPos = getTileYPos(mousePos_);
 
@@ -180,7 +180,7 @@ namespace ui {
             if (isEmpty) circle.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
             else circle.setScale(g_SPECIAL_SCALE, g_SPECIAL_SCALE);
 
-            if (m_isFlipped) {i = 7-i; j = 7-j;}
+            if (m_board.isFlipped()) {i = 7-i; j = 7-j;}
             circle.setPosition(getWindowXPos(i), getWindowYPos(j));
             m_window.draw(circle);
         }
@@ -211,7 +211,7 @@ namespace ui {
 
                 Sprite s(*t);
                 s.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
-                s.setPosition(getWindowXPos(m_isFlipped? (7-i): i), getWindowYPos(m_isFlipped? (7-j): j));
+                s.setPosition(getWindowXPos(m_board.isFlipped() ? (7-i): i), getWindowYPos(m_board.isFlipped()? (7-j): j));
                 m_window.draw(s);
             }
         }
@@ -229,8 +229,8 @@ namespace ui {
         sBefore.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
         s.setPosition(mousePos_.first, mousePos_.second);
         sBefore.setPosition(
-            getWindowXPos(m_isFlipped? 7-pSelectedPiece_->getY(): pSelectedPiece_->getY()),
-            getWindowYPos(m_isFlipped? 7-pSelectedPiece_->getX(): pSelectedPiece_->getX())
+            getWindowXPos(m_board.isFlipped()? 7-pSelectedPiece_->getY(): pSelectedPiece_->getY()),
+            getWindowYPos(m_board.isFlipped()? 7-pSelectedPiece_->getX(): pSelectedPiece_->getX())
         );
 
         s.setOrigin(g_SPRITE_SIZE/2, g_SPRITE_SIZE/2);
@@ -279,8 +279,8 @@ namespace ui {
         CircleShape c(g_CELL_SIZE / 2);
         c.setFillColor(Color::Transparent);
 
-        int x = m_isFlipped? 7-king->getY(): king->getY();
-        int y = m_isFlipped? 7-king->getX(): king->getX();
+        int x = m_board.isFlipped()? 7-king->getY(): king->getY();
+        int y = m_board.isFlipped()? 7-king->getX(): king->getX();
         c.setPosition(getWindowXPos(x), getWindowYPos(y));
         shader.setUniform("color", Glsl::Vec4(1.f, 0.f, 0.f, 1.f));
         shader.setUniform("center", Vector2f(
@@ -304,8 +304,8 @@ namespace ui {
             checkmate.setScale(g_SPECIAL_SCALE / 2, g_SPECIAL_SCALE / 2);
             checkmate.setOrigin(40, 40);
             checkmate.setPosition(
-                getWindowXPos(m_isFlipped? 7-losing->getY(): losing->getY()) + g_CELL_SIZE,
-                getWindowYPos(m_isFlipped? 7-losing->getX(): losing->getX())
+                getWindowXPos(m_board.isFlipped()? 7-losing->getY(): losing->getY()) + g_CELL_SIZE,
+                getWindowYPos(m_board.isFlipped()? 7-losing->getX(): losing->getX())
             );
             m_window.draw(checkmate);
             return;

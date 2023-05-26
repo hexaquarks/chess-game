@@ -30,7 +30,9 @@ public:
     vector<Move> calculateAllMoves();
     void switchTurn();
     bool kingIsChecked();
+    bool isFlipped() { return m_isFlipped; }
     void addPiece(const shared_ptr<Piece>&);
+    void flipBoard() { m_isFlipped = !m_isFlipped; }
 
 private:
     // Member variables

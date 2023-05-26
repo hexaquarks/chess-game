@@ -106,7 +106,7 @@ void MenuButton::doMouseClick(Board& game_, MoveList& moveList_)
             moveList_.reset();
             break;
         case MenuButtonType::FLIP_BOARD:
-            GameThread::flipBoard();
+            game_.flipBoard();
             m_isColorTransitioning = true;
             break;
     }

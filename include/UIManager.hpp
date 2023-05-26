@@ -84,7 +84,6 @@ namespace ui {
             SidePanel m_sidePanel;
             MoveSelectionPanel m_moveSelectionPanel;
 
-            bool m_isFlipped = false;
             bool m_showMoveSelectionPanel = false;
 
             void initializeMenuBar();
