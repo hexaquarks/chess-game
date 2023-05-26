@@ -1,5 +1,6 @@
 #pragma once
-#include "../GameThread.hpp"
+
+#include <SFML/Graphics.hpp>
 
 using namespace std;
 using namespace sf;
@@ -8,10 +9,12 @@ inline constexpr float g_BOX_HORIZONTAL_SCALE = 1.25;
 inline constexpr float g_BOX_VERTICAL_SCALE = 1.25;
 inline constexpr float g_BOX_TEXT_HORIZONTAL_SHIFT = 1.05;
 
+typedef std::pair<int, int> coor2d;
+
 class MoveBox
 {
 public:
-    MoveBox(coor2d, string);
+    MoveBox(coor2d&, string&);
 
     float getScaledWidth() const { return g_BOX_HORIZONTAL_SCALE * m_textBounds.width; }
     float getScaledHeight() const { return g_BOX_VERTICAL_SCALE * m_textsf.getCharacterSize(); }

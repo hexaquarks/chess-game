@@ -23,24 +23,24 @@ namespace
 
     void handleRectangle(size_t i_, sf::RectangleShape& rectangle_)
     {
-        DrawableSf::drawRectangleSf(rectangle_, g_BUTTON_POS*i_, 0, { g_BUTTON_POS, g_MENUBAR_HEIGHT }, { 23,23,23 });
+        DrawableSf::drawRectangleSf(rectangle_, ui::g_BUTTON_POS*i_, 0, { ui::g_BUTTON_POS, ui::g_MENUBAR_HEIGHT }, { 23,23,23 });
         rectangle_.setOutlineThickness(2.f);
         rectangle_.setOutlineColor({ 239, 242, 249 });
     }
 
     void handleSprite(size_t i_, sf::Sprite& sprite_)
     {
-        sprite_.setOrigin(g_BUTTON_SIZE/2, g_BUTTON_SIZE/2);
-        sprite_.setPosition(g_BUTTON_POS*i_ + 20, g_MENUBAR_HEIGHT/2);
-        sprite_.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
+        sprite_.setOrigin(ui::g_BUTTON_SIZE/2, ui::g_BUTTON_SIZE/2);
+        sprite_.setPosition(ui::g_BUTTON_POS*i_ + 20, ui::g_MENUBAR_HEIGHT/2);
+        sprite_.setScale(ui::g_SPRITE_SCALE, ui::g_SPRITE_SCALE);
     }
 
     void handleText(size_t i, sf::Text& text_)
     {
         text_.setStyle(sf::Text::Bold);
         text_.setFillColor(sf::Color(240, 248, 255));
-        text_.setOrigin(g_BUTTON_SIZE/2 - g_BUTTON_POS/3, g_BUTTON_SIZE/1.75);
-        text_.setPosition(g_BUTTON_POS*i + g_BUTTON_POS/3, g_MENUBAR_HEIGHT);
+        text_.setOrigin(ui::g_BUTTON_SIZE/2 - ui::g_BUTTON_POS/3, ui::g_BUTTON_SIZE/1.75);
+        text_.setPosition(ui::g_BUTTON_POS*i + ui::g_BUTTON_POS/3, ui::g_MENUBAR_HEIGHT);
     }
 
     void rotateIcon(sf::Sprite& sprite_)

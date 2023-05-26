@@ -1,6 +1,7 @@
 #pragma once
-#include "../GameThread.hpp"
+
 #include "../Utilities/MoveTree.hpp"
+#include "../Utilities/UIConstants.hpp"
 #include "SidePanel.hpp"
 
 #include <string>
@@ -25,7 +26,7 @@ public:
     {
     }
 
-    bool isHowered(coor2d&) const;
+    bool isHowered(const coor2d&) const;
     int getSelection() const { return m_selectionIndex; }
     void handleTitleText();
     void handlePanelRectangle();

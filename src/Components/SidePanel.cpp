@@ -1,5 +1,6 @@
 #include "../../include/Components/SidePanel.hpp"
 #include "../../include/Utilities/DrawableSf.hpp"
+#include "../../include/Ressources/RessourceManager.hpp"
 
 SidePanel::SidePanel(
     RenderWindow& window_, MoveList& moveList_, bool& b_
@@ -74,13 +75,13 @@ string SidePanel::parseMove(const Move& move_, int moveNumber_, bool showNumber_
 
 void SidePanel::goToNextRow(int height_)
 {
-    m_nextPos = {g_BORDER_SIZE + 10, m_nextPos.second + height_ + 20};
+    m_nextPos = {ui::g_BORDER_SIZE + 10, m_nextPos.second + height_ + 20};
 }
 
 void SidePanel::checkOutOfBounds(MoveBox& moveBox_, int offset_)
 {
-    int newPos = g_WINDOW_SIZE + offset_ + m_nextPos.first + moveBox_.getTextBounds().width;
-    if (newPos >= g_WINDOW_SIZE + g_PANEL_SIZE - g_BORDER_SIZE)
+    int newPos = ui::g_WINDOW_SIZE + offset_ + m_nextPos.first + moveBox_.getTextBounds().width;
+    if (newPos >= ui::g_WINDOW_SIZE + ui::g_PANEL_SIZE - ui::g_BORDER_SIZE)
     {
         goToNextRow(moveBox_.getTextBounds().height); // Change next position
         moveBox_.setPosition(m_nextPos); // Update the new position
@@ -97,8 +98,8 @@ void SidePanel::handleMoveBoxClicked(const coor2d& mousePos_) const
         float height = moveBox.getScaledHeight();
         const auto [xPos, yPos] = moveBox.getPosition();
 
-        int x = mousePos_.first - g_WINDOW_SIZE;
-        int y = mousePos_.second - g_MENUBAR_HEIGHT;
+        int x = mousePos_.first - ui::g_WINDOW_SIZE;
+        int y = mousePos_.second - ui::g_MENUBAR_HEIGHT;
 
         if ((x >= xPos && x < xPos + width) && (y >= yPos && y < yPos + height))
         {
@@ -137,15 +138,15 @@ void SidePanel::drawSquareBracket(coor2d& nextPos_, int offset_, bool open_) con
     Vector2f recSize(textsf.getGlobalBounds().width, textsf.getCharacterSize());
     RectangleShape rect;
     DrawableSf::drawRectangleSf(
-        rect, (g_WINDOW_SIZE + nextPos_.first),
-        (g_MENUBAR_HEIGHT + nextPos_.second), recSize, Color(50, 50, 50)
+        rect, (ui::g_WINDOW_SIZE + nextPos_.first),
+        (ui::g_MENUBAR_HEIGHT + nextPos_.second), recSize, Color(50, 50, 50)
     );
 
     float positionalShift = ((g_BOX_HORIZONTAL_SCALE - 1.f) * rect.getLocalBounds().width)/2.f;
     rect.setScale(g_BOX_HORIZONTAL_SCALE, g_BOX_VERTICAL_SCALE);
     textsf.setPosition(
-        g_WINDOW_SIZE + nextPos_.first + positionalShift,
-        g_MENUBAR_HEIGHT + nextPos_.second - 4
+        ui::g_WINDOW_SIZE + nextPos_.first + positionalShift,
+        ui::g_MENUBAR_HEIGHT + nextPos_.second - 4
     );
 
     m_window.draw(rect);

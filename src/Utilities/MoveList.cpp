@@ -1,37 +1,10 @@
 #include "../../include/Utilities/MoveList.hpp"
 #include "../../include/Utilities/PieceTransition.hpp"
+#include "../../include/Utilities/UIConstants.hpp"
 #include "../../include/GameThread.hpp"
 
 MoveList::MoveList(Board& board_, PieceTransition& p_): game(board_), m_transitioningPiece(p_)
 {
-}
-
-void MoveList::highlightLastMove(RenderWindow& window_)
-{
-    shared_ptr<Move> move = m_moveIterator->m_move;
-    if (!move) return;
-
-    RectangleShape squareBefore = createSquare();
-    RectangleShape squareAfter = createSquare();
-
-    Color colorInit = ((move->getInit().first+move->getInit().second) % 2)
-                    ? Color(170, 162, 58): Color(205, 210, 106);
-    Color colorTarget = ((move->getTarget().first+move->getTarget().second) % 2)
-                    ? Color(170, 162, 58): Color(205, 210, 106);
-    squareBefore.setFillColor(colorInit);
-    squareAfter.setFillColor(colorTarget);
-
-    squareBefore.setPosition(
-        GameThread::getWindowXPos(GameThread::boardFlipped()? 7-move->getInit().first: move->getInit().first),
-        GameThread::getWindowYPos(GameThread::boardFlipped()? 7-move->getInit().second: move->getInit().second)
-    );
-    squareAfter.setPosition(
-        GameThread::getWindowXPos(GameThread::boardFlipped()? 7-move->getTarget().first: move->getTarget().first),
-        GameThread::getWindowYPos(GameThread::boardFlipped()? 7-move->getTarget().second: move->getTarget().second)
-    );
-
-    window_.draw(squareBefore);
-    window_.draw(squareAfter);
 }
 
 bool MoveList::goToPreviousMove(bool enableTransition_, vector<Arrow>& arrowList_)

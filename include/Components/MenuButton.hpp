@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../Utilities/UIConstants.hpp"
+
 #include <SFML/Graphics.hpp>
 #include <string>
 
