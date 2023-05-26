@@ -1,6 +1,7 @@
 #include "../../include/Utilities/MoveList.hpp"
 #include "../../include/Utilities/PieceTransition.hpp"
 #include "../../include/Utilities/UIConstants.hpp"
+#include "../../include/GameThread.hpp"
 
 MoveList::MoveList(Board& board_, PieceTransition& p_): game(board_), m_transitioningPiece(p_)
 {
