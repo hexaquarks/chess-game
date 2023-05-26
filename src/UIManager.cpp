@@ -358,4 +358,17 @@ namespace ui {
     {
         return m_showMoveSelectionPanel && !m_moveSelectionPanel.isHowered(mousePos_);
     }
+
+    int getTileXPos(const coor2d& pos_, bool isFlipped_)
+    { 
+        int cellPos = pos_.first / g_CELL_SIZE; 
+        return isFlipped_ ? 7 - cellPos : cellPos;
+    }
+    int getTileYPos(const coor2d& pos_, bool isFlipped_)
+    {
+        int cellPos = (pos_.second - g_MENUBAR_HEIGHT) / g_CELL_SIZE;
+        
+        if (pos_.second < g_MENUBAR_HEIGHT) return -1;
+        return isFlipped_ ? 7 - cellPos : cellPos;
+    }
 };
