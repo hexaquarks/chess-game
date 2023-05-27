@@ -1,5 +1,6 @@
 #pragma once
 
+#include "UIManager.hpp"
 #include "Ressources/RessourceManager.hpp"
 #include "Utilities/PieceTransition.hpp"
 #include "Components/MenuButton.hpp"
@@ -48,8 +49,13 @@ private:
     inline static MoveTree::Iterator treeIterator = moveList.getIterator();
     inline static bool kingChecked = false;
     inline static bool noMovesAvailable = false;
+    inline static shared_ptr<Piece> pLastMove;
 
     /* Graphical functions */
+    static bool handleMouseButtonPressedLeft(Event&, ui::ClickState& clickState, ui::DragState&, ui::UIManager&);
+    static bool handleMouseButtonPressedRight(Event&, ui::ClickState& clickState, ui::DragState&, ui::ArrowsInfo&);
+    static bool handleMouseMoved(Event&, ui::ClickState&, ui::ArrowsInfo&, ui::UIManager&);
+    static bool handleMouseButtonReleasedLeft(Event&, ui::ClickState&, ui::DragState&, ui::ArrowsInfo&, ui::UIManager&);
     static void handleKeyPressed(const Event&, MoveSelectionPanel&, vector<Arrow>&, bool&);
 
     inline static bool isFlipped = false;
