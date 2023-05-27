@@ -38,7 +38,7 @@ void GameThread::startGame()
     ui::ClickState clickState;
     ui::ArrowsInfo arrowsInfo;
 
-    possibleMoves = board.calculateAllMoves();
+    board.updateAllCurrentlyAvailableMoves();
 
     // Additional board state variables
     shared_ptr<Piece> pLastMove;
@@ -152,7 +152,7 @@ void GameThread::startGame()
                             clickState.mousePos = {0, 0};
 
                             arrowsInfo.arrows.clear();
-                            refreshMoves();
+                            board.updateAllCurrentlyAvailableMoves();
                         }
                     }
 
@@ -180,7 +180,7 @@ void GameThread::startGame()
 
                     // Try to match moves
                     Move* pSelectedMove = nullptr;
-                    for (auto& move: possibleMoves)
+                    for (auto move: board.getAllCurrentlyAvailableMoves())
                     {
                         if (move.getSelectedPiece() == clickState.pSelectedPiece)
                         {
@@ -211,9 +211,9 @@ void GameThread::startGame()
                         Piece::setLastMovedPiece(pLastMove);
 
                         board.switchTurn();
-                        refreshMoves();
+                        board.updateAllCurrentlyAvailableMoves();
                         
-                        noMovesAvailable = possibleMoves.empty();
+                        noMovesAvailable = board.getAllCurrentlyAvailableMoves().empty();
                         if (noMovesAvailable) pMove->setNoMovesAvailable();
 
                         if (board.kingIsChecked())
@@ -274,8 +274,7 @@ void GameThread::startGame()
             clickState, 
             dragState, 
             arrowsInfo, 
-            kingChecked, 
-            possibleMoves, 
+            kingChecked,  
             noMovesAvailable, 
             kingChecked);
             

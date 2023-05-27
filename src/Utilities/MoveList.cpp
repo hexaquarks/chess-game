@@ -13,7 +13,8 @@ bool MoveList::goToPreviousMove(bool enableTransition_, vector<Arrow>& arrowList
     {
         undoMove(enableTransition_, arrowList_);
         game.switchTurn();
-        GameThread::refreshMoves();
+        game.updateAllCurrentlyAvailableMoves();
+        
         return true;
     }
     return false;
@@ -26,7 +27,8 @@ bool MoveList::goToNextMove(bool enableTransition_, vector<Arrow>& arrowList_)
         ++m_moveIterator;
         applyMove(enableTransition_, arrowList_);
         game.switchTurn();
-        GameThread::refreshMoves();
+        game.updateAllCurrentlyAvailableMoves();
+
         return true;
     }
     return false;

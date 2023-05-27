@@ -108,7 +108,7 @@ void Board::resetBoardTile(int x_, int y_, bool record_)
     m_board[y_][x_].reset();
 }
 
-vector<Move> Board::calculateAllMoves()
+void Board::updateAllCurrentlyAvailableMoves()
 {
     vector<Move> moves;
     vector<shared_ptr<Piece>> playerPieces = (m_turn == Team::WHITE)? m_whitePieces: m_blackPieces;
@@ -120,7 +120,8 @@ vector<Move> Board::calculateAllMoves()
         for (auto& move: pieceMoves)
             moves.push_back(move);
     }
-    return moves;
+
+    m_allCurrentlyAvailableMoves = moves;
 }
 
 void Board::removeIllegalMoves(vector<Move>& possibleMoves_, shared_ptr<Piece>& pSelectedPiece_)

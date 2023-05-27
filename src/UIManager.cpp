@@ -36,7 +36,6 @@ namespace ui {
         DragState& dragState_, 
         ArrowsInfo& arrowsInfo_,
         bool kingChecked_,
-        vector<Move>& possibleMoves_,
         bool noMovesAvailable_,
         bool kingIsChecked_)
     {
@@ -48,8 +47,8 @@ namespace ui {
 
         if ((dragState_.pieceIsMoving || clickState_.pieceIsClicked) && clickState_.pSelectedPiece)
         {
-            drawCaptureCircles(clickState_.pSelectedPiece, possibleMoves_);
-            highlightHoveredSquare(clickState_.pSelectedPiece, clickState_.mousePos, possibleMoves_);
+            drawCaptureCircles(clickState_.pSelectedPiece, m_board.getAllCurrentlyAvailableMoves());
+            highlightHoveredSquare(clickState_.pSelectedPiece, clickState_.mousePos,  m_board.getAllCurrentlyAvailableMoves());
         }
         drawPieces();
         if (dragState_.pieceIsMoving) drawDraggedPiece(clickState_.pSelectedPiece, clickState_.mousePos);
@@ -141,7 +140,7 @@ namespace ui {
     void UIManager::highlightHoveredSquare(
         const shared_ptr<Piece>& pSelectedPiece_, 
         const coor2d& mousePos_,
-        vector<Move>& possibleMoves_)
+        const vector<Move>& possibleMoves_)
     {
         const Color colours[2] = {{173, 176, 134}, {100, 111, 64}};
 
@@ -164,7 +163,7 @@ namespace ui {
 
     void UIManager::drawCaptureCircles(
         const shared_ptr<Piece>& pSelectedPiece_,
-        vector<Move>& possibleMoves_)
+        const vector<Move>& possibleMoves_)
     {
         for (auto& move: possibleMoves_)
         {

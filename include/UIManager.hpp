@@ -53,7 +53,7 @@ namespace ui {
     class UIManager {
         public:
             UIManager(Board&, MoveTree::Iterator&, MoveList&);
-            void draw(ClickState&, DragState&, ArrowsInfo&, bool, vector<Move>&, bool, bool);
+            void draw(ClickState&, DragState&, ArrowsInfo&, bool, bool, bool);
 
             void display() { m_window.display(); }
             void clearWindow() { m_window.clear({23, 23, 23}); }
@@ -89,8 +89,8 @@ namespace ui {
             void initializeMenuBar();
             void drawMenuBar();
             void drawSidePanel(SidePanel&);
-            void drawCaptureCircles(const std::shared_ptr<Piece>&, vector<Move>&);
-            void highlightHoveredSquare(const std::shared_ptr<Piece>&, const coor2d&, vector<Move>&);
+            void drawCaptureCircles(const std::shared_ptr<Piece>&, const vector<Move>&);
+            void highlightHoveredSquare(const std::shared_ptr<Piece>&, const coor2d&, const vector<Move>&);
             void drawPieces();
             void drawDraggedPiece(const std::shared_ptr<Piece>&, const coor2d&);
             void drawTransitioningPiece(PieceTransition&);

@@ -1,5 +1,6 @@
 #pragma once
 #include "../Pieces/Piece.hpp"
+#include "../Utilities/Move.hpp"
 
 #include <list>
 #include "memory"
@@ -27,7 +28,8 @@ public:
 
     // Utility functions
     vector<Move> possibleMovesFor(const shared_ptr<Piece>&);
-    vector<Move> calculateAllMoves();
+    const vector<Move>& getAllCurrentlyAvailableMoves() const { return m_allCurrentlyAvailableMoves; }
+    void updateAllCurrentlyAvailableMoves();
     void switchTurn();
     bool kingIsChecked();
     bool isFlipped() { return m_isFlipped; }
@@ -43,6 +45,7 @@ private:
     shared_ptr<King> m_whiteKing;
     shared_ptr<King> m_blackKing;
     bool m_isFlipped = false;
+    vector<Move> m_allCurrentlyAvailableMoves{};
 
     // Private functions
     void removeIllegalMoves(vector<Move>&, shared_ptr<Piece>&);

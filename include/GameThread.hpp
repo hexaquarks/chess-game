@@ -39,11 +39,9 @@ public:
         int, int, PieceTransition&
     );
     static void highlightLastMove(RenderWindow&);
-    static void refreshMoves() { possibleMoves = board.calculateAllMoves(); }
 
 private:
     inline static Board board;
-    inline static vector<Move> possibleMoves;
     inline static PieceTransition transitioningPiece;
     inline static MoveList moveList{board, transitioningPiece};
     // inline static MoveTree moveTree;
