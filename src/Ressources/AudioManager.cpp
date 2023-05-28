@@ -12,8 +12,9 @@ void AudioManager::loadSound(SoundEffect effect_, const std::string& filename_)
 
 void AudioManager::playSound(SoundEffect effect_)
 {
-    if (m_sounds.count(effect_) > 0)
+    auto iter = m_sounds.find(effect_);
+    if (iter != m_sounds.end())
     {
-        m_sounds[effect_].play();
+        iter->second.play();
     }
 }

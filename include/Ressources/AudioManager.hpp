@@ -18,8 +18,8 @@ public:
         return instance;
     }
 
-    void loadSound(SoundEffect, const std::string& filename_);
-    void playSound(SoundEffect);
+    void loadSound(SoundEffect effect_, const std::string& filename_);
+    void playSound(SoundEffect effect_);
 
 private:
     std::unordered_map<SoundEffect, sf::Sound> m_sounds;
