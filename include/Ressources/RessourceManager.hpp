@@ -7,11 +7,9 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
-using namespace std;
-
-typedef unordered_map<string, shared_ptr<sf::Texture>> textureMap;
-typedef unordered_map<string, shared_ptr<sf::SoundBuffer>> audioMap;
-typedef unordered_map<string, shared_ptr<sf::Font>> fontsMap;
+typedef std::unordered_map<std::string, std::shared_ptr<sf::Texture>> textureMap;
+typedef std::unordered_map<std::string, std::shared_ptr<sf::SoundBuffer>> audioMap;
+typedef std::unordered_map<std::string, std::shared_ptr<sf::Font>> fontsMap;
 
 
 class RessourceManager
@@ -24,25 +22,25 @@ public:
 
     static void loadRessources();
 
-    static void addTexture(const string& name);
-    static void addFont(const string& name);
-    static shared_ptr<sf::Texture> getTexture(const string &name);
-    static shared_ptr<sf::Texture> getTexture(const shared_ptr<Piece>& piece) {
+    static void addTexture(const std::string& name);
+    static void addFont(const std::string& name);
+    static std::shared_ptr<sf::Texture> getTexture(const std::string &name);
+    static std::shared_ptr<sf::Texture> getTexture(const std::shared_ptr<Piece>& piece) {
         return getTexture(piece->getFileName());
     }
-    static shared_ptr<sf::Font> getFont(const string &name);
+    static std::shared_ptr<sf::Font> getFont(const std::string &name);
 
-    static string getIconPath(const string& filename) { return iconsPath + filename; }
-    static string getAudioPath(const string& filename) { return audioPath + filename; }
-    static string getFontPath(const string& filename) { return fontPath + filename; }
+    static std::string getIconPath(const std::string& filename) { return iconsPath + filename; }
+    static std::string getAudioPath(const std::string& filename) { return audioPath + filename; }
+    static std::string getFontPath(const std::string& filename) { return fontPath + filename; }
 
 private:
-    inline const static string iconsPath = "./assets/icons/";
-    inline const static string audioPath = "./assets/sounds/";
-    inline const static string fontPath = "./assets/fonts/";
+    inline const static std::string iconsPath = "./assets/icons/";
+    inline const static std::string audioPath = "./assets/sounds/";
+    inline const static std::string fontPath = "./assets/fonts/";
 
     inline static constexpr uint8_t m_numberOfTextures = 36;
-    inline const static string m_textureNames[m_numberOfTextures] = {
+    inline const static std::string m_textureNames[m_numberOfTextures] = {
         "circle.png", "empty_circle.png",
         "bb.png", "bw.png", "kb.png", "kw.png", "nb.png", "nw.png", "pb.png", "pw.png",
         "qb.png", "qw.png", "rb.png", "reset.png", "resetWhite.png", "rw.png", "dropDown.png",
@@ -53,7 +51,7 @@ private:
         "arrow_d7x.png"
     };
 
-    inline const static string m_fontNames[1] = {"Arial.ttf"};
+    inline const static std::string m_fontNames[1] = {"Arial.ttf"};
     inline static textureMap m_textures;
     inline static fontsMap m_fonts;
 };

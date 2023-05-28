@@ -5,5 +5,5 @@
 struct Bishop: public Piece
 {
     Bishop(Team, int, int); // Constructor
-    vector<Move> calcPossibleMoves(Board& board_) const override;
+    std::vector<Move> calcPossibleMoves(Board& board_) const override;
 };

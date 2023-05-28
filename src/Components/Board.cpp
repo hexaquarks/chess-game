@@ -20,34 +20,34 @@ void Board::reset()
     m_blackPieces.clear();
 
     // Set the kings
-    m_blackKing = make_shared<King>(Team::BLACK, 0, 4);
-    m_whiteKing = make_shared<King>(Team::WHITE, 7, 4);
+    m_blackKing = std::make_shared<King>(Team::BLACK, 0, 4);
+    m_whiteKing = std::make_shared<King>(Team::WHITE, 7, 4);
 
     // Set first row (black)
-    m_board[0][0] = make_shared<Rook>(Team::BLACK, 0, 0);
-    m_board[0][1] = make_shared<Knight>(Team::BLACK, 0, 1);
-    m_board[0][2] = make_shared<Bishop>(Team::BLACK, 0, 2);
-    m_board[0][3] = make_shared<Queen>(Team::BLACK, 0, 3);
+    m_board[0][0] = std::make_shared<Rook>(Team::BLACK, 0, 0);
+    m_board[0][1] = std::make_shared<Knight>(Team::BLACK, 0, 1);
+    m_board[0][2] = std::make_shared<Bishop>(Team::BLACK, 0, 2);
+    m_board[0][3] = std::make_shared<Queen>(Team::BLACK, 0, 3);
     m_board[0][4] = m_blackKing;
-    m_board[0][5] = make_shared<Bishop>(Team::BLACK, 0, 5);
-    m_board[0][6] = make_shared<Knight>(Team::BLACK, 0, 6);
-    m_board[0][7] = make_shared<Rook>(Team::BLACK, 0, 7);
+    m_board[0][5] = std::make_shared<Bishop>(Team::BLACK, 0, 5);
+    m_board[0][6] = std::make_shared<Knight>(Team::BLACK, 0, 6);
+    m_board[0][7] = std::make_shared<Rook>(Team::BLACK, 0, 7);
 
     // Set last row (white)
-    m_board[7][0] = make_shared<Rook>(Team::WHITE, 7, 0);
-    m_board[7][1] = make_shared<Knight>(Team::WHITE, 7, 1);
-    m_board[7][2] = make_shared<Bishop>(Team::WHITE, 7, 2);
-    m_board[7][3] = make_shared<Queen>(Team::WHITE, 7, 3);
+    m_board[7][0] = std::make_shared<Rook>(Team::WHITE, 7, 0);
+    m_board[7][1] = std::make_shared<Knight>(Team::WHITE, 7, 1);
+    m_board[7][2] = std::make_shared<Bishop>(Team::WHITE, 7, 2);
+    m_board[7][3] = std::make_shared<Queen>(Team::WHITE, 7, 3);
     m_board[7][4] = m_whiteKing;
-    m_board[7][5] = make_shared<Bishop>(Team::WHITE, 7, 5);
-    m_board[7][6] = make_shared<Knight>(Team::WHITE, 7, 6);
-    m_board[7][7] = make_shared<Rook>(Team::WHITE, 7, 7);
+    m_board[7][5] = std::make_shared<Bishop>(Team::WHITE, 7, 5);
+    m_board[7][6] = std::make_shared<Knight>(Team::WHITE, 7, 6);
+    m_board[7][7] = std::make_shared<Rook>(Team::WHITE, 7, 7);
 
     // Fill in white and black pawns
     for (size_t col = 0; col < 8; ++col)
     {
-        m_board[1][col] = make_shared<Pawn>(Team::BLACK, 1, col); // Black pawn on row 1
-        m_board[6][col] = make_shared<Pawn>(Team::WHITE, 6, col); // White pawn on row 6
+        m_board[1][col] = std::make_shared<Pawn>(Team::BLACK, 1, col); // Black pawn on row 1
+        m_board[6][col] = std::make_shared<Pawn>(Team::WHITE, 6, col); // White pawn on row 6
     }
 
     // Add every black piece to the list of black pieces
@@ -68,7 +68,7 @@ void Board::reset()
     m_turn = Team::WHITE; // Reset the first move to be for white
 }
 
-vector<Move> Board::possibleMovesFor(const shared_ptr<Piece>& piece)
+std::vector<Move> Board::possibleMovesFor(const std::shared_ptr<Piece>& piece)
 {
     return piece->calcPossibleMoves(*this);
 }
@@ -78,18 +78,18 @@ bool Board::kingIsChecked()
     return getKing()->isChecked(*this);
 }
 
-void Board::addPiece(const shared_ptr<Piece>& pPiece_)
+void Board::addPiece(const std::shared_ptr<Piece>& pPiece_)
 {
     (pPiece_->getTeam() == Team::WHITE)? m_whitePieces.push_back(pPiece_)
                                        : m_blackPieces.push_back(pPiece_);
 }
 
-shared_ptr<King> Board::getKing() const
+std::shared_ptr<King> Board::getKing() const
 {
     return (m_turn == Team::WHITE)? m_whiteKing: m_blackKing;
 }
 
-void Board::setBoardTile(int x_, int y_, shared_ptr<Piece>& pPiece_, bool record_)
+void Board::setBoardTile(int x_, int y_, std::shared_ptr<Piece>& pPiece_, bool record_)
 {
     if (record_ && m_board[y_][x_])
     {
@@ -110,12 +110,12 @@ void Board::resetBoardTile(int x_, int y_, bool record_)
 
 void Board::updateAllCurrentlyAvailableMoves()
 {
-    vector<Move> moves;
-    vector<shared_ptr<Piece>> playerPieces = (m_turn == Team::WHITE)? m_whitePieces: m_blackPieces;
+    std::vector<Move> moves;
+    std::vector<std::shared_ptr<Piece>> playerPieces = (m_turn == Team::WHITE)? m_whitePieces: m_blackPieces;
     for (auto piece: playerPieces)
     {
         if (piece->getX() == -1 || piece->getY() == -1) continue;
-        vector<Move> pieceMoves = possibleMovesFor(piece);
+        std::vector<Move> pieceMoves = possibleMovesFor(piece);
         removeIllegalMoves(pieceMoves, piece);
         for (auto& move: pieceMoves)
             moves.push_back(move);
@@ -124,16 +124,16 @@ void Board::updateAllCurrentlyAvailableMoves()
     m_allCurrentlyAvailableMoves = moves;
 }
 
-void Board::removeIllegalMoves(vector<Move>& possibleMoves_, shared_ptr<Piece>& pSelectedPiece_)
+void Board::removeIllegalMoves(std::vector<Move>& possibleMoves_, std::shared_ptr<Piece>& pSelectedPiece_)
 {
-    vector<Move>::const_iterator it = possibleMoves_.begin();
+    std::vector<Move>::const_iterator it = possibleMoves_.begin();
 
     while (it != possibleMoves_.end())
     {
         const auto [y, x] = (*it).getTarget();
 
         // Store piece occupied by target square
-        shared_ptr<Piece> temp = getBoardTile(x, y);
+        std::shared_ptr<Piece> temp = getBoardTile(x, y);
 
         int initialX = pSelectedPiece_->getY();
         int initialY = pSelectedPiece_->getX();

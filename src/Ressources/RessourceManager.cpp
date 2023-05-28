@@ -4,38 +4,37 @@
 #include <algorithm>
 #include <iostream>
 
-using namespace std;
-
-void RessourceManager::addTexture(const string& name_)
+void RessourceManager::addTexture(const std::string& name_)
 {
-    shared_ptr<sf::Texture> texture = make_shared<sf::Texture>();
+    std::shared_ptr<sf::Texture> texture = std::make_shared<sf::Texture>();
     texture->loadFromFile(getIconPath(name_));
     m_textures.emplace(name_, texture);
 }
 
-void RessourceManager::addFont(const string& name_)
+void RessourceManager::addFont(const std::string& name_)
 {
-    shared_ptr<sf::Font> font = make_shared<sf::Font>();
+    std::shared_ptr<sf::Font> font = std::make_shared<sf::Font>();
     font->loadFromFile(getFontPath(name_));
     m_fonts.emplace(name_, font);
 }
 
-shared_ptr<sf::Texture> RessourceManager::getTexture(const string& name_)
-{
-    for (auto it = m_textures.begin(); it != m_textures.end(); ++it)
+template<typename T>
+std::shared_ptr<T> getObject(const std::string& name_, const std::unordered_map<std::string, std::shared_ptr<T>>& map) {
+    for (auto it = map.begin(); it != map.end(); ++it)
     {
         if (it->first == name_) return it->second;
     }
-    return nullptr;
+    return {};
 }
 
-shared_ptr<sf::Font> RessourceManager::getFont(const string& name_)
+std::shared_ptr<sf::Texture> RessourceManager::getTexture(const std::string& name_)
 {
-    for (auto it = m_fonts.begin(); it != m_fonts.end(); ++it)
-    {
-        if (it->first == name_) return it->second;
-    }
-    return nullptr;
+    return getObject(name_, m_textures);
+}
+
+std::shared_ptr<sf::Font> RessourceManager::getFont(const std::string& name_)
+{
+    return getObject(name_, m_fonts);
 }
 
 void RessourceManager::loadRessources()

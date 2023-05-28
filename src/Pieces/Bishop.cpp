@@ -5,9 +5,9 @@ Bishop::Bishop(Team team_, int x_, int y_):
 {
 }
 
-vector<Move> Bishop::calcPossibleMoves(Board& board_) const
+std::vector<Move> Bishop::calcPossibleMoves(Board& board_) const
 {
-    vector<Move> moves;
+    std::vector<Move> moves;
     addDiagonalMovements(board_, moves);
     return moves;
 }

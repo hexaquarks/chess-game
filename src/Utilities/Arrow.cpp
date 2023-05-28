@@ -9,8 +9,8 @@ constexpr int g_rotation[3][3] =
         { 315, 0, 45 },
 };
 
-const vector<coor2d> urCoords = {{1, -2}, {2, 1}, {-1, 2}, {-2, -1}};
-const vector<coor2d> ruCoords = {{2, -1}, {1, 2}, {-2, 1}, {-1, -2}};
+const std::vector<coor2d> urCoords = {{1, -2}, {2, 1}, {-1, 2}, {-2, -1}};
+const std::vector<coor2d> ruCoords = {{2, -1}, {1, 2}, {-2, 1}, {-1, -2}};
 
 template <typename T>
 int sign(T val_)
@@ -30,8 +30,8 @@ namespace // anonymous namespace
 
     void checkKnightSquares(int dx_, int dy_, int& rotation_, std::string& filename_, bool& isLarrow_)
     {
-        vector<coor2d>::const_iterator it_ur = urCoords.begin();
-        vector<coor2d>::const_iterator it_ru = ruCoords.begin();
+        std::vector<coor2d>::const_iterator it_ur = urCoords.begin();
+        std::vector<coor2d>::const_iterator it_ru = ruCoords.begin();
 
         while (it_ur != urCoords.end())
         {
@@ -53,7 +53,7 @@ namespace // anonymous namespace
     }
 } 
 
-Arrow::Arrow(coor2d origin_, coor2d destination_, int rotation_, string filename_)
+Arrow::Arrow(coor2d origin_, coor2d destination_, int rotation_, std::string filename_)
 : m_origin(origin_), m_destination(destination_), m_rotation(rotation_), m_filename(filename_)
 {
 }
@@ -98,12 +98,12 @@ void Arrow::updateArrow()
     }
     else if (abs(m_dx) == abs(m_dy))
     {
-        m_filename = "arrow_d" + to_string(size) + "x.png";
+        m_filename = "arrow_d" + std::to_string(size) + "x.png";
         m_isLArrow = false;
     }
     else
     {
-        m_filename = "arrow_n" + to_string(size) + "x.png";
+        m_filename = "arrow_n" + std::to_string(size) + "x.png";
         m_isLArrow = false;
     }
 }
@@ -121,9 +121,9 @@ bool Arrow::isDrawable() const
     return abs(m_dx) > 0 || abs(m_dy) > 0;
 }
 
-bool Arrow::removeArrow(vector<Arrow>& arrows_) const
+bool Arrow::removeArrow(std::vector<Arrow>& arrows_) const
 {
-    vector<Arrow>::iterator it = arrows_.begin();
+    std::vector<Arrow>::iterator it = arrows_.begin();
     bool removed = false;
 
     while (it != arrows_.end())

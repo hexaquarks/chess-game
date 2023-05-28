@@ -5,5 +5,5 @@
 struct Rook: public Piece
 {
     Rook(Team, int, int); // Constructor
-    vector<Move> calcPossibleMoves(Board&) const override;
+    std::vector<Move> calcPossibleMoves(Board&) const override;
 };

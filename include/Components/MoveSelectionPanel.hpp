@@ -7,9 +7,6 @@
 #include <string>
 #include <SFML/Graphics.hpp>
 
-using namespace std;
-using namespace sf;
-
 inline constexpr int g_TOP_PANEL_HEIGHT = 50;
 inline constexpr int g_PANEL_WIDTH = 200;
 inline constexpr int g_VARIATION_HEIGHT = 50;

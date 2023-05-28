@@ -5,8 +5,6 @@
 #include <list>
 #include "memory"
 
-using namespace std;
-
 class King;
 class Move;
 enum class Team;
@@ -18,35 +16,35 @@ public:
     void reset(); // Resets the board
 
     // Getters and setters
-    vector<shared_ptr<Piece>> getWhitePieces() const { return m_whitePieces; }
-    vector<shared_ptr<Piece>> getBlackPieces() const { return m_blackPieces; }
-    shared_ptr<Piece> getBoardTile(int x, int y) const { return m_board[y][x]; }
-    shared_ptr<King> getKing() const;
+    std::vector<std::shared_ptr<Piece>> getWhitePieces() const { return m_whitePieces; }
+    std::vector<std::shared_ptr<Piece>> getBlackPieces() const { return m_blackPieces; }
+    std::shared_ptr<Piece> getBoardTile(int x, int y) const { return m_board[y][x]; }
+    std::shared_ptr<King> getKing() const;
     Team getTurn() const { return m_turn; }
-    void setBoardTile(int, int, shared_ptr<Piece>&, bool = true);
+    void setBoardTile(int, int, std::shared_ptr<Piece>&, bool = true);
     void resetBoardTile(int, int, bool = true);
 
     // Utility functions
-    vector<Move> possibleMovesFor(const shared_ptr<Piece>&);
-    const vector<Move>& getAllCurrentlyAvailableMoves() const { return m_allCurrentlyAvailableMoves; }
+    std::vector<Move> possibleMovesFor(const std::shared_ptr<Piece>&);
+    const std::vector<Move>& getAllCurrentlyAvailableMoves() const { return m_allCurrentlyAvailableMoves; }
     void updateAllCurrentlyAvailableMoves();
     void switchTurn();
     bool kingIsChecked();
     bool isFlipped() { return m_isFlipped; }
-    void addPiece(const shared_ptr<Piece>&);
+    void addPiece(const std::shared_ptr<Piece>&);
     void flipBoard() { m_isFlipped = !m_isFlipped; }
 
 private:
     // Member variables
-    shared_ptr<Piece> m_board[8][8];
+    std::shared_ptr<Piece> m_board[8][8];
     Team m_turn; // White or black player's turn
-    vector<shared_ptr<Piece>> m_whitePieces;
-    vector<shared_ptr<Piece>> m_blackPieces;
-    shared_ptr<King> m_whiteKing;
-    shared_ptr<King> m_blackKing;
+    std::vector<std::shared_ptr<Piece>> m_whitePieces;
+    std::vector<std::shared_ptr<Piece>> m_blackPieces;
+    std::shared_ptr<King> m_whiteKing;
+    std::shared_ptr<King> m_blackKing;
     bool m_isFlipped = false;
-    vector<Move> m_allCurrentlyAvailableMoves{};
+    std::vector<Move> m_allCurrentlyAvailableMoves;
 
     // Private functions
-    void removeIllegalMoves(vector<Move>&, shared_ptr<Piece>&);
+    void removeIllegalMoves(std::vector<Move>&, std::shared_ptr<Piece>&);
 };

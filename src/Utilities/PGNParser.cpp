@@ -27,7 +27,7 @@ void PGNParser::loadFromFile(const char* fileName) {
 
     while (getline(file, line)) {
         bool ignore = false;
-        string lastMove;
+        std::string lastMove;
         for (char c: line) {
             if (c == '}' || c == ']') {
                 ignore = false;

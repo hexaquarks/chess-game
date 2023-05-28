@@ -5,13 +5,13 @@ King::King(Team team, int x, int y): Piece(team, x, y, PieceType::KING, "k")
 {
 }
 
-vector<Move> King::calcPossibleMoves(Board& board_) const
+std::vector<Move> King::calcPossibleMoves(Board& board_) const
 {
-    vector<Move> moves;
+    std::vector<Move> moves;
     int x = getX();
     int y = getY();
     coor2d kingCoor = {x, y};
-    shared_ptr<Piece> kingPtr = board_.getBoardTile(y, x);
+    std::shared_ptr<Piece> kingPtr = board_.getBoardTile(y, x);
 
     // Checking castling
     if (canCastleKingSide(board_))
@@ -19,15 +19,15 @@ vector<Move> King::calcPossibleMoves(Board& board_) const
     if (canCastleQueenSide(board_))
         moves.push_back(Move({x, 2}, kingCoor, kingPtr, MoveType::CASTLE_QUEENSIDE));
 
-    for (int i = max(0, x-1); i <= min(7, x+1); ++i)
+    for (int i = std::max(0, x-1); i <= std::min(7, x+1); ++i)
     {
-        for (int j = max(0, y-1); j <= min(7, y+1); ++j)
+        for (int j = std::max(0, y-1); j <= std::min(7, y+1); ++j)
         {
             // King cannot stay in same place
             if (x == i && y == j) continue;
 
             // If position is empty or piece on it is of the opposite colour
-            shared_ptr<Piece> piece = board_.getBoardTile(j, i);
+            std::shared_ptr<Piece> piece = board_.getBoardTile(j, i);
             if (!piece || piece->getTeam() != getTeam())
             {
                 // Move king to test
@@ -53,15 +53,15 @@ vector<Move> King::calcPossibleMoves(Board& board_) const
     return moves;
 }
 
-vector<Move> King::possibleMovesNoCheck(Board& board_) const {
-    vector<Move> moves;
+std::vector<Move> King::possibleMovesNoCheck(Board& board_) const {
+    std::vector<Move> moves;
     int x = getX();
     int y = getY();
     coor2d kingCoor = {x, y};
-    shared_ptr<Piece> kingPtr = board_.getBoardTile(y, x);
+    std::shared_ptr<Piece> kingPtr = board_.getBoardTile(y, x);
 
-    for (int i = max(0, x-1); i <= min(7, x+1); ++i) {
-        for (int j = max(0, y-1); j <= min(7, y+1); ++j) {
+    for (int i = std::max(0, x-1); i <= std::min(7, x+1); ++i) {
+        for (int j = std::max(0, y-1); j <= std::min(7, y+1); ++j) {
             // King cannot stay in same place
             if (x == i && y == j) continue;
 
@@ -79,11 +79,11 @@ bool King::isChecked(Board& board_) const {
     // Looping through every piece
     for (size_t row = 0; row < 8; ++row) {
         for (size_t col = 0; col < 8; ++col) {
-            shared_ptr<Piece> p = board_.getBoardTile(col, row);
+            std::shared_ptr<Piece> p = board_.getBoardTile(col, row);
 
             // If piece has opposite colour, it is a potential danger
             if (p && p->getTeam() != getTeam()) {
-                vector<Move> positions = (p->getType() == PieceType::KING)?
+                std::vector<Move> positions = (p->getType() == PieceType::KING)?
                     ((King*) p.get())->possibleMovesNoCheck(board_): p->calcPossibleMoves(board_);
 
                 // Loop through every possible move to see if king is in danger or not
@@ -103,7 +103,7 @@ bool King::canCastleKingSide(Board& board_) const {
     const int rookRow = (getTeam() == Team::WHITE)? 7: 0;
 
     // If rook is not at position (rookRow, 7), forget it
-    shared_ptr<Piece> rightCorner = board_.getBoardTile(7, rookRow);
+    std::shared_ptr<Piece> rightCorner = board_.getBoardTile(7, rookRow);
     if (!rightCorner || rightCorner->getType() != PieceType::ROOK || rightCorner->getTeam() != getTeam())
         return false;
 
@@ -132,7 +132,7 @@ bool King::canCastleQueenSide(Board& board_) const {
     const int rookRow = (getTeam() == Team::WHITE)? 7: 0;
 
     // If rook is not at position (rookRow, 0), forget it
-    shared_ptr<Piece> leftCorner = board_.getBoardTile(0, rookRow);
+    std::shared_ptr<Piece> leftCorner = board_.getBoardTile(0, rookRow);
     if (!leftCorner || leftCorner->getType() != PieceType::ROOK || leftCorner->getTeam() != getTeam())
         return false;
 

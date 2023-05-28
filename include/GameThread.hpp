@@ -19,8 +19,6 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-using namespace sf;
-
 class SidePanel; // Forward declaration
 class MoveSelectionPanel; // Forward declaration
 

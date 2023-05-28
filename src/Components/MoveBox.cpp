@@ -3,7 +3,7 @@
 #include "../../include/Utilities/UIConstants.hpp"
 #include "../../include/Ressources/RessourceManager.hpp"
 
-MoveBox::MoveBox(coor2d& position_, string& text_): m_position(position_), m_text(text_)
+MoveBox::MoveBox(coor2d& position_, std::string& text_): m_position(position_), m_text(text_)
 {
 }
 

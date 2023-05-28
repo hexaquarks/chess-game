@@ -15,10 +15,10 @@ public:
         if (m_second_piece) return m_hasArrived && m_second_hasArrived;
         return m_hasArrived;
     }
-    shared_ptr<Piece> getPiece() const { return m_piece; }
-    shared_ptr<Piece> getSecondPiece() const { return m_second_piece; }
-    shared_ptr<Piece> getCapturedPiece() const { return m_captured; }
-    shared_ptr<Piece> getPromotingPiece() const { return m_promoting_piece; }
+    std::shared_ptr<Piece> getPiece() const { return m_piece; }
+    std::shared_ptr<Piece> getSecondPiece() const { return m_second_piece; }
+    std::shared_ptr<Piece> getCapturedPiece() const { return m_captured; }
+    std::shared_ptr<Piece> getPromotingPiece() const { return m_promoting_piece; }
     coor2d getIncrement() const { return m_increment; }
     coor2d getSecondIncrement() const { return m_second_increment; }
     coor2d getDestination() const { return m_destination; }
@@ -36,12 +36,12 @@ public:
     void setDestination(coor2d&& dest) { m_destination = dest; }
     void setSecondDestination(coor2d&& dest) { m_second_destination = dest; }
     void resetPieces() { m_piece.reset(); m_second_piece.reset(); }
-    void setTransitioningPiece(shared_ptr<Piece>& p) { m_piece = p; }
-    void setSecondTransitioningPiece(shared_ptr<Piece>& p) { m_second_piece = p; }
+    void setTransitioningPiece(std::shared_ptr<Piece>& p) { m_piece = p; }
+    void setSecondTransitioningPiece(std::shared_ptr<Piece>& p) { m_second_piece = p; }
     void setIsTransitioning(bool b) { m_isTransitioning = b; }
     void setSecondIsTransitioning(bool b) { m_second_isTransitioning = b; }
-    void setCapturedPiece(shared_ptr<Piece>&, int, int);
-    void setPromotingPiece(shared_ptr<Piece>& p) { m_promoting_piece = p; }
+    void setCapturedPiece(std::shared_ptr<Piece>&, int, int);
+    void setPromotingPiece(std::shared_ptr<Piece>& p) { m_promoting_piece = p; }
     void setIncrement();
     void setSecondIncrement();
     void setHasArrived(Board&);
@@ -51,10 +51,10 @@ public:
     void move(Board&);
 
 private:
-    shared_ptr<Piece> m_piece;
-    shared_ptr<Piece> m_second_piece;
-    shared_ptr<Piece> m_captured;
-    shared_ptr<Piece> m_promoting_piece;
+    std::shared_ptr<Piece> m_piece;
+    std::shared_ptr<Piece> m_second_piece;
+    std::shared_ptr<Piece> m_captured;
+    std::shared_ptr<Piece> m_promoting_piece;
     coor2d m_currPos;
     coor2d m_second_currPos;
     coor2d m_destination;

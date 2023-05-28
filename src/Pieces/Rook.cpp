@@ -7,9 +7,9 @@ Rook::Rook(Team team_, int x_, int y_)
 {
 }
 
-vector<Move> Rook::calcPossibleMoves(Board& board_) const
+std::vector<Move> Rook::calcPossibleMoves(Board& board_) const
 {
-    vector<Move> moves;
+    std::vector<Move> moves;
     addHorizontalAndVerticalMovements(board_, moves);
     return moves;
 }

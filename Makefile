@@ -2,7 +2,7 @@
 
 CMD := g++
 LIB := -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
-FLAGS := -std=c++17 -g -O3
+FLAGS := -std=c++17 -O3
 RM := rm -rf
 SRC := src/
 OBJ := obj/

@@ -8,9 +8,9 @@ Knight::Knight(Team team, int x, int y):
 {
 }
 
-vector<Move> Knight::calcPossibleMoves(Board& board_) const
+std::vector<Move> Knight::calcPossibleMoves(Board& board_) const
 {
-    vector<Move> moves;
+    std::vector<Move> moves;
     int xPos = getX();
     int yPos = getY();
 
@@ -25,7 +25,7 @@ vector<Move> Knight::calcPossibleMoves(Board& board_) const
 
         if (x >= 0 && y >= 0 && x < 8 && y < 8)
         {
-            shared_ptr<Piece> p = board_.getBoardTile(yPos, xPos);
+            std::shared_ptr<Piece> p = board_.getBoardTile(yPos, xPos);
             if (!board_.getBoardTile(y, x))
                 moves.push_back(Move({x, y}, {xPos, yPos}, p, MoveType::NORMAL));
             else if (board_.getBoardTile(y, x)->getTeam() != getTeam())
