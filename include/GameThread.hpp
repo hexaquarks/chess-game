@@ -52,8 +52,9 @@ private:
     /* Graphical functions */
     static bool handleMouseButtonPressedLeft(Event&, ui::ClickState& clickState, ui::DragState&, ui::UIManager&);
     static bool handleMouseButtonPressedRight(Event&, ui::ClickState& clickState, ui::DragState&, ui::ArrowsInfo&);
-    static bool handleMouseMoved(Event&, ui::ClickState&, ui::ArrowsInfo&, ui::UIManager&);
-    static bool handleMouseButtonReleasedLeft(Event&, ui::ClickState&, ui::DragState&, ui::ArrowsInfo&, ui::UIManager&);
+    static bool handleMouseMoved(ui::ClickState&, ui::ArrowsInfo&, ui::UIManager&);
+    static bool handleMouseButtonReleasedLeft(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&, ui::UIManager&);
+    static bool handleMouseButtonReleasedRight(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&);
     static void handleKeyPressed(const Event&, MoveSelectionPanel&, vector<Arrow>&, bool&);
 
     inline static bool isFlipped = false;

@@ -70,7 +70,7 @@ void GameThread::startGame()
             // Dragging a piece around
             if (event.type == Event::MouseMoved && aPieceIsHandled)
             {
-                if (!handleMouseMoved(event, clickState, arrowsInfo, uiManager)) continue;
+                if (!handleMouseMoved(clickState, arrowsInfo, uiManager)) continue;
             }
 
             // Mouse button released
@@ -78,31 +78,11 @@ void GameThread::startGame()
             {
                 if (event.mouseButton.button == Mouse::Left)
                 {    
-                    if (!handleMouseButtonReleasedLeft(event, clickState, dragState, arrowsInfo, uiManager)) continue;
+                    if (!handleMouseButtonReleasedLeft(clickState, dragState, arrowsInfo, uiManager)) continue;
                 }
                 if (event.mouseButton.button == Mouse::Right)
                 {
-                    if (clickState.pSelectedPiece && dragState.pieceIsMoving)
-                    {
-                        // Reset the piece back
-                        board.setBoardTile(dragState.lastXPos, dragState.lastYPos, clickState.pSelectedPiece, false);
-                        clickState.pSelectedPiece.reset();
-                        dragState.pieceIsMoving = false;
-                    }
-                    else if (clickState.isRightClicking)
-                    {
-                        // add arrow to arrow list to be drawn
-                        if (arrowsInfo.currArrow.isDrawable())
-                        {
-                            if (!arrowsInfo.currArrow.removeArrow(arrowsInfo.arrows)) 
-                            {
-                                arrowsInfo.arrows.push_back(arrowsInfo.currArrow);
-                            }
-                        }
-                        clickState.isRightClicking = false;
-                        clickState.rightClickAnchor = {0, 0};
-                        arrowsInfo.currArrow.resetParameters();
-                    }
+                    if (!handleMouseButtonReleasedRight(clickState, dragState, arrowsInfo)) continue;;
                 }
             }
 
@@ -182,7 +162,7 @@ bool GameThread::handleMouseButtonPressedRight(Event& event, ui::ClickState& cli
     return true;
 }
 
-bool GameThread::handleMouseMoved(Event& event, ui::ClickState& clickState, ui::ArrowsInfo& arrowsInfo, ui::UIManager& uiManager)
+bool GameThread::handleMouseMoved(ui::ClickState& clickState, ui::ArrowsInfo& arrowsInfo, ui::UIManager& uiManager)
 {
     // Update the position of the piece that is being moved
     Vector2i mousePosition = Mouse::getPosition(uiManager.getWindow());
@@ -197,7 +177,7 @@ bool GameThread::handleMouseMoved(Event& event, ui::ClickState& clickState, ui::
     return true;
 }
 
-bool GameThread::handleMouseButtonReleasedLeft(Event& event, ui::ClickState& clickState, ui::DragState& dragState, ui::ArrowsInfo& arrowsInfo, ui::UIManager& uiManager)
+bool GameThread::handleMouseButtonReleasedLeft(ui::ClickState& clickState, ui::DragState& dragState, ui::ArrowsInfo& arrowsInfo, ui::UIManager& uiManager)
 {
     // Handle menu bar buttons
     if (clickState.mousePos.second < ui::g_MENUBAR_HEIGHT)
@@ -303,6 +283,33 @@ bool GameThread::handleMouseButtonReleasedLeft(Event& event, ui::ClickState& cli
     clickState.pieceIsClicked = false;
     clickState.mousePos = {0, 0};
     dragState.pieceIsMoving = false;
+
+    return true;
+}
+
+bool GameThread::handleMouseButtonReleasedRight(ui::ClickState& clickState, ui::DragState& dragState, ui::ArrowsInfo& arrowsInfo)
+{ 
+    if (clickState.pSelectedPiece && dragState.pieceIsMoving)
+    {
+        // Reset the piece back
+        board.setBoardTile(dragState.lastXPos, dragState.lastYPos, clickState.pSelectedPiece, false);
+        clickState.pSelectedPiece.reset();
+        dragState.pieceIsMoving = false;
+    }
+    else if (clickState.isRightClicking)
+    {
+        // add arrow to arrow list to be drawn
+        if (arrowsInfo.currArrow.isDrawable())
+        {
+            if (!arrowsInfo.currArrow.removeArrow(arrowsInfo.arrows)) 
+            {
+                arrowsInfo.arrows.push_back(arrowsInfo.currArrow);
+            }
+        }
+        clickState.isRightClicking = false;
+        clickState.rightClickAnchor = {0, 0};
+        arrowsInfo.currArrow.resetParameters();
+    }
 
     return true;
 }
