@@ -14,10 +14,10 @@ public:
     Arrow(): m_rotation(0), m_size(0){};
     Arrow(coor2d, coor2d, int, std::string);
 
-    std::string getFilename() { return m_filename; }
-    coor2d getOrigin() { return m_origin; }
+    const std::string& getFilename() { return m_filename; }
+    const coor2d& getOrigin() { return m_origin; }
+    const coor2d& getDestination() { return m_destination; }
     coor2d getFormattedOrigin() const;
-    coor2d getDestination() { return m_destination; }
     int getRotation() { return m_rotation; }
 
     void setCoordinates(const coor2d&,const coor2d&);
@@ -40,3 +40,5 @@ private:
 
     bool operator==(Arrow&) const;
 };
+
+void setPoint(coor2d&, const coor2d&);

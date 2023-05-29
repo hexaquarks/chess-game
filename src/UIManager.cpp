@@ -250,7 +250,7 @@ namespace ui {
             shared_ptr<Texture> t = RessourceManager::getTexture(arrow.getFilename());
             if (!t) return;
             Sprite s(*t);
-            const coor2d arrowOrigin = arrow.getFormattedOrigin();
+            const coor2d& arrowOrigin = arrow.getFormattedOrigin();
 
             if (arrow.isLArrow())
             {
@@ -314,7 +314,8 @@ namespace ui {
     void UIManager::drawTransitioningPiece(PieceTransition& piece_)
     {
         shared_ptr<Piece> captured = piece_.getCapturedPiece();
-        piece_.move(m_board);
+        piece_.move();
+        
         shared_ptr<Texture> t = RessourceManager::getTexture(piece_.getPiece());
         if (!t) return;
 

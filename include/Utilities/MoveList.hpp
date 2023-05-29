@@ -17,7 +17,7 @@ public:
 
     MoveTree::Iterator getNewIterator() { return m_moves.begin(); }
     MoveTree::Iterator getIterator() { return m_moveIterator; }
-    MoveTree getMoves() const { return m_moves; }
+    const MoveTree& getMoves() const { return m_moves; }
     PieceTransition& getTransitioningPiece() const { return m_transitioningPiece; }
     int getIteratorIndex() { return 0; }
     int getMoveListSize() const { return m_moves.getNumberOfMoves(); }

@@ -378,7 +378,7 @@ void GameThread::handleKeyPressed(
 {
     // If a piece is already moving, make it arrive
     if (transitioningPiece.getIsTransitioning())
-        transitioningPiece.setHasArrived(board);
+        transitioningPiece.setHasArrived();
 
     shared_ptr<Move> move;
     switch (event_.key.code)

@@ -19,13 +19,13 @@ public:
     Move(const Move&, const std::shared_ptr<Piece>&, const coor2d& = std::make_pair(-1, -1)); // Constructor for CAPTURE, EN PASSANT
     Move(const std::string&);
 
-    std::vector<Arrow> getMoveArrows() { return m_arrows; }
+    const std::vector<Arrow>& getMoveArrows() { return m_arrows; }
     MoveType getMoveType() const { return m_MoveType; }
-    std::shared_ptr<Piece> getSelectedPiece() const { return m_selectedPiece; }
-    std::shared_ptr<Piece> getCapturedPiece() const { return m_capturedPiece; }
-    coor2d getTarget() const { return m_target; }
-    coor2d getInit() const { return m_init; }
-    coor2d getSpecial() const { return m_special; }
+    const std::shared_ptr<Piece>& getSelectedPiece() const { return m_selectedPiece; }
+    const std::shared_ptr<Piece>& getCapturedPiece() const { return m_capturedPiece; }
+    const coor2d& getTarget() const { return m_target; }
+    const coor2d& getInit() const { return m_init; }
+    const coor2d& getSpecial() const { return m_special; }
 
     bool kingIsChecked() const { return m_kingChecked; }
     bool hasNoMovesAvailable() const { return m_noMovesAvailable; }

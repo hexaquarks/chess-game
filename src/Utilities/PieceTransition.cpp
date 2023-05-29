@@ -26,7 +26,7 @@ bool PieceTransition::pieceIsInBounds() const
     return xArrived() && yArrived() && xSecondArrived() && ySecondArrived();
 }
 
-void PieceTransition::move(Board& game)
+void PieceTransition::move()
 {
     if (!m_piece) return;
 
@@ -38,14 +38,14 @@ void PieceTransition::move(Board& game)
 
     if (pieceIsInBounds())
     {
-        setHasArrived(game);
+        setHasArrived();
         return;
     }
 
     updateDistToDest();
 }
 
-void PieceTransition::setHasArrived(Board& board_)
+void PieceTransition::setHasArrived()
 {
     // Piece has arrived at destination
     m_hasArrived = true;

@@ -20,7 +20,7 @@ int sign(T val_)
 
 namespace // anonymous namespace
 {
-    bool checkOutOfBounds(coor2d& destination_)
+    bool checkOutOfBounds(const coor2d& destination_)
     {
         return (
             destination_.first < 0 || destination_.first > ui::g_WINDOW_SIZE ||
@@ -30,14 +30,14 @@ namespace // anonymous namespace
 
     void checkKnightSquares(int dx_, int dy_, int& rotation_, std::string& filename_, bool& isLarrow_)
     {
-        std::vector<coor2d>::const_iterator it_ur = urCoords.begin();
-        std::vector<coor2d>::const_iterator it_ru = ruCoords.begin();
+        auto it_ur = urCoords.begin();
+        auto it_ru = ruCoords.begin();
 
         while (it_ur != urCoords.end())
         {
             if (it_ur->first == dx_ && it_ur->second == dy_)
             {
-                rotation_ = (it_ur - urCoords.begin())*90;
+                rotation_ = (it_ur - urCoords.begin()) * 90;
                 filename_ = "arrow_Nur.png";
                 break;
             }
@@ -60,9 +60,16 @@ Arrow::Arrow(coor2d origin_, coor2d destination_, int rotation_, std::string fil
 
 void Arrow::setOrigin(const coor2d& origin_)
 {
-    // Need to format the origin to be at the center of the tile
-    m_origin.first = origin_.first;
-    m_origin.second = origin_.second - ui::g_MENUBAR_HEIGHT;
+    setPoint(m_origin, origin_);
+}
+
+void Arrow::setDestination(const coor2d& destination_)
+{
+    setPoint(m_destination, destination_);
+
+    int formattedCellSize = static_cast<int>(ui::g_CELL_SIZE);
+    m_dx = (m_destination.first / formattedCellSize - m_origin.first / formattedCellSize);
+    m_dy = (m_destination.second / formattedCellSize - m_origin.second / formattedCellSize);
 }
 
 coor2d Arrow::getFormattedOrigin() const
@@ -72,31 +79,25 @@ coor2d Arrow::getFormattedOrigin() const
     return {x, y};
 }
 
-void Arrow::setDestination(const coor2d& destination_)
-{
-    m_destination.first = destination_.first;
-    m_destination.second = destination_.second - ui::g_MENUBAR_HEIGHT;
-
-    // Tile coordinates
-    m_dx = (m_destination.first/(int)ui::g_CELL_SIZE - m_origin.first/(int)ui::g_CELL_SIZE);
-    m_dy = (m_destination.second/(int)ui::g_CELL_SIZE - m_origin.second/(int)ui::g_CELL_SIZE);
-}
-
 void Arrow::updateArrow()
 {
     // Check if arrow is feasible
-    if (m_dx == 0 && m_dy == 0) return;
+    if (m_dx == 0 && m_dy == 0) return; // Do nothing, arrow is at the same spot
+    if (checkOutOfBounds(m_destination)) return; // Do nothing, arrow out of window
+
     if (m_dx != 0 || m_dy != 0) m_rotation = g_rotation[1 + sign(m_dx)][1 + sign(m_dy)];
 
     const int size = std::max(abs(m_dx), abs(m_dy));
     if (size == 0) return; // Do nothing, arrow too short
-    if (checkOutOfBounds(m_destination)) return; // Do nothing, arrow out of window
+    
+    bool isKnightArrow = abs(abs(m_dx)-abs(m_dy)) == 1 && abs(m_dx) > 0 && abs(m_dy) > 0;
+    bool isDiagonalArrow = abs(m_dx) == abs(m_dy);
 
-    if (abs(abs(m_dx)-abs(m_dy)) == 1 && abs(m_dx) > 0 && abs(m_dy) > 0) 
+    if (isKnightArrow) 
     {
         checkKnightSquares(m_dx, m_dy,m_rotation, m_filename, m_isLArrow);
     }
-    else if (abs(m_dx) == abs(m_dy))
+    else if (isDiagonalArrow)
     {
         m_filename = "arrow_d" + std::to_string(size) + "x.png";
         m_isLArrow = false;
@@ -123,7 +124,7 @@ bool Arrow::isDrawable() const
 
 bool Arrow::removeArrow(std::vector<Arrow>& arrows_) const
 {
-    std::vector<Arrow>::iterator it = arrows_.begin();
+    auto it = arrows_.begin();
     bool removed = false;
 
     while (it != arrows_.end())
@@ -145,4 +146,10 @@ bool Arrow::operator==(Arrow& rhs_) const
         rhs_.getFilename() == m_filename &&
         rhs_.getRotation() == m_rotation
     );
+}
+
+void setPoint(coor2d& point_, const coor2d& value_)
+{
+    point_.first = value_.first;
+    point_.second = value_.second - ui::g_MENUBAR_HEIGHT;
 }

@@ -15,16 +15,16 @@ public:
         if (m_second_piece) return m_hasArrived && m_second_hasArrived;
         return m_hasArrived;
     }
-    std::shared_ptr<Piece> getPiece() const { return m_piece; }
-    std::shared_ptr<Piece> getSecondPiece() const { return m_second_piece; }
-    std::shared_ptr<Piece> getCapturedPiece() const { return m_captured; }
-    std::shared_ptr<Piece> getPromotingPiece() const { return m_promoting_piece; }
-    coor2d getIncrement() const { return m_increment; }
-    coor2d getSecondIncrement() const { return m_second_increment; }
-    coor2d getDestination() const { return m_destination; }
-    coor2d getSecondDestination() const { return m_second_destination; }
-    coor2d getCurrPos() const { return m_currPos; }
-    coor2d getSecondCurrPos() const { return m_second_currPos; }
+    const std::shared_ptr<Piece>& getPiece() const { return m_piece; }
+    const std::shared_ptr<Piece>& getSecondPiece() const { return m_second_piece; }
+    const std::shared_ptr<Piece>& getCapturedPiece() const { return m_captured; }
+    const std::shared_ptr<Piece>& getPromotingPiece() const { return m_promoting_piece; }
+    const coor2d& getIncrement() const { return m_increment; }
+    const coor2d& getSecondIncrement() const { return m_second_increment; }
+    const coor2d& getDestination() const { return m_destination; }
+    const coor2d& getSecondDestination() const { return m_second_destination; }
+    const coor2d& getCurrPos() const { return m_currPos; }
+    const coor2d& getSecondCurrPos() const { return m_second_currPos; }
     int getCapturedX() const { return capturedXPos; }
     int getCapturedY() const { return capturedYPos; }
     double getPercentageLeft() const { return distance_to_dest / original_dest; }
@@ -44,11 +44,11 @@ public:
     void setPromotingPiece(std::shared_ptr<Piece>& p) { m_promoting_piece = p; }
     void setIncrement();
     void setSecondIncrement();
-    void setHasArrived(Board&);
+    void setHasArrived();
     void setUndo(bool value_) { undoMove = value_; }
 
     // Utilities
-    void move(Board&);
+    void move();
 
 private:
     std::shared_ptr<Piece> m_piece;

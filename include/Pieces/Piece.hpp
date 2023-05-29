@@ -32,7 +32,7 @@ public:
     /* Getters */
     Team getTeam() const { return m_team; };
     PieceType getType() const { return m_type; }
-    std::string getFileName() const { return m_filename; }
+    const std::string& getFileName() const { return m_filename; }
     MoveType getLastMove() const { return m_lastMove; }
     static std::shared_ptr<Piece> getLastMovedPiece() { return m_lastPiece; }
     int getX() const { return m_xPos; }
