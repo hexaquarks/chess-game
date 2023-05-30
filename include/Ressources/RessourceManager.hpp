@@ -7,10 +7,12 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
-typedef std::unordered_map<std::string, std::shared_ptr<sf::Texture>> textureMap;
-typedef std::unordered_map<std::string, std::shared_ptr<sf::SoundBuffer>> audioMap;
-typedef std::unordered_map<std::string, std::shared_ptr<sf::Font>> fontsMap;
+template<typename T>
+using ResourceMap = std::unordered_map<std::string, std::shared_ptr<T>>;
 
+using TextureMap = ResourceMap<sf::Texture>;
+using AudioMap = ResourceMap<sf::SoundBuffer>;
+using FontsMap = ResourceMap<sf::Font>;
 
 class RessourceManager
 {
@@ -22,9 +24,13 @@ public:
 
     static void loadRessources();
 
-    static void addTexture(const std::string& name);
-    static void addFont(const std::string& name);
-    static std::shared_ptr<sf::Texture> getTexture(const std::string &name);
+    template<typename Resource, typename Container>
+    static void addResource(const std::string&, const std::string&, Container&);
+
+    template<typename Resource>
+    static std::shared_ptr<Resource> getResource(const std::string&, const ResourceMap<Resource>&);
+
+    static std::shared_ptr<sf::Texture> getTexture(const std::string&);
     static std::shared_ptr<sf::Texture> getTexture(const std::shared_ptr<Piece>& piece) {
         return getTexture(piece->getFileName());
     }
@@ -52,6 +58,23 @@ private:
     };
 
     inline const static std::string m_fontNames[1] = {"Arial.ttf"};
-    inline static textureMap m_textures;
-    inline static fontsMap m_fonts;
+    inline static TextureMap m_textures;
+    inline static FontsMap m_fonts;
 };
+
+template<typename Resource, typename Container>
+void RessourceManager::addResource(const std::string& resourceName_, const std::string& filepath_, Container& resources_)
+{
+    auto resource = std::make_shared<Resource>();
+    resource->loadFromFile(filepath_);
+    resources_.emplace(resourceName_, resource);
+}
+
+template<typename Resource>
+std::shared_ptr<Resource> RessourceManager::getResource(const std::string& name_, const ResourceMap<Resource>& map_) {
+    for (const auto& [first, second] : map_)
+    {
+        if (first == name_) return second;
+    }
+    return {};
+}
