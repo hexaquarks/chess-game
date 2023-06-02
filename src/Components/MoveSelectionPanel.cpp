@@ -43,7 +43,7 @@ void MoveSelectionPanel::handleSubPanels()
 
 void MoveSelectionPanel::handleVariations(vector<std::string>& variations_)
 {
-    int counter = 0;
+    size_t counter = 0;
     for (const auto& text : variations_)
     {
         // Draw the rectangle container for the variation text
