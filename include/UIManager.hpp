@@ -52,7 +52,7 @@ namespace ui {
     
     class UIManager {
         public:
-            UIManager(Board&, MoveTree::Iterator&, MoveList&);
+            UIManager(Board&, MoveList&);
             void draw(ClickState&, DragState&, ArrowsInfo&, bool, bool, bool);
 
             void display() { m_window.display(); }
@@ -80,7 +80,7 @@ namespace ui {
             std::vector<MenuButton> m_menuBar;
             PieceTransition m_transitioningPiece;
 
-            MoveTree::Iterator m_treeIterator;
+            MoveList& m_moveList;
             SidePanel m_sidePanel;
             MoveSelectionPanel m_moveSelectionPanel;
 
@@ -100,5 +100,6 @@ namespace ui {
             void drawMoveSelectionPanel(int);
             void drawGrayCover();
             void drawBoardSquares();
+            void highlightLastMove();
     }; 
 }

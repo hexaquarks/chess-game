@@ -37,14 +37,12 @@ public:
         shared_ptr<Piece>&, int, int,
         int, int, PieceTransition&
     );
-    static void highlightLastMove(RenderWindow&);
-
+    
 private:
     inline static Board board;
     inline static PieceTransition transitioningPiece;
     inline static MoveList moveList{board, transitioningPiece};
-    // inline static MoveTree moveTree;
-    inline static MoveTree::Iterator treeIterator = moveList.getIterator();
+    inline static MoveTree::Iterator& treeIterator = moveList.getIterator();
     inline static bool kingChecked = false;
     inline static bool noMovesAvailable = false;
     inline static shared_ptr<Piece> pLastMove;

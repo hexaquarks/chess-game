@@ -20,11 +20,16 @@ bool MoveList::goToPreviousMove(bool enableTransition_, vector<Arrow>& arrowList
     return false;
 }
 
-bool MoveList::goToNextMove(bool enableTransition_, vector<Arrow>& arrowList_)
+bool MoveList::goToNextMove(
+    bool enableTransition_, 
+    const std::optional<size_t>& moveChildNumber_, 
+    vector<Arrow>& arrowList_)
 {
     if (!m_moveIterator.isAtTheEnd())
     {
-        ++m_moveIterator;
+        // Go to first children in the move list of the node, or at the specified index.
+        m_moveIterator.goToChild(moveChildNumber_.value_or(0));
+
         applyMove(enableTransition_, arrowList_);
         game.switchTurn();
         game.updateAllCurrentlyAvailableMoves();
@@ -39,7 +44,9 @@ void MoveList::addMove(shared_ptr<Move>& move_, vector<Arrow>& arrowList_)
     applyMove(move_, true, true, arrowList_);
 }
 
-void MoveList::applyMove(bool enableTransition_, vector<Arrow>& arrowList_)
+void MoveList::applyMove(
+    bool enableTransition_, 
+    vector<Arrow>& arrowList_)
 {
     applyMove(m_moveIterator->m_move, false, enableTransition_, arrowList_);
 }
@@ -47,6 +54,7 @@ void MoveList::applyMove(bool enableTransition_, vector<Arrow>& arrowList_)
 void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTransition_, vector<Arrow>& arrowList_)
 {
     if (!move_) return;
+    
     const int castleRow = (game.getTurn() == Team::WHITE)? 7: 0;
     shared_ptr<Piece> pOldPiece;
     shared_ptr<Piece> pSecondPiece;

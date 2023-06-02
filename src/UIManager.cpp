@@ -8,11 +8,10 @@ class MoveList;
 namespace ui {
     UIManager::UIManager(
     Board& board_, 
-    MoveTree::Iterator& treeIterator_,
     MoveList& moveList_
     ) :
         m_board(board_),
-        m_treeIterator(treeIterator_),
+        m_moveList(moveList_),
         m_sidePanel(m_window, moveList_, m_showMoveSelectionPanel),
         m_moveSelectionPanel(m_window, m_sidePanel)
     {
@@ -39,17 +38,21 @@ namespace ui {
         bool noMovesAvailable_,
         bool kingIsChecked_)
     {
+        // Note that order of function calls in this function is important
+        // otherwise drawing is affected negatively.
         drawMenuBar();
         drawBoardSquares();
         drawSidePanel(m_sidePanel);
 
         if (kingChecked_) drawKingCheckCircle();
 
-        if ((dragState_.pieceIsMoving || clickState_.pieceIsClicked) && clickState_.pSelectedPiece)
+        const bool needToDrawCirclesAndHighlightSquares = (dragState_.pieceIsMoving || clickState_.pieceIsClicked) && clickState_.pSelectedPiece;
+        if (needToDrawCirclesAndHighlightSquares)
         {
             drawCaptureCircles(clickState_.pSelectedPiece, m_board.getAllCurrentlyAvailableMoves());
             highlightHoveredSquare(clickState_.pSelectedPiece, clickState_.mousePos,  m_board.getAllCurrentlyAvailableMoves());
         }
+        highlightLastMove();
         drawPieces();
         if (dragState_.pieceIsMoving) drawDraggedPiece(clickState_.pSelectedPiece, clickState_.mousePos);
         if (m_transitioningPiece.getIsTransitioning()) {
@@ -60,7 +63,7 @@ namespace ui {
         if (m_showMoveSelectionPanel)
         {
             drawGrayCover();
-            m_moveSelectionPanel.drawMoveSelectionPanel(m_treeIterator);
+            m_moveSelectionPanel.drawMoveSelectionPanel(m_moveList.getIterator());
         }   
 
         // End conditions
@@ -185,13 +188,43 @@ namespace ui {
         }
     }
 
+    void UIManager::highlightLastMove()
+    {
+        shared_ptr<Move> move = m_moveList.getIterator()->m_move;
+        if (!move) return;
+        
+        RectangleShape squareBefore = ui::createSquare();
+        RectangleShape squareAfter = ui::createSquare();
+
+        Color colorInit = ((move->getInit().first + move->getInit().second) % 2)
+                        ? Color(170, 162, 58)
+                        : Color(205, 210, 106);
+        Color colorTarget = ((move->getTarget().first + move->getTarget().second) % 2)
+                        ? Color(170, 162, 58)
+                        : Color(205, 210, 106);
+        squareBefore.setFillColor(colorInit);
+        squareAfter.setFillColor(colorTarget);
+
+        squareBefore.setPosition(
+            ui::getWindowXPos(m_board.isFlipped() ? 7-move->getInit().first: move->getInit().first),
+            ui::getWindowYPos(m_board.isFlipped() ? 7-move->getInit().second: move->getInit().second)
+        );
+        squareAfter.setPosition(
+            ui::getWindowXPos(m_board.isFlipped() ? 7-move->getTarget().first: move->getTarget().first),
+            ui::getWindowYPos(m_board.isFlipped() ? 7-move->getTarget().second: move->getTarget().second)
+        );
+
+        m_window.draw(squareBefore);
+        m_window.draw(squareAfter);
+    }
+
     void UIManager::drawPieces()
     {
         for (size_t i = 0; i < 8; ++i)
         {
             for (size_t j = 0; j < 8; ++j)
             {
-                shared_ptr<Piece> piece = m_board.getBoardTile(i, j);
+                shared_ptr<Piece>& piece = m_board.getBoardTile(i, j);
                 if (!piece) continue;
 
                 // Do not draw transitioning pieces
@@ -297,7 +330,9 @@ namespace ui {
         if (kingChecked_)
         {
             shared_ptr<King> losing = m_board.getKing();
-            Texture t; t.loadFromFile(RessourceManager::getIconPath("checkmate.png"));
+            Texture t; 
+            t.loadFromFile(RessourceManager::getIconPath("checkmate.png"));
+
             Sprite checkmate(t);
             checkmate.setColor({255, 255, 255, 200});
             checkmate.setScale(g_SPECIAL_SCALE / 2, g_SPECIAL_SCALE / 2);
@@ -313,7 +348,7 @@ namespace ui {
 
     void UIManager::drawTransitioningPiece(PieceTransition& piece_)
     {
-        shared_ptr<Piece> captured = piece_.getCapturedPiece();
+        const shared_ptr<Piece>& captured = piece_.getCapturedPiece();
         piece_.move();
         
         shared_ptr<Texture> t = RessourceManager::getTexture(piece_.getPiece());
