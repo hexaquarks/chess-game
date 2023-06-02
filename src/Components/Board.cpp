@@ -131,7 +131,7 @@ void Board::removeIllegalMoves(std::vector<Move>& possibleMoves_, std::shared_pt
 
     while (it != possibleMoves_.end())
     {
-        const auto& [y, x] = (*it).getTarget();
+        const auto [y, x] = (*it).getTarget();
 
         // Store piece occupied by target square
         std::shared_ptr<Piece> temp = getBoardTile(x, y);
