@@ -33,7 +33,7 @@ set(Headers
     ./include/Pieces/Rook.hpp
     ./include/Ressources/RessourceManager.hpp
     ./include/Utilities/Arrow.hpp
-    ./include/Utilities/DrawableSf.hpp
+    ./include/Utilities/SFDrawUtil.hpp
     ./include/Utilities/Move.hpp
     ./include/Utilities/MoveList.hpp
     ./include/Utilities/MoveTree.hpp
@@ -57,7 +57,7 @@ set(Sources
     ./src/Pieces/Rook.cpp
     ./src/Ressources/RessourceManager.cpp
     ./src/Utilities/Arrow.cpp
-    ./src/Utilities/DrawableSf.cpp
+    ./src/Utilities/SFDrawUtil.cpp
     ./src/Utilities/Move.cpp
     ./src/Utilities/MoveList.cpp
     ./src/Utilities/MoveTree.cpp

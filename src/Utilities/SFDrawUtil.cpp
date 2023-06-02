@@ -1,6 +1,6 @@
-#include "../../include/Utilities/DrawableSf.hpp"
+#include "../../include/Utilities/SFDrawUtil.hpp"
 
-void DrawableSf::drawTextSf(
+void SFDrawUtil::drawTextSf(
     Text& texture_, const std::string& text_, Font& font_, int size_,
     const Text::Style& style_, const Color& color_
 )
@@ -12,7 +12,7 @@ void DrawableSf::drawTextSf(
     texture_.setFillColor(color_);
 }
 
-void DrawableSf::drawRectangleSf(
+void SFDrawUtil::drawRectangleSf(
     RectangleShape& rect_, float posX_, float posY_,
     const Vector2f& size_, const Color& color_
 )

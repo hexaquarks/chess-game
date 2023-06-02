@@ -1,11 +1,11 @@
 #include "../../include/Components/MoveSelectionPanel.hpp"
-#include "../../include/Utilities/DrawableSf.hpp"
+#include "../../include/Utilities/SFDrawUtil.hpp"
 #include "../../include/Ressources/RessourceManager.hpp"
 
 void MoveSelectionPanel::handleTitleText()
 {
     auto font = RessourceManager::getFont("Arial.ttf");
-    DrawableSf::drawTextSf(
+    SFDrawUtil::drawTextSf(
         m_title, "Select a variation", *font, 14,
         Text::Style::Regular, Color::Black
     );
@@ -17,7 +17,7 @@ void MoveSelectionPanel::handlePanelRectangle()
     m_height = g_TOP_PANEL_HEIGHT + (m_numberOfVariations * g_VARIATION_HEIGHT) + (2 * g_INNER_MARGIN);
 
     // Draw all the panel
-    DrawableSf::drawRectangleSf(
+    SFDrawUtil::drawRectangleSf(
         m_panel, ui::g_WINDOW_SIZE + ui::g_PANEL_SIZE / 3, ui::g_PANEL_SIZE / 3,
         Vector2f(g_PANEL_WIDTH, m_height), g_GRAY
     );
@@ -26,7 +26,7 @@ void MoveSelectionPanel::handlePanelRectangle()
 void MoveSelectionPanel::handleSubPanels()
 {
     // Draw top left rectangle and title text
-    DrawableSf::drawRectangleSf(
+    SFDrawUtil::drawRectangleSf(
         m_topRect, m_panel.getPosition().x, m_panel.getPosition().y,
         Vector2f(g_PANEL_WIDTH, g_TOP_PANEL_HEIGHT), g_LIGHT_WHITE
     );
@@ -35,7 +35,7 @@ void MoveSelectionPanel::handleSubPanels()
     const int h = m_height - (2 * g_INNER_MARGIN) - g_TOP_PANEL_HEIGHT;
     Vector2f panelPos{ g_INNER_MARGIN, g_TOP_PANEL_HEIGHT + g_INNER_MARGIN };
     Vector2f netPos = m_panel.getPosition() + panelPos;
-    DrawableSf::drawRectangleSf(m_variationsPanel, netPos.x, netPos.y,
+    SFDrawUtil::drawRectangleSf(m_variationsPanel, netPos.x, netPos.y,
                                 Vector2f(g_PANEL_WIDTH - (2 * g_INNER_MARGIN), h), g_LIGHT_WHITE);
     m_variationsPanel.setOutlineColor(Color::Black);
     m_variationsPanel.setOutlineThickness(2.f);
@@ -58,7 +58,7 @@ void MoveSelectionPanel::handleVariations(vector<std::string>& variations_)
         // Write the variation texts
         Text variationText;
         shared_ptr<Font> f = RessourceManager::getFont("Arial.ttf");
-        DrawableSf::drawTextSf(variationText, text, *f, 16, Text::Regular, sf::Color((counter == m_selectionIndex)? sf::Color::Black : sf::Color::Black));
+        SFDrawUtil::drawTextSf(variationText, text, *f, 16, Text::Regular, sf::Color((counter == m_selectionIndex)? sf::Color::Black : sf::Color::Black));
         variationText.setPosition(variationRect.getPosition() + Vector2f(5.f,5.f));
         m_variationTexts.push_back(variationText);
 

@@ -5,7 +5,7 @@
 #include "../include/Ressources/AudioManager.hpp"
 #include "../include/Components/SidePanel.hpp"
 #include "../include/Components/MoveSelectionPanel.hpp"
-#include "../include/Utilities/DrawableSf.hpp"
+#include "../include/Utilities/SFDrawUtil.hpp"
 #include "./Ressources/Shader.cpp"
 #include <iostream>
 #include <vector>

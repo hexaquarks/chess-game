@@ -1,7 +1,7 @@
 #include "../../include/Components/MenuButton.hpp"
 #include "../../include/GameThread.hpp"
 #include "../../include/Utilities/MoveList.hpp"
-#include "../../include/Utilities/DrawableSf.hpp"
+#include "../../include/Utilities/SFDrawUtil.hpp"
 
 enum class MenuButtonType
 {
@@ -23,7 +23,7 @@ namespace
 
     void handleRectangle(size_t i_, sf::RectangleShape& rectangle_)
     {
-        DrawableSf::drawRectangleSf(rectangle_, ui::g_BUTTON_POS*i_, 0, { ui::g_BUTTON_POS, ui::g_MENUBAR_HEIGHT }, { 23,23,23 });
+        SFDrawUtil::drawRectangleSf(rectangle_, ui::g_BUTTON_POS*i_, 0, { ui::g_BUTTON_POS, ui::g_MENUBAR_HEIGHT }, { 23,23,23 });
         rectangle_.setOutlineThickness(2.f);
         rectangle_.setOutlineColor({ 239, 242, 249 });
     }

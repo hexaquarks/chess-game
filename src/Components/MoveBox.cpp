@@ -1,5 +1,5 @@
 #include "../../include/Components/MoveBox.hpp"
-#include "../../include/Utilities/DrawableSf.hpp"
+#include "../../include/Utilities/SFDrawUtil.hpp"
 #include "../../include/Utilities/UIConstants.hpp"
 #include "../../include/Ressources/RessourceManager.hpp"
 
@@ -10,7 +10,7 @@ MoveBox::MoveBox(coor2d& position_, std::string& text_): m_position(position_), 
 void MoveBox::handleText()
 {
     auto font = RessourceManager::getFont("Arial.ttf");
-    DrawableSf::drawTextSf(m_textsf, m_text, *font, 25, Text::Bold, Color::Black);
+    SFDrawUtil::drawTextSf(m_textsf, m_text, *font, 25, Text::Bold, Color::Black);
 
     m_textBounds = m_textsf.getGlobalBounds();
 }
@@ -18,7 +18,7 @@ void MoveBox::handleText()
 void MoveBox::handleRectangle()
 {
     Vector2f recSize(m_textBounds.width, m_textsf.getCharacterSize());
-    DrawableSf::drawRectangleSf(
+    SFDrawUtil::drawRectangleSf(
         m_rectangle, ui::g_WINDOW_SIZE + m_position.first,
         ui::g_MENUBAR_HEIGHT + m_position.second, recSize, {50, 50, 50}
     );

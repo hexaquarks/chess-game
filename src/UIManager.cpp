@@ -1,5 +1,5 @@
 #include "../include/UIManager.hpp"
-#include "../include/Utilities/DrawableSf.hpp"
+#include "../include/Utilities/SFDrawUtil.hpp"
 #include "./Ressources/Shader.cpp"
 #include "../include/Components/SidePanel.hpp"
 
@@ -77,7 +77,7 @@ namespace ui {
             {
                 // Drawing the colored square
                 RectangleShape square = createSquare();
-                DrawableSf::drawRectangleSf(square, getWindowXPos(i), getWindowYPos(j), square.getSize(), colours[(i+j)%2]);
+                SFDrawUtil::drawRectangleSf(square, getWindowXPos(i), getWindowYPos(j), square.getSize(), colours[(i+j)%2]);
                 m_window.draw(square);
             }
         }
@@ -129,7 +129,7 @@ namespace ui {
     void UIManager::drawGrayCover()
     {
         RectangleShape cover{};
-        DrawableSf::drawRectangleSf(
+        SFDrawUtil::drawRectangleSf(
             cover, 0, g_MENUBAR_HEIGHT,
             Vector2f(g_WINDOW_SIZE + g_PANEL_SIZE, g_WINDOW_SIZE), Color(220, 220, 220, 75)
         );
@@ -155,7 +155,7 @@ namespace ui {
             {
                 // Currently hovering a square where the piece can move
                 RectangleShape square = createSquare();
-                DrawableSf::drawRectangleSf(square, getWindowXPos(i), getWindowYPos(j), square.getSize(), colours[(i+j)%2]);
+                SFDrawUtil::drawRectangleSf(square, getWindowXPos(i), getWindowYPos(j), square.getSize(), colours[(i+j)%2]);
                 m_window.draw(square);
             }
         }

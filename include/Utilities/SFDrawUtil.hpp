@@ -4,7 +4,7 @@
 
 using namespace sf;
 
-class DrawableSf
+class SFDrawUtil
 {
 public:
     static void drawTextSf(
