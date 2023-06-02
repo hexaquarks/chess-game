@@ -53,7 +53,7 @@ private:
     static bool handleMouseMoved(ui::ClickState&, ui::ArrowsInfo&, ui::UIManager&);
     static bool handleMouseButtonReleasedLeft(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&, ui::UIManager&);
     static bool handleMouseButtonReleasedRight(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&);
-    static void handleKeyPressed(const Event&, MoveSelectionPanel&, vector<Arrow>&, bool&);
+    static void handleKeyPressed(const Event&, ui::UIManager&, vector<Arrow>&);
 
     inline static bool isFlipped = false;
 };

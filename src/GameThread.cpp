@@ -103,7 +103,7 @@ void GameThread::startGame()
 
             if (event.type == Event::KeyPressed)
             {
-                handleKeyPressed(event, uiManager.getMoveSelectionPanel(), arrowsInfo.arrows, uiManager.showMoveSelectionPanel());
+                handleKeyPressed(event, uiManager, arrowsInfo.arrows);
             }
         }
         
@@ -349,8 +349,8 @@ void GameThread::setSecondTransitioningPiece(
 }
 
 void GameThread::handleKeyPressed(
-    const Event& event_, MoveSelectionPanel& moveSelectionPanel_,
-    vector<Arrow>& arrowList_, bool& showMoveSelectionPanel_
+    const Event& event_, ui::UIManager& uiManager_,
+    vector<Arrow>& arrowList_
 )
 {
     // If a piece is already moving, make it arrive
@@ -358,6 +358,7 @@ void GameThread::handleKeyPressed(
         transitioningPiece.setHasArrived();
 
     shared_ptr<Move> move;
+    MoveSelectionPanel& moveSelectionPanel = uiManager_.getMoveSelectionPanel();
     switch (event_.key.code)
     {
         case Keyboard::Left:
@@ -369,14 +370,18 @@ void GameThread::handleKeyPressed(
         case Keyboard::Right:
             if (treeIterator.currentNodeHasMoreThanOneVariation())
             {
-                if (showMoveSelectionPanel_)
+                if (!uiManager_.isMoveSelectionPanelOpen()) 
                 {
-                    moveList.goToNextMove(true, moveSelectionPanel_.getSelection(), arrowList_);
-
-                    move = treeIterator.get()->m_move;
-                    checkIfMoveMakesKingChecked(move, kingChecked, noMovesAvailable);
+                    uiManager_.openMoveSelectionPanel();
+                    return;
                 }
-                showMoveSelectionPanel_ = !showMoveSelectionPanel_;
+
+                moveList.goToNextMove(true, moveSelectionPanel.getSelection(), arrowList_);
+
+                move = treeIterator.get()->m_move;
+                checkIfMoveMakesKingChecked(move, kingChecked, noMovesAvailable);
+
+                uiManager_.closeMoveSelectionPanel();
                 return;
             }
             moveList.goToNextMove(true, std::nullopt, arrowList_);
@@ -388,24 +393,24 @@ void GameThread::handleKeyPressed(
             board.flipBoard();
             break;
         case Keyboard::Up:
-            showMoveSelectionPanel_
-                ? moveSelectionPanel_.goToPreviousVariation()
+            uiManager_.isMoveSelectionPanelOpen()
+                ? moveSelectionPanel.goToPreviousVariation()
                 : moveList.goToCurrentMove(arrowList_);
             break;
         case Keyboard::Down:
-            showMoveSelectionPanel_
-                ? moveSelectionPanel_.goToNextVariation()
+            uiManager_.isMoveSelectionPanelOpen()
+                ? moveSelectionPanel.goToNextVariation()
                 : moveList.goToInitialMove(arrowList_);
             break;
         case Keyboard::Enter:
-            if (showMoveSelectionPanel_)
+            if (uiManager_.isMoveSelectionPanelOpen())
             {
-                moveList.goToNextMove(true, moveSelectionPanel_.getSelection(), arrowList_);
+                moveList.goToNextMove(true, moveSelectionPanel.getSelection(), arrowList_);
                 
                 move = treeIterator.get()->m_move;
                 checkIfMoveMakesKingChecked(move, kingChecked, noMovesAvailable);
 
-                showMoveSelectionPanel_ = false; // Close the panel display
+                uiManager_.closeMoveSelectionPanel();
             }
             break;
         default: break; // Avoid pattern matching not exhaustive warning
