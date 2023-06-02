@@ -7,9 +7,9 @@ void DrawableSf::drawTextSf(
 {
     texture_.setString(text_);
     texture_.setFont(font_);
-    texture_.setCharacterSize(28);
-    texture_.setStyle(Text::Bold);
-    texture_.setFillColor({ 240, 248, 255 });
+    texture_.setCharacterSize(size_);
+    texture_.setStyle(style_);
+    texture_.setFillColor(color_);
 }
 
 void DrawableSf::drawRectangleSf(

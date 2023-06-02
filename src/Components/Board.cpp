@@ -112,13 +112,14 @@ void Board::updateAllCurrentlyAvailableMoves()
 {
     std::vector<Move> moves;
     std::vector<std::shared_ptr<Piece>> playerPieces = (m_turn == Team::WHITE)? m_whitePieces: m_blackPieces;
-    for (auto piece: playerPieces)
+
+    for (auto& piece: playerPieces)
     {
         if (piece->getX() == -1 || piece->getY() == -1) continue;
+
         std::vector<Move> pieceMoves = possibleMovesFor(piece);
         removeIllegalMoves(pieceMoves, piece);
-        for (auto& move: pieceMoves)
-            moves.push_back(move);
+        for (const auto& move: pieceMoves) moves.push_back(move);
     }
 
     m_allCurrentlyAvailableMoves = moves;
@@ -130,7 +131,7 @@ void Board::removeIllegalMoves(std::vector<Move>& possibleMoves_, std::shared_pt
 
     while (it != possibleMoves_.end())
     {
-        const auto [y, x] = (*it).getTarget();
+        const auto& [y, x] = (*it).getTarget();
 
         // Store piece occupied by target square
         std::shared_ptr<Piece> temp = getBoardTile(x, y);

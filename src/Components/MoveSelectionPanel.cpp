@@ -44,7 +44,7 @@ void MoveSelectionPanel::handleSubPanels()
 void MoveSelectionPanel::handleVariations(vector<std::string>& variations_)
 {
     int counter = 0;
-    for (auto& text : variations_)
+    for (const auto& text : variations_)
     {
         // Draw the rectangle container for the variation text
         RectangleShape variationRect{Vector2f(g_PANEL_WIDTH - 2 * g_INNER_MARGIN, g_VARIATION_HEIGHT)};
@@ -58,7 +58,7 @@ void MoveSelectionPanel::handleVariations(vector<std::string>& variations_)
         // Write the variation texts
         Text variationText;
         shared_ptr<Font> f = RessourceManager::getFont("Arial.ttf");
-        DrawableSf::drawTextSf(variationText, text, *f, 16, Text::Regular, Color((counter == m_selectionIndex)? Color::White : Color::Black));
+        DrawableSf::drawTextSf(variationText, text, *f, 16, Text::Regular, sf::Color((counter == m_selectionIndex)? sf::Color::Black : sf::Color::Black));
         variationText.setPosition(variationRect.getPosition() + Vector2f(5.f,5.f));
         m_variationTexts.push_back(variationText);
 
@@ -74,7 +74,7 @@ void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it_)
     bool showNumber = moveListSize % 2 != 0;
     vector<string> variations;
 
-    for (int i = 0; i < it_.get()->childNumber; ++i)
+    for (size_t i = 0; i < it_.get()->childNumber; ++i)
     {
         variations.push_back(
             m_sidePanel.parseMove(
@@ -93,8 +93,8 @@ void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it_)
     m_window.draw(m_panel);
     m_window.draw(m_topRect);
     m_window.draw(m_title);
-    for (auto& rect: m_variationRectangles) m_window.draw(rect);
-    for (auto& text: m_variationTexts) m_window.draw(text);
+    for (const auto& rect: m_variationRectangles) m_window.draw(rect);
+    for (const auto& text: m_variationTexts) m_window.draw(text);
 
     reset();
 }
