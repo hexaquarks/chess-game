@@ -35,6 +35,11 @@ public:
             return m_ptr->m_children.empty();
         }
 
+        bool currentNodeHasMoreThanOneVariation()
+        {
+            return m_ptr->m_children.size() > 1;
+        }
+
         void goToChild(int i) { m_ptr = m_ptr->m_children.at(i); }
 
         void addChild(shared_ptr<MoveTreeNode>& child)
@@ -119,8 +124,8 @@ public:
     void insertNode(const shared_ptr<Move>&, MoveTree::Iterator&);
     void goToNextNode(int, MoveTree::Iterator&);
     void goToPreviousNode(MoveTree::Iterator&);
-    void printTree();
-    void printTreeRec(shared_ptr<MoveTreeNode>&, vector<bool>, int a = 0, bool b = false);
+    void printTree() const;
+    void printTreeRec(shared_ptr<MoveTreeNode>&, vector<bool>, int a = 0, bool b = false) const;
     int getNumberOfMoves() const { return numberOfMoves; }
     void printPreorder(shared_ptr<MoveTreeNode>&);
     int getNodeLevel(MoveTree::Iterator&);
