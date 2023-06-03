@@ -15,7 +15,7 @@ void MoveSelectionPanel::handleTitleText()
 void MoveSelectionPanel::handlePanelRectangle()
 {
     m_height = g_TOP_PANEL_HEIGHT + (m_numberOfVariations * g_VARIATION_HEIGHT) + (2 * g_INNER_MARGIN);
-
+    cout << "height is : " << m_height << endl;
     // Draw all the panel
     SFDrawUtil::drawRectangleSf(
         m_panel, ui::g_WINDOW_SIZE + ui::g_PANEL_SIZE / 3, ui::g_PANEL_SIZE / 3,
@@ -43,7 +43,10 @@ void MoveSelectionPanel::handleSubPanels()
 
 void MoveSelectionPanel::handleVariations(vector<std::string>& variations_)
 {
-    int counter = 0;
+    // No need to redraw content.
+    if (m_variationRectangles.size() != 0 || m_variationTexts.size() != 0) return;
+
+    size_t counter = 0;
     for (const auto& text : variations_)
     {
         // Draw the rectangle container for the variation text
@@ -96,7 +99,8 @@ void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it_)
     for (const auto& rect: m_variationRectangles) m_window.draw(rect);
     for (const auto& text: m_variationTexts) m_window.draw(text);
 
-    reset();
+    cout << m_variationRectangles.size() << endl;
+    cout << m_variationTexts.size() << endl;
 }
 
 bool MoveSelectionPanel::isHowered(const coor2d& mousePos_) const
@@ -138,6 +142,6 @@ void MoveSelectionPanel::goToPreviousVariation()
 
 void MoveSelectionPanel::reset()
 {
-    // m_variationRectangles.clear();
+    m_variationRectangles.clear();
     m_variationTexts.clear();
 }

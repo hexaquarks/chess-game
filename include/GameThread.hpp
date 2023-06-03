@@ -37,14 +37,12 @@ public:
         shared_ptr<Piece>&, int, int,
         int, int, PieceTransition&
     );
-    static void highlightLastMove(RenderWindow&);
-
+    
 private:
     inline static Board board;
     inline static PieceTransition transitioningPiece;
     inline static MoveList moveList{board, transitioningPiece};
-    // inline static MoveTree moveTree;
-    inline static MoveTree::Iterator treeIterator = moveList.getIterator();
+    inline static MoveTree::Iterator& treeIterator = moveList.getIterator();
     inline static bool kingChecked = false;
     inline static bool noMovesAvailable = false;
     inline static shared_ptr<Piece> pLastMove;
@@ -55,7 +53,7 @@ private:
     static bool handleMouseMoved(ui::ClickState&, ui::ArrowsInfo&, ui::UIManager&);
     static bool handleMouseButtonReleasedLeft(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&, ui::UIManager&);
     static bool handleMouseButtonReleasedRight(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&);
-    static void handleKeyPressed(const Event&, MoveSelectionPanel&, vector<Arrow>&, bool&);
+    static void handleKeyPressed(const Event&, ui::UIManager&, vector<Arrow>&);
 
     inline static bool isFlipped = false;
 };

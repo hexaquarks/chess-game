@@ -52,7 +52,7 @@ namespace ui {
     
     class UIManager {
         public:
-            UIManager(Board&, MoveTree::Iterator&, MoveList&);
+            UIManager(Board&, MoveList&);
             void draw(ClickState&, DragState&, ArrowsInfo&, bool, bool, bool);
 
             void display() { m_window.display(); }
@@ -60,7 +60,10 @@ namespace ui {
 
             void handleSidePanelMoveBox(const coor2d&);
             bool ignoreInputWhenSelectionPanelIsActive(const coor2d&) const;
-            bool& showMoveSelectionPanel() { return m_showMoveSelectionPanel; }
+            
+            bool isMoveSelectionPanelOpen() { return m_showMoveSelectionPanel; }
+            void closeMoveSelectionPanel() { m_showMoveSelectionPanel = false; m_moveSelectionPanel.reset(); }
+            void openMoveSelectionPanel() { m_showMoveSelectionPanel = true; }
 
             // TODO architecture issue here. Should return a const ref ideally.
             MoveSelectionPanel& getMoveSelectionPanel() { return m_moveSelectionPanel; }
@@ -80,7 +83,7 @@ namespace ui {
             std::vector<MenuButton> m_menuBar;
             PieceTransition m_transitioningPiece;
 
-            MoveTree::Iterator m_treeIterator;
+            MoveList& m_moveList;
             SidePanel m_sidePanel;
             MoveSelectionPanel m_moveSelectionPanel;
 
@@ -100,5 +103,6 @@ namespace ui {
             void drawMoveSelectionPanel(int);
             void drawGrayCover();
             void drawBoardSquares();
+            void highlightLastMove();
     }; 
 }

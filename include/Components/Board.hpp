@@ -18,7 +18,7 @@ public:
     // Getters and setters
     std::vector<std::shared_ptr<Piece>> getWhitePieces() const { return m_whitePieces; }
     std::vector<std::shared_ptr<Piece>> getBlackPieces() const { return m_blackPieces; }
-    std::shared_ptr<Piece> getBoardTile(int x, int y) const { return m_board[y][x]; }
+    std::shared_ptr<Piece>& getBoardTile(int x, int y) { return m_board[y][x]; }
     std::shared_ptr<King> getKing() const;
     Team getTurn() const { return m_turn; }
     void setBoardTile(int, int, std::shared_ptr<Piece>&, bool = true);

@@ -109,7 +109,7 @@ void SidePanel::handleMoveBoxClicked(const coor2d& mousePos_) const
             {
                 while (newMoveIndex > currMoveIndex)
                 {
-                    m_moveList.goToNextMove(false, temp);
+                    m_moveList.goToNextMove(false, std::nullopt, temp);
                     --newMoveIndex;
                 }
             }

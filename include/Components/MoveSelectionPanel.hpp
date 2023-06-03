@@ -24,7 +24,7 @@ public:
     }
 
     bool isHowered(const coor2d&) const;
-    int getSelection() const { return m_selectionIndex; }
+    size_t getSelection() const { return m_selectionIndex; }
     void handleTitleText();
     void handlePanelRectangle();
     void handleSubPanels();
@@ -44,7 +44,7 @@ private:
     vector<RectangleShape> m_variationRectangles;
     vector<Text> m_variationTexts;
     int m_height;
-    int m_selectionIndex = 0;
+    size_t m_selectionIndex = 0;
     int m_numberOfVariations = 0;
     bool m_isHowered = false;
 };
