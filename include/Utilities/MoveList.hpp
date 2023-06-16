@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "../Components/Board.hpp"
 #include "Move.hpp"
+#include "MoveTreeDisplayHandler.hpp"
 #include "PieceTransition.hpp"
 //#include "../GameThread.hpp"
 #include "MoveTree.hpp"
@@ -18,6 +19,7 @@ public:
     MoveTree::Iterator getNewIterator() { return m_moves.begin(); }
     MoveTree::Iterator& getIterator() { return m_moveIterator; }
     const MoveTree& getMoves() const { return m_moves; }
+    MoveTreeDisplayHandler& getMoveTreeDisplayHandler() { return m_moveTreeDisplayHandler; }
     PieceTransition& getTransitioningPiece() const { return m_transitioningPiece; }
     int getIteratorIndex() { return 0; }
     int getMoveListSize() const { return m_moves.getNumberOfMoves(); }
@@ -31,6 +33,7 @@ public:
 
 private:
     MoveTree m_moves;
+    MoveTreeDisplayHandler m_moveTreeDisplayHandler{m_moves};
     MoveTree::Iterator m_moveIterator = m_moves.begin();
     PieceTransition& m_transitioningPiece;
     Board& game;

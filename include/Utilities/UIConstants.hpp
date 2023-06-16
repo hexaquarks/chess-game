@@ -13,6 +13,7 @@ namespace ui
     inline constexpr int g_BUTTON_POS = g_WINDOW_SIZE / g_NUMBER_BUTTONS;
     inline constexpr int g_PANEL_SIZE = 640;
     inline constexpr int g_BORDER_SIZE = 10;
+    inline constexpr int g_LINE_HEIGHT = 40;
     inline constexpr int g_SOUTH_PANEL_HEIGHT = g_MENUBAR_HEIGHT;
     inline constexpr int g_MAIN_PANEL_HEIGHT = g_PANEL_SIZE - g_SOUTH_PANEL_HEIGHT;
     inline constexpr float g_SPRITE_SIZE = 128;
