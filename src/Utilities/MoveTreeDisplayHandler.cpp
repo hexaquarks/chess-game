@@ -3,9 +3,12 @@
 MoveTreeDisplayHandler::MoveTreeDisplayHandler(MoveTree& tree) : m_tree(tree) {}
 
 void MoveTreeDisplayHandler::processNode(MoveTree::Iterator& iter_, int& currentRow_, int level_) {
+    auto* move = iter_->m_move.get();
+    if (move == nullptr) return;
+
     MoveInfo info;
     info.m_row = currentRow_++;
-    info.m_content = parseMove(*(iter_->m_move.get()), (level_ / 2) + 1, level_ % 2 != 0);
+    info.m_content = parseMove(*move, (level_ / 2) + 1, level_ % 2 != 0);
     info.m_isSubVariation = level_ > 0;
     info.m_isSubSubVariation = level_ > 1;
     info.m_subVariationIndex = iter_->childNumber;
@@ -30,6 +33,9 @@ void MoveTreeDisplayHandler::processSubNodes(MoveTree::Iterator& iter_, int& cur
 }
 
 std::vector<MoveInfo> MoveTreeDisplayHandler::generateMoveInfo() {
+    // No information has been generated yet, display nothing.
+    if (m_tree.getRoot() == nullptr) return {};
+
     m_moveInfos.clear();
     int currentRow = 0;
 
