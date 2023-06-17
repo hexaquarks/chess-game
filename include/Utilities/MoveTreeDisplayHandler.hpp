@@ -1,7 +1,6 @@
 #pragma once
 
 #include "MoveTree.hpp"
-#include "MoveTreeNode.hpp"
 
 struct MoveInfo {
     int m_row; // The line number on the panel

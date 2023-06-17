@@ -1,5 +1,4 @@
 #include "../../include/Utilities/MoveTreeDisplayHandler.hpp"
-#include "../../include/Utilities/Move.hpp"
 
 MoveTreeDisplayHandler::MoveTreeDisplayHandler(MoveTree& tree) : m_tree(tree) {}
 
