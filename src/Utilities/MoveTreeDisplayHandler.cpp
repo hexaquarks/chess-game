@@ -2,6 +2,14 @@
 
 MoveTreeDisplayHandler::MoveTreeDisplayHandler(MoveTree& tree) : m_tree(tree) {}
 
+void printMoves(std::vector<MoveInfo>& moveInfo_) {
+    std::cout << "There are currently " << moveInfo_.size() << " moves to display: ";
+    for (const MoveInfo& move : moveInfo_) {
+        std::cout << move.m_content << ",";
+    }
+    std::cout << std::endl;
+}
+
 void MoveTreeDisplayHandler::processNode(MoveTree::Iterator& iter_, int& currentRow_, int level_) {
     auto* move = iter_->m_move.get();
     if (move == nullptr) return;
@@ -17,32 +25,29 @@ void MoveTreeDisplayHandler::processNode(MoveTree::Iterator& iter_, int& current
 
     m_moveInfos.push_back(info);
 
-    if (iter_->m_children.empty())
-        return;
-
-    ++iter_;
-    processNode(iter_, currentRow_, level_);
-}
-
-void MoveTreeDisplayHandler::processSubNodes(MoveTree::Iterator& iter_, int& currentRow_, int level_) {
-    for (int i = 0; i < iter_->m_children.size(); ++i) {
-        iter_ >> i;
-        processNode(iter_, currentRow_, level_ + 1);
-        iter_ << i;
+    for (size_t i = 0; i < iter_->m_children.size(); ++i) {
+        iter_.goToChild(i);  
+        processNode(iter_, currentRow_, level_ + 1); 
+        iter_.goToParent();  
     }
 }
 
 std::vector<MoveInfo> MoveTreeDisplayHandler::generateMoveInfo() {
     // No information has been generated yet, display nothing.
-    if (m_tree.getRoot() == nullptr) return {};
+    if (m_tree.getNumberOfMoves() == 0) return {};
 
     m_moveInfos.clear();
     int currentRow = 0;
 
     MoveTree::Iterator iter_ = m_tree.begin();
 
-    processNode(iter_, currentRow, 0);
-    processSubNodes(iter_, currentRow, 0);
-
+    // Note The first node is nullptr as per our API, so we don't process It.
+    for (size_t i = 0; i < iter_->m_children.size(); ++i)
+    {
+        iter_.goToChild(i);
+        processNode(iter_, currentRow, 0);
+        iter_.goToParent();
+    }
+    
     return m_moveInfos;
 }

@@ -122,6 +122,7 @@ void SidePanel::drawMove(const MoveInfo& move_, const coor2d& mousePos_)
         // Start from the beginning of the next line
         absolutePosition.first = ui::g_BORDER_SIZE + 10;
         absolutePosition.second += ui::g_LINE_HEIGHT;
+        moveBox.setPosition(absolutePosition); // Update the move box position
     }
 
     if (!m_showMoveSelectionPanel)
@@ -141,8 +142,6 @@ void SidePanel::drawMove(const MoveInfo& move_, const coor2d& mousePos_)
     // Update the next position to draw
     m_nextPos.first = absolutePosition.first + realDimensionsOfCurrentMoveBox.first;
     m_nextPos.second = absolutePosition.second;
-
-    //return realDimensionsOfCurrentMoveBox;
 }
 
 

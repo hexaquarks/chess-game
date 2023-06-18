@@ -23,5 +23,4 @@ private:
     std::vector<MoveInfo> m_moveInfos;
 
     void processNode(MoveTree::Iterator& iter_, int& currentRow_, int level_);
-    void processSubNodes(MoveTree::Iterator& iter_, int& currentRow_, int level_);
 };
