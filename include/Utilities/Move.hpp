@@ -52,3 +52,7 @@ private:
     bool m_kingChecked = false; 
     bool m_noMovesAvailable = false; // Flag that captures the availablility of possible moves in the position
 };
+
+std::pair<char, int> findLetterCoord(const coor2d& target_);
+std::string parseMoveHelper(const Move& move_, int moveNumber_, bool showNumber_, bool showDots_);
+std::string parseMove(const Move& move_, int moveNumber_, bool showNumber_, bool showDots_ = false);

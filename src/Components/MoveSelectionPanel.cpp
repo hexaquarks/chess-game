@@ -80,7 +80,7 @@ void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it_)
     for (size_t i = 0; i < it_.get()->childNumber; ++i)
     {
         variations.push_back(
-            m_sidePanel.parseMove(
+            parseMove(
                 *(it_.get()->m_children.at(i)->m_move), moveNumber, showNumber, true
             )
         );

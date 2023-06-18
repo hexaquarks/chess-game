@@ -42,7 +42,7 @@ namespace ui {
         // otherwise drawing is affected negatively.
         drawMenuBar();
         drawBoardSquares();
-        drawSidePanel(m_sidePanel);
+        drawSidePanel();
 
         if (kingChecked_) drawKingCheckCircle();
 
@@ -110,9 +110,8 @@ namespace ui {
         }
     }
 
-    void UIManager::drawSidePanel(SidePanel& sidePanel_)
+    void UIManager::drawSidePanel()
     {
-        // Draw the main panels
         RectangleShape mainPanel(Vector2f(g_PANEL_SIZE - 2*g_BORDER_SIZE, g_MAIN_PANEL_HEIGHT - 2*g_BORDER_SIZE));
         RectangleShape southPanel(Vector2f(g_PANEL_SIZE - 2*g_BORDER_SIZE, g_SOUTH_PANEL_HEIGHT));
         mainPanel.setFillColor({50, 50, 50}); // Charcoal
@@ -126,7 +125,9 @@ namespace ui {
         // Draw the content on the panels
         Vector2i position = sf::Mouse::getPosition(m_window);
         coor2d mousePos = {position.x, position.y};
-        sidePanel_.drawMoves(mousePos);
+        m_sidePanel.drawMoves(
+            m_moveList.getMoveTreeDisplayHandler().generateMoveInfo(),
+            mousePos);
     }
 
     void UIManager::drawGrayCover()

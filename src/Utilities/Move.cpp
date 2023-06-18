@@ -68,3 +68,49 @@ bool Move::operator==(const Move& other_)
     m_special == other_.m_special;
 }
 
+// free functions
+
+std::pair<char, int> findLetterCoord(const coor2d& target_) 
+{
+    char letter = 'a' + target_.first;
+    return {letter, 8-target_.second};
+}
+
+std::string parseMoveHelper(const Move& move_, int moveNumber_, bool showNumber_, bool showDots_) 
+{
+    std::string text = (showNumber_)
+        ? std::to_string(moveNumber_) + "."
+        : (showDots_)? std::to_string(moveNumber_-1) + "..." : "";
+    MoveType moveType = move_.getMoveType();
+
+    // Side cases
+    if (moveType == MoveType::CASTLE_KINGSIDE) { return text + "O-O"; }
+    if (moveType == MoveType::CASTLE_QUEENSIDE) { return text + "O-O-O"; }
+
+    std::pair<char, int> letterCoord = findLetterCoord(move_.getTarget());
+    std::string letterCoordString = static_cast<char>(letterCoord.first) + std::to_string(letterCoord.second);
+
+    switch (move_.getSelectedPiece()->getType())
+    {
+        case PieceType::PAWN:
+            // TODO fix promotion
+            if (moveType == MoveType::CAPTURE || moveType == MoveType::ENPASSANT)
+            {
+                return text + (static_cast<char>('a' + move_.getInit().first)) + "x" + letterCoordString;
+            } break;
+        case PieceType::KNIGHT: text += "N"; break;
+        case PieceType::BISHOP: text += "B"; break;
+        case PieceType::ROOK: text += "R"; break;
+        case PieceType::QUEEN: text += "Q"; break;
+        case PieceType::KING: text += "K"; break;
+    }
+    return text + std::string((moveType == MoveType::CAPTURE)? "x" : "") + letterCoordString;
+}
+
+std::string parseMove(const Move& move_, int moveNumber_, bool showNumber_, bool showDots_)
+{
+    std::string text = parseMoveHelper(move_, moveNumber_, showNumber_, showDots_);
+    if (move_.kingIsCheckmated()) return text + std::string("#");
+    if (move_.kingIsChecked()) return text + std::string("+");
+    return text;
+}

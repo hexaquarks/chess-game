@@ -91,7 +91,7 @@ namespace ui {
 
             void initializeMenuBar();
             void drawMenuBar();
-            void drawSidePanel(SidePanel&);
+            void drawSidePanel();
             void drawCaptureCircles(const std::shared_ptr<Piece>&, const vector<Move>&);
             void highlightHoveredSquare(const std::shared_ptr<Piece>&, const coor2d&, const vector<Move>&);
             void drawPieces();

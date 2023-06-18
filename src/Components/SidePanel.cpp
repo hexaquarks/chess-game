@@ -10,67 +10,18 @@ SidePanel::SidePanel(
 {
 }
 
-void SidePanel::addMove(const Move& move_)
+void SidePanel::addMove(const MoveInfo& move_)
 {
-    // get the text coordinates information for a Move Box
-    int moveListSize = m_moveList.getMoveListSize();
-    int moveNumber = (moveListSize / 2) + 1;
-    bool showNumber = moveListSize % 2 != 0;
-    string text = parseMove(move_, moveNumber, showNumber);
+    string text = move_.m_content;
 
     // construct the Move Box
     MoveBox moveBox(m_nextPos, text); // Make the text box
     moveBox.handleText(); // Create the Text, and pass the font ressource
-    checkOutOfBounds(moveBox, 0); // check if object's width goes out of bounds and update
+    //checkOutOfBounds(moveBox, 0); // check if object's width goes out of bounds and update
     m_nextPos.first += (moveBox.getScaledWidth()); // increment for next move box
 
     moveBoxes.push_back(moveBox);
     ++moveBoxCounter;
-}
-
-pair<char, int> SidePanel::findLetterCoord(const coor2d& target_) const
-{
-    char letter = 'a' + target_.first;
-    return {letter, 8-target_.second};
-}
-
-string SidePanel::parseMoveHelper(const Move& move_, int moveNumber_, bool showNumber_, bool showDots_) const
-{
-    string text = (showNumber_)
-        ? to_string(moveNumber_) + "."
-        : (showDots_)? to_string(moveNumber_-1) + "..." : "";
-    MoveType moveType = move_.getMoveType();
-
-    // Side cases
-    if (moveType == MoveType::CASTLE_KINGSIDE) { return text + "O-O"; }
-    if (moveType == MoveType::CASTLE_QUEENSIDE) { return text + "O-O-O"; }
-
-    pair<char, int> letterCoord = findLetterCoord(move_.getTarget());
-    string letterCoordString = static_cast<char>(letterCoord.first) + to_string(letterCoord.second);
-
-    switch (move_.getSelectedPiece()->getType())
-    {
-        case PieceType::PAWN:
-            // TODO fix promotion
-            if (moveType == MoveType::CAPTURE || moveType == MoveType::ENPASSANT)
-            {
-                return text + (static_cast<char>('a' + move_.getInit().first)) + "x" + letterCoordString;
-            } break;
-        case PieceType::KNIGHT: text += "N"; break;
-        case PieceType::BISHOP: text += "B"; break;
-        case PieceType::ROOK: text += "R"; break;
-        case PieceType::QUEEN: text += "Q"; break;
-        case PieceType::KING: text += "K"; break;
-    }
-    return text + string((moveType == MoveType::CAPTURE)? "x" : "") + letterCoordString;
-}
-
-string SidePanel::parseMove(const Move& move_, int moveNumber_, bool showNumber_, bool showDots_) const
-{
-    string text = parseMoveHelper(move_, moveNumber_, showNumber_, showDots_);
-    if (move_.kingIsCheckmated()) return text + string("#");
-    if (move_.kingIsChecked()) return text + string("+");
-    return text;
 }
 
 void SidePanel::goToNextRow(int height_)
@@ -154,74 +105,62 @@ void SidePanel::drawSquareBracket(coor2d& nextPos_, int offset_, bool open_) con
     nextPos_.first -= offset_;
 }
 
-void SidePanel::drawFromNode(const shared_ptr<MoveTreeNode>& node_, int level_, int offset_, coor2d& nextPos_, const coor2d& mousePos)
+void SidePanel::drawMove(const MoveInfo& move_, const coor2d& mousePos_)
 {
-    // Base case leaf
-    if (!node_->m_move && node_->m_parent)
-    {
-        // Close the open bracket for sub variation
-        if (offset_ != 0) drawSquareBracket(nextPos_, offset_ + 10, false);
-        return;
-    }
+    coor2d absolutePosition = m_nextPos;
 
-    // Draw the node
-    if (node_->m_move)
-    {
-        nextPos_ = drawMove(*(node_->m_move), level_, offset_, nextPos_, mousePos);
-    }
-
-    // Recursive step
-    for (int i = 0; i < node_->childNumber; ++i)
-    {
-        if (i == 0) drawFromNode(node_->m_children.at(0), level_+1, offset_, nextPos_, mousePos);
-        else
-        {
-            ++m_row;
-            nextPos_ = { g_INIT_WIDTH, g_INIT_HEIGHT + (m_row * g_ROW_HEIGHT) };
-            drawSquareBracket(nextPos_, offset_ + g_HORIZONTAL_OFFSET - 10, true);
-            drawFromNode(
-                node_->m_children.at(i), level_+1,
-                offset_ + g_HORIZONTAL_OFFSET, nextPos_, mousePos
-            );
-        }
-    }
-}
-
-coor2d SidePanel::drawMove(const Move& move_, int level_, int offset_, coor2d& nextPos_, const coor2d& mousePos_)
-{
-    // Iterate through all the move list from begining to end
-    // Get the text coordinates information for a Move Box
-    int moveNumber = (level_ / 2) + 1;
-    bool showNumber = level_ % 2 != 0;
-    string text = parseMove(move_, moveNumber, showNumber);
-
+    // Adjust the vertical position based on the level
+    absolutePosition.second += move_.m_level * ui::g_LINE_HEIGHT;
+    
     // Construct the Move Box
-    nextPos_.first += offset_;
-    MoveBox moveBox(nextPos_, text); // Make the text box
-    moveBox.handleText(); // Create the Text, and pass the font ressource
+    MoveBox moveBox(absolutePosition, move_.m_content); // Make the text box
+    moveBox.handleText(); // Create the Text, and pass the font resource
+    moveBox.handleRectangle(); // Create the Rectangle to display.
 
-    // CheckOutOfBounds(moveBox, offset); // check if object's width goes out of bounds and update
-    // m_nextPos.first += (moveBox.getScaledWidth()); // increment for next move box
+    // Check if object's width goes out of bounds
+    if (absolutePosition.first + moveBox.getScaledWidth() > ui::g_PANEL_SIZE) {
+        // Start from the beginning of the next line
+        absolutePosition.first = ui::g_BORDER_SIZE + 10;
+        absolutePosition.second += ui::g_LINE_HEIGHT;
+        moveBox.setPosition(absolutePosition); // Update the move box position
+    }
 
-    moveBox.handleRectangle();
     if (!m_showMoveSelectionPanel)
     {
-        // Change the color of the Move Box if it is howered
+        // Change the color of the Move Box if it is hovered
         if (moveBox.isHowered(mousePos_)) moveBox.setIsSelected();
         else moveBox.setDefault();
     }
+
     m_window.draw(moveBox.getRectangle());
     m_window.draw(moveBox.getTextsf());
 
-    return {nextPos_.first += (moveBox.getScaledWidth()-offset_), nextPos_.second};
+    coor2d realDimensionsOfCurrentMoveBox = {
+        static_cast<int>(moveBox.getScaledWidth()), 
+        static_cast<int>(moveBox.getScaledHeight())};
+
+    // Update the next position to draw
+    m_nextPos.first = absolutePosition.first + realDimensionsOfCurrentMoveBox.first;
+    m_nextPos.second = absolutePosition.second;
 }
 
-void SidePanel::drawMoves(const coor2d& mousePos_)
+
+void SidePanel::drawMoves(const std::vector<MoveInfo>& moveTreeInfo_, const coor2d& mousePos_)
 {
-    shared_ptr<MoveTreeNode> root = m_moveList.getMoves().getRoot();
-    coor2d coors = {g_INIT_WIDTH, g_INIT_HEIGHT};
-    drawFromNode(root, 0, 0, coors, mousePos_);
-    m_row = 0; // Reset to 0 for next iteration
+    // Reset the initial drawing position
+    m_nextPos = {ui::g_BORDER_SIZE + 10, 10};
+
+    for (const MoveInfo& moveInfo : moveTreeInfo_)
+    {
+        drawMove(moveInfo, mousePos_);
+    }
+
+    // TODO 
+
+    // shared_ptr<MoveTreeNode> root = m_moveList.getMoves().getRoot();
+    // coor2d coors = {g_INIT_WIDTH, g_INIT_HEIGHT};
+    // drawFromNode(root, 0, 0, coors, mousePos_);
+    // m_row = 0; // Reset to 0 for next iteration
     // if (moveBoxes.size() == 0) return; // No moves added yet, return
 
     // int counter = 0;

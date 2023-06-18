@@ -92,16 +92,18 @@ public:
         // Shift child number
         shared_ptr<MoveTreeNode> operator>>(int n)
         {
+            if (!m_ptr) return m_ptr; // we're at the root - no siblings here
             int childNumber = m_ptr->childNumber;
-            if (goToParent()) goToChild(childNumber+n);
+            goToChild(childNumber+n);
             return m_ptr;
         }
 
         // Shift child number
         shared_ptr<MoveTreeNode> operator<<(int n)
         {
+            if (!m_ptr) return m_ptr; // we're at the root - no siblings here
             int childNumber = m_ptr->childNumber;
-            if (goToParent()) goToChild(childNumber-n);
+            goToChild(childNumber-n);
             return m_ptr;
         }
 
