@@ -110,8 +110,8 @@ void SidePanel::drawMove(const MoveInfo& move_, const coor2d& mousePos_)
     coor2d absolutePosition = m_nextPos;
 
     // Adjust the vertical position based on the level
-    absolutePosition.second += move_.m_level * ui::g_LINE_HEIGHT;
-    
+    absolutePosition.second = move_.m_row * ui::g_LINE_HEIGHT;
+
     // Construct the Move Box
     MoveBox moveBox(absolutePosition, move_.m_content); // Make the text box
     moveBox.handleText(); // Create the Text, and pass the font resource
