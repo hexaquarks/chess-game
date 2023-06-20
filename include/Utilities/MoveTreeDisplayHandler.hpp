@@ -20,6 +20,6 @@ private:
     MoveTree& m_tree;
     std::vector<MoveInfo> m_moveInfos;
 
-    void processNodeRec(MoveTree::Iterator& iter_, int level_, int& row_);
-    void processNode(MoveTree::Iterator& iter_, int level_, int& row_);
+    void processNodeRec(MoveTree::Iterator& iter_, int level_, int& row_, bool canShowDots_ = false);
+    void processNode(MoveTree::Iterator& iter_, int level_, int& row_, bool canShowDots_ = false);
 };
