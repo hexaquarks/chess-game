@@ -3,9 +3,10 @@
 MoveTreeDisplayHandler::MoveTreeDisplayHandler(MoveTree& tree) : m_tree(tree) {}
 
 void printMoves(std::vector<MoveInfo>& moveInfo_) {
-    std::cout << "There are currently " << moveInfo_.size() << " moves to display: ";
+    std::cout << "There are currently " << moveInfo_.size() << std::endl; 
+    std::cout << "Moves to display: " << std::endl;
     for (const MoveInfo& move : moveInfo_) {
-        std::cout << move.m_content << ", (" << move.m_row << ")";
+        std::cout << move.m_content << ", row : " << move.m_row << ", depth: " << move.m_indentLevel << endl;;
     }
     std::cout << std::endl;
 }
@@ -16,16 +17,43 @@ void MoveTreeDisplayHandler::processNode(MoveTree::Iterator& iter_, int level_, 
 
     MoveInfo info;
     info.m_content = parseMove(*move, level_ / 2 + 1, level_ % 2 == 0, level_ % 2 != 0);
-    info.m_depth = level_;
+    info.m_indentLevel = level_;
     info.m_row = row_;
 
     m_moveInfos.push_back(info);
+}
+void MoveTreeDisplayHandler::processNodeRec(MoveTree::Iterator& iter_, int level_, int& row_) {
+    processNode(iter_, level_, row_);
+    // If only 1 child go as usual
+    // If more than one child, need to start with non-main line
 
-    for (size_t i = 0; i < iter_->m_children.size(); ++i) {
-        if (i != 0) ++row_;
-        iter_.goToChild(i);
-        processNode(iter_, level_ + 1, row_); 
+    if (iter_->m_children.size() < 2)
+    {
+        if (iter_->m_children.size() == 0) return;
+        iter_.goToChild(0);
+        processNodeRec(iter_, level_, row_); 
         iter_.goToParent();
+    }
+    else
+    {
+        // process index 0.
+        iter_.goToChild(0);
+        processNode(iter_, level_, row_);
+        iter_.goToParent();
+        
+        // then loop over index 1 to N-1
+        for (size_t i = 1; i < iter_->m_children.size(); ++i) {
+            ++row_;
+            iter_.goToChild(i);
+            processNodeRec(iter_, level_ + 1, row_); 
+            iter_.goToParent();
+        }
+
+        // after the loop, goToGrandChild(0) and increase row
+        iter_.goToChild(0);
+        iter_.goToChild(0);
+        ++row_;
+        processNodeRec(iter_, level_, row_);
     }
 }
 
@@ -42,7 +70,7 @@ std::vector<MoveInfo> MoveTreeDisplayHandler::generateMoveInfo() {
     for (size_t i = 0; i < iter->m_children.size(); ++i)
     {
         iter.goToChild(i);
-        processNode(iter, 0, row);
+        processNodeRec(iter, 0, row);
         iter.goToParent();
     }
     
