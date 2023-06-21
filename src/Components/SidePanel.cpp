@@ -108,13 +108,13 @@ void SidePanel::drawSquareBracket(coor2d& nextPos_, int offset_, bool open_) con
 void SidePanel::drawMove(const MoveInfo& move_, const coor2d& mousePos_)
 {
     coor2d absolutePosition;
-    if (move_.m_indentLevel == m_previousIndent)
+    if (move_.m_row == m_previousRow)
     {
         absolutePosition = m_nextPos;
     }
     else 
     {
-        m_previousIndent = move_.m_indentLevel;
+        m_previousRow = move_.m_row;
         absolutePosition.first = ui::g_BORDER_SIZE + move_.m_indentLevel * ui::g_INDENT_WIDTH;
     }
 

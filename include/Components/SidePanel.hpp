@@ -39,6 +39,6 @@ private:
     coor2d m_nextPos = {ui::g_BORDER_SIZE + 10, 10};
     int moveBoxCounter = 0;
     int m_row = 0;
-    int m_previousIndent = 0;
+    int m_previousRow = 0;
     bool& m_showMoveSelectionPanel;
 };

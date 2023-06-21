@@ -3,10 +3,10 @@
 #include "MoveTree.hpp"
 
 struct MoveInfo {
-    std::string m_content;
-    int m_row; 
-    int m_indentLevel;
-    bool m_isInlineSubVariation;
+    std::string m_content = "";
+    int m_row = 0; 
+    int m_indentLevel = 0;
+    bool m_isInlineSubVariation = false;
 };
 
 
