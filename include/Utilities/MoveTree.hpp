@@ -66,6 +66,18 @@ public:
             return false;
         }
 
+        bool goToGrandChild(int i)
+        {
+            auto temp = m_ptr;   
+            if (temp->m_children.size() <= i) return false;
+            temp = temp->m_children.at(i);
+            if (temp->m_children.size() <= i) return false;
+            temp = temp->m_children.at(i);
+            
+            m_ptr = temp;
+            return true;
+        }
+
         int getNodeLevel() {
             shared_ptr<MoveTreeNode> temp = m_ptr;
             int i = 0;

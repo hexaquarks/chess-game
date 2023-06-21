@@ -50,11 +50,13 @@ void MoveTreeDisplayHandler::processNodeRec(MoveTree::Iterator& iter_, int level
             iter_.goToParent();
         }
 
-        // after the loop, goToGrandChild(0) and increase row
-        iter_.goToChild(0);
-        iter_.goToChild(0);
-        ++row_;
-        processNodeRec(iter_, level_, row_);
+        // after the loop, goToGrandChild(0) and increase row if 
+        // main line stretches after.
+        if (iter_.goToGrandChild(0))
+        {
+            ++row_;
+            processNodeRec(iter_, level_, row_);
+        }
     }
 }
 
