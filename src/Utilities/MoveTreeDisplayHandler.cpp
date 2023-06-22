@@ -1,8 +1,36 @@
 #include "../../include/Utilities/MoveTreeDisplayHandler.hpp"
 
-MoveTreeDisplayHandler::MoveTreeDisplayHandler(MoveTree& tree) : m_tree(tree) {}
+namespace 
+{
+    std::string getLetterPrefix(MoveTree::Iterator iter_, int indentationLevel_)
+    {
+        // Base case
+        if(indentationLevel_ == 1) 
+        {
+            return std::string(1, 'A' + iter_.getNodeIdxAmongSiblings() - 1) + ")";
+        }
+        else 
+        {
+            auto currentNode = iter_.get();
 
-void printMoves(std::vector<MoveInfo>& moveInfo_) {
+            iter_.goToParent();
+            std::string parentPrefix = getLetterPrefix(iter_, indentationLevel_ - 1);
+
+            // Restore iterator to current node
+            iter_.get() = currentNode;
+
+            return parentPrefix + std::to_string(iter_.getNodeIdxAmongSiblings() + 1) + ")";
+        }
+    }
+}
+
+MoveTreeDisplayHandler::MoveTreeDisplayHandler(MoveTree& tree) 
+: m_tree(tree) 
+{
+}
+
+void printMoves(std::vector<MoveInfo>& moveInfo_) 
+{
     std::cout << "There are currently " << moveInfo_.size() << std::endl; 
     std::cout << "Moves to display: " << std::endl;
     for (const MoveInfo& move : moveInfo_) {
@@ -11,20 +39,37 @@ void printMoves(std::vector<MoveInfo>& moveInfo_) {
     std::cout << std::endl;
 }
 
-void MoveTreeDisplayHandler::processNode(MoveTree::Iterator& iter_, int level_, int& row_, bool canShowDots_) {
+void MoveTreeDisplayHandler::processNode(
+    MoveTree::Iterator& iter_, 
+    int level_, 
+    int& row_, 
+    bool isNewLineSubvariation_) 
+{
     auto* move = iter_->m_move.get();
     if (move == nullptr) return;
 
     MoveInfo info;
     int nodeDepth = iter_.getNodeLevel();
-    info.m_content = parseMove(*move, nodeDepth / 2 + 1, nodeDepth % 2 != 0, canShowDots_);
+    info.m_content = parseMove(*move, nodeDepth / 2 + 1, nodeDepth % 2 != 0, isNewLineSubvariation_);
     info.m_indentLevel = level_;
     info.m_row = row_;
 
+    if (isNewLineSubvariation_)
+    {
+        std::cout <<"in" << std::endl;
+        info.m_letterPrefix = getLetterPrefix(iter_, level_);
+    }
+
+
     m_moveInfos.push_back(info);
 }
-void MoveTreeDisplayHandler::processNodeRec(MoveTree::Iterator& iter_, int level_, int& row_, bool canShowDots_) {
-    processNode(iter_, level_, row_, canShowDots_);
+void MoveTreeDisplayHandler::processNodeRec(
+    MoveTree::Iterator& iter_, 
+    int level_, 
+    int& row_, 
+    bool isNewLineSubvariation_) 
+{
+    processNode(iter_, level_, row_, isNewLineSubvariation_);
     // If only 1 child go as usual
     // If more than one child, need to start with non-main line
 
@@ -61,13 +106,13 @@ void MoveTreeDisplayHandler::processNodeRec(MoveTree::Iterator& iter_, int level
 }
 
 
-std::vector<MoveInfo> MoveTreeDisplayHandler::generateMoveInfo() {
+std::vector<MoveInfo> MoveTreeDisplayHandler::generateMoveInfo() 
+{
     if (m_tree.getNumberOfMoves() == 0) return {};
 
     m_moveInfos.clear();
 
     MoveTree::Iterator iter = m_tree.begin();
-
     int row = 0;
 
     for (size_t i = 0; i < iter->m_children.size(); ++i)

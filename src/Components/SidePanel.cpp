@@ -105,6 +105,33 @@ void SidePanel::drawSquareBracket(coor2d& nextPos_, int offset_, bool open_) con
     nextPos_.first -= offset_;
 }
 
+void SidePanel::drawMovePrefix(const std::string& prefixLetter_, coor2d& position_)
+    {
+        auto font = RessourceManager::getFont("Arial.ttf");
+        Text textsf;
+        SFDrawUtil::drawTextSf(textsf, prefixLetter_, *font, 28, Text::Bold, {240, 248, 255});
+
+        Vector2f recSize(textsf.getGlobalBounds().width, textsf.getCharacterSize());
+        RectangleShape rect;
+        SFDrawUtil::drawRectangleSf(
+            rect, (ui::g_WINDOW_SIZE + position_.first),
+            (ui::g_MENUBAR_HEIGHT + position_.second), recSize, Color(50, 50, 50)
+        );
+
+        float positionalShift = ((g_BOX_HORIZONTAL_SCALE - 1.f) * rect.getLocalBounds().width)/2.f;
+        rect.setScale(g_BOX_HORIZONTAL_SCALE, g_BOX_VERTICAL_SCALE);
+        textsf.setPosition(
+            ui::g_WINDOW_SIZE + position_.first + positionalShift,
+            ui::g_MENUBAR_HEIGHT + position_.second - 4
+        );
+
+        m_window.draw(rect);
+        m_window.draw(textsf);
+
+        // Update the next position to draw
+        position_.first += rect.getGlobalBounds().width;
+    }
+
 void SidePanel::drawMove(const MoveInfo& move_, const coor2d& mousePos_)
 {
     coor2d absolutePosition;
@@ -115,11 +142,17 @@ void SidePanel::drawMove(const MoveInfo& move_, const coor2d& mousePos_)
     else 
     {
         m_previousRow = move_.m_row;
+        
         absolutePosition.first = ui::g_BORDER_SIZE + move_.m_indentLevel * ui::g_INDENT_WIDTH;
     }
 
     // Adjust the vertical position based on the level
     absolutePosition.second = move_.m_row * ui::g_LINE_HEIGHT;
+
+    if (move_.m_letterPrefix.has_value())
+    {
+        drawMovePrefix(move_.m_letterPrefix.value(), absolutePosition);
+    }
 
     // Construct the Move Box
     MoveBox moveBox(absolutePosition, move_.m_content); // Make the text box

@@ -32,6 +32,7 @@ public:
     void checkOutOfBounds(MoveBox&, int);
     void handleMoveBoxClicked(const coor2d&) const;
     void drawFromNode(const shared_ptr<MoveTreeNode>&, int, int, coor2d&, const coor2d&);
+    void drawMovePrefix(const std::string&, coor2d&);
 
 private:
     RenderWindow& m_window;

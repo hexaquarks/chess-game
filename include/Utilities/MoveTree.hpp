@@ -73,12 +73,13 @@ public:
             temp = temp->m_children.at(i);
             if (temp->m_children.size() <= i) return false;
             temp = temp->m_children.at(i);
-            
+
             m_ptr = temp;
             return true;
         }
 
-        int getNodeLevel() {
+        int getNodeLevel() 
+        {
             shared_ptr<MoveTreeNode> temp = m_ptr;
             int i = 0;
             while (temp->m_parent)
@@ -87,6 +88,22 @@ public:
                 ++i;
             }
             return i;
+        }
+
+        int getNodeIdxAmongSiblings() 
+        {
+            auto temp = m_ptr;
+            auto parent = temp->m_parent;
+            
+            if (!parent) return -1;
+            
+            for (size_t i = 0; i < parent->m_children.size(); ++i) 
+            {
+                if (parent->m_children.at(i) == temp) return i;
+            }
+            
+            // Index not found
+            return -1;
         }
 
         // Prefix increment
