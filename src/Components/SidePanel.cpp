@@ -2,6 +2,29 @@
 #include "../../include/Utilities/SFDrawUtil.hpp"
 #include "../../include/Ressources/RessourceManager.hpp"
 
+namespace 
+{
+    sf::Text createMovePrefixText(const std::string& prefixLetter_, sf::Font& font_)
+    {
+        sf::Text text;
+        SFDrawUtil::drawTextSf(text, prefixLetter_, font_, 25, sf::Text::Bold, {240, 248, 255});
+        
+        return text;
+    }
+
+    sf::RectangleShape createMovePrefixRect(coor2d& position_, const sf::Vector2f& size_)
+    {
+        sf::RectangleShape rect;
+        SFDrawUtil::drawRectangleSf(rect, ui::g_WINDOW_SIZE + position_.first,
+                ui::g_MENUBAR_HEIGHT + position_.second, size_, sf::Color(50, 50, 50));
+
+        float positionalShift = ((g_BOX_HORIZONTAL_SCALE - 1.f) * rect.getLocalBounds().width) / 2.f;
+        rect.setScale(g_BOX_HORIZONTAL_SCALE, g_BOX_VERTICAL_SCALE);
+
+        return rect;
+    }
+}
+
 SidePanel::SidePanel(
     RenderWindow& window_, MoveList& moveList_, bool& b_
 ):
@@ -106,31 +129,21 @@ void SidePanel::drawSquareBracket(coor2d& nextPos_, int offset_, bool open_) con
 }
 
 void SidePanel::drawMovePrefix(const std::string& prefixLetter_, coor2d& position_)
-    {
-        auto font = RessourceManager::getFont("Arial.ttf");
-        Text textsf;
-        SFDrawUtil::drawTextSf(textsf, prefixLetter_, *font, 25, Text::Bold, {240, 248, 255});
+{
+    auto font = RessourceManager::getFont("Arial.ttf");
+    auto text = createMovePrefixText(prefixLetter_, *font);
+    auto rect = createMovePrefixRect(position_, { text.getGlobalBounds().width, static_cast<float>(text.getCharacterSize()) });
 
-        Vector2f recSize(textsf.getGlobalBounds().width, textsf.getCharacterSize());
-        RectangleShape rect;
-        SFDrawUtil::drawRectangleSf(
-            rect, (ui::g_WINDOW_SIZE + position_.first),
-            (ui::g_MENUBAR_HEIGHT + position_.second), recSize, Color(50, 50, 50)
-        );
+    float positionalShift = ((g_BOX_HORIZONTAL_SCALE - 1.f) * rect.getLocalBounds().width) / 2.f;
+    text.setPosition(ui::g_WINDOW_SIZE + position_.first + positionalShift,
+                      ui::g_MENUBAR_HEIGHT + position_.second);
 
-        float positionalShift = ((g_BOX_HORIZONTAL_SCALE - 1.f) * rect.getLocalBounds().width)/2.f;
-        rect.setScale(g_BOX_HORIZONTAL_SCALE, g_BOX_VERTICAL_SCALE);
-        textsf.setPosition(
-            ui::g_WINDOW_SIZE + position_.first + positionalShift,
-            ui::g_MENUBAR_HEIGHT + position_.second
-        );
+    m_window.draw(rect);
+    m_window.draw(text);
 
-        m_window.draw(rect);
-        m_window.draw(textsf);
-
-        // Update the next position to draw
-        position_.first += rect.getGlobalBounds().width;
-    }
+    // Update the next position to draw
+    position_.first += rect.getGlobalBounds().width;
+}
 
 void SidePanel::drawMove(const MoveInfo& move_, const coor2d& mousePos_)
 {
