@@ -122,7 +122,7 @@ void SidePanel::drawMovePrefix(const std::string& prefixLetter_, coor2d& positio
         rect.setScale(g_BOX_HORIZONTAL_SCALE, g_BOX_VERTICAL_SCALE);
         textsf.setPosition(
             ui::g_WINDOW_SIZE + position_.first + positionalShift,
-            ui::g_MENUBAR_HEIGHT + position_.second - 4
+            ui::g_MENUBAR_HEIGHT + position_.second
         );
 
         m_window.draw(rect);
@@ -142,11 +142,11 @@ void SidePanel::drawMove(const MoveInfo& move_, const coor2d& mousePos_)
     else 
     {
         m_previousRow = move_.m_row;
-        absolutePosition.first = ui::g_BORDER_SIZE + move_.m_indentLevel * ui::g_INDENT_WIDTH;
+        absolutePosition.first = ui::g_BORDER_SIZE + 10 + move_.m_indentLevel * ui::g_INDENT_WIDTH;
     }
 
     // Adjust the vertical position based on the level
-    absolutePosition.second = move_.m_row * ui::g_LINE_HEIGHT;
+    absolutePosition.second = move_.m_row * ui::g_LINE_HEIGHT + ui::g_SIDE_PANEL_TOP_OFFSET;
 
     if (move_.m_letterPrefix.has_value())
     {
@@ -189,7 +189,7 @@ void SidePanel::drawMove(const MoveInfo& move_, const coor2d& mousePos_)
 void SidePanel::drawMoves(const std::vector<MoveInfo>& moveTreeInfo_, const coor2d& mousePos_)
 {
     // Reset the initial drawing position
-    m_nextPos = {ui::g_BORDER_SIZE + 10, 10};
+    m_nextPos = {ui::g_BORDER_SIZE + 10, 0};
 
     for (const MoveInfo& moveInfo : moveTreeInfo_)
     {

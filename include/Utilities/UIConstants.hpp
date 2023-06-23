@@ -14,6 +14,7 @@ namespace ui
     inline constexpr int g_PANEL_SIZE = 640;
     inline constexpr int g_BORDER_SIZE = 10;
     inline constexpr int g_LINE_HEIGHT = 40;
+    inline constexpr int g_SIDE_PANEL_TOP_OFFSET = 10;
     inline constexpr int g_INDENT_WIDTH = 40;
     inline constexpr int g_SOUTH_PANEL_HEIGHT = g_MENUBAR_HEIGHT;
     inline constexpr int g_MAIN_PANEL_HEIGHT = g_PANEL_SIZE - g_SOUTH_PANEL_HEIGHT;
