@@ -2,25 +2,21 @@
 
 namespace 
 {
-    std::string getLetterPrefix(MoveTree::Iterator iter_, int indentationLevel_)
+    std::string getLetterPrefix(MoveTree::Iterator iter, int indentationLevel)
     {
         // Base case
-        if(indentationLevel_ == 1) 
-        {
-            return std::string(1, 'A' + iter_.getNodeIdxAmongSiblings() - 1) + ")";
-        }
-        else 
-        {
-            auto currentNode = iter_.get();
-
-            iter_.goToParent();
-            std::string parentPrefix = getLetterPrefix(iter_, indentationLevel_ - 1);
-
-            // Restore iterator to current node
-            iter_.get() = currentNode;
-
-            return parentPrefix + std::to_string(iter_.getNodeIdxAmongSiblings() + 1) + ")";
-        }
+        if (indentationLevel == 1) return std::string(1, static_cast<char>('A' + iter.getNodeIdxAmongSiblings() - 1)) + ")";
+            
+        // Go to subvariations that are indented by more than 1 level.
+        // For these we use the sibling index of the ancestors to establish
+        // the correct number and letter prefix.    
+        int currentNodeIdx = iter.getNodeIdxAmongSiblings();
+        iter.goToParent();
+        auto parentLetterPrefix = getLetterPrefix(iter, indentationLevel - 1);
+        auto numberSuffix = std::to_string(currentNodeIdx);
+        
+        if (indentationLevel > 2) return parentLetterPrefix.substr(0, parentLetterPrefix.size() - 1) + "," + numberSuffix + ")";
+        return parentLetterPrefix.substr(0, parentLetterPrefix.size() - 1) + numberSuffix + ")";
     }
 }
 

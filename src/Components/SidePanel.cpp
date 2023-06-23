@@ -109,7 +109,7 @@ void SidePanel::drawMovePrefix(const std::string& prefixLetter_, coor2d& positio
     {
         auto font = RessourceManager::getFont("Arial.ttf");
         Text textsf;
-        SFDrawUtil::drawTextSf(textsf, prefixLetter_, *font, 28, Text::Bold, {240, 248, 255});
+        SFDrawUtil::drawTextSf(textsf, prefixLetter_, *font, 25, Text::Bold, {240, 248, 255});
 
         Vector2f recSize(textsf.getGlobalBounds().width, textsf.getCharacterSize());
         RectangleShape rect;
@@ -142,7 +142,6 @@ void SidePanel::drawMove(const MoveInfo& move_, const coor2d& mousePos_)
     else 
     {
         m_previousRow = move_.m_row;
-        
         absolutePosition.first = ui::g_BORDER_SIZE + move_.m_indentLevel * ui::g_INDENT_WIDTH;
     }
 
