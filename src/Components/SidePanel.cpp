@@ -8,7 +8,7 @@ namespace
     {
         sf::Text text;
         SFDrawUtil::drawTextSf(text, prefixLetter_, font_, 25, sf::Text::Bold, {240, 248, 255});
-        
+
         return text;
     }
 
@@ -145,7 +145,7 @@ void SidePanel::drawMovePrefix(const std::string& prefixLetter_, coor2d& positio
     position_.first += rect.getGlobalBounds().width;
 }
 
-void SidePanel::drawMove(const MoveInfo& move_, const coor2d& mousePos_)
+void SidePanel::drawMove(const MoveInfo& move_, const coor2d& mousePos_, bool isActualCurrentMove_)
 {
     coor2d absolutePosition;
     if (move_.m_row == m_previousRow)
@@ -179,12 +179,15 @@ void SidePanel::drawMove(const MoveInfo& move_, const coor2d& mousePos_)
         moveBox.setPosition(absolutePosition); // Update the move box position
     }
 
+
     if (!m_showMoveSelectionPanel)
     {
         // Change the color of the Move Box if it is hovered
         if (moveBox.isHowered(mousePos_)) moveBox.setIsSelected();
         else moveBox.setDefault();
     }
+
+    if (isActualCurrentMove_) moveBox.setIsCurrentMove();
 
     m_window.draw(moveBox.getRectangle());
     m_window.draw(moveBox.getTextsf());
@@ -204,36 +207,11 @@ void SidePanel::drawMoves(const std::vector<MoveInfo>& moveTreeInfo_, const coor
     // Reset the initial drawing position
     m_nextPos = {ui::g_BORDER_SIZE + 10, 0};
 
+    size_t idx = 0;
     for (const MoveInfo& moveInfo : moveTreeInfo_)
     {
-        drawMove(moveInfo, mousePos_);
+        const bool isActualCurrentMove = moveInfo.m_movePtr == m_moveList.getIterator()->m_move.get();
+        drawMove(moveInfo, mousePos_, isActualCurrentMove);
+        ++idx;
     }
-
-    // TODO 
-
-    // shared_ptr<MoveTreeNode> root = m_moveList.getMoves().getRoot();
-    // coor2d coors = {g_INIT_WIDTH, g_INIT_HEIGHT};
-    // drawFromNode(root, 0, 0, coors, mousePos_);
-    // m_row = 0; // Reset to 0 for next iteration
-    // if (moveBoxes.size() == 0) return; // No moves added yet, return
-
-    // int counter = 0;
-    // for (auto& moveBox : moveBoxes) {
-    //     moveBox.handleRectangle();
-
-    //     if (!m_showMoveSelectionPanel) {
-    //         // Change the color of the Move Box if it is howered
-    //         if (moveBox.isHowered(mousePos_)) moveBox.setIsSelected();
-    //         else moveBox.setDefault();
-    //     }
-
-    //     // Change the color of te Move Box if it is represents the current move
-    //     int currMoveIndex = m_moveList.getMoveListSize() - m_moveList.getIteratorIndex() -1;
-    //     if (counter == currMoveIndex) moveBox.setIsCurrentMove();
-
-    //     ++counter;
-    //     m_window.draw(moveBox.getRectangle());
-    //     m_window.draw(moveBox.getTextsf());
-    // }
-    // resetNextPos();
 }

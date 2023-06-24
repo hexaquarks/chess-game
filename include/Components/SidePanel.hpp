@@ -28,7 +28,7 @@ public:
     void addMove(const MoveInfo&);
     void drawMoves(const std::vector<MoveInfo>&, const coor2d&);
     void drawSquareBracket(coor2d&, int, bool) const;
-    void drawMove(const MoveInfo&, const coor2d&);
+    void drawMove(const MoveInfo&, const coor2d&, bool);
     void checkOutOfBounds(MoveBox&, int);
     void handleMoveBoxClicked(const coor2d&) const;
     void drawFromNode(const shared_ptr<MoveTreeNode>&, int, int, coor2d&, const coor2d&);

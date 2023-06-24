@@ -49,10 +49,10 @@ void MoveTreeDisplayHandler::processNode(
     info.m_content = parseMove(*move, nodeDepth / 2 + 1, nodeDepth % 2 != 0, isNewLineSubvariation_);
     info.m_indentLevel = level_;
     info.m_row = row_;
+    info.m_movePtr = move;
 
     if (isNewLineSubvariation_)
     {
-        std::cout <<"in" << std::endl;
         info.m_letterPrefix = getLetterPrefix(iter_, level_);
     }
 
@@ -118,6 +118,6 @@ std::vector<MoveInfo> MoveTreeDisplayHandler::generateMoveInfo()
         iter.goToParent();
     }
     
-    printMoves(m_moveInfos);
+    //printMoves(m_moveInfos);
     return m_moveInfos;
 }

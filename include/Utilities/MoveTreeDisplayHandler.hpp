@@ -9,6 +9,7 @@ struct MoveInfo
     int m_row = 0; 
     int m_indentLevel = 0;
     bool m_isInlineSubVariation = false;
+    Move* m_movePtr = nullptr;
     std::optional<std::string> m_letterPrefix = std::nullopt;
 };
 
