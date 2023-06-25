@@ -4,6 +4,29 @@
 
 namespace 
 {
+    void handleMoveBoxOutOfBounds(coor2d& absolutePosition_, MoveBox& moveBox_)
+    {
+        // Check if object's width goes out of bounds
+        if (absolutePosition_.first + moveBox_.getScaledWidth() > ui::g_PANEL_SIZE) {
+            // Start from the beginning of the next line
+            absolutePosition_.first = ui::g_BORDER_SIZE + 10;
+            absolutePosition_.second += ui::g_LINE_HEIGHT;
+
+            // Update the move box position
+            moveBox_.setPosition(absolutePosition_); 
+        }
+    }
+
+    void handleMoveBoxHovered(MoveBox& moveBox_, const coor2d& mousePos_)
+    {
+        moveBox_.setIsHovered(moveBox_.isHowered(mousePos_));
+    }
+
+    void handleMoveBoxIsCurrentMove(MoveBox& moveBox_, bool isActualCurrentMove_)
+    {
+        if (isActualCurrentMove_) moveBox_.setIsCurrentMove();
+    }
+
     sf::Text createMovePrefixText(const std::string& prefixLetter_, sf::Font& font_)
     {
         sf::Text text;
@@ -46,6 +69,23 @@ void SidePanel::addMove(const MoveInfo& move_)
     moveBoxes.push_back(moveBox);
     ++moveBoxCounter;
 }
+
+void SidePanel::initializeMoveBoxCoodinates(const MoveInfo& move_, coor2d& absolutePosition_)
+{
+    if (move_.m_row == m_previousRow)
+    {
+        absolutePosition_ = m_nextPos;
+    }
+    else 
+    {
+        m_previousRow = move_.m_row;
+        absolutePosition_.first = ui::g_BORDER_SIZE + 10 + move_.m_indentLevel * ui::g_INDENT_WIDTH;
+    }
+
+    // Adjust the vertical position based on the level
+    absolutePosition_.second = move_.m_row * ui::g_LINE_HEIGHT + ui::g_SIDE_PANEL_TOP_OFFSET;
+}
+
 
 void SidePanel::goToNextRow(int height_)
 {
@@ -148,19 +188,11 @@ void SidePanel::drawMovePrefix(const std::string& prefixLetter_, coor2d& positio
 void SidePanel::drawMove(const MoveInfo& move_, const coor2d& mousePos_, bool isActualCurrentMove_)
 {
     coor2d absolutePosition;
-    if (move_.m_row == m_previousRow)
-    {
-        absolutePosition = m_nextPos;
-    }
-    else 
-    {
-        m_previousRow = move_.m_row;
-        absolutePosition.first = ui::g_BORDER_SIZE + 10 + move_.m_indentLevel * ui::g_INDENT_WIDTH;
-    }
+    // We first initialize the moveBox's top left coordinates based off
+    // The MoveInfo's indentation level and row.
+    initializeMoveBoxCoodinates(move_, absolutePosition);
 
-    // Adjust the vertical position based on the level
-    absolutePosition.second = move_.m_row * ui::g_LINE_HEIGHT + ui::g_SIDE_PANEL_TOP_OFFSET;
-
+    // For subvariations we must draw the letter and number prefix.
     if (move_.m_letterPrefix.has_value())
     {
         drawMovePrefix(move_.m_letterPrefix.value(), absolutePosition);
@@ -171,23 +203,9 @@ void SidePanel::drawMove(const MoveInfo& move_, const coor2d& mousePos_, bool is
     moveBox.handleText(); // Create the Text, and pass the font resource
     moveBox.handleRectangle(); // Create the Rectangle to display.
 
-    // Check if object's width goes out of bounds
-    if (absolutePosition.first + moveBox.getScaledWidth() > ui::g_PANEL_SIZE) {
-        // Start from the beginning of the next line
-        absolutePosition.first = ui::g_BORDER_SIZE + 10;
-        absolutePosition.second += ui::g_LINE_HEIGHT;
-        moveBox.setPosition(absolutePosition); // Update the move box position
-    }
-
-
-    if (!m_showMoveSelectionPanel)
-    {
-        // Change the color of the Move Box if it is hovered
-        if (moveBox.isHowered(mousePos_)) moveBox.setIsSelected();
-        else moveBox.setDefault();
-    }
-
-    if (isActualCurrentMove_) moveBox.setIsCurrentMove();
+    handleMoveBoxOutOfBounds(absolutePosition, moveBox);
+    handleMoveBoxHovered(moveBox, mousePos_);
+    handleMoveBoxIsCurrentMove(moveBox, isActualCurrentMove_);
 
     m_window.draw(moveBox.getRectangle());
     m_window.draw(moveBox.getTextsf());

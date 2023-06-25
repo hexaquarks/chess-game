@@ -42,16 +42,20 @@ bool MoveBox::isHowered(const coor2d& mousePos_) const
     );
 }
 
-void MoveBox::setDefault()
+void MoveBox::setIsHovered(bool isMoveBoxHovered_)
 {
-    m_textsf.setFillColor({240, 248, 255}); // Aliceblue
-    m_rectangle.setFillColor({50, 50, 50}); // Charcoal
-}
-
-void MoveBox::setIsSelected()
-{
-    m_textsf.setFillColor({240, 248, 255}); // Charcoal
-    m_rectangle.setFillColor({139, 148, 158}); // Aliceblue
+    if (isMoveBoxHovered_)
+    {
+        // Selected color
+        m_textsf.setFillColor({240, 248, 255}); // Charcoal
+        m_rectangle.setFillColor({139, 148, 158}); // Aliceblue
+    }
+    else
+    {
+        // Default color
+        m_textsf.setFillColor({240, 248, 255}); // Aliceblue
+        m_rectangle.setFillColor({50, 50, 50}); // Charcoal
+    }
 }
 
 void MoveBox::setIsCurrentMove()

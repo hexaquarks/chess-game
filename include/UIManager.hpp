@@ -58,7 +58,7 @@ namespace ui {
             void display() { m_window.display(); }
             void clearWindow() { m_window.clear({23, 23, 23}); }
 
-            void handleSidePanelMoveBox(const coor2d&);
+            void handleSidePanelMoveBoxClick(const coor2d&);
             bool ignoreInputWhenSelectionPanelIsActive(const coor2d&) const;
             
             bool isMoveSelectionPanelOpen() { return m_showMoveSelectionPanel; }

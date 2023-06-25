@@ -15,7 +15,7 @@ void MoveSelectionPanel::handleTitleText()
 void MoveSelectionPanel::handlePanelRectangle()
 {
     m_height = g_TOP_PANEL_HEIGHT + (m_numberOfVariations * g_VARIATION_HEIGHT) + (2 * g_INNER_MARGIN);
-    cout << "height is : " << m_height << endl;
+
     // Draw all the panel
     SFDrawUtil::drawRectangleSf(
         m_panel, ui::g_WINDOW_SIZE + ui::g_PANEL_SIZE / 3, ui::g_PANEL_SIZE / 3,
@@ -96,11 +96,9 @@ void MoveSelectionPanel::drawMoveSelectionPanel(MoveTree::Iterator& it_)
     m_window.draw(m_panel);
     m_window.draw(m_topRect);
     m_window.draw(m_title);
+    
     for (const auto& rect: m_variationRectangles) m_window.draw(rect);
     for (const auto& text: m_variationTexts) m_window.draw(text);
-
-    cout << m_variationRectangles.size() << endl;
-    cout << m_variationTexts.size() << endl;
 }
 
 bool MoveSelectionPanel::isHowered(const coor2d& mousePos_) const

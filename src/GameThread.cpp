@@ -210,7 +210,7 @@ bool GameThread::handleMouseButtonReleasedLeft(ui::ClickState& clickState, ui::D
     }
 
     // Handle Side Panel Move Box buttons click
-    uiManager.handleSidePanelMoveBox(clickState.mousePos);
+    uiManager.handleSidePanelMoveBoxClick(clickState.mousePos);
     
     // ^^^ Possible bug here when moveboxe and moveselection panel overlap
 

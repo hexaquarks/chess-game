@@ -23,13 +23,11 @@ public:
     sf::Text getTextsf() const { return m_textsf; }
     bool isHowered(const coor2d&) const;
     void setIsCurrentMove();
-    void setIsSelected();
-    void setDefault();
+    void setIsHovered(bool);
     void handleRectangle();
     void handleText();
 
 private:
-    bool m_isSelected = false;
     sf::RectangleShape m_rectangle;
     sf::FloatRect m_textBounds;
     coor2d m_position;

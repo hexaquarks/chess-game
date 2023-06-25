@@ -26,6 +26,7 @@ public:
     void resetNextPos() { m_nextPos = {ui::g_BORDER_SIZE + 10, 10}; }
     void goToNextRow(int height);
     void addMove(const MoveInfo&);
+    void initializeMoveBoxCoodinates(const MoveInfo&, coor2d&);
     void drawMoves(const std::vector<MoveInfo>&, const coor2d&);
     void drawSquareBracket(coor2d&, int, bool) const;
     void drawMove(const MoveInfo&, const coor2d&, bool);
