@@ -386,10 +386,11 @@ namespace ui {
         m_window.draw(s);
     }
 
-    void UIManager::handleSidePanelMoveBox(const coor2d& mousePos_)
+    void UIManager::handleSidePanelMoveBoxClick(const coor2d& mousePos_)
     {
         if (!m_showMoveSelectionPanel) m_sidePanel.handleMoveBoxClicked(mousePos_);
     }
+
     bool UIManager::ignoreInputWhenSelectionPanelIsActive(const coor2d& mousePos_) const
     {
         return m_showMoveSelectionPanel && !m_moveSelectionPanel.isHowered(mousePos_);

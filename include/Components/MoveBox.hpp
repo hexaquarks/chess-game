@@ -15,11 +15,11 @@ public:
 
     float getScaledWidth() const { return g_BOX_HORIZONTAL_SCALE * m_textBounds.width; }
     float getScaledHeight() const { return g_BOX_VERTICAL_SCALE * m_textsf.getCharacterSize(); }
-    void setPosition(coor2d coord) { m_position = coord; }
+    void setPosition(const coor2d& coord_) { m_position = coord_; }
     sf::RectangleShape getRectangle() const { return m_rectangle; }
     sf::FloatRect getTextBounds() const { return m_textBounds; }
     coor2d getPosition() const { return m_position; }
-    std::string getText() const { return m_text; }
+    const std::string& getText() const { return m_text; }
     sf::Text getTextsf() const { return m_textsf; }
     bool isHowered(const coor2d&) const;
     void setIsCurrentMove();

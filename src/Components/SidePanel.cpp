@@ -4,17 +4,19 @@
 
 namespace 
 {
-    void handleMoveBoxOutOfBounds(coor2d& absolutePosition_, MoveBox& moveBox_)
+    bool moveBoxIsOutOfBounds(const coor2d& absolutePosition_, const MoveBox& moveBox_)
     {
-        // Check if object's width goes out of bounds
-        if (absolutePosition_.first + moveBox_.getScaledWidth() > ui::g_PANEL_SIZE) {
-            // Start from the beginning of the next line
-            absolutePosition_.first = ui::g_BORDER_SIZE + 10;
-            absolutePosition_.second += ui::g_LINE_HEIGHT;
+        return absolutePosition_.first + moveBox_.getScaledWidth() > ui::g_PANEL_SIZE - ui::g_BORDER_SIZE;
+    }
 
-            // Update the move box position
-            moveBox_.setPosition(absolutePosition_); 
-        }
+    void updateRowInAllRemainingMoves(std::vector<MoveInfo>& moveTreeInfo_, size_t idx_) 
+    {
+        // -1 here because we already increased the row of the current 
+        // moveInfo structure in handleOutOfBounds function.
+        int currRow = moveTreeInfo_[idx_].m_row - 1;
+        while (moveTreeInfo_[idx_].m_row == currRow) ++idx_;
+
+        for (; idx_ < moveTreeInfo_.size(); ++idx_) ++moveTreeInfo_[idx_].m_row;
     }
 
     void handleMoveBoxHovered(MoveBox& moveBox_, const coor2d& mousePos_)
@@ -102,6 +104,20 @@ void SidePanel::checkOutOfBounds(MoveBox& moveBox_, int offset_)
     }
 }
 
+void SidePanel::handleMoveBoxOutOfBounds(
+    coor2d& absolutePosition_, 
+    MoveBox& moveBox_,
+    MoveInfo& moveInfo_)
+{
+    // Go to next row
+    ++moveInfo_.m_row;
+    initializeMoveBoxCoodinates(moveInfo_, absolutePosition_);
+
+    // Update the information for display
+    moveBox_.setPosition(absolutePosition_);
+    moveBox_.handleRectangle();
+}
+
 void SidePanel::handleMoveBoxClicked(const coor2d& mousePos_) const
 {
     int newMoveIndex = 0;
@@ -185,25 +201,35 @@ void SidePanel::drawMovePrefix(const std::string& prefixLetter_, coor2d& positio
     position_.first += rect.getGlobalBounds().width;
 }
 
-void SidePanel::drawMove(const MoveInfo& move_, const coor2d& mousePos_, bool isActualCurrentMove_)
+void SidePanel::drawMove(
+    std::vector<MoveInfo>& moveTreeInfo_, 
+    size_t idx_,
+    const coor2d& mousePos_, 
+    bool isActualCurrentMove_)
 {
+    MoveInfo& move = moveTreeInfo_[idx_];
+
     coor2d absolutePosition;
     // We first initialize the moveBox's top left coordinates based off
     // The MoveInfo's indentation level and row.
-    initializeMoveBoxCoodinates(move_, absolutePosition);
+    initializeMoveBoxCoodinates(move, absolutePosition);
 
     // For subvariations we must draw the letter and number prefix.
-    if (move_.m_letterPrefix.has_value())
+    if (move.m_letterPrefix.has_value())
     {
-        drawMovePrefix(move_.m_letterPrefix.value(), absolutePosition);
+        drawMovePrefix(move.m_letterPrefix.value(), absolutePosition);
     }
 
     // Construct the Move Box
-    MoveBox moveBox(absolutePosition, move_.m_content); // Make the text box
+    MoveBox moveBox(absolutePosition, move.m_content); // Make the text box
     moveBox.handleText(); // Create the Text, and pass the font resource
     moveBox.handleRectangle(); // Create the Rectangle to display.
 
-    handleMoveBoxOutOfBounds(absolutePosition, moveBox);
+    if (moveBoxIsOutOfBounds(absolutePosition, moveBox))
+    {
+        handleMoveBoxOutOfBounds(absolutePosition, moveBox, move);
+        updateRowInAllRemainingMoves(moveTreeInfo_, idx_);
+    }
     handleMoveBoxHovered(moveBox, mousePos_);
     handleMoveBoxIsCurrentMove(moveBox, isActualCurrentMove_);
 
@@ -220,7 +246,7 @@ void SidePanel::drawMove(const MoveInfo& move_, const coor2d& mousePos_, bool is
 }
 
 
-void SidePanel::drawMoves(const std::vector<MoveInfo>& moveTreeInfo_, const coor2d& mousePos_)
+void SidePanel::drawMoves(std::vector<MoveInfo> moveTreeInfo_, const coor2d& mousePos_)
 {
     // Reset the initial drawing position
     m_nextPos = {ui::g_BORDER_SIZE + 10, 0};
@@ -229,7 +255,7 @@ void SidePanel::drawMoves(const std::vector<MoveInfo>& moveTreeInfo_, const coor
     for (const MoveInfo& moveInfo : moveTreeInfo_)
     {
         const bool isActualCurrentMove = moveInfo.m_movePtr == m_moveList.getIterator()->m_move.get();
-        drawMove(moveInfo, mousePos_, isActualCurrentMove);
+        drawMove(moveTreeInfo_, idx, mousePos_, isActualCurrentMove);
         ++idx;
     }
 }
