@@ -2,20 +2,27 @@
 
 namespace 
 {
-    std::string getLetterPrefix(MoveTree::Iterator iter, int indentationLevel)
+    std::string getLetterPrefix(MoveTree::Iterator iter_, int indentationLevel_)
     {
         // Base case
-        if (indentationLevel == 1) return std::string(1, static_cast<char>('A' + iter.getNodeIdxAmongSiblings() - 1)) + ")";
+        if (indentationLevel_ == 1) 
+        {
+            return std::string(1, static_cast<char>( 
+                'A' + 
+                iter_.getNodeIdxAmongSiblings() - 
+                ((iter_.getNbOfNodesAtCurrentLevel() % 2 == 0) ? 1 : 0)
+            )) + ")";
+        }
             
         // Go to subvariations that are indented by more than 1 level.
         // For these we use the sibling index of the ancestors to establish
         // the correct number and letter prefix.    
-        int currentNodeIdx = iter.getNodeIdxAmongSiblings();
-        iter.goToParent();
-        auto parentLetterPrefix = getLetterPrefix(iter, indentationLevel - 1);
-        auto numberSuffix = std::to_string(currentNodeIdx);
+        const int currentNodeIdx = iter_.getNodeIdxAmongSiblings();
+        iter_.goToParent();
+        const auto parentLetterPrefix = getLetterPrefix(iter_, indentationLevel_ - 1);
+        const auto numberSuffix = std::to_string(currentNodeIdx);
         
-        if (indentationLevel > 2) return parentLetterPrefix.substr(0, parentLetterPrefix.size() - 1) + "," + numberSuffix + ")";
+        if (indentationLevel_ > 2) return parentLetterPrefix.substr(0, parentLetterPrefix.size() - 1) + "," + numberSuffix + ")";
         return parentLetterPrefix.substr(0, parentLetterPrefix.size() - 1) + numberSuffix + ")";
     }
 }
@@ -45,7 +52,7 @@ void MoveTreeDisplayHandler::processNode(
     if (move == nullptr) return;
 
     MoveInfo info;
-    int nodeDepth = iter_.getNodeLevel();
+    const int nodeDepth = iter_.getNodeLevel();
     info.m_content = parseMove(*move, nodeDepth / 2 + 1, nodeDepth % 2 != 0, isNewLineSubvariation_);
     info.m_indentLevel = level_;
     info.m_row = row_;
@@ -56,9 +63,9 @@ void MoveTreeDisplayHandler::processNode(
         info.m_letterPrefix = getLetterPrefix(iter_, level_);
     }
 
-
     m_moveInfos.push_back(info);
 }
+
 void MoveTreeDisplayHandler::processNodeRec(
     MoveTree::Iterator& iter_, 
     int level_, 

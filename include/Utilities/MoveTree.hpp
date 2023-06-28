@@ -106,6 +106,12 @@ public:
             return -1;
         }
 
+        int getNbOfNodesAtCurrentLevel()
+        {
+            if (!m_ptr) return 1;
+            return m_ptr->m_parent->m_children.size();
+        }
+
         // Prefix increment
         shared_ptr<MoveTreeNode> operator++()
         {
