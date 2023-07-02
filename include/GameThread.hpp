@@ -2,7 +2,6 @@
 
 #include "UIManager.hpp"
 #include "Ressources/RessourceManager.hpp"
-#include "Utilities/PieceTransition.hpp"
 #include "Components/MenuButton.hpp"
 #include "Components/Board.hpp"
 #include "Utilities/Arrow.hpp"
@@ -28,21 +27,14 @@ public:
     GameThread() = delete; // Delete constructor
     static void startGame();
 
-    static void setTransitioningPiece(
-        bool, shared_ptr<Piece>&, int, int, int, int,
-        shared_ptr<Piece>&, int, int, PieceTransition&
-    );
-
-    static void setSecondTransitioningPiece(
-        shared_ptr<Piece>&, int, int,
-        int, int, PieceTransition&
-    );
     
 private:
     inline static Board board;
-    inline static PieceTransition transitioningPiece;
-    inline static MoveList moveList{board, transitioningPiece};
+
+    inline static MoveList moveList{board};
     inline static MoveTree::Iterator& treeIterator = moveList.getIterator();
+    inline static ui::UIManager uiManager{board, moveList};
+
     inline static bool kingChecked = false;
     inline static bool noMovesAvailable = false;
     inline static shared_ptr<Piece> pLastMove;

@@ -3,7 +3,7 @@
 #include "../../include/Utilities/UIConstants.hpp"
 #include "../../include/GameThread.hpp"
 
-MoveList::MoveList(Board& board_, PieceTransition& p_): game(board_), m_transitioningPiece(p_)
+MoveList::MoveList(Board& board_): game(board_)
 {
 }
 
@@ -167,15 +167,15 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
         if (!addToList_ && pSelectedPiece)
         {
             // Enable piece visual transition
-            GameThread::setTransitioningPiece(
+            setTransitioningPiece(
                 false, pSelectedPiece, prevX, prevY, x, y, pCapturedPiece,
-                capturedX, capturedY, getTransitioningPiece()
+                capturedX, capturedY
             );
 
             if (pSecondPiece) {
-                GameThread::setSecondTransitioningPiece(
+                setSecondTransitioningPiece(
                     pSecondPiece, secondXInit, castleRow,
-                    secondXTarget, castleRow, getTransitioningPiece()
+                    secondXTarget, castleRow
                 );
             }
 
@@ -186,9 +186,9 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
         else if (pSecondPiece)
         {
             // Enable rook sliding when user just castled
-            GameThread::setTransitioningPiece(
+            setTransitioningPiece(
                 false, pSecondPiece, secondXInit, castleRow, secondXTarget, castleRow,
-                pCapturedPiece, capturedX, capturedY, getTransitioningPiece()
+                pCapturedPiece, capturedX, capturedY
             );
         }
     }
@@ -261,18 +261,47 @@ void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
     if (enableTransition_)
     {
         // Enable transition movement
-        GameThread::setTransitioningPiece(
+        setTransitioningPiece(
             true, selected, x, y, prevX, prevY, pUndoPiece,
-            capturedX, capturedY, getTransitioningPiece()
+                capturedX, capturedY
         );
 
         if (pSecondPiece) {
-            GameThread::setSecondTransitioningPiece(
+            setSecondTransitioningPiece(
                 pSecondPiece, secondXInit, castleRow,
-                secondXTarget, castleRow, getTransitioningPiece()
+                secondXTarget, castleRow
             );
         }
     }
 
     --m_moveIterator;
 }
+
+void MoveList::setTransitioningPiece(
+    bool isUndo_, shared_ptr<Piece>& p_, int initialX_, int initialY_,
+    int xTarget_, int yTarget_, shared_ptr<Piece>& captured_,
+    int capturedXPos_, int capturedYPos_
+)
+{
+    m_transitioningPiece.resetPieces();
+    m_transitioningPiece.setTransitioningPiece(p_);
+    m_transitioningPiece.setDestination({ui::getWindowXPos(xTarget_), ui::getWindowYPos(yTarget_)});
+    m_transitioningPiece.setCurrPos({ui::getWindowXPos(initialX_), ui::getWindowYPos(initialY_)});
+    m_transitioningPiece.setCapturedPiece(captured_, ui::getWindowXPos(capturedXPos_), ui::getWindowYPos(capturedYPos_));
+    m_transitioningPiece.setUndo(isUndo_);
+    m_transitioningPiece.setIsTransitioning(true);
+    m_transitioningPiece.setIncrement();
+}
+
+void MoveList::setSecondTransitioningPiece(
+    shared_ptr<Piece>& p_, int initialX_, int initialY_,
+    int xTarget_, int yTarget_
+)
+{
+    m_transitioningPiece.setSecondTransitioningPiece(p_);
+    m_transitioningPiece.setSecondDestination({ui::getWindowXPos(xTarget_), ui::getWindowYPos(yTarget_)});
+    m_transitioningPiece.setSecondCurrPos({ui::getWindowXPos(initialX_), ui::getWindowYPos(initialY_)});
+    m_transitioningPiece.setSecondIsTransitioning(true);
+    m_transitioningPiece.setSecondIncrement();
+}
+

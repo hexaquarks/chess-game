@@ -55,8 +55,8 @@ namespace ui {
         highlightLastMove();
         drawPieces();
         if (dragState_.pieceIsMoving) drawDraggedPiece(clickState_.pSelectedPiece, clickState_.mousePos);
-        if (m_transitioningPiece.getIsTransitioning()) {
-            drawTransitioningPiece(m_transitioningPiece);
+        if (m_moveList.getTransitioningPiece().getIsTransitioning()) {
+            drawTransitioningPiece(m_moveList.getTransitioningPiece());
         }
         drawAllArrows(arrowsInfo_.arrows, arrowsInfo_.currArrow);
 
@@ -229,13 +229,14 @@ namespace ui {
                 if (!piece) continue;
 
                 // Do not draw transitioning pieces
-                if (m_transitioningPiece.getIsTransitioning())
+                auto& pieceTransition = m_moveList.getTransitioningPiece();
+                if (pieceTransition.getIsTransitioning())
                 {
                     if (
-                        piece == m_transitioningPiece.getPiece() ||
-                        piece == m_transitioningPiece.getCapturedPiece() ||
-                        piece == m_transitioningPiece.getSecondPiece() ||
-                        piece == m_transitioningPiece.getPromotingPiece()
+                        piece == pieceTransition.getPiece() ||
+                        piece == pieceTransition.getCapturedPiece() ||
+                        piece == pieceTransition.getSecondPiece() ||
+                        piece == pieceTransition.getPromotingPiece()
                     ) continue;
                 }
 
@@ -408,4 +409,5 @@ namespace ui {
         if (pos_.second < g_MENUBAR_HEIGHT) return -1;
         return isFlipped_ ? 7 - cellPos : cellPos;
     }
+
 };
