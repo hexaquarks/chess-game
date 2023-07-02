@@ -1,6 +1,5 @@
 #include "../include/GameThread.hpp"
 #include "../include/Components/MenuButton.hpp"
-#include "../include/Utilities/PieceTransition.hpp"
 #include "../include/Utilities/Move.hpp"
 #include "../include/Ressources/AudioManager.hpp"
 #include "../include/Components/SidePanel.hpp"
@@ -45,8 +44,6 @@ std::optional<Move> findSelectedMove(Board& board_, ui::ClickState& clickState_,
 
 void GameThread::startGame()
 {
-    ui::UIManager uiManager(board, moveList);
-
     // Parameters to handle a piece being dragged
     ui::DragState dragState;
     ui::ClickState clickState;
@@ -320,42 +317,15 @@ bool GameThread::handleMouseButtonReleasedRight(ui::ClickState& clickState, ui::
     return true;
 }
 
-void GameThread::setTransitioningPiece(
-    bool isUndo_, shared_ptr<Piece>& p_, int initialX_, int initialY_,
-    int xTarget_, int yTarget_, shared_ptr<Piece>& captured_,
-    int capturedXPos_, int capturedYPos_, PieceTransition& trans_
-)
-{
-    trans_.resetPieces();
-    trans_.setTransitioningPiece(p_);
-    trans_.setDestination({ui::getWindowXPos(xTarget_), ui::getWindowYPos(yTarget_)});
-    trans_.setCurrPos({ui::getWindowXPos(initialX_), ui::getWindowYPos(initialY_)});
-    trans_.setCapturedPiece(captured_, ui::getWindowXPos(capturedXPos_), ui::getWindowYPos(capturedYPos_));
-    trans_.setUndo(isUndo_);
-    trans_.setIsTransitioning(true);
-    trans_.setIncrement();
-}
-
-void GameThread::setSecondTransitioningPiece(
-    shared_ptr<Piece>& p_, int initialX_, int initialY_,
-    int xTarget_, int yTarget_, PieceTransition& trans_
-)
-{
-    trans_.setSecondTransitioningPiece(p_);
-    trans_.setSecondDestination({ui::getWindowXPos(xTarget_), ui::getWindowYPos(yTarget_)});
-    trans_.setSecondCurrPos({ui::getWindowXPos(initialX_), ui::getWindowYPos(initialY_)});
-    trans_.setSecondIsTransitioning(true);
-    trans_.setSecondIncrement();
-}
-
 void GameThread::handleKeyPressed(
     const Event& event_, ui::UIManager& uiManager_,
     vector<Arrow>& arrowList_
 )
 {
     // If a piece is already moving, make it arrive
-    if (transitioningPiece.getIsTransitioning())
-        transitioningPiece.setHasArrived();
+    if (moveList.isTransitionningPiece()) {
+        moveList.setTransitioningPieceArrived();
+    }
 
     shared_ptr<Move> move;
     MoveSelectionPanel& moveSelectionPanel = uiManager_.getMoveSelectionPanel();

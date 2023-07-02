@@ -108,7 +108,6 @@ void MoveTreeDisplayHandler::processNodeRec(
     }
 }
 
-
 std::vector<MoveInfo> MoveTreeDisplayHandler::generateMoveInfo() 
 {
     if (m_tree.getNumberOfMoves() == 0) return {};

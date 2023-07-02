@@ -81,8 +81,6 @@ namespace ui {
             };
             Board& m_board;
             std::vector<MenuButton> m_menuBar;
-            PieceTransition m_transitioningPiece;
-
             MoveList& m_moveList;
             SidePanel m_sidePanel;
             MoveSelectionPanel m_moveSelectionPanel;
