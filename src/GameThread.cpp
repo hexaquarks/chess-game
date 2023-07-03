@@ -14,8 +14,6 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 
-using namespace sf;
-
 namespace game
 {
     void GameThread::startGame()
@@ -89,20 +87,24 @@ namespace game
         }
     }
 
-    bool GameThread::handleMouseButtonPressedLeft(Event& event, ui::ClickState& clickState, ui::DragState& dragState, ui::UIManager& uiManager)
+    bool GameThread::handleMouseButtonPressedLeft(
+        Event& event_, 
+        ui::ClickState& clickState_, 
+        ui::DragState& dragState_,
+        ui::UIManager& uiManager_)
     {
-        clickState.mousePos = {event.mouseButton.x, event.mouseButton.y};
+        clickState_.mousePos = {event_.mouseButton.x, event_.mouseButton.y};
 
         // Allow user to make moves only if they're at the current live position,
         // and if the click is on the chess board
-        int yPos = ui::getTileYPos(clickState.mousePos);
+        int yPos = ui::getTileYPos(clickState_.mousePos);
         if (yPos < 0) return false;
 
         // Do not register click if Moveselection panel is activated
         // and the mouse is not within the panel's bounds
-        if (m_uiManager.ignoreInputWhenSelectionPanelIsActive(clickState.mousePos)) return false;
+        if (m_uiManager.ignoreInputWhenSelectionPanelIsActive(clickState_.mousePos)) return false;
 
-        int xPos = ui::getTileXPos(clickState.mousePos, m_board.isFlipped());
+        int xPos = ui::getTileXPos(clickState_.mousePos, m_board.isFlipped());
         if (m_board.isFlipped()) yPos = 7 - yPos;
         auto& pPieceAtCurrentMousePos = m_board.getBoardTile(xPos, yPos);
 
@@ -110,119 +112,130 @@ namespace game
         if (pPieceAtCurrentMousePos && pPieceAtCurrentMousePos->getTeam() == m_board.getTurn())
         {
             // Unselect clicked piece
-            if (pPieceAtCurrentMousePos == clickState.pSelectedPiece)
+            if (pPieceAtCurrentMousePos == clickState_.pSelectedPiece)
             {
-                clickState.pSelectedPiece.reset();
-                clickState.pieceIsClicked = false;
+                clickState_.pSelectedPiece.reset();
+                clickState_.pieceIsClicked = false;
                 return false;
             }
 
-            clickState.pSelectedPiece = pPieceAtCurrentMousePos;
-            clickState.pieceIsClicked = false;
+            clickState_.pSelectedPiece = pPieceAtCurrentMousePos;
+            clickState_.pieceIsClicked = false;
 
-            dragState.pieceIsMoving = true;
-            dragState.lastXPos = ui::getTileXPos(clickState.mousePos, m_board.isFlipped());
-            dragState.lastYPos = yPos;
+            dragState_.pieceIsMoving = true;
+            dragState_.lastXPos = ui::getTileXPos(clickState_.mousePos, m_board.isFlipped());
+            dragState_.lastYPos = yPos;
 
             // Set the tile on the board where the piece is selected to null
-            m_board.resetBoardTile(dragState.lastXPos, dragState.lastYPos, false);
+            m_board.resetBoardTile(dragState_.lastXPos, dragState_.lastYPos, false);
         }
 
         return true;
     }
 
-    bool GameThread::handleMouseButtonPressedRight(Event& event, ui::ClickState& clickState, ui::DragState& dragState, ui::ArrowsInfo& arrowsInfo)
+    bool GameThread::handleMouseButtonPressedRight(
+        Event& event_, 
+        ui::ClickState& clickState_, 
+        ui::DragState& dragState_, 
+        ui::ArrowsInfo& arrowsInfo_)
     {
-        if (!dragState.pieceIsMoving)
+        if (!dragState_.pieceIsMoving)
         {
-            clickState.rightClickAnchor = {event.mouseButton.x, event.mouseButton.y};
-            clickState.isRightClicking = true;
+            clickState_.rightClickAnchor = {event_.mouseButton.x, event_.mouseButton.y};
+            clickState_.isRightClicking = true;
 
-            arrowsInfo.currArrow.setOrigin(clickState.rightClickAnchor);
-            arrowsInfo.currArrow.setDestination(clickState.rightClickAnchor);
+            arrowsInfo_.currArrow.setOrigin(clickState_.rightClickAnchor);
+            arrowsInfo_.currArrow.setDestination(clickState_.rightClickAnchor);
         }
 
         return true;
     }
 
-    bool GameThread::handleMouseMoved(ui::ClickState& clickState, ui::ArrowsInfo& arrowsInfo, ui::UIManager& uiManager_)
+    bool GameThread::handleMouseMoved(
+        ui::ClickState& clickState_, 
+        ui::ArrowsInfo& arrowsInfo_, 
+        ui::UIManager& uiManager_)
     {
         // Update the position of the piece that is being moved
         Vector2i mousePosition = Mouse::getPosition(uiManager_.getWindow());
-        clickState.mousePos = {mousePosition.x, mousePosition.y};
+        clickState_.mousePos = {mousePosition.x, mousePosition.y};
 
-        if (clickState.isRightClicking)
+        if (clickState_.isRightClicking)
         {
-            arrowsInfo.currArrow.setDestination(clickState.mousePos);
-            arrowsInfo.currArrow.updateArrow(); // Update the type and rotation
+            arrowsInfo_.currArrow.setDestination(clickState_.mousePos);
+            arrowsInfo_.currArrow.updateArrow(); // Update the type and rotation
         }
 
         return true;
     }
 
-    bool GameThread::handleMouseButtonReleasedLeft(ui::ClickState& clickState, ui::DragState& dragState, ui::ArrowsInfo& arrowsInfo, ui::UIManager& uiManager_)
+    bool GameThread::handleMouseButtonReleasedLeft(
+        ui::ClickState& clickState_, 
+        ui::DragState& dragState_, 
+        ui::ArrowsInfo& arrowsInfo_, 
+        ui::UIManager& uiManager_)
     {
         // Handle menu bar buttons
-        if (clickState.mousePos.second < ui::g_MENUBAR_HEIGHT)
+        if (clickState_.mousePos.second < ui::g_MENUBAR_HEIGHT)
         {
             for (auto& menuButton: uiManager_.getMenuBar()) 
             {
-                if (!menuButton.isMouseHovered(clickState.mousePos)) continue;
+                if (!menuButton.isMouseHovered(clickState_.mousePos)) continue;
                 menuButton.doMouseClick(m_board, m_moveList);
                 if (!menuButton.isBoardReset()) continue;
                 
-                clickState.pSelectedPiece.reset();
-                clickState.mousePos = {0, 0};
+                clickState_.pSelectedPiece.reset();
+                clickState_.mousePos = {0, 0};
 
-                arrowsInfo.arrows.clear();
+                arrowsInfo_.arrows.clear();
                 m_board.updateAllCurrentlyAvailableMoves();
             }
         }
 
         // Handle Side Panel Move Box buttons click
-        uiManager_.handleSidePanelMoveBoxClick(clickState.mousePos);
+        uiManager_.handleSidePanelMoveBoxClick(clickState_.mousePos);
         
         // ^^^ Possible bug here when moveboxe and moveselection panel overlap
 
-        if (!clickState.pSelectedPiece) return false;
+        if (!clickState_.pSelectedPiece) return false;
 
         // If clicked and mouse remained on the same square
-        int xPos = ui::getTileXPos(clickState.mousePos, m_board.isFlipped());
-        int yPos = ui::getTileYPos(clickState.mousePos, m_board.isFlipped());
-        if (xPos == clickState.pSelectedPiece->getY() && yPos == clickState.pSelectedPiece->getX())
+        int xPos = ui::getTileXPos(clickState_.mousePos, m_board.isFlipped());
+        int yPos = ui::getTileYPos(clickState_.mousePos, m_board.isFlipped());
+        if (xPos == clickState_.pSelectedPiece->getY() && yPos == clickState_.pSelectedPiece->getX())
         {
-            if (!clickState.pieceIsClicked)
+            if (!clickState_.pieceIsClicked)
             {
                 // Put the piece back to it's square; it's not moving
-                m_board.setBoardTile(dragState.lastXPos, dragState.lastYPos, clickState.pSelectedPiece, false);
-                dragState.pieceIsMoving = false;
+                m_board.setBoardTile(dragState_.lastXPos, dragState_.lastYPos, clickState_.pSelectedPiece, false);
+                dragState_.pieceIsMoving = false;
             }
-            clickState.pieceIsClicked = !clickState.pieceIsClicked;
+            clickState_.pieceIsClicked = !clickState_.pieceIsClicked;
             return false;
         }
 
         // Try to match moves
-        std::optional<Move> pSelectedMoveOpt = m_board.findSelectedMove(clickState.pSelectedPiece, xPos, yPos);
+        std::optional<Move> pSelectedMoveOpt = m_board.findSelectedMove(clickState_.pSelectedPiece, xPos, yPos);
 
         // If move is not allowed, place piece back, else apply the move
         if (!pSelectedMoveOpt.has_value())
         {
-            m_board.setBoardTile(dragState.lastXPos, dragState.lastYPos, clickState.pSelectedPiece, false); // Cancel the move
+            m_board.setBoardTile(dragState_.lastXPos, dragState_.lastYPos, clickState_.pSelectedPiece, false); // Cancel the move
         }
         else
         {
             MoveType type = pSelectedMoveOpt->getMoveType();
             auto pMove = make_shared<Move>(
                 make_pair(xPos, yPos), 
-                make_pair(dragState.lastXPos, dragState.lastYPos), 
-                clickState.pSelectedPiece, 
+                make_pair(dragState_.lastXPos, dragState_.lastYPos), 
+                clickState_.pSelectedPiece, 
                 type);
 
             pMove->setCapturedPiece(m_board.getLastMovedPiece());
-            pMove->setMoveArrows(arrowsInfo.arrows);
-            m_moveList.addMove(pMove, arrowsInfo.arrows);
+            pMove->setMoveArrows(arrowsInfo_.arrows);
+            m_moveList.addMove(pMove, arrowsInfo_.arrows);
 
-            m_board.setLastMovedPiece(clickState.pSelectedPiece);
+            m_board.setLastMovedPiece(clickState_.pSelectedPiece);
             m_board.setLastMoveType(type);
             Piece::setLastMovedPiece(m_board.getLastMovedPiece());
             m_board.switchTurn();
@@ -254,46 +267,50 @@ namespace game
                 }
             }
 
-            arrowsInfo.arrows.clear();
+            arrowsInfo_.arrows.clear();
         }
 
-        clickState.pSelectedPiece.reset();
-        clickState.pieceIsClicked = false;
-        clickState.mousePos = {0, 0};
-        dragState.pieceIsMoving = false;
+        clickState_.pSelectedPiece.reset();
+        clickState_.pieceIsClicked = false;
+        clickState_.mousePos = {0, 0};
+        dragState_.pieceIsMoving = false;
 
         return true;
     }
 
-    bool GameThread::handleMouseButtonReleasedRight(ui::ClickState& clickState, ui::DragState& dragState, ui::ArrowsInfo& arrowsInfo)
+    bool GameThread::handleMouseButtonReleasedRight(
+        ui::ClickState& clickState_, 
+        ui::DragState& dragState_, 
+        ui::ArrowsInfo& arrowsInfo_)
     { 
-        if (clickState.pSelectedPiece && dragState.pieceIsMoving)
+        if (clickState_.pSelectedPiece && dragState_.pieceIsMoving)
         {
             // Reset the piece back
-            m_board.setBoardTile(dragState.lastXPos, dragState.lastYPos, clickState.pSelectedPiece, false);
-            clickState.pSelectedPiece.reset();
-            dragState.pieceIsMoving = false;
+            m_board.setBoardTile(dragState_.lastXPos, dragState_.lastYPos, clickState_.pSelectedPiece, false);
+            clickState_.pSelectedPiece.reset();
+            dragState_.pieceIsMoving = false;
         }
-        else if (clickState.isRightClicking)
+        else if (clickState_.isRightClicking)
         {
             // add arrow to arrow list to be drawn
-            if (arrowsInfo.currArrow.isDrawable())
+            if (arrowsInfo_.currArrow.isDrawable())
             {
-                if (!arrowsInfo.currArrow.removeArrow(arrowsInfo.arrows)) 
+                if (!arrowsInfo_.currArrow.removeArrow(arrowsInfo_.arrows)) 
                 {
-                    arrowsInfo.arrows.push_back(arrowsInfo.currArrow);
+                    arrowsInfo_.arrows.push_back(arrowsInfo_.currArrow);
                 }
             }
-            clickState.isRightClicking = false;
-            clickState.rightClickAnchor = {0, 0};
-            arrowsInfo.currArrow.resetParameters();
+            clickState_.isRightClicking = false;
+            clickState_.rightClickAnchor = {0, 0};
+            arrowsInfo_.currArrow.resetParameters();
         }
 
         return true;
     }
 
     void GameThread::handleKeyPressed(
-        const Event& event_, ui::UIManager& uiManager_,
+        const Event& event_, 
+        ui::UIManager& uiManager_,
         vector<Arrow>& arrowList_
     )
     {
