@@ -33,10 +33,7 @@ namespace ui {
     void UIManager::draw(
         ClickState& clickState_, 
         DragState& dragState_, 
-        ArrowsInfo& arrowsInfo_,
-        bool kingChecked_,
-        bool noMovesAvailable_,
-        bool kingIsChecked_)
+        ArrowsInfo& arrowsInfo_)
     {
         // Note that order of function calls in this function is important
         // otherwise drawing is affected negatively.
@@ -44,7 +41,7 @@ namespace ui {
         drawBoardSquares();
         drawSidePanel();
 
-        if (kingChecked_) drawKingCheckCircle();
+        if (m_board.isKingChecked()) drawKingCheckCircle();
 
         const bool needToDrawCirclesAndHighlightSquares = (dragState_.pieceIsMoving || clickState_.pieceIsClicked) && clickState_.pSelectedPiece;
         if (needToDrawCirclesAndHighlightSquares)
@@ -67,7 +64,10 @@ namespace ui {
         }   
 
         // End conditions
-        if (noMovesAvailable_) drawEndResults(kingChecked_);
+        if (m_board.areThereNoMovesAvailableAtCurrentPosition()) 
+        {
+            drawEndResults(m_board.isKingChecked());
+        }
     }
 
     void UIManager::drawBoardSquares()
@@ -326,10 +326,10 @@ namespace ui {
         m_window.draw(c, &shader);
     }
 
-    void UIManager::drawEndResults(bool kingChecked_)
+    void UIManager::drawEndResults(bool isKingChecked_)
     {
         // Checkmate
-        if (kingChecked_)
+        if (isKingChecked_)
         {
             shared_ptr<King> losing = m_board.getKing();
             Texture t; 

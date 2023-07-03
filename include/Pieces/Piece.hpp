@@ -44,7 +44,7 @@ public:
 
     /* Setters */
     void setLastMove(MoveType newMove) { m_lastMove = newMove; }
-    static void setLastMovedPiece(std::shared_ptr<Piece>& piece) { m_lastPiece = piece; }
+    static void setLastMovedPiece(const std::shared_ptr<Piece>& piece) { m_lastPiece = piece; }
 
     /* Utility functions */
     virtual std::vector<Move> calcPossibleMoves(Board&) const = 0; // Pure virtual function
