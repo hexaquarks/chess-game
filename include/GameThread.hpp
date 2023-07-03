@@ -18,8 +18,8 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-class SidePanel; // Forward declaration
-class MoveSelectionPanel; // Forward declaration
+class SidePanel; 
+class MoveSelectionPanel;
 
 class GameThread
 {
@@ -27,17 +27,16 @@ public:
     GameThread() = delete; // Delete constructor
     static void startGame();
 
-    
 private:
-    inline static Board board;
+    inline static Board m_board;
 
-    inline static MoveList moveList{board};
-    inline static MoveTree::Iterator& treeIterator = moveList.getIterator();
-    inline static ui::UIManager uiManager{board, moveList};
+    inline static MoveList m_moveList{m_board};
+    inline static MoveTree::Iterator& m_treeIterator = m_moveList.getIterator();
+    inline static ui::UIManager m_uiManager{m_board, m_moveList};
 
-    inline static bool kingChecked = false;
-    inline static bool noMovesAvailable = false;
-    inline static shared_ptr<Piece> pLastMove;
+    inline static bool m_isKingChecked = false;
+    inline static bool m_noMovesAvailable = false;
+    inline static shared_ptr<Piece> m_pLastMove;
 
     /* Graphical functions */
     static bool handleMouseButtonPressedLeft(Event&, ui::ClickState& clickState, ui::DragState&, ui::UIManager&);
@@ -47,5 +46,5 @@ private:
     static bool handleMouseButtonReleasedRight(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&);
     static void handleKeyPressed(const Event&, ui::UIManager&, vector<Arrow>&);
 
-    inline static bool isFlipped = false;
+    inline static bool m_isBoardFlipped = false;
 };
