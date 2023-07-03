@@ -154,3 +154,9 @@ void Board::switchTurn()
 {
     m_turn = (m_turn == Team::WHITE)? Team::BLACK: Team::WHITE;
 }
+
+void Board::checkIfMoveMakesKingChecked(const std::shared_ptr<Move>& move_)
+{
+    m_isKingChecked = move_ ? move_->kingIsChecked() : false;
+    m_currentlyNoMovesAvailable = move_ ? move_->hasNoMovesAvailable() : false;
+}

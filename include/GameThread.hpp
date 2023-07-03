@@ -34,8 +34,6 @@ namespace game
         MoveTree::Iterator& m_treeIterator = m_moveList.getIterator();
         ui::UIManager m_uiManager{m_board, m_moveList};
 
-        bool m_isKingChecked = false;
-        bool m_noMovesAvailable = false;
         bool m_isBoardFlipped = false;
         shared_ptr<Piece> m_pLastMove;
 

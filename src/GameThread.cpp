@@ -18,15 +18,6 @@ using namespace sf;
 
 namespace 
 {
-    void checkIfMoveMakesKingChecked(
-        const shared_ptr<Move>& move,
-        bool& kingChecked_,
-        bool& noMovesAvailable_)
-    {
-        kingChecked_ = move ? move->kingIsChecked() : false;
-        noMovesAvailable_ = move ? move->hasNoMovesAvailable() : false;
-    }
-
     std::optional<Move> findSelectedMove(Board& board_, ui::ClickState& clickState_, int xPos_, int yPos_)
     {
         for (auto& move : board_.getAllCurrentlyAvailableMoves())
@@ -110,9 +101,7 @@ namespace game
             m_uiManager.draw(
                 clickState, 
                 dragState, 
-                arrowsInfo, 
-                m_isKingChecked,  
-                m_noMovesAvailable);
+                arrowsInfo);
             
             m_uiManager.display();
         }
@@ -257,17 +246,19 @@ namespace game
             m_board.switchTurn();
             m_board.updateAllCurrentlyAvailableMoves();
             
-            m_noMovesAvailable = m_board.getAllCurrentlyAvailableMoves().empty();
-            if (m_noMovesAvailable) pMove->setNoMovesAvailable();
+            m_board.setAreThereNoMovesAvailableAtCurrentPosition(
+                m_board.getAllCurrentlyAvailableMoves().empty()
+            );
+            if (m_board.areThereNoMovesAvailableAtCurrentPosition()) pMove->setNoMovesAvailable();
 
             if (m_board.kingIsChecked())
             {
-                m_isKingChecked = true;
+                m_board.setIsKingChecked(true);
                 pMove->setChecked();
             }
             else
             {
-                m_isKingChecked = false;
+                m_board.setIsKingChecked(false);
                 if (type == MoveType::CAPTURE || type == MoveType::ENPASSANT)
                 {
                     AudioManager::getInstance().playSound(SoundEffect::CAPTURE);
@@ -334,7 +325,7 @@ namespace game
                 m_moveList.goToPreviousMove(true, arrowList_);
 
                 move = m_treeIterator.get()->m_move;
-                checkIfMoveMakesKingChecked(move, m_isKingChecked, m_noMovesAvailable);
+                m_board.checkIfMoveMakesKingChecked(move);
                 break;
             case Keyboard::Right:
                 if (m_treeIterator.currentNodeHasMoreThanOneVariation())
@@ -348,7 +339,7 @@ namespace game
                     m_moveList.goToNextMove(true, moveSelectionPanel.getSelection(), arrowList_);
 
                     move = m_treeIterator.get()->m_move;
-                    checkIfMoveMakesKingChecked(move, m_isKingChecked, m_noMovesAvailable);
+                    m_board.checkIfMoveMakesKingChecked(move);
 
                     uiManager_.closeMoveSelectionPanel();
                     return;
@@ -356,7 +347,7 @@ namespace game
                 m_moveList.goToNextMove(true, std::nullopt, arrowList_);
 
                 move = m_treeIterator.get()->m_move;
-                checkIfMoveMakesKingChecked(move, m_isKingChecked, m_noMovesAvailable);
+                m_board.checkIfMoveMakesKingChecked(move);
                 break;
             case Keyboard::LControl:
                 m_board.flipBoard();
@@ -377,7 +368,7 @@ namespace game
                     m_moveList.goToNextMove(true, moveSelectionPanel.getSelection(), arrowList_);
                     
                     move = m_treeIterator.get()->m_move;
-                    checkIfMoveMakesKingChecked(move, m_isKingChecked, m_noMovesAvailable);
+                    m_board.checkIfMoveMakesKingChecked(move);
 
                     uiManager_.closeMoveSelectionPanel();
                 }

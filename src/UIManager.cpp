@@ -33,9 +33,7 @@ namespace ui {
     void UIManager::draw(
         ClickState& clickState_, 
         DragState& dragState_, 
-        ArrowsInfo& arrowsInfo_,
-        bool isKingChecked_,
-        bool noMovesAvailable_)
+        ArrowsInfo& arrowsInfo_)
     {
         // Note that order of function calls in this function is important
         // otherwise drawing is affected negatively.
@@ -43,7 +41,7 @@ namespace ui {
         drawBoardSquares();
         drawSidePanel();
 
-        if (isKingChecked_) drawKingCheckCircle();
+        if (m_board.isKingChecked()) drawKingCheckCircle();
 
         const bool needToDrawCirclesAndHighlightSquares = (dragState_.pieceIsMoving || clickState_.pieceIsClicked) && clickState_.pSelectedPiece;
         if (needToDrawCirclesAndHighlightSquares)
@@ -66,7 +64,10 @@ namespace ui {
         }   
 
         // End conditions
-        if (noMovesAvailable_) drawEndResults(isKingChecked_);
+        if (m_board.areThereNoMovesAvailableAtCurrentPosition()) 
+        {
+            drawEndResults(m_board.isKingChecked());
+        }
     }
 
     void UIManager::drawBoardSquares()

@@ -53,7 +53,7 @@ namespace ui {
     class UIManager {
         public:
             UIManager(Board&, MoveList&);
-            void draw(ClickState&, DragState&, ArrowsInfo&, bool, bool);
+            void draw(ClickState&, DragState&, ArrowsInfo&);
 
             void display() { m_window.display(); }
             void clearWindow() { m_window.clear({23, 23, 23}); }

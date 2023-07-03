@@ -21,6 +21,7 @@ public:
     std::shared_ptr<Piece>& getBoardTile(int x, int y) { return m_board[y][x]; }
     std::shared_ptr<King> getKing() const;
     Team getTurn() const { return m_turn; }
+    void setIsKingChecked(bool isKingChecked_) { m_isKingChecked = isKingChecked_; }
     void setBoardTile(int, int, std::shared_ptr<Piece>&, bool = true);
     void resetBoardTile(int, int, bool = true);
 
@@ -31,8 +32,12 @@ public:
     void switchTurn();
     bool kingIsChecked();
     bool isFlipped() { return m_isFlipped; }
+    bool isKingChecked() { return m_isKingChecked; }
     void addPiece(const std::shared_ptr<Piece>&);
     void flipBoard() { m_isFlipped = !m_isFlipped; }
+    void checkIfMoveMakesKingChecked(const std::shared_ptr<Move>&);
+    bool areThereNoMovesAvailableAtCurrentPosition() { return m_currentlyNoMovesAvailable; }
+    void setAreThereNoMovesAvailableAtCurrentPosition(bool b_) { m_currentlyNoMovesAvailable = b_; }
 
 private:
     // Member variables
@@ -44,6 +49,8 @@ private:
     std::shared_ptr<King> m_blackKing;
     bool m_isFlipped = false;
     std::vector<Move> m_allCurrentlyAvailableMoves;
+    bool m_isKingChecked = false;
+    bool m_currentlyNoMovesAvailable = false;
 
     // Private functions
     void removeIllegalMoves(std::vector<Move>&, std::shared_ptr<Piece>&);
