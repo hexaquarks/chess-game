@@ -5,6 +5,7 @@
 int main()
 {
     std::cout << "SFML version: " << SFML_VERSION_MAJOR << "." << SFML_VERSION_MINOR << std::endl;
-    GameThread::startGame();
+    game::GameThread gameThread;
+    gameThread.startGame();
     return 0;
 }

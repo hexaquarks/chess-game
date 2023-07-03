@@ -21,30 +21,30 @@
 class SidePanel; 
 class MoveSelectionPanel;
 
-class GameThread
+namespace game 
 {
-public:
-    GameThread() = delete; // Delete constructor
-    static void startGame();
+    class GameThread
+    {
+    public:
+        void startGame();
 
-private:
-    inline static Board m_board;
+    private:
+        Board m_board;
+        MoveList m_moveList{m_board};
+        MoveTree::Iterator& m_treeIterator = m_moveList.getIterator();
+        ui::UIManager m_uiManager{m_board, m_moveList};
 
-    inline static MoveList m_moveList{m_board};
-    inline static MoveTree::Iterator& m_treeIterator = m_moveList.getIterator();
-    inline static ui::UIManager m_uiManager{m_board, m_moveList};
+        bool m_isKingChecked = false;
+        bool m_noMovesAvailable = false;
+        bool m_isBoardFlipped = false;
+        shared_ptr<Piece> m_pLastMove;
 
-    inline static bool m_isKingChecked = false;
-    inline static bool m_noMovesAvailable = false;
-    inline static shared_ptr<Piece> m_pLastMove;
-
-    /* Graphical functions */
-    static bool handleMouseButtonPressedLeft(Event&, ui::ClickState& clickState, ui::DragState&, ui::UIManager&);
-    static bool handleMouseButtonPressedRight(Event&, ui::ClickState& clickState, ui::DragState&, ui::ArrowsInfo&);
-    static bool handleMouseMoved(ui::ClickState&, ui::ArrowsInfo&, ui::UIManager&);
-    static bool handleMouseButtonReleasedLeft(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&, ui::UIManager&);
-    static bool handleMouseButtonReleasedRight(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&);
-    static void handleKeyPressed(const Event&, ui::UIManager&, vector<Arrow>&);
-
-    inline static bool m_isBoardFlipped = false;
-};
+        /* Event handles */
+        bool handleMouseButtonPressedLeft(Event&, ui::ClickState& clickState, ui::DragState&, ui::UIManager&);
+        bool handleMouseButtonPressedRight(Event&, ui::ClickState& clickState, ui::DragState&, ui::ArrowsInfo&);
+        bool handleMouseMoved(ui::ClickState&, ui::ArrowsInfo&, ui::UIManager&);
+        bool handleMouseButtonReleasedLeft(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&, ui::UIManager&);
+        bool handleMouseButtonReleasedRight(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&);
+        void handleKeyPressed(const Event&, ui::UIManager&, vector<Arrow>&);
+    };
+}
