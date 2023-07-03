@@ -33,11 +33,11 @@ public:
 
     void setChecked(bool checked_ = true) { m_kingChecked = checked_; }
     void setNoMovesAvailable(bool noMoves_ = true) { m_noMovesAvailable = noMoves_; }
-    void setTarget(coor2d& target_) { m_target = target_; }
+    void setTarget(const coor2d& target_) { m_target = target_; }
     void setMoveType(MoveType moveType_) { m_MoveType = moveType_; }
-    void setCapturedPiece(std::shared_ptr<Piece>& capturedPiece_) { m_capturedPiece = capturedPiece_; }
-    void setSelectedPiece(std::shared_ptr<Piece>& piece_) { m_selectedPiece = piece_; }
-    void setMoveArrows(std::vector<Arrow> arrows_) { m_arrows = arrows_; }
+    void setCapturedPiece(const std::shared_ptr<Piece>& capturedPiece_) { m_capturedPiece = capturedPiece_; }
+    void setSelectedPiece(const std::shared_ptr<Piece>& piece_) { m_selectedPiece = piece_; }
+    void setMoveArrows(const std::vector<Arrow> arrows_) { m_arrows = arrows_; }
 
     bool operator==(const Move&);
 

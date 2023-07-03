@@ -34,8 +34,6 @@ namespace game
         MoveTree::Iterator& m_treeIterator = m_moveList.getIterator();
         ui::UIManager m_uiManager{m_board, m_moveList};
 
-        shared_ptr<Piece> m_pLastMove;
-
         /* Event handles */
         bool handleMouseButtonPressedLeft(Event&, ui::ClickState& clickState, ui::DragState&, ui::UIManager&);
         bool handleMouseButtonPressedRight(Event&, ui::ClickState& clickState, ui::DragState&, ui::ArrowsInfo&);

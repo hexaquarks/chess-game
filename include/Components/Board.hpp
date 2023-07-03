@@ -24,6 +24,9 @@ public:
     void setIsKingChecked(bool isKingChecked_) { m_isKingChecked = isKingChecked_; }
     void setBoardTile(int, int, std::shared_ptr<Piece>&, bool = true);
     void resetBoardTile(int, int, bool = true);
+    void setLastMovedPiece(const std::shared_ptr<Piece>& lastMovedPiece_) { m_pLastMovedPiece = lastMovedPiece_; }
+    void setLastMoveType(MoveType moveType_) { m_pLastMovedPiece->setLastMove(moveType_); }
+    const std::shared_ptr<Piece>& getLastMovedPiece() { return m_pLastMovedPiece; }
 
     // Utility functions
     std::vector<Move> possibleMovesFor(const std::shared_ptr<Piece>&);
@@ -51,6 +54,8 @@ private:
     std::vector<Move> m_allCurrentlyAvailableMoves;
     bool m_isKingChecked = false;
     bool m_currentlyNoMovesAvailable = false;
+
+    std::shared_ptr<Piece> m_pLastMovedPiece;
 
     // Private functions
     void removeIllegalMoves(std::vector<Move>&, std::shared_ptr<Piece>&);

@@ -236,16 +236,19 @@ namespace game
                 clickState.pSelectedPiece, 
                 type);
 
-            pMove->setCapturedPiece(m_pLastMove);
+            pMove->setCapturedPiece(m_board.getLastMovedPiece());
             pMove->setMoveArrows(arrowsInfo.arrows);
             m_moveList.addMove(pMove, arrowsInfo.arrows);
 
-            m_pLastMove = clickState.pSelectedPiece;
-            m_pLastMove->setLastMove(type);
-            Piece::setLastMovedPiece(m_pLastMove);
+            m_board.setLastMovedPiece(clickState.pSelectedPiece);
+            m_board.setLastMoveType(type);
+            Piece::setLastMovedPiece(m_board.getLastMovedPiece());
             m_board.switchTurn();
             m_board.updateAllCurrentlyAvailableMoves();
             
+            // It's better to have an explicit setter for this boolean instead
+            // of invoking getAllCUrrentlyAvailableMoves.empty() in the getter 
+            // because this function is suffiently expensive.
             m_board.setAreThereNoMovesAvailableAtCurrentPosition(
                 m_board.getAllCurrentlyAvailableMoves().empty()
             );
