@@ -16,24 +16,6 @@
 
 using namespace sf;
 
-namespace 
-{
-    std::optional<Move> findSelectedMove(Board& board_, ui::ClickState& clickState_, int xPos_, int yPos_)
-    {
-        for (auto& move : board_.getAllCurrentlyAvailableMoves())
-        {
-            if (move.getSelectedPiece() == clickState_.pSelectedPiece)
-            {
-                if (move.getTarget().first == yPos_ && move.getTarget().second == xPos_)
-                {
-                    return move;
-                }
-            }
-        }
-        return std::nullopt;
-    }
-} // anonymous namespace
-
 namespace game
 {
     void GameThread::startGame()
@@ -220,7 +202,7 @@ namespace game
         }
 
         // Try to match moves
-        std::optional<Move> pSelectedMoveOpt = findSelectedMove(m_board, clickState, xPos, yPos);
+        std::optional<Move> pSelectedMoveOpt = m_board.findSelectedMove(clickState.pSelectedPiece, xPos, yPos);
 
         // If move is not allowed, place piece back, else apply the move
         if (!pSelectedMoveOpt.has_value())

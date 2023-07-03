@@ -3,7 +3,8 @@
 #include "../Utilities/Move.hpp"
 
 #include <list>
-#include "memory"
+#include <optional>
+#include <memory>
 
 class King;
 class Move;
@@ -29,6 +30,7 @@ public:
     const std::shared_ptr<Piece>& getLastMovedPiece() { return m_pLastMovedPiece; }
 
     // Utility functions
+    std::optional<Move> findSelectedMove(const std::shared_ptr<Piece>&, int, int) const;
     std::vector<Move> possibleMovesFor(const std::shared_ptr<Piece>&);
     const std::vector<Move>& getAllCurrentlyAvailableMoves() const { return m_allCurrentlyAvailableMoves; }
     void updateAllCurrentlyAvailableMoves();
