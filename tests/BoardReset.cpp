@@ -1,26 +1,77 @@
-#include <gtest/gtest.h>
+#define BOOST_TEST_MODULE MyTest
+#include <boost/test/included/unit_test.hpp>
+
 #include "../include/GameThread.hpp"
 #include "../include/Components/Board.hpp"
 #include "../include/Pieces/Piece.hpp"
 
+std::ostream& operator<<(std::ostream& os, const PieceType& pieceType) {
+    switch(pieceType) {
+        case PieceType::PAWN:
+            os << "Pawn";
+            break;
+        case PieceType::KNIGHT:
+            os << "Knight";
+            break;
+        case PieceType::BISHOP:
+            os << "Bishop";
+            break;
+        case PieceType::ROOK:
+            os << "Rook";
+            break;
+        case PieceType::QUEEN:
+            os << "Queen";
+            break;
+        case PieceType::KING:
+            os << "King";
+            break;
+        default:
+            os << "Unknown";
+            break;
+    }
+    return os;
+}
 
-TEST(BoardTests, ResetTest)
+std::ostream& operator<<(std::ostream& os, const Team& team) {
+    switch(team) {
+        case Team::WHITE:
+            os << "White";
+            break;
+        case Team::BLACK:
+            os << "Black";
+            break;
+        default:
+            os << "Unknown";
+            break;
+    }
+    return os;
+}
+
+BOOST_AUTO_TEST_CASE(BoardResetTest)
 {
     Board board;
 
     board.reset();
-    ASSERT_EQ(board.getTurn(), Team::WHITE);
+    BOOST_CHECK_EQUAL(board.getTurn(), Team::WHITE);
 
+    // There should be 16 pieces on each team
     size_t whitePiecesSize = board.getWhitePieces().size();
-    ASSERT_EQ(whitePiecesSize, 16);
-
     size_t blackPiecesSize = board.getBlackPieces().size();
-    ASSERT_EQ(blackPiecesSize, 16);
+    BOOST_CHECK_EQUAL(whitePiecesSize, 16);
+    BOOST_CHECK_EQUAL(blackPiecesSize, 16);
+
+    // It should always be white's turn.
+    bool isWhitesTurn = board.getTurn() == Team::WHITE;
+    BOOST_CHECK(isWhitesTurn);
 
     // Verify that pieces are brought back to their initial square.
-    shared_ptr<Piece> whitePawn = board.getBoardTile(0, 6);
+    auto& whitePawn = board.getBoardTile(0, 6);
+    board.resetBoardTile(0, 6);
     board.setBoardTile(0, 4, whitePawn);
-    ASSERT_EQ(board.getBoardTile(0, 4), whitePawn);
+    BOOST_CHECK_EQUAL(board.getBoardTile(0, 4).get(), whitePawn.get());
     board.reset();
-    ASSERT_EQ(board.getBoardTile(0, 4), nullptr);
+    BOOST_CHECK_EQUAL(board.getBoardTile(0, 4), nullptr);
+    auto& whitePawnAfterReset = board.getBoardTile(0, 6);
+    BOOST_CHECK_EQUAL(whitePawnAfterReset->getType(), PieceType::PAWN);
+    BOOST_CHECK_EQUAL(whitePawnAfterReset->getTeam(), Team::WHITE);
 }
