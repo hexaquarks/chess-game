@@ -232,7 +232,7 @@ void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
             secondXInit = 5;
             secondXTarget = 7;
             pSecondPiece = pCaptured;
-            game.getKing()->setAsFirstMovement();
+            game.setKingAsFirstMovement();
             game.resetBoardTile(secondXInit, castleRow);
             game.resetBoardTile(6, castleRow);
             game.setBoardTile(secondXTarget, castleRow, pSecondPiece);
@@ -241,7 +241,7 @@ void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
             secondXInit = 3;
             secondXTarget = 0;
             pSecondPiece = pCaptured;
-            game.getKing()->setAsFirstMovement();
+            game.setKingAsFirstMovement();
             game.resetBoardTile(secondXInit, castleRow);
             game.resetBoardTile(2, castleRow);
             game.setBoardTile(secondXTarget, castleRow, pSecondPiece);

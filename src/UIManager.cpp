@@ -309,7 +309,7 @@ namespace ui {
         shader.loadFromMemory(VertexShader, RadialGradient);
         shader.setUniform("windowHeight", (float) m_window.getSize().y);
 
-        shared_ptr<King> king = m_board.getKing();
+        const auto& king = m_board.getKing();
         CircleShape c(g_CELL_SIZE / 2);
         c.setFillColor(Color::Transparent);
 
@@ -331,7 +331,7 @@ namespace ui {
         // Checkmate
         if (isKingChecked_)
         {
-            shared_ptr<King> losing = m_board.getKing();
+            const auto& king = m_board.getKing();
             Texture t; 
             t.loadFromFile(RessourceManager::getIconPath("checkmate.png"));
 
@@ -340,8 +340,8 @@ namespace ui {
             checkmate.setScale(g_SPECIAL_SCALE / 2, g_SPECIAL_SCALE / 2);
             checkmate.setOrigin(40, 40);
             checkmate.setPosition(
-                getWindowXPos(m_board.isFlipped()? 7-losing->getY(): losing->getY()) + g_CELL_SIZE,
-                getWindowYPos(m_board.isFlipped()? 7-losing->getX(): losing->getX())
+                getWindowXPos(m_board.isFlipped()? 7-king->getY(): king->getY()) + g_CELL_SIZE,
+                getWindowYPos(m_board.isFlipped()? 7-king->getX(): king->getX())
             );
             m_window.draw(checkmate);
             return;

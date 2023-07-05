@@ -84,9 +84,15 @@ void Board::addPiece(const std::shared_ptr<Piece>& pPiece_)
                                        : m_blackPieces.push_back(pPiece_);
 }
 
-std::shared_ptr<King> Board::getKing() const
+const std::shared_ptr<King>& Board::getKing() const
 {
     return (m_turn == Team::WHITE)? m_whiteKing: m_blackKing;
+}
+
+void Board::setKingAsFirstMovement() 
+{
+    auto& king = (m_turn == Team::WHITE)? m_whiteKing: m_blackKing;
+    king->setAsFirstMovement();
 }
 
 void Board::setBoardTile(int x_, int y_, std::shared_ptr<Piece>& pPiece_, bool record_)

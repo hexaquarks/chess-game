@@ -13,21 +13,21 @@ enum class Team;
 class Board
 {
 public:
-    Board(); // Constructor
-    void reset(); // Resets the board
+    Board(); 
+    void reset();
 
     // Getters and setters
-    std::vector<std::shared_ptr<Piece>> getWhitePieces() const { return m_whitePieces; }
-    std::vector<std::shared_ptr<Piece>> getBlackPieces() const { return m_blackPieces; }
+    const auto& getWhitePieces() const { return m_whitePieces; }
+    const auto& getBlackPieces() const { return m_blackPieces; }
     std::shared_ptr<Piece>& getBoardTile(int x, int y) { return m_board[y][x]; }
-    std::shared_ptr<King> getKing() const;
+    const std::shared_ptr<King>& getKing() const;
     Team getTurn() const { return m_turn; }
     void setIsKingChecked(bool isKingChecked_) { m_isKingChecked = isKingChecked_; }
     void setBoardTile(int, int, std::shared_ptr<Piece>&, bool = true);
     void resetBoardTile(int, int, bool = true);
     void setLastMovedPiece(const std::shared_ptr<Piece>& lastMovedPiece_) { m_pLastMovedPiece = lastMovedPiece_; }
     void setLastMoveType(MoveType moveType_) { m_pLastMovedPiece->setLastMove(moveType_); }
-    const std::shared_ptr<Piece>& getLastMovedPiece() { return m_pLastMovedPiece; }
+    const auto& getLastMovedPiece() const { return m_pLastMovedPiece; }
 
     // Utility functions
     std::optional<Move> findSelectedMove(const std::shared_ptr<Piece>&, int, int) const;
@@ -43,9 +43,9 @@ public:
     void checkIfMoveMakesKingChecked(const std::shared_ptr<Move>&);
     bool areThereNoMovesAvailableAtCurrentPosition() { return m_currentlyNoMovesAvailable; }
     void setAreThereNoMovesAvailableAtCurrentPosition(bool b_) { m_currentlyNoMovesAvailable = b_; }
+    void setKingAsFirstMovement();
 
 private:
-    // Member variables
     std::shared_ptr<Piece> m_board[8][8];
     Team m_turn; // White or black player's turn
     std::vector<std::shared_ptr<Piece>> m_whitePieces;
@@ -59,6 +59,5 @@ private:
 
     std::shared_ptr<Piece> m_pLastMovedPiece;
 
-    // Private functions
     void removeIllegalMoves(std::vector<Move>&, std::shared_ptr<Piece>&);
 };
