@@ -13,7 +13,7 @@ enum class Team;
 class Board
 {
 public:
-    Board(); 
+    Board();
     void reset();
 
     // Getters and setters
