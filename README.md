@@ -4,8 +4,12 @@
 ## Installation
  - Running the project requires [SFML](https://www.sfml-dev.org/download/sfml/2.5.1/) installed locally
  - Need **C++17** compiler installed locally
-
 One can then compile the project by running `make app`, and run the project by running `make run`.
+
+## Long-term Goals
+The long-term goal for this project is to have a puzzle trainer similar [Puzzle Rush](https://www.chess.com/puzzles/rush) and [Puzzle Storm](https://lichess.org/storm) but for openings! The opening puzzles would be generated according to move variations that were manually entered by the user and saved in their user configuration as FEN or PGN files. 
+> Chess Base 17 has this feature but at ~300$ it's inaccessible for most, hence the open sourcing project.
+
 ## Features
  - [x] Fully functional chess game, with respect to chess rules (*pin, check, checkmate, en passant, promotion, castle, etc*).
  - [x] Move history and move list traversal through <kbd> ← </kbd> <kbd> → </kbd> <kbd> ↑ </kbd> <kbd> ↓ </kbd>
