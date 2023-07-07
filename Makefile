@@ -1,8 +1,8 @@
 .PHONY: app clean cleanall run test
 
 CMD := g++
-LIB := -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
-FLAGS := -std=c++17 -g
+LIB := -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio external/lib/project_pgn/pgnp/build/libpgnp.a
+FLAGS := -std=c++17 -g -Iproject_pgn/pgnp/build/includes -Iproject_pgn/pgnp/libs/chess-move-interface/includes
 RM := rm -rf
 SRC := src/
 OBJ := obj/

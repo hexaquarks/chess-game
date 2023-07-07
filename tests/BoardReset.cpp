@@ -1,6 +1,8 @@
 #define BOOST_TEST_MODULE MyTest
 #include <boost/test/included/unit_test.hpp>
 
+#include "../external/lib/project_pgn/pgnp/build/includes/pgnp.hpp"
+
 #include "../include/GameThread.hpp"
 #include "../include/Components/Board.hpp"
 #include "../include/Pieces/Piece.hpp"
