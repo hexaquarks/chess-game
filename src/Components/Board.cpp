@@ -66,6 +66,50 @@ void Board::reset()
             m_board[col][row].reset();
 
     m_turn = Team::WHITE; // Reset the first move to be for white
+    m_pLastMovedPiece.reset();
+    setIsKingChecked(false);
+}
+
+std::shared_ptr<Move> Board::applyMoveOnBoard(
+    const std::optional<Move>& pSelectedMoveOpt_,
+    coor2d currPos_,
+    coor2d initialPos_,
+    const std::shared_ptr<Piece>& pSelectedPiece_,
+    const std::vector<Arrow>& arrows_)
+{
+    MoveType type = pSelectedMoveOpt_->getMoveType();
+    auto pMove = std::make_shared<Move>(
+        std::move(currPos_), 
+        std::move(initialPos_), 
+        pSelectedPiece_, 
+        type);
+
+    pMove->setCapturedPiece(getLastMovedPiece());
+    pMove->setMoveArrows(arrows_);
+
+    return pMove; 
+}
+
+void Board::updateBoardInfosAfterNewMove(
+    const std::shared_ptr<Piece>& pSelectedPiece_,
+    const std::shared_ptr<Move>& pMove_)
+{
+    setLastMovedPiece(pSelectedPiece_);
+    setLastMoveType(pMove_->getMoveType());
+    Piece::setLastMovedPiece(getLastMovedPiece());
+    switchTurn();
+    updateAllCurrentlyAvailableMoves();
+    
+    // It's better to have an explicit setter for this boolean instead
+    // of invoking getAllCUrrentlyAvailableMoves.empty() in the getter 
+    // because this function is suffiently expensive.
+    setAreThereNoMovesAvailableAtCurrentPosition(
+        getAllCurrentlyAvailableMoves().empty()
+    );
+    if (areThereNoMovesAvailableAtCurrentPosition()) pMove_->setNoMovesAvailable();
+
+    setIsKingChecked(kingIsChecked());
+    if (kingIsChecked()) pMove_->setChecked();
 }
 
 std::vector<Move> Board::possibleMovesFor(const std::shared_ptr<Piece>& piece)

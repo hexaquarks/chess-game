@@ -41,5 +41,7 @@ namespace game
         bool handleMouseButtonReleasedLeft(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&, ui::UIManager&);
         bool handleMouseButtonReleasedRight(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&);
         void handleKeyPressed(const Event&, ui::UIManager&, vector<Arrow>&);
+
+        void handleMouseButtonReleasedOnMenuBar(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&, ui::UIManager&);
     };
 }

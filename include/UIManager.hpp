@@ -74,6 +74,8 @@ namespace ui {
             // in GameThread. Good for now
             sf::RenderWindow& getWindow() { return m_window; }
 
+            void resetUserInputStatesAfterNewMove(ClickState&, DragState&);
+
         private:
             sf::RenderWindow m_window = {
                 sf::VideoMode(g_WINDOW_SIZE + g_PANEL_SIZE, g_WINDOW_SIZE + g_MENUBAR_HEIGHT),

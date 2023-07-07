@@ -397,6 +397,14 @@ namespace ui {
         return m_showMoveSelectionPanel && !m_moveSelectionPanel.isHowered(mousePos_);
     }
 
+    void UIManager::resetUserInputStatesAfterNewMove(ClickState& clickState_, DragState& dragState_)
+    {
+        clickState_.pSelectedPiece.reset();
+        clickState_.pieceIsClicked = false;
+        clickState_.mousePos = {0, 0};
+        dragState_.pieceIsMoving = false;
+    }
+
     int getTileXPos(const coor2d& pos_, bool isFlipped_)
     { 
         int cellPos = pos_.first / g_CELL_SIZE; 

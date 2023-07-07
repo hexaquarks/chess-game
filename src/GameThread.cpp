@@ -169,28 +169,35 @@ namespace game
         return true;
     }
 
+    void GameThread::handleMouseButtonReleasedOnMenuBar(
+        ui::ClickState& clickState_, 
+        ui::DragState& dragState_, 
+        ui::ArrowsInfo& arrowsInfo_, 
+        ui::UIManager& uiManager_)
+    {
+        if (clickState_.mousePos.second >= ui::g_MENUBAR_HEIGHT) return;
+        
+        for (auto& menuButton: uiManager_.getMenuBar()) 
+        {
+            if (!menuButton.isMouseHovered(clickState_.mousePos)) continue;
+            menuButton.doMouseClick(m_board, m_moveList);
+            if (!menuButton.isBoardReset()) continue;
+            
+            clickState_.pSelectedPiece.reset();
+            clickState_.mousePos = {0, 0};
+
+            arrowsInfo_.arrows.clear();
+            m_board.updateAllCurrentlyAvailableMoves();
+        }
+    }
+
     bool GameThread::handleMouseButtonReleasedLeft(
         ui::ClickState& clickState_, 
         ui::DragState& dragState_, 
         ui::ArrowsInfo& arrowsInfo_, 
         ui::UIManager& uiManager_)
     {
-        // Handle menu bar buttons
-        if (clickState_.mousePos.second < ui::g_MENUBAR_HEIGHT)
-        {
-            for (auto& menuButton: uiManager_.getMenuBar()) 
-            {
-                if (!menuButton.isMouseHovered(clickState_.mousePos)) continue;
-                menuButton.doMouseClick(m_board, m_moveList);
-                if (!menuButton.isBoardReset()) continue;
-                
-                clickState_.pSelectedPiece.reset();
-                clickState_.mousePos = {0, 0};
-
-                arrowsInfo_.arrows.clear();
-                m_board.updateAllCurrentlyAvailableMoves();
-            }
-        }
+        handleMouseButtonReleasedOnMenuBar(clickState_, dragState_, arrowsInfo_, uiManager_);
 
         // Handle Side Panel Move Box buttons click
         uiManager_.handleSidePanelMoveBoxClick(clickState_.mousePos);
@@ -224,56 +231,29 @@ namespace game
         }
         else
         {
-            MoveType type = pSelectedMoveOpt->getMoveType();
-            auto pMove = make_shared<Move>(
-                make_pair(xPos, yPos), 
-                make_pair(dragState_.lastXPos, dragState_.lastYPos), 
+            auto pMove = m_board.applyMoveOnBoard(
+                pSelectedMoveOpt, 
+                std::make_pair(xPos, yPos), 
+                std::make_pair(dragState_.lastXPos, dragState_.lastYPos),
                 clickState_.pSelectedPiece, 
-                type);
-
-            pMove->setCapturedPiece(m_board.getLastMovedPiece());
-            pMove->setMoveArrows(arrowsInfo_.arrows);
+                arrowsInfo_.arrows);
             m_moveList.addMove(pMove, arrowsInfo_.arrows);
+            m_board.updateBoardInfosAfterNewMove(clickState_.pSelectedPiece, pMove);
 
-            m_board.setLastMovedPiece(clickState_.pSelectedPiece);
-            m_board.setLastMoveType(type);
-            Piece::setLastMovedPiece(m_board.getLastMovedPiece());
-            m_board.switchTurn();
-            m_board.updateAllCurrentlyAvailableMoves();
+            const MoveType moveType = pMove->getMoveType();
+            if (moveType == MoveType::CAPTURE || moveType == MoveType::ENPASSANT)
+            {
+                AudioManager::getInstance().playSound(SoundEffect::CAPTURE);
+            } 
+            else if (moveType == MoveType::NORMAL || moveType == MoveType::INIT_SPECIAL) 
+            {
+                AudioManager::getInstance().playSound(SoundEffect::MOVE);
+            }
             
-            // It's better to have an explicit setter for this boolean instead
-            // of invoking getAllCUrrentlyAvailableMoves.empty() in the getter 
-            // because this function is suffiently expensive.
-            m_board.setAreThereNoMovesAvailableAtCurrentPosition(
-                m_board.getAllCurrentlyAvailableMoves().empty()
-            );
-            if (m_board.areThereNoMovesAvailableAtCurrentPosition()) pMove->setNoMovesAvailable();
-
-            if (m_board.kingIsChecked())
-            {
-                m_board.setIsKingChecked(true);
-                pMove->setChecked();
-            }
-            else
-            {
-                m_board.setIsKingChecked(false);
-                if (type == MoveType::CAPTURE || type == MoveType::ENPASSANT)
-                {
-                    AudioManager::getInstance().playSound(SoundEffect::CAPTURE);
-                } 
-                else if (type == MoveType::NORMAL || type == MoveType::INIT_SPECIAL) 
-                {
-                    AudioManager::getInstance().playSound(SoundEffect::MOVE);
-                }
-            }
-
             arrowsInfo_.arrows.clear();
         }
 
-        clickState_.pSelectedPiece.reset();
-        clickState_.pieceIsClicked = false;
-        clickState_.mousePos = {0, 0};
-        dragState_.pieceIsMoving = false;
+        m_uiManager.resetUserInputStatesAfterNewMove(clickState_, dragState_);
 
         return true;
     }
