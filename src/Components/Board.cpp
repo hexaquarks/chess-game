@@ -8,6 +8,10 @@
 #include "../../include/Pieces/Queen.hpp"
 #include "../../include/Utilities/Move.hpp"
 
+#include <algorithm>
+#include <cctype>
+#include <cassert>
+
 Board::Board(): m_turn(Team::WHITE)
 {
     reset();
@@ -70,6 +74,65 @@ void Board::reset()
     setIsKingChecked(false);
 }
 
+Board::Board(const std::string& fen_)
+{
+    auto splitPosition = std::find_if(fen_.begin(), fen_.end(), ::isspace);
+    std::string position(fen_.begin(), splitPosition);
+    std::string remainingFEN(splitPosition, fen_.end());
+    
+    size_t rowIndex = 0, colIndex = 0;
+    for (const char& ch : position) 
+    {
+        if (ch == '/') 
+        {
+            ++rowIndex;
+            colIndex = 0;
+        } 
+        else if (std::isdigit(ch)) 
+        {
+            colIndex += ch - '0';
+        } 
+        else 
+        {
+            switch(ch) 
+            {
+                case 'r': m_board[rowIndex][colIndex] = std::make_shared<Rook>(Team::BLACK, rowIndex, colIndex); break;
+                case 'n': m_board[rowIndex][colIndex] = std::make_shared<Knight>(Team::BLACK, rowIndex, colIndex); break;
+                case 'b': m_board[rowIndex][colIndex] = std::make_shared<Bishop>(Team::BLACK, rowIndex, colIndex); break;
+                case 'q': m_board[rowIndex][colIndex] = std::make_shared<Queen>(Team::BLACK, rowIndex, colIndex); break;
+                case 'k': 
+                {
+                    m_board[rowIndex][colIndex] = std::make_shared<King>(Team::BLACK, rowIndex, colIndex); 
+                    // m_blackKing = dynamic_cast<King*>(m_board[rowIndex][colIndex]); 
+                    break;
+                }
+                case 'p': m_board[rowIndex][colIndex] = std::make_shared<Pawn>(Team::BLACK, rowIndex, colIndex); break;
+                case 'R': m_board[rowIndex][colIndex] = std::make_shared<Rook>(Team::WHITE, rowIndex, colIndex); break;
+                case 'N': m_board[rowIndex][colIndex] = std::make_shared<Knight>(Team::WHITE, rowIndex, colIndex); break;
+                case 'B': m_board[rowIndex][colIndex] = std::make_shared<Bishop>(Team::WHITE, rowIndex, colIndex); break;
+                case 'Q': m_board[rowIndex][colIndex] = std::make_shared<Queen>(Team::WHITE, rowIndex, colIndex); break;
+                case 'K': 
+                {
+                    m_board[rowIndex][colIndex] = std::make_shared<King>(Team::WHITE, rowIndex, colIndex); 
+                    // m_whiteKing = dynamic_cast<King*>(m_board[rowIndex][colIndex]); 
+                    break;
+                }
+                case 'P': m_board[rowIndex][colIndex] = std::make_shared<Pawn>(Team::WHITE, rowIndex, colIndex); break;
+                default: break;
+            }
+            if (m_board[rowIndex][colIndex]->getTeam() == Team::BLACK)
+                m_blackPieces.push_back(m_board[rowIndex][colIndex]);
+            else
+                m_whitePieces.push_back(m_board[rowIndex][colIndex]);
+
+            ++colIndex;
+        }
+    }
+
+    m_turn = remainingFEN[1] == 'w' ? Team::WHITE : Team::BLACK;
+
+}
+
 std::shared_ptr<Move> Board::applyMoveOnBoard(
     const std::optional<Move>& pSelectedMoveOpt_,
     coor2d currPos_,
@@ -110,6 +173,15 @@ void Board::updateBoardInfosAfterNewMove(
 
     setIsKingChecked(kingIsChecked());
     if (kingIsChecked()) pMove_->setChecked();
+}
+
+std::shared_ptr<Piece>& Board::getBoardTile(const std::pair<char, char>& coord_) 
+{
+    assert(std::isalpha(coord_.first));
+    assert(coord_.second >= '1' && coord_.second <= '8');
+    assert(coord_.first >= 'a' && coord_.first <= 'h');
+
+    return m_board[7 - static_cast<int>(coord_.second - '1')][static_cast<int>(coord_.first - 'a')];
 }
 
 std::vector<Move> Board::possibleMovesFor(const std::shared_ptr<Piece>& piece)

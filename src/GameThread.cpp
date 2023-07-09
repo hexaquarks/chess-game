@@ -16,6 +16,21 @@
 
 namespace game
 {
+    namespace
+    {
+        void playSoundsAfterNewMove(MoveType moveType_)
+        {
+            if (moveType_ == MoveType::CAPTURE || moveType_ == MoveType::ENPASSANT)
+            {
+                AudioManager::getInstance().playSound(SoundEffect::CAPTURE);
+            } 
+            else if (moveType_ == MoveType::NORMAL || moveType_ == MoveType::INIT_SPECIAL) 
+            {
+                AudioManager::getInstance().playSound(SoundEffect::MOVE);
+            }
+        }
+    }
+
     void GameThread::startGame()
     {
         // Parameters to handle a piece being dragged
@@ -239,18 +254,9 @@ namespace game
                 arrowsInfo_.arrows);
             m_moveList.addMove(pMove, arrowsInfo_.arrows);
             m_board.updateBoardInfosAfterNewMove(clickState_.pSelectedPiece, pMove);
-
-            const MoveType moveType = pMove->getMoveType();
-            if (moveType == MoveType::CAPTURE || moveType == MoveType::ENPASSANT)
-            {
-                AudioManager::getInstance().playSound(SoundEffect::CAPTURE);
-            } 
-            else if (moveType == MoveType::NORMAL || moveType == MoveType::INIT_SPECIAL) 
-            {
-                AudioManager::getInstance().playSound(SoundEffect::MOVE);
-            }
-            
             arrowsInfo_.arrows.clear();
+
+            playSoundsAfterNewMove(pMove->getMoveType());
         }
 
         m_uiManager.resetUserInputStatesAfterNewMove(clickState_, dragState_);

@@ -14,12 +14,14 @@ class Board
 {
 public:
     Board();
+    Board(const std::string&);
     void reset();
 
     // Getters and setters
     const auto& getWhitePieces() const { return m_whitePieces; }
     const auto& getBlackPieces() const { return m_blackPieces; }
     std::shared_ptr<Piece>& getBoardTile(int x, int y) { return m_board[y][x]; }
+    std::shared_ptr<Piece>& getBoardTile(const std::pair<char, char>&);
     const std::shared_ptr<King>& getKing() const;
     Team getTurn() const { return m_turn; }
     void setIsKingChecked(bool isKingChecked_) { m_isKingChecked = isKingChecked_; }

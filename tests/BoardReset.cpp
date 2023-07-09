@@ -1,38 +1,12 @@
-#define BOOST_TEST_MODULE MyTest
-#include <boost/test/included/unit_test.hpp>
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MODULE BoardReset
+#include <boost/test/unit_test.hpp>
 
 #include "../external/lib/project_pgn/pgnp/build/includes/pgnp.hpp"
 
 #include "../include/GameThread.hpp"
 #include "../include/Components/Board.hpp"
 #include "../include/Pieces/Piece.hpp"
-
-std::ostream& operator<<(std::ostream& os, const PieceType& pieceType) {
-    switch(pieceType) {
-        case PieceType::PAWN:
-            os << "Pawn";
-            break;
-        case PieceType::KNIGHT:
-            os << "Knight";
-            break;
-        case PieceType::BISHOP:
-            os << "Bishop";
-            break;
-        case PieceType::ROOK:
-            os << "Rook";
-            break;
-        case PieceType::QUEEN:
-            os << "Queen";
-            break;
-        case PieceType::KING:
-            os << "King";
-            break;
-        default:
-            os << "Unknown";
-            break;
-    }
-    return os;
-}
 
 std::ostream& operator<<(std::ostream& os, const Team& team) {
     switch(team) {
@@ -76,4 +50,12 @@ BOOST_AUTO_TEST_CASE(BoardResetTest)
     auto& whitePawnAfterReset = board.getBoardTile(0, 6);
     BOOST_CHECK_EQUAL(whitePawnAfterReset->getType(), PieceType::PAWN);
     BOOST_CHECK_EQUAL(whitePawnAfterReset->getTeam(), Team::WHITE);
+
+    // Verify that the board is no longer flipped if it was before
+    board.flipBoard();
+    board.reset();
+    BOOST_CHECK(!board.isFlipped());
+
+    // The last moved piece should be reseted since it's redundant
+    BOOST_CHECK(!board.getLastMovedPiece().get());
 }

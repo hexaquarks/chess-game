@@ -182,3 +182,30 @@ void Piece::addDiagonalMovements(Board& board_, vector<Move>& moves) const
         }
     }
 }
+
+std::ostream& operator<<(std::ostream& os, const PieceType& pieceType) {
+    switch(pieceType) {
+        case PieceType::PAWN:
+            os << "Pawn";
+            break;
+        case PieceType::KNIGHT:
+            os << "Knight";
+            break;
+        case PieceType::BISHOP:
+            os << "Bishop";
+            break;
+        case PieceType::ROOK:
+            os << "Rook";
+            break;
+        case PieceType::QUEEN:
+            os << "Queen";
+            break;
+        case PieceType::KING:
+            os << "King";
+            break;
+        default:
+            os << "Unknown";
+            break;
+    }
+    return os;
+}
