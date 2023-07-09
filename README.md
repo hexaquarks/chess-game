@@ -33,10 +33,18 @@ The long-term goal for this project is to have a puzzle trainer similar [Puzzle 
         <tr>
             <td align="center">
               <img src="https://github.com/hexaquarks/chess_game/blob/main/promotion/ChessGamePromotionGameplay.gif" title="Gameplay example" width="350"/>
-          </td>
+            </td>
             <td align="center">
               <img src="https://github.com/hexaquarks/chess_game/blob/main/promotion/ChessGamePromotionTraversal.gif" title="Gameplay example" width="350"/>
-          </td>
+            </td>
+        </tr>
+        <tr>
+            <td align="center" colspan="2"><code>Move Tree Display</code></td>
+        </tr>
+        <tr>
+            <td align="center" colspan="2">
+              <img src="https://github.com/hexaquarks/chess_game/blob/main/promotion/ChessGamePromotionMoveTree.gif" title="Gameplay example" width="750"/>
+            </td>
         </tr>
     </tbody>
 </table>
