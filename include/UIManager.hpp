@@ -23,8 +23,8 @@ namespace ui {
         bool pieceIsMoving = false;
 
         // Last position of the piece before being dragged
-        int lastXPos = 0;
-        int lastYPos = 0; 
+        int lastFile = 0;
+        int lastRank = 0; 
     };
 
     struct ClickState {
@@ -47,8 +47,8 @@ namespace ui {
 
     inline int getWindowXPos(int i) { return i * g_CELL_SIZE; }
     inline int getWindowYPos(int j) { return j * g_CELL_SIZE + g_MENUBAR_HEIGHT; }
-    int getTileXPos(const coor2d& pos_, bool isFlipped_ = false);
-    int getTileYPos(const coor2d& pos_, bool isFlipped_ = false);
+    int getFile(const coor2d& pos_, bool isFlipped_ = false);
+    int getRank(const coor2d& pos_, bool isFlipped_ = false);
     
     class UIManager {
         public:

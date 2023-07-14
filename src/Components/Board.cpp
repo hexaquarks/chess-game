@@ -283,13 +283,16 @@ void Board::checkIfMoveMakesKingChecked(const std::shared_ptr<Move>& move_)
     m_currentlyNoMovesAvailable = move_ ? move_->hasNoMovesAvailable() : false;
 }
 
-std::optional<Move> Board::findSelectedMove(const std::shared_ptr<Piece>& pSelectedPiece_, int xPos_, int yPos_) const
+std::optional<Move> Board::findSelectedMove(
+    const std::shared_ptr<Piece>& pSelectedPiece_, 
+    int rank_, 
+    int file_) const
 {
     for (auto& move : getAllCurrentlyAvailableMoves())
     {
         if (move.getSelectedPiece() == pSelectedPiece_)
         {
-            if (move.getTarget().first == yPos_ && move.getTarget().second == xPos_)
+            if (move.getTarget().first == rank_ && move.getTarget().second == file_)
             {
                 return move;
             }

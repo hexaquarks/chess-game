@@ -153,13 +153,18 @@ namespace ui {
             auto [j, i] = move.getTarget();
             if (m_board.isFlipped()) {i = 7-i; j = 7-j;}
             if (move.getSelectedPiece() != pSelectedPiece_) continue;
-            int xPos = getTileXPos(mousePos_), yPos = getTileYPos(mousePos_);
+            int file = getFile(mousePos_), rank = getRank(mousePos_);
 
-            if (i == xPos && j == yPos)
+            if (i == file && j == rank)
             {
                 // Currently hovering a square where the piece can move
                 RectangleShape square = createSquare();
-                SFDrawUtil::drawRectangleSf(square, getWindowXPos(i), getWindowYPos(j), square.getSize(), colours[(i+j)%2]);
+                SFDrawUtil::drawRectangleSf(
+                    square, 
+                    getWindowXPos(i), 
+                    getWindowYPos(j), 
+                    square.getSize(), 
+                    colours[(i+j)%2]);
                 m_window.draw(square);
             }
         }
@@ -221,11 +226,11 @@ namespace ui {
 
     void UIManager::drawPieces()
     {
-        for (size_t i = 0; i < 8; ++i)
+        for (size_t row = 0; row < 8; ++row)
         {
-            for (size_t j = 0; j < 8; ++j)
+            for (size_t file = 0; file < 8; ++file)
             {
-                shared_ptr<Piece>& piece = m_board.getBoardTile(i, j);
+                shared_ptr<Piece>& piece = m_board.getBoardTile(file, row);
                 if (!piece) continue;
 
                 // Do not draw transitioning pieces
@@ -245,7 +250,9 @@ namespace ui {
 
                 Sprite s(*t);
                 s.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
-                s.setPosition(getWindowXPos(m_board.isFlipped() ? (7-i): i), getWindowYPos(m_board.isFlipped()? (7-j): j));
+                s.setPosition(
+                    getWindowXPos(m_board.isFlipped() ? (7 - file): file), 
+                    getWindowYPos(m_board.isFlipped() ? (7 - row): row));
                 m_window.draw(s);
             }
         }
@@ -313,9 +320,9 @@ namespace ui {
         CircleShape c(g_CELL_SIZE / 2);
         c.setFillColor(Color::Transparent);
 
-        int x = m_board.isFlipped()? 7-king->getFile(): king->getFile();
-        int y = m_board.isFlipped()? 7-king->getRank(): king->getRank();
-        c.setPosition(getWindowXPos(x), getWindowYPos(y));
+        int row = m_board.isFlipped()? 7-king->getRank(): king->getRank();
+        int file = m_board.isFlipped()? 7-king->getFile(): king->getFile();
+        c.setPosition(getWindowXPos(file), getWindowYPos(row));
         shader.setUniform("color", Glsl::Vec4(1.f, 0.f, 0.f, 1.f));
         shader.setUniform("center", Vector2f(
             c.getPosition().x + c.getRadius(), c.getPosition().y + + c.getRadius()
@@ -405,12 +412,12 @@ namespace ui {
         dragState_.pieceIsMoving = false;
     }
 
-    int getTileXPos(const coor2d& pos_, bool isFlipped_)
+    int getFile(const coor2d& pos_, bool isFlipped_)
     { 
         int cellPos = pos_.first / g_CELL_SIZE; 
         return isFlipped_ ? 7 - cellPos : cellPos;
     }
-    int getTileYPos(const coor2d& pos_, bool isFlipped_)
+    int getRank(const coor2d& pos_, bool isFlipped_)
     {
         int cellPos = (pos_.second - g_MENUBAR_HEIGHT) / g_CELL_SIZE;
         

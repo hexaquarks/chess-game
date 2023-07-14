@@ -51,7 +51,11 @@ void MoveList::applyMove(
     applyMove(m_moveIterator->m_move, false, enableTransition_, arrowList_);
 }
 
-void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTransition_, vector<Arrow>& arrowList_)
+void MoveList::applyMove(
+    shared_ptr<Move>& move_, 
+    bool addToList_, 
+    bool enableTransition_, 
+    vector<Arrow>& arrowList_)
 {
     if (!move_) return;
     
@@ -61,21 +65,21 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
     shared_ptr<Piece> pPromotingPiece;
     shared_ptr<Piece> pSelectedPiece = move_->getSelectedPiece();
     shared_ptr<Piece> pCapturedPiece;
-    int capturedX = -1, capturedY = -1;
+    int capturedFile = -1, capturedRank = -1;
 
     coor2d oldCoors;
-    const auto [prevX, prevY] = move_->getInit();
-    const auto [x, y] = move_->getTarget();
-    int secondXInit = -1, secondXTarget = -1;
+    const auto [prevFile, prevRank] = move_->getInit();
+    const auto [file, rank] = move_->getTarget();
+    int secondFileInit = -1, secondFileTarget = -1;
 
     // Set the current tile of the piece null. Necessary for navigating back to current move through goToNextMove()
-    game.resetBoardTile(prevX, prevY);
+    game.resetBoardTile(prevFile, prevRank);
     arrowList_ = move_->getMoveArrows();
-    // TODO smooth piece transition for castle
+
     switch (move_->getMoveType())
     {
         case MoveType::NORMAL:
-            game.setBoardTile(x, y, pSelectedPiece);
+            game.setBoardTile(file, rank, pSelectedPiece);
             if (addToList_)
             {
                 m_moves.insertNode(move_, m_moveIterator);
@@ -85,10 +89,10 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
 
         case MoveType::CAPTURE:
             pCapturedPiece = move_->getCapturedPiece();
-            capturedX = x;
-            capturedY = y;
-            pOldPiece = game.getBoardTile(x, y);
-            game.setBoardTile(x, y, pSelectedPiece);
+            capturedFile = file;
+            capturedRank = rank;
+            pOldPiece = game.getBoardTile(file, rank);
+            game.setBoardTile(file, rank, pSelectedPiece);
             if (addToList_)
             {
                 m_moves.insertNode(make_shared<Move>(*move_, pOldPiece), m_moveIterator);
@@ -98,11 +102,11 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
 
         case MoveType::ENPASSANT:
             pCapturedPiece = move_->getCapturedPiece();
-            capturedX = pCapturedPiece->getFile();
-            capturedY = pCapturedPiece->getRank();
-            oldCoors = {capturedX, capturedY};
+            capturedFile = pCapturedPiece->getFile();
+            capturedRank = pCapturedPiece->getRank();
+            oldCoors = {capturedFile, capturedRank};
             game.resetBoardTile(oldCoors.first, oldCoors.second);
-            game.setBoardTile(x, y, pSelectedPiece);
+            game.setBoardTile(file, rank, pSelectedPiece);
             if (addToList_)
             {
                 m_moves.insertNode(make_shared<Move>(*move_, pCapturedPiece, oldCoors), m_moveIterator);
@@ -110,13 +114,13 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             break;
 
         case MoveType::CASTLE_KINGSIDE:
-            secondXInit = 7;
-            secondXTarget = 5;
-            pSecondPiece = game.getBoardTile(secondXInit, castleRow);
-            game.resetBoardTile(secondXInit, castleRow);
-            game.setBoardTile(secondXTarget, castleRow, pSecondPiece);
+            secondFileInit = 7;
+            secondFileTarget = 5;
+            pSecondPiece = game.getBoardTile(secondFileInit, castleRow);
+            game.resetBoardTile(secondFileInit, castleRow);
+            game.setBoardTile(secondFileTarget, castleRow, pSecondPiece);
             game.setBoardTile(6, castleRow, pSelectedPiece);
-            game.setBoardTile(x, y, pSelectedPiece);
+            game.setBoardTile(file, rank, pSelectedPiece);
             if (addToList_)
             {
                 coor2d target = {6, castleRow};
@@ -126,13 +130,13 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             break;
 
         case MoveType::CASTLE_QUEENSIDE:
-            secondXInit = 0;
-            secondXTarget = 3;
-            pSecondPiece = game.getBoardTile(secondXInit, castleRow);
-            game.resetBoardTile(secondXInit, castleRow);
-            game.setBoardTile(secondXTarget, castleRow, pSecondPiece);
+            secondFileInit = 0;
+            secondFileTarget = 3;
+            pSecondPiece = game.getBoardTile(secondFileInit, castleRow);
+            game.resetBoardTile(secondFileInit, castleRow);
+            game.setBoardTile(secondFileTarget, castleRow, pSecondPiece);
             game.setBoardTile(2, castleRow, pSelectedPiece);
-            game.setBoardTile(x, y, pSelectedPiece);
+            game.setBoardTile(file, rank, pSelectedPiece);
             if (addToList_)
             {
                 coor2d target = {2, castleRow};
@@ -142,7 +146,7 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             break;
 
         case MoveType::INIT_SPECIAL:
-            game.setBoardTile(x, y, pSelectedPiece);
+            game.setBoardTile(file, rank, pSelectedPiece);
             if (addToList_)
             {
                 m_moves.insertNode(move_, m_moveIterator);
@@ -150,10 +154,10 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
             break;
 
         case MoveType::NEWPIECE:
-            pOldPiece = game.getBoardTile(x, y);
-            pPromotingPiece = make_shared<Queen>(pSelectedPiece->getTeam(), y, x);
+            pOldPiece = game.getBoardTile(file, rank);
+            pPromotingPiece = make_shared<Queen>(pSelectedPiece->getTeam(), rank, file);
             Piece::setLastMovedPiece(pPromotingPiece);
-            game.setBoardTile(x, y, pPromotingPiece);
+            game.setBoardTile(file, rank, pPromotingPiece);
             game.addPiece(pPromotingPiece);
             if (addToList_)
             {
@@ -168,14 +172,14 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
         {
             // Enable piece visual transition
             setTransitioningPiece(
-                false, pSelectedPiece, prevX, prevY, x, y, pCapturedPiece,
-                capturedX, capturedY
+                false, pSelectedPiece, prevFile, prevRank, file, rank, pCapturedPiece,
+                capturedFile, capturedRank
             );
 
             if (pSecondPiece) {
                 setSecondTransitioningPiece(
-                    pSecondPiece, secondXInit, castleRow,
-                    secondXTarget, castleRow
+                    pSecondPiece, secondFileInit, castleRow,
+                    secondFileTarget, castleRow
                 );
             }
 
@@ -187,8 +191,8 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
         {
             // Enable rook sliding when user just castled
             setTransitioningPiece(
-                false, pSecondPiece, secondXInit, castleRow, secondXTarget, castleRow,
-                pCapturedPiece, capturedX, capturedY
+                false, pSecondPiece, secondFileInit, castleRow, secondFileTarget, castleRow,
+                pCapturedPiece, capturedFile, capturedRank
             );
         }
     }
@@ -202,10 +206,10 @@ void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
     shared_ptr<Piece> pCaptured = m->getCapturedPiece();
     shared_ptr<Piece> pSecondPiece;
     shared_ptr<Piece> pUndoPiece;
-    const auto [x, y] = m->getTarget();
-    const auto [prevX, prevY] = m->getInit();
-    int capturedX = -1, capturedY = -1;
-    int secondXInit = -1, secondXTarget = -1;
+    const auto [file, rank] = m->getTarget();
+    const auto [prevFile, prevRank] = m->getInit();
+    int capturedFile = -1, capturedRank = -1;
+    int secondFileInit = -1, secondFileTarget = -1;
 
     const int castleRow = (m->getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0;
     arrowList_ = m->getMoveArrows();
@@ -213,63 +217,63 @@ void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
     switch (m->getMoveType())
     {
         case MoveType::NORMAL:
-            game.resetBoardTile(x, y);
+            game.resetBoardTile(file, rank);
             break;
         case MoveType::CAPTURE:
             pUndoPiece = pCaptured;
-            capturedX = x;
-            capturedY = y;
-            game.setBoardTile(x, y, pCaptured);
+            capturedFile = file;
+            capturedRank = rank;
+            game.setBoardTile(file, rank, pCaptured);
             break;
         case MoveType::ENPASSANT:
             pUndoPiece = pCaptured;
-            capturedX = m->getSpecial().first;
-            capturedY = m->getSpecial().second;
-            game.resetBoardTile(x, y);
-            game.setBoardTile(capturedX, capturedY, pCaptured);
+            capturedFile = m->getSpecial().first;
+            capturedRank = m->getSpecial().second;
+            game.resetBoardTile(file, rank);
+            game.setBoardTile(capturedFile, capturedRank, pCaptured);
             break;
         case MoveType::CASTLE_KINGSIDE:
-            secondXInit = 5;
-            secondXTarget = 7;
+            secondFileInit = 5;
+            secondFileTarget = 7;
             pSecondPiece = pCaptured;
             game.setKingAsFirstMovement();
-            game.resetBoardTile(secondXInit, castleRow);
+            game.resetBoardTile(secondFileInit, castleRow);
             game.resetBoardTile(6, castleRow);
-            game.setBoardTile(secondXTarget, castleRow, pSecondPiece);
+            game.setBoardTile(secondFileTarget, castleRow, pSecondPiece);
             break;
         case MoveType::CASTLE_QUEENSIDE:
-            secondXInit = 3;
-            secondXTarget = 0;
+            secondFileInit = 3;
+            secondFileTarget = 0;
             pSecondPiece = pCaptured;
             game.setKingAsFirstMovement();
-            game.resetBoardTile(secondXInit, castleRow);
+            game.resetBoardTile(secondFileInit, castleRow);
             game.resetBoardTile(2, castleRow);
-            game.setBoardTile(secondXTarget, castleRow, pSecondPiece);
+            game.setBoardTile(secondFileTarget, castleRow, pSecondPiece);
             break;
         case MoveType::INIT_SPECIAL:
-            game.resetBoardTile(x, y);
+            game.resetBoardTile(file, rank);
             break;
         case MoveType::NEWPIECE:
-            shared_ptr<Piece> pawn = make_shared<Pawn>(m->getSelectedPiece()->getTeam(), prevY, prevX);
-            game.setBoardTile(x, y, pCaptured);
-            game.setBoardTile(prevX, prevY, pawn);
+            shared_ptr<Piece> pawn = make_shared<Pawn>(m->getSelectedPiece()->getTeam(), prevRank, prevFile);
+            game.setBoardTile(file, rank, pCaptured);
+            game.setBoardTile(prevFile, prevRank, pawn);
     }
 
     shared_ptr<Piece> selected = m->getSelectedPiece();
-    game.setBoardTile(prevX, prevY, selected);
+    game.setBoardTile(prevFile, prevRank, selected);
 
     if (enableTransition_)
     {
         // Enable transition movement
         setTransitioningPiece(
-            true, selected, x, y, prevX, prevY, pUndoPiece,
-                capturedX, capturedY
+            true, selected, file, rank, prevFile, prevRank, pUndoPiece,
+                capturedFile, capturedRank
         );
 
         if (pSecondPiece) {
             setSecondTransitioningPiece(
-                pSecondPiece, secondXInit, castleRow,
-                secondXTarget, castleRow
+                pSecondPiece, secondFileInit, castleRow,
+                secondFileTarget, castleRow
             );
         }
     }
@@ -278,29 +282,29 @@ void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
 }
 
 void MoveList::setTransitioningPiece(
-    bool isUndo_, shared_ptr<Piece>& p_, int initialX_, int initialY_,
-    int xTarget_, int yTarget_, shared_ptr<Piece>& captured_,
-    int capturedXPos_, int capturedYPos_
+    bool isUndo_, shared_ptr<Piece>& p_, int initialFile_, int initialRank_,
+    int targetFile_, int targetRank_, shared_ptr<Piece>& captured_,
+    int capturedFile_, int capturedRank_
 )
 {
     m_transitioningPiece.resetPieces();
     m_transitioningPiece.setTransitioningPiece(p_);
-    m_transitioningPiece.setDestination({ui::getWindowXPos(xTarget_), ui::getWindowYPos(yTarget_)});
-    m_transitioningPiece.setCurrPos({ui::getWindowXPos(initialX_), ui::getWindowYPos(initialY_)});
-    m_transitioningPiece.setCapturedPiece(captured_, ui::getWindowXPos(capturedXPos_), ui::getWindowYPos(capturedYPos_));
+    m_transitioningPiece.setDestination({ui::getWindowXPos(targetFile_), ui::getWindowYPos(targetRank_)});
+    m_transitioningPiece.setCurrPos({ui::getWindowXPos(initialFile_), ui::getWindowYPos(initialRank_)});
+    m_transitioningPiece.setCapturedPiece(captured_, ui::getWindowXPos(capturedFile_), ui::getWindowYPos(capturedRank_));
     m_transitioningPiece.setUndo(isUndo_);
     m_transitioningPiece.setIsTransitioning(true);
     m_transitioningPiece.setIncrement();
 }
 
 void MoveList::setSecondTransitioningPiece(
-    shared_ptr<Piece>& p_, int initialX_, int initialY_,
-    int xTarget_, int yTarget_
+    shared_ptr<Piece>& p_, int initialFile_, int initialRank_,
+    int targetFile_, int targetRank_
 )
 {
     m_transitioningPiece.setSecondTransitioningPiece(p_);
-    m_transitioningPiece.setSecondDestination({ui::getWindowXPos(xTarget_), ui::getWindowYPos(yTarget_)});
-    m_transitioningPiece.setSecondCurrPos({ui::getWindowXPos(initialX_), ui::getWindowYPos(initialY_)});
+    m_transitioningPiece.setSecondDestination({ui::getWindowXPos(targetFile_), ui::getWindowYPos(targetRank_)});
+    m_transitioningPiece.setSecondCurrPos({ui::getWindowXPos(initialFile_), ui::getWindowYPos(initialRank_)});
     m_transitioningPiece.setSecondIsTransitioning(true);
     m_transitioningPiece.setSecondIncrement();
 }

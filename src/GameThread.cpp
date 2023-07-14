@@ -112,16 +112,15 @@ namespace game
 
         // Allow user to make moves only if they're at the current live position,
         // and if the click is on the chess board
-        int yPos = ui::getTileYPos(clickState_.mousePos);
-        if (yPos < 0) return false;
+        int rank = ui::getRank(clickState_.mousePos, m_board.isFlipped());
+        if (rank < 0) return false;
 
         // Do not register click if Moveselection panel is activated
         // and the mouse is not within the panel's bounds
         if (m_uiManager.ignoreInputWhenSelectionPanelIsActive(clickState_.mousePos)) return false;
 
-        int xPos = ui::getTileXPos(clickState_.mousePos, m_board.isFlipped());
-        if (m_board.isFlipped()) yPos = 7 - yPos;
-        auto& pPieceAtCurrentMousePos = m_board.getBoardTile(xPos, yPos);
+        int file = ui::getFile(clickState_.mousePos, m_board.isFlipped());
+        auto& pPieceAtCurrentMousePos = m_board.getBoardTile(file, rank);
 
         // If piece is not null and has the right color
         if (pPieceAtCurrentMousePos && pPieceAtCurrentMousePos->getTeam() == m_board.getTurn())
@@ -138,11 +137,11 @@ namespace game
             clickState_.pieceIsClicked = false;
 
             dragState_.pieceIsMoving = true;
-            dragState_.lastXPos = ui::getTileXPos(clickState_.mousePos, m_board.isFlipped());
-            dragState_.lastYPos = yPos;
+            dragState_.lastFile = ui::getFile(clickState_.mousePos, m_board.isFlipped());
+            dragState_.lastRank = rank;
 
             // Set the tile on the board where the piece is selected to null
-            m_board.resetBoardTile(dragState_.lastXPos, dragState_.lastYPos, false);
+            m_board.resetBoardTile(dragState_.lastFile, dragState_.lastRank, false);
         }
 
         return true;
@@ -222,14 +221,14 @@ namespace game
         if (!clickState_.pSelectedPiece) return false;
 
         // If clicked and mouse remained on the same square
-        int xPos = ui::getTileXPos(clickState_.mousePos, m_board.isFlipped());
-        int yPos = ui::getTileYPos(clickState_.mousePos, m_board.isFlipped());
-        if (xPos == clickState_.pSelectedPiece->getFile() && yPos == clickState_.pSelectedPiece->getRank())
+        int rank = ui::getRank(clickState_.mousePos, m_board.isFlipped());
+        int file = ui::getFile(clickState_.mousePos, m_board.isFlipped());
+        if (rank == clickState_.pSelectedPiece->getRank() && file == clickState_.pSelectedPiece->getFile())
         {
             if (!clickState_.pieceIsClicked)
             {
                 // Put the piece back to it's square; it's not moving
-                m_board.setBoardTile(dragState_.lastXPos, dragState_.lastYPos, clickState_.pSelectedPiece, false);
+                m_board.setBoardTile(dragState_.lastFile, dragState_.lastRank, clickState_.pSelectedPiece, false);
                 dragState_.pieceIsMoving = false;
             }
             clickState_.pieceIsClicked = !clickState_.pieceIsClicked;
@@ -237,19 +236,19 @@ namespace game
         }
 
         // Try to match moves
-        std::optional<Move> pSelectedMoveOpt = m_board.findSelectedMove(clickState_.pSelectedPiece, xPos, yPos);
+        std::optional<Move> pSelectedMoveOpt = m_board.findSelectedMove(clickState_.pSelectedPiece, rank, file);
 
         // If move is not allowed, place piece back, else apply the move
         if (!pSelectedMoveOpt.has_value())
         {
-            m_board.setBoardTile(dragState_.lastXPos, dragState_.lastYPos, clickState_.pSelectedPiece, false); // Cancel the move
+            m_board.setBoardTile(dragState_.lastFile, dragState_.lastRank, clickState_.pSelectedPiece, false); // Cancel the move
         }
         else
         {
             auto pMove = m_board.applyMoveOnBoard(
                 pSelectedMoveOpt, 
-                std::make_pair(xPos, yPos), 
-                std::make_pair(dragState_.lastXPos, dragState_.lastYPos),
+                std::make_pair(file, rank), 
+                std::make_pair(dragState_.lastFile, dragState_.lastRank),
                 clickState_.pSelectedPiece, 
                 arrowsInfo_.arrows);
             m_moveList.addMove(pMove, arrowsInfo_.arrows);
@@ -272,7 +271,7 @@ namespace game
         if (clickState_.pSelectedPiece && dragState_.pieceIsMoving)
         {
             // Reset the piece back
-            m_board.setBoardTile(dragState_.lastXPos, dragState_.lastYPos, clickState_.pSelectedPiece, false);
+            m_board.setBoardTile(dragState_.lastFile, dragState_.lastRank, clickState_.pSelectedPiece, false);
             clickState_.pSelectedPiece.reset();
             dragState_.pieceIsMoving = false;
         }
