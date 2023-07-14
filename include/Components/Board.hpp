@@ -20,7 +20,7 @@ public:
     // Getters and setters
     const auto& getWhitePieces() const { return m_whitePieces; }
     const auto& getBlackPieces() const { return m_blackPieces; }
-    std::shared_ptr<Piece>& getBoardTile(int x, int y) { return m_board[y][x]; }
+    std::shared_ptr<Piece>& getBoardTile(int file_, int row_) { return m_board[row_][file_]; }
     std::shared_ptr<Piece>& getBoardTile(const std::pair<char, char>&);
     const std::shared_ptr<King>& getKing() const;
     Team getTurn() const { return m_turn; }

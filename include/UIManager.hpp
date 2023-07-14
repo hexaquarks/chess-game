@@ -45,8 +45,8 @@ namespace ui {
         return sf::RectangleShape({g_CELL_SIZE, g_CELL_SIZE});
     }
 
-    inline int getWindowXPos(int i) { return i * g_CELL_SIZE; }
-    inline int getWindowYPos(int j) { return j * g_CELL_SIZE + g_MENUBAR_HEIGHT; }
+    inline int getWindowXPos(int file_) { return file_ * g_CELL_SIZE; }
+    inline int getWindowYPos(int row_) { return row_ * g_CELL_SIZE + g_MENUBAR_HEIGHT; }
     int getFile(const coor2d& pos_, bool isFlipped_ = false);
     int getRank(const coor2d& pos_, bool isFlipped_ = false);
     

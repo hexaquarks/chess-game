@@ -175,7 +175,7 @@ void Board::updateBoardInfosAfterNewMove(
     if (kingIsChecked()) pMove_->setChecked();
 }
 
-std::shared_ptr<Piece>& Board::getBoardTile(const std::pair<char, char>& coord_) 
+std::shared_ptr<Piece>& Board::getBoardTile(const std::pair<char, char>& coord_ /* <file, rank> : {'a', 2} */)  
 {
     assert(std::isalpha(coord_.first));
     assert(coord_.second >= '1' && coord_.second <= '8');
@@ -211,23 +211,23 @@ void Board::setKingAsFirstMovement()
     king->setAsFirstMovement();
 }
 
-void Board::setBoardTile(int x_, int y_, std::shared_ptr<Piece>& pPiece_, bool record_)
+void Board::setBoardTile(int file_, int rank_, std::shared_ptr<Piece>& pPiece_, bool record_)
 {
-    if (record_ && m_board[y_][x_])
+    if (record_ && m_board[rank_][file_])
     {
-        m_board[y_][x_]->move(-1, -1);
+        m_board[rank_][file_]->move(-1, -1);
     }
-    m_board[y_][x_] = pPiece_;
-    if (pPiece_) pPiece_->move(y_, x_, record_);
+    m_board[rank_][file_] = pPiece_;
+    if (pPiece_) pPiece_->move(rank_, file_, record_);
 }
 
-void Board::resetBoardTile(int x_, int y_, bool record_)
+void Board::resetBoardTile(int file_, int rank_, bool record_)
 {
-    if (record_ && m_board[y_][x_])
+    if (record_ && m_board[rank_][file_])
     {
-        m_board[y_][x_]->move(-1, -1);
+        m_board[rank_][file_]->move(-1, -1);
     }
-    m_board[y_][x_].reset();
+    m_board[rank_][file_].reset();
 }
 
 void Board::updateAllCurrentlyAvailableMoves()
