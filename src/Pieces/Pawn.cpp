@@ -3,8 +3,8 @@
 
 #include <vector>
 
-Pawn::Pawn(Team team_, int xPos_, int yPos_):
-    Piece(team_, xPos_, yPos_, PieceType::PAWN, "p")
+Pawn::Pawn(Team team_, int rank_, int file_):
+    Piece(team_, rank_, file_, PieceType::PAWN, "p")
 {
 }
 
@@ -12,8 +12,8 @@ std::vector<Move> Pawn::calcPossibleMoves(Board& board_) const
 {
     std::vector<Move> moves;
     int dir = (getTeam() == Team::WHITE)? -1 : 1;
-    int xPos = getX();
-    int yPos = getY();
+    int rank = getRank();
+    int file = getFile();
 
     generateCaptureMoves(moves, board_, dir);
     generateForwardMoves(moves, board_, dir);
@@ -24,84 +24,84 @@ std::vector<Move> Pawn::calcPossibleMoves(Board& board_) const
 
 void Pawn::generateCaptureMoves(std::vector<Move>& moves_, Board& board_, int dir_) const
 {
-    int xPos = getX();
-    int yPos = getY();
-    coor2d pawnCoor = { xPos, yPos };
-    std::shared_ptr<Piece> pPawnPos = board_.getBoardTile(yPos, xPos);
+    int rank = getRank();
+    int file = getFile();
+    coor2d pawnCoor = { rank, file };
+    std::shared_ptr<Piece> pPawnPos = board_.getBoardTile(file, rank);
 
     // Taking piece on the right
-    if (yPos+1 < 8 && (xPos+dir_ < 8 && xPos+dir_ >= 0))
-        if (board_.getBoardTile(yPos+1, xPos+dir_) && board_.getBoardTile(yPos+1, xPos+dir_)->getTeam() != getTeam())
+    if (file+1 < 8 && (rank+dir_ < 8 && rank+dir_ >= 0))
+        if (board_.getBoardTile(file+1, rank+dir_) && board_.getBoardTile(file+1, rank+dir_)->getTeam() != getTeam())
         {
-            if ((xPos+dir_ == 0 || xPos+dir_ == 7))
-                moves_.push_back(Move({xPos+dir_, yPos+1}, pawnCoor, pPawnPos, MoveType::NEWPIECE));
+            if ((rank+dir_ == 0 || rank+dir_ == 7))
+                moves_.push_back(Move({rank+dir_, file+1}, pawnCoor, pPawnPos, MoveType::NEWPIECE));
             else
-                moves_.push_back(Move({xPos+dir_, yPos+1}, pawnCoor, pPawnPos, MoveType::CAPTURE));
+                moves_.push_back(Move({rank+dir_, file+1}, pawnCoor, pPawnPos, MoveType::CAPTURE));
         }
 
     // Taking piece on the left
-    if (yPos-1 >= 0 && (xPos+dir_ < 8 && xPos+dir_ >= 0))
-        if (board_.getBoardTile(yPos-1, xPos+dir_) && board_.getBoardTile(yPos-1, xPos+dir_)->getTeam() != getTeam())
+    if (file-1 >= 0 && (rank+dir_ < 8 && rank+dir_ >= 0))
+        if (board_.getBoardTile(file-1, rank+dir_) && board_.getBoardTile(file-1, rank+dir_)->getTeam() != getTeam())
         {
-            if ((xPos+dir_ == 0 || xPos+dir_ == 7))
-                moves_.push_back(Move({xPos+dir_, yPos-1}, pawnCoor, pPawnPos, MoveType::NEWPIECE));
+            if ((rank+dir_ == 0 || rank+dir_ == 7))
+                moves_.push_back(Move({rank+dir_, file-1}, pawnCoor, pPawnPos, MoveType::NEWPIECE));
             else
-                moves_.push_back(Move({xPos+dir_, yPos-1}, pawnCoor, pPawnPos, MoveType::CAPTURE));
+                moves_.push_back(Move({rank+dir_, file-1}, pawnCoor, pPawnPos, MoveType::CAPTURE));
         }
 }
 
 void Pawn::generateForwardMoves(std::vector<Move>& moves_, Board& board_, int dir_) const
 {
-    int xPos = getX();
-    int yPos = getY();
-    coor2d pawnCoor = {xPos, yPos};
-    std::shared_ptr<Piece> pPawnPos = board_.getBoardTile(yPos, xPos);
-    bool hasNotMoved = (getTeam() == Team::WHITE && xPos == 6) || (getTeam() == Team::BLACK && xPos == 1);
+    int rank = getRank();
+    int file = getFile();
+    coor2d pawnCoor = {rank, file};
+    std::shared_ptr<Piece> pPawnPos = board_.getBoardTile(file, rank);
+    bool hasNotMoved = (getTeam() == Team::WHITE && rank == 6) || (getTeam() == Team::BLACK && rank == 1);
 
     // Forward move
-    if ((xPos+dir_ == 0 || xPos+dir_ == 7) && !board_.getBoardTile(yPos, xPos+dir_))
-        moves_.push_back(Move({xPos+dir_, yPos}, pawnCoor, pPawnPos, MoveType::NEWPIECE));
-    else if (!board_.getBoardTile(yPos, xPos+dir_))
+    if ((rank+dir_ == 0 || rank+dir_ == 7) && !board_.getBoardTile(file, rank+dir_))
+        moves_.push_back(Move({rank+dir_, file}, pawnCoor, pPawnPos, MoveType::NEWPIECE));
+    else if (!board_.getBoardTile(file, rank+dir_))
     {
-        moves_.push_back(Move({xPos+dir_, yPos}, pawnCoor, pPawnPos, MoveType::NORMAL));
+        moves_.push_back(Move({rank+dir_, file}, pawnCoor, pPawnPos, MoveType::NORMAL));
         // Double square initial move
-        if (hasNotMoved && !board_.getBoardTile(yPos, xPos+2*dir_))
-            moves_.push_back(Move({xPos+2*dir_, yPos}, pawnCoor, pPawnPos, MoveType::INIT_SPECIAL));
+        if (hasNotMoved && !board_.getBoardTile(file, rank+2*dir_))
+            moves_.push_back(Move({rank+2*dir_, file}, pawnCoor, pPawnPos, MoveType::INIT_SPECIAL));
     }
 }
 
 void Pawn::generateEnPassantMoves(std::vector<Move>& moves_, Board& board_, int dir) const
 {
-    int xPos = getX();
-    int yPos = getY();
-    coor2d pawnCoor = { xPos, yPos };
-    std::shared_ptr<Piece> pPawnPos = board_.getBoardTile(yPos, xPos);
+    int rank = getRank();
+    int file = getFile();
+    coor2d pawnCoor = { rank, file };
+    std::shared_ptr<Piece> pPawnPos = board_.getBoardTile(file, rank);
 
     // Edge case, should not happen
-    if (xPos+dir < 0 || xPos+dir > 7) return;
+    if (rank+dir < 0 || rank+dir > 7) return;
 
     // Left En Passant
-    if (yPos > 0)
+    if (file > 0)
     {
-        std::shared_ptr<Piece> leftPiece = board_.getBoardTile(yPos-1, xPos);
+        std::shared_ptr<Piece> leftPiece = board_.getBoardTile(file-1, rank);
         if (leftPiece && leftPiece->getType() == PieceType::PAWN && leftPiece->getTeam() != getTeam())
         {
             if (getLastMovedPiece() == leftPiece && leftPiece->getLastMove() == MoveType::INIT_SPECIAL)
             {
-                moves_.push_back(Move({xPos+dir, yPos-1}, pawnCoor, pPawnPos, MoveType::ENPASSANT, leftPiece));
+                moves_.push_back(Move({rank+dir, file-1}, pawnCoor, pPawnPos, MoveType::ENPASSANT, leftPiece));
             }
         }
     }
 
     // Right En Passant
-    if (yPos < 7)
+    if (file < 7)
     {
-        std::shared_ptr<Piece> rightPiece = board_.getBoardTile(yPos+1, xPos);
+        std::shared_ptr<Piece> rightPiece = board_.getBoardTile(file+1, rank);
         if (rightPiece && rightPiece->getType() == PieceType::PAWN && rightPiece->getTeam() != getTeam())
         {
             if (getLastMovedPiece() == rightPiece && rightPiece->getLastMove() == MoveType::INIT_SPECIAL)
             {
-                moves_.push_back(Move({xPos+dir, yPos+1}, pawnCoor, pPawnPos, MoveType::ENPASSANT, rightPiece));
+                moves_.push_back(Move({rank+dir, file+1}, pawnCoor, pPawnPos, MoveType::ENPASSANT, rightPiece));
             }
         }
     }

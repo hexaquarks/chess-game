@@ -98,8 +98,8 @@ void MoveList::applyMove(shared_ptr<Move>& move_, bool addToList_, bool enableTr
 
         case MoveType::ENPASSANT:
             pCapturedPiece = move_->getCapturedPiece();
-            capturedX = pCapturedPiece->getY();
-            capturedY = pCapturedPiece->getX();
+            capturedX = pCapturedPiece->getFile();
+            capturedY = pCapturedPiece->getRank();
             oldCoors = {capturedX, capturedY};
             game.resetBoardTile(oldCoors.first, oldCoors.second);
             game.setBoardTile(x, y, pSelectedPiece);

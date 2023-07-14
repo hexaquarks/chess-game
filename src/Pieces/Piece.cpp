@@ -3,209 +3,196 @@
 
 #include <iostream>
 
-Piece::Piece(Team team_, int x_, int y_, PieceType type_, const string& pieceType_):
-    m_team(team_), m_xPos(x_), m_yPos(y_), m_type(type_)
+Piece::Piece(
+    Team team_, 
+    int rank_, 
+    int file_, 
+    PieceType type_, 
+    const string& pieceType_)
+: m_team(team_), m_rank(rank_), m_file(file_), m_type(type_)
 {
     m_filename = pieceType_ + getColorCode() + fileExt;
 }
 
 void Piece::addHorizontalAndVerticalMovements(Board& board_, vector<Move>& moves) const
 {
-    int xPos = getX();
-    int yPos = getY();
-    shared_ptr<Piece> piece = board_.getBoardTile(yPos, xPos);
+    int rank = getRank();
+    int file = getFile();
+    shared_ptr<Piece> piece = board_.getBoardTile(file, rank);
 
     // Vertical up movement check
-    for (int i = xPos-1; i >= 0; --i)
+    for (int i = rank - 1; i >= 0; --i)
     {
-        if (!board_.getBoardTile(yPos, i))
+        if (!board_.getBoardTile(file, i))
         {
-            moves.push_back(Move({i, yPos}, {xPos, yPos}, piece, MoveType::NORMAL));
+            moves.push_back(Move({i, file}, {rank, file}, piece, MoveType::NORMAL));
         }
-        else if (board_.getBoardTile(yPos, i)->getTeam() != getTeam())
+        else if (board_.getBoardTile(file, i)->getTeam() != getTeam())
         {
-            shared_ptr<Piece> p = board_.getBoardTile(yPos, i);
-            moves.push_back(Move({i, yPos}, {xPos, yPos}, piece, MoveType::CAPTURE, p));
+            shared_ptr<Piece> p = board_.getBoardTile(file, i);
+            moves.push_back(Move({i, file}, {rank, file}, piece, MoveType::CAPTURE, p));
             break;
         }
-        else
-        {
-            break;
-        }
+        else break;
     }
 
     // Vertical down movement check
-    for (int i = xPos+1; i < 8; ++i)
+    for (int i = rank + 1; i < 8; ++i)
     {
-        if (!board_.getBoardTile(yPos, i))
+        if (!board_.getBoardTile(file, i))
         {
-            moves.push_back(Move({i, yPos}, {xPos, yPos}, piece, MoveType::NORMAL));
+            moves.push_back(Move({i, file}, {rank, file}, piece, MoveType::NORMAL));
         }
-        else if (board_.getBoardTile(yPos, i)->getTeam() != getTeam())
+        else if (board_.getBoardTile(file, i)->getTeam() != getTeam())
         {
-            shared_ptr<Piece> p = board_.getBoardTile(yPos, i);
-            moves.push_back(Move({i, yPos}, {xPos, yPos}, piece, MoveType::CAPTURE, p));
+            shared_ptr<Piece> p = board_.getBoardTile(file, i);
+            moves.push_back(Move({i, file}, {rank, file}, piece, MoveType::CAPTURE, p));
             break;
         }
-        else
-        {
-            break;
-        }
+        else break;
     }
 
     // Horizontal left movement check
-    for (int j = yPos-1; j >= 0; --j)
+    for (int j = file - 1; j >= 0; --j)
     {
-        if (!board_.getBoardTile(j, xPos))
+        if (!board_.getBoardTile(j, rank))
         {
-            moves.push_back(Move({xPos, j}, {xPos, yPos}, piece, MoveType::NORMAL));
+            moves.push_back(Move({rank, j}, {rank, file}, piece, MoveType::NORMAL));
         }
-        else if (board_.getBoardTile(j, xPos)->getTeam() != getTeam())
+        else if (board_.getBoardTile(j, rank)->getTeam() != getTeam())
         {
-            shared_ptr<Piece> p = board_.getBoardTile(j, xPos);
-            moves.push_back(Move({xPos, j}, {xPos, yPos}, piece, MoveType::CAPTURE, p));
+            shared_ptr<Piece> p = board_.getBoardTile(j, rank);
+            moves.push_back(Move({rank, j}, {rank, file}, piece, MoveType::CAPTURE, p));
             break;
         }
-        else
-        {
-            break;
-        }
+        else break;
     }
 
     // Horizontal right movement check
-    for (int j = yPos+1; j < 8; ++j)
+    for (int j = file + 1; j < 8; ++j)
     {
-        if (!board_.getBoardTile(j, xPos))
+        if (!board_.getBoardTile(j, rank))
         {
-            moves.push_back(Move({xPos, j}, {xPos, yPos}, piece, MoveType::NORMAL));
+            moves.push_back(Move({rank, j}, {rank, file}, piece, MoveType::NORMAL));
         }
-        else if (board_.getBoardTile(j, xPos)->getTeam() != getTeam())
+        else if (board_.getBoardTile(j, rank)->getTeam() != getTeam())
         {
-            shared_ptr<Piece> p = board_.getBoardTile(j, xPos);
-            moves.push_back(Move({xPos, j}, {xPos, yPos}, piece, MoveType::CAPTURE, p));
+            shared_ptr<Piece> p = board_.getBoardTile(j, rank);
+            moves.push_back(Move({rank, j}, {rank, file}, piece, MoveType::CAPTURE, p));
             break;
         }
-        else
-        {
-            break;
-        }
+        else break;
     }
 }
 
-void Piece::addDiagonalMovements(Board& board_, vector<Move>& moves) const
+void Piece::addDiagonalMovements(Board& board_, vector<Move>& moves_) const
 {
-    int xPos = getX();
-    int yPos = getY();
-    shared_ptr<Piece> piece = board_.getBoardTile(yPos, xPos);
+    int rank = getRank();
+    int file = getFile();
+    shared_ptr<Piece> piece = board_.getBoardTile(file, rank);
 
     // Up left diagonal
-    int i = xPos-1, j = yPos-1;
+    int i = rank - 1;
+    int j = file - 1;
     while (i >= 0 && j >= 0)
     {
         shared_ptr<Piece> p = board_.getBoardTile(j, i);
         if (!p)
         {
-            moves.push_back(Move({i, j}, {xPos, yPos}, piece, MoveType::NORMAL));
+            moves_.push_back(Move({i, j}, {rank, file}, piece, MoveType::NORMAL));
             --i; --j;
         }
         else if (p->getTeam() != getTeam())
         {
-            moves.push_back(Move({i, j}, {xPos, yPos}, piece, MoveType::CAPTURE, p));
+            moves_.push_back(Move({i, j}, {rank, file}, piece, MoveType::CAPTURE, p));
             break;
         }
-        else
-        {
-            break;
-        }
+        else break;
     }
 
     // Up right diagonal
-    i = xPos-1; j = yPos+1;
+    i = rank - 1; 
+    j = file + 1;
     while (i >= 0 && j < 8)
     {
         shared_ptr<Piece> p = board_.getBoardTile(j, i);
         if (!p)
         {
-            moves.push_back(Move({i, j}, {xPos, yPos}, piece, MoveType::NORMAL));
+            moves_.push_back(Move({i, j}, {rank, file}, piece, MoveType::NORMAL));
             --i; ++j;
         }
         else if (p->getTeam() != getTeam())
         {
-            moves.push_back(Move({i, j}, {xPos, yPos}, piece, MoveType::CAPTURE, p));
+            moves_.push_back(Move({i, j}, {rank, file}, piece, MoveType::CAPTURE, p));
             break;
         }
-        else
-        {
-            break;
-        }
+        else break;
     }
 
     // Down left diagonal
-    i = xPos+1; j = yPos-1;
+    i = rank + 1; 
+    j = file - 1;
     while (i < 8 && j >= 0)
     {
         shared_ptr<Piece> p = board_.getBoardTile(j, i);
         if (!p)
         {
-            moves.push_back(Move({i, j}, {xPos, yPos}, piece, MoveType::NORMAL));
+            moves_.push_back(Move({i, j}, {rank, file}, piece, MoveType::NORMAL));
             ++i; --j;
         }
         else if (p->getTeam() != getTeam())
         {
-            moves.push_back(Move({i, j}, {xPos, yPos}, piece, MoveType::CAPTURE, p));
+            moves_.push_back(Move({i, j}, {rank, file}, piece, MoveType::CAPTURE, p));
             break;
         }
-        else
-        {
-            break;
-        }
+        else break;
     }
 
     // Down right diagonal
-    i = xPos+1; j = yPos+1;
+    i = rank + 1; 
+    j = file + 1;
     while (i < 8 && j < 8)
     {
         shared_ptr<Piece> p = board_.getBoardTile(j, i);
         if (!p)
         {
-            moves.push_back(Move({i, j}, {xPos, yPos}, piece, MoveType::NORMAL));
+            moves_.push_back(Move({i, j}, {rank, file}, piece, MoveType::NORMAL));
             ++i; ++j;
         }
         else if (p->getTeam() != getTeam())
         {
-            moves.push_back(Move({i, j}, {xPos, yPos}, piece, MoveType::CAPTURE, p));
+            moves_.push_back(Move({i, j}, {rank, file}, piece, MoveType::CAPTURE, p));
             break;
         }
-        else
-        {
-            break;
-        }
+        else break;
     }
 }
 
-std::ostream& operator<<(std::ostream& os, const PieceType& pieceType) {
-    switch(pieceType) {
+std::ostream& operator<<(std::ostream& os_, const PieceType& pieceType_) 
+{
+    switch (pieceType_) 
+    {
         case PieceType::PAWN:
-            os << "Pawn";
+            os_ << "Pawn";
             break;
         case PieceType::KNIGHT:
-            os << "Knight";
+            os_ << "Knight";
             break;
         case PieceType::BISHOP:
-            os << "Bishop";
+            os_ << "Bishop";
             break;
         case PieceType::ROOK:
-            os << "Rook";
+            os_ << "Rook";
             break;
         case PieceType::QUEEN:
-            os << "Queen";
+            os_ << "Queen";
             break;
         case PieceType::KING:
-            os << "King";
+            os_ << "King";
             break;
         default:
-            os << "Unknown";
+            os_ << "Unknown";
             break;
     }
-    return os;
+    return os_;
 }

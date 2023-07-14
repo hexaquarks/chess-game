@@ -10,12 +10,12 @@ public:
     std::vector<Move> calcPossibleMoves(Board&) const override;
     bool isChecked(Board&) const;
 
-    static void swapPieces(Board& board_, int x, int y, int X, int Y)
+    static void swapPieces(Board& board_, int rank1_, int file1_, int rank2_, int file2_)
     {
-        std::shared_ptr<Piece> first = board_.getBoardTile(y, x);
-        std::shared_ptr<Piece> second = board_.getBoardTile(Y, X);
-        board_.setBoardTile(y, x, second, false);
-        board_.setBoardTile(Y, X, first, false);
+        auto& first = board_.getBoardTile(file1_, rank1_);
+        auto& second = board_.getBoardTile(file2_, rank2_);
+        board_.setBoardTile(file1_, rank1_, second, false);
+        board_.setBoardTile(file2_, rank2_, first, false);
     }
 
 private:

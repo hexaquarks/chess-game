@@ -1,7 +1,11 @@
 #include "../../include/Pieces/Bishop.hpp"
 
-Bishop::Bishop(Team team_, int x_, int y_):
-    Piece(team_, x_, y_, PieceType::BISHOP, "b")
+Bishop::Bishop(Team team_, int rank_, int file_):
+    Piece(
+        team_, 
+        rank_, 
+        file_, 
+        PieceType::BISHOP, "b")
 {
 }
 

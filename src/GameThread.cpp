@@ -224,7 +224,7 @@ namespace game
         // If clicked and mouse remained on the same square
         int xPos = ui::getTileXPos(clickState_.mousePos, m_board.isFlipped());
         int yPos = ui::getTileYPos(clickState_.mousePos, m_board.isFlipped());
-        if (xPos == clickState_.pSelectedPiece->getY() && yPos == clickState_.pSelectedPiece->getX())
+        if (xPos == clickState_.pSelectedPiece->getFile() && yPos == clickState_.pSelectedPiece->getRank())
         {
             if (!clickState_.pieceIsClicked)
             {

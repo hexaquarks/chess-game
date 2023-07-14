@@ -37,8 +37,8 @@ public:
     const std::string& getFileName() const { return m_filename; }
     MoveType getLastMove() const { return m_lastMove; }
     static std::shared_ptr<Piece> getLastMovedPiece() { return m_lastPiece; }
-    int getX() const { return m_xPos; }
-    int getY() const { return m_yPos; }
+    int getRank() const { return m_rank; }
+    int getFile() const { return m_file; }
     bool hasMoved() const { return m_moved; }
     void setAsFirstMovement() { m_moved = false; }
     void addHorizontalAndVerticalMovements(Board&, std::vector<Move>&) const;
@@ -50,11 +50,11 @@ public:
 
     /* Utility functions */
     virtual std::vector<Move> calcPossibleMoves(Board&) const = 0; // Pure virtual function
-    void move(int x, int y, bool record = true)
+    void move(int rank_, int file_, bool record = true)
     {
-        if (record && (m_xPos != x || m_yPos != y)) m_moved = true;
-        m_xPos = x;
-        m_yPos = y;
+        if (record && (m_rank != rank_ || m_file != file_)) m_moved = true;
+        m_rank = rank_;
+        m_file = file_;
     }
 
 private:
@@ -67,7 +67,8 @@ private:
     Team m_team; // Team this piece plays for
     PieceType m_type; // Type of this piece
     MoveType m_lastMove; // Move type of this piece
-    int m_xPos; int m_yPos; // X and Y positions
+    int m_rank; 
+    int m_file;  
     bool m_moved = false; // Whether piece has moved or not
 
     /* Helper function */

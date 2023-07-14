@@ -3,33 +3,33 @@
 
 #include <vector>
 
-Knight::Knight(Team team, int x, int y):
-    Piece(team, x, y, PieceType::KNIGHT, "n")
+Knight::Knight(Team team_, int rank_, int file_):
+    Piece(team_, rank_, file_, PieceType::KNIGHT, "n")
 {
 }
 
 std::vector<Move> Knight::calcPossibleMoves(Board& board_) const
 {
     std::vector<Move> moves;
-    int xPos = getX();
-    int yPos = getY();
+    int rank = getRank();
+    int file = getFile();
 
     // All possible moves
-    int X[8] = {2, 1, -1, -2, -2, -1, 1, 2};
-    int Y[8] = {1, 2, 2, 1, -1, -2, -2, -1};
+    int dx[8] = {2, 1, -1, -2, -2, -1, 1, 2};
+    int dy[8] = {1, 2, 2, 1, -1, -2, -2, -1};
 
     for (int i = 0; i < 8; ++i)
     {
-        int x = xPos + X[i];
-        int y = yPos + Y[i];
+        int newRank = rank + dx[i];
+        int newFile = file + dy[i];
 
-        if (x >= 0 && y >= 0 && x < 8 && y < 8)
+        if (newRank >= 0 && newFile >= 0 && newRank < 8 && newFile < 8)
         {
-            std::shared_ptr<Piece> p = board_.getBoardTile(yPos, xPos);
-            if (!board_.getBoardTile(y, x))
-                moves.push_back(Move({x, y}, {xPos, yPos}, p, MoveType::NORMAL));
-            else if (board_.getBoardTile(y, x)->getTeam() != getTeam())
-                moves.push_back(Move({x, y}, {xPos, yPos}, p, MoveType::CAPTURE));
+            std::shared_ptr<Piece> p = board_.getBoardTile(file, rank);
+            if (!board_.getBoardTile(newFile, newRank))
+                moves.push_back(Move({newRank, newFile}, {rank, file}, p, MoveType::NORMAL));
+            else if (board_.getBoardTile(newFile, newRank)->getTeam() != getTeam())
+                moves.push_back(Move({newRank, newFile}, {rank, file}, p, MoveType::CAPTURE));
         }
     }
 

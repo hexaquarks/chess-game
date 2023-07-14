@@ -237,7 +237,7 @@ void Board::updateAllCurrentlyAvailableMoves()
 
     for (auto& piece: playerPieces)
     {
-        if (piece->getX() == -1 || piece->getY() == -1) continue;
+        if (piece->getRank() == -1 || piece->getFile() == -1) continue;
 
         std::vector<Move> pieceMoves = possibleMovesFor(piece);
         removeIllegalMoves(pieceMoves, piece);
@@ -258,8 +258,8 @@ void Board::removeIllegalMoves(std::vector<Move>& possibleMoves_, std::shared_pt
         // Store piece occupied by target square
         std::shared_ptr<Piece> temp = getBoardTile(x, y);
 
-        int initialX = pSelectedPiece_->getY();
-        int initialY = pSelectedPiece_->getX();
+        int initialX = pSelectedPiece_->getFile();
+        int initialY = pSelectedPiece_->getRank();
 
         setBoardTile(x, y, pSelectedPiece_, false); // Move this piece to target square
         resetBoardTile(initialX, initialY, false); // Set null to selected piece's square

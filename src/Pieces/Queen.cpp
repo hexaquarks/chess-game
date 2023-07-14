@@ -2,7 +2,7 @@
 
 #include <vector>
 
-Queen::Queen(Team team_, int x_, int y_): Piece(team_, x_, y_, PieceType::QUEEN, "q")
+Queen::Queen(Team team_, int rank_, int file_): Piece(team_, rank_, file_, PieceType::QUEEN, "q")
 {
 }
 

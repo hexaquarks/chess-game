@@ -1,44 +1,44 @@
 #include "../../include/Pieces/King.hpp"
 #include "../../include/Components/Board.hpp"
 
-King::King(Team team, int x, int y): Piece(team, x, y, PieceType::KING, "k")
+King::King(Team team, int rank, int file): Piece(team, rank, file, PieceType::KING, "k")
 {
 }
 
 std::vector<Move> King::calcPossibleMoves(Board& board_) const
 {
     std::vector<Move> moves;
-    int x = getX();
-    int y = getY();
-    coor2d kingCoor = {x, y};
-    std::shared_ptr<Piece> kingPtr = board_.getBoardTile(y, x);
+    int rank = getRank();
+    int file = getFile();
+    coor2d kingCoor = {rank, file};
+    std::shared_ptr<Piece> kingPtr = board_.getBoardTile(file, rank);
 
     // Checking castling
     if (canCastleKingSide(board_))
-        moves.push_back(Move({x, 6}, kingCoor, kingPtr, MoveType::CASTLE_KINGSIDE));
+        moves.push_back(Move({rank, 6}, kingCoor, kingPtr, MoveType::CASTLE_KINGSIDE));
     if (canCastleQueenSide(board_))
-        moves.push_back(Move({x, 2}, kingCoor, kingPtr, MoveType::CASTLE_QUEENSIDE));
+        moves.push_back(Move({rank, 2}, kingCoor, kingPtr, MoveType::CASTLE_QUEENSIDE));
 
-    for (int i = std::max(0, x-1); i <= std::min(7, x+1); ++i)
+    for (int i = std::max(0, rank-1); i <= std::min(7, rank+1); ++i)
     {
-        for (int j = std::max(0, y-1); j <= std::min(7, y+1); ++j)
+        for (int j = std::max(0, file-1); j <= std::min(7, file+1); ++j)
         {
             // King cannot stay in same place
-            if (x == i && y == j) continue;
+            if (rank == i && file == j) continue;
 
             // If position is empty or piece on it is of the opposite colour
             std::shared_ptr<Piece> piece = board_.getBoardTile(j, i);
             if (!piece || piece->getTeam() != getTeam())
             {
                 // Move king to test
-                board_.resetBoardTile(y, x, false);
+                board_.resetBoardTile(file, rank, false);
                 board_.setBoardTile(j, i, kingPtr, false);
 
                 // Check if king is checked in this position
                 bool checked = isChecked(board_);
 
                 // Put king back
-                board_.setBoardTile(y, x, kingPtr, false);
+                board_.setBoardTile(file, rank, kingPtr, false);
                 board_.setBoardTile(j, i, piece, false);
 
                 // If king is not checked, we can add move
@@ -55,15 +55,15 @@ std::vector<Move> King::calcPossibleMoves(Board& board_) const
 
 std::vector<Move> King::possibleMovesNoCheck(Board& board_) const {
     std::vector<Move> moves;
-    int x = getX();
-    int y = getY();
-    coor2d kingCoor = {x, y};
-    std::shared_ptr<Piece> kingPtr = board_.getBoardTile(y, x);
+    int rank = getRank();
+    int file = getFile();
+    coor2d kingCoor = {rank, file};
+    std::shared_ptr<Piece> kingPtr = board_.getBoardTile(file, rank);
 
-    for (int i = std::max(0, x-1); i <= std::min(7, x+1); ++i) {
-        for (int j = std::max(0, y-1); j <= std::min(7, y+1); ++j) {
+    for (int i = std::max(0, rank-1); i <= std::min(7, rank+1); ++i) {
+        for (int j = std::max(0, file-1); j <= std::min(7, file+1); ++j) {
             // King cannot stay in same place
-            if (x == i && y == j) continue;
+            if (rank == i && file == j) continue;
 
             // If position is empty or piece on it is of the opposite colour
             if (!board_.getBoardTile(j, i) || board_.getBoardTile(j, i)->getTeam() != getTeam()) {
@@ -76,7 +76,7 @@ std::vector<Move> King::possibleMovesNoCheck(Board& board_) const {
 }
 
 bool King::isChecked(Board& board_) const {
-    // Looping through every piece
+    // Looping through everfile piece
     for (size_t row = 0; row < 8; ++row) {
         for (size_t col = 0; col < 8; ++col) {
             std::shared_ptr<Piece> p = board_.getBoardTile(col, row);
@@ -88,7 +88,7 @@ bool King::isChecked(Board& board_) const {
 
                 // Loop through every possible move to see if king is in danger or not
                 for (auto& move: positions)
-                    if (move.getTarget().first == getX() && move.getTarget().second == getY())
+                    if (move.getTarget().first == getRank() && move.getTarget().second == getFile())
                         return true;
             }
         }
@@ -99,7 +99,7 @@ bool King::isChecked(Board& board_) const {
 }
 
 bool King::canCastleKingSide(Board& board_) const {
-    int x = getX(), y = getY();
+    int rank = getRank(), file = getFile();
     const int rookRow = (getTeam() == Team::WHITE)? 7: 0;
 
     // If rook is not at position (rookRow, 7), forget it
@@ -112,23 +112,23 @@ bool King::canCastleKingSide(Board& board_) const {
         return false;
 
     // If one of the two squares on the right are not empty, forget it
-    if (board_.getBoardTile(y+1, x) || board_.getBoardTile(y+2, x))
+    if (board_.getBoardTile(file+1, rank) || board_.getBoardTile(file+2, rank))
         return false;
 
     // If we traverse a check, forget it
     bool traversesCheck = false;
-    swapPieces(board_, x, y, x, y+1); // Move king one place to the left
+    swapPieces(board_, rank, file, rank, file+1); // Move king one place to the left
     if (isChecked(board_)) traversesCheck = true;
 
-    swapPieces(board_, x, y+1, x, y+2); // Move king two places to the left
+    swapPieces(board_, rank, file+1, rank, file+2); // Move king two places to the left
     if (isChecked(board_)) traversesCheck = true;
 
-    swapPieces(board_, x, y+2, x, y); // Put king back
+    swapPieces(board_, rank, file+2, rank, file); // Put king back
     return !traversesCheck;
 }
 
 bool King::canCastleQueenSide(Board& board_) const {
-    int x = getX(), y = getY();
+    int rank = getRank(), file = getFile();
     const int rookRow = (getTeam() == Team::WHITE)? 7: 0;
 
     // If rook is not at position (rookRow, 0), forget it
@@ -141,17 +141,17 @@ bool King::canCastleQueenSide(Board& board_) const {
         return false;
 
     // If one of the three squares on the right are not empty, forget it
-    if (board_.getBoardTile(y-1, x) || board_.getBoardTile(y-2, x) || board_.getBoardTile(y-3, x))
+    if (board_.getBoardTile(file-1, rank) || board_.getBoardTile(file-2, rank) || board_.getBoardTile(file-3, rank))
         return false;
 
     // If we traverse a check, forget it
     bool traversesCheck = false;
-    swapPieces(board_, x, y, x, y-1); // Move king one place to the left
+    swapPieces(board_, rank, file, rank, file-1); // Move king one place to the left
     if (isChecked(board_)) traversesCheck = true;
 
-    swapPieces(board_, x, y-1, x, y-2); // Move king two places to the left
+    swapPieces(board_, rank, file-1, rank, file-2); // Move king two places to the left
     if (isChecked(board_)) traversesCheck = true;
 
-    swapPieces(board_, x, y-2, x, y); // Put king back
+    swapPieces(board_, rank, file-2, rank, file); // Put king back
     return !traversesCheck;
 }

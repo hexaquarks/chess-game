@@ -263,8 +263,8 @@ namespace ui {
         sBefore.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
         s.setPosition(mousePos_.first, mousePos_.second);
         sBefore.setPosition(
-            getWindowXPos(m_board.isFlipped()? 7-pSelectedPiece_->getY(): pSelectedPiece_->getY()),
-            getWindowYPos(m_board.isFlipped()? 7-pSelectedPiece_->getX(): pSelectedPiece_->getX())
+            getWindowXPos(m_board.isFlipped()? 7-pSelectedPiece_->getFile(): pSelectedPiece_->getFile()),
+            getWindowYPos(m_board.isFlipped()? 7-pSelectedPiece_->getRank(): pSelectedPiece_->getRank())
         );
 
         s.setOrigin(g_SPRITE_SIZE/2, g_SPRITE_SIZE/2);
@@ -313,8 +313,8 @@ namespace ui {
         CircleShape c(g_CELL_SIZE / 2);
         c.setFillColor(Color::Transparent);
 
-        int x = m_board.isFlipped()? 7-king->getY(): king->getY();
-        int y = m_board.isFlipped()? 7-king->getX(): king->getX();
+        int x = m_board.isFlipped()? 7-king->getFile(): king->getFile();
+        int y = m_board.isFlipped()? 7-king->getRank(): king->getRank();
         c.setPosition(getWindowXPos(x), getWindowYPos(y));
         shader.setUniform("color", Glsl::Vec4(1.f, 0.f, 0.f, 1.f));
         shader.setUniform("center", Vector2f(
@@ -340,8 +340,8 @@ namespace ui {
             checkmate.setScale(g_SPECIAL_SCALE / 2, g_SPECIAL_SCALE / 2);
             checkmate.setOrigin(40, 40);
             checkmate.setPosition(
-                getWindowXPos(m_board.isFlipped()? 7-king->getY(): king->getY()) + g_CELL_SIZE,
-                getWindowYPos(m_board.isFlipped()? 7-king->getX(): king->getX())
+                getWindowXPos(m_board.isFlipped()? 7-king->getFile(): king->getFile()) + g_CELL_SIZE,
+                getWindowYPos(m_board.isFlipped()? 7-king->getRank(): king->getRank())
             );
             m_window.draw(checkmate);
             return;
