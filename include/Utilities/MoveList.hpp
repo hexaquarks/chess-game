@@ -18,6 +18,13 @@ class MoveList
 public:
     explicit MoveList(Board&);
 
+    // This class is an identity and has ownership over the uniques
+    // MoveTree and  MoveTreeDisplayHandler.
+    MoveList(const MoveList&) = delete;
+    MoveList& operator=(const MoveList&) = delete;
+
+    ~MoveList() = default;
+
     MoveTree::Iterator getNewIterator() { return m_moves.begin(); }
     MoveTree::Iterator& getIterator() { return m_moveIterator; }
     const MoveTree& getMoves() const { return m_moves; }

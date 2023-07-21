@@ -2,6 +2,13 @@
 #include "../../include/Utilities/SFDrawUtil.hpp"
 #include "../../include/Ressources/RessourceManager.hpp"
 
+MoveSelectionPanel::MoveSelectionPanel(
+    RenderWindow& window_,
+    SidePanel& panel_)
+: m_window(window_), m_sidePanel(panel_)
+{
+}
+
 void MoveSelectionPanel::handleTitleText()
 {
     auto font = RessourceManager::getFont("Arial.ttf");

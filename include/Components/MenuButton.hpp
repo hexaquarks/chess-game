@@ -16,7 +16,8 @@ class MenuButton
 {
 public:
     MenuButton(const std::string&, size_t, bool isRotatable = false);
-
+    MenuButton() = default;
+    
     sf::RectangleShape getRectangle() const { return m_rectangle; }
     sf::Sprite getSprite() const { return m_sprite; }
     sf::Text getText() const { return m_text; }

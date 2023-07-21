@@ -19,9 +19,8 @@ public:
         using iterator_category = bidirectional_iterator_tag;
         using difference_type = ptrdiff_t;
 
-        Iterator(const shared_ptr<MoveTreeNode>& ptr): m_ptr(ptr)
-        {
-        }
+        explicit Iterator(const shared_ptr<MoveTreeNode>& ptr): m_ptr(ptr) {}
+        Iterator() = default;
 
         MoveTreeNode& operator*() const { return *m_ptr; }
         shared_ptr<MoveTreeNode>& operator->() { return m_ptr; }

@@ -11,8 +11,8 @@ typedef std::pair<int, int> coor2d;
 class Arrow
 {
 public:
-    Arrow(): m_rotation(0), m_size(0){};
     Arrow(coor2d, coor2d, int, std::string);
+    Arrow() = default;
 
     const std::string& getFilename() { return m_filename; }
     const coor2d& getOrigin() { return m_origin; }

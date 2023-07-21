@@ -17,6 +17,7 @@ class MoveTreeDisplayHandler
 {
 public:
     explicit MoveTreeDisplayHandler(MoveTree& tree);
+    MoveTreeDisplayHandler() = default;
 
     std::vector<MoveInfo> generateMoveInfo();
 

@@ -22,6 +22,7 @@ class SidePanel
 {
 public:
     SidePanel(RenderWindow&, MoveList&, bool&);
+    SidePanel() = default;
 
     void resetNextPos() { m_nextPos = {ui::g_BORDER_SIZE + 10, 10}; }
     void goToNextRow(int height);

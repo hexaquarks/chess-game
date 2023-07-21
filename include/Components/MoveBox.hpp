@@ -12,7 +12,8 @@ class MoveBox
 {
 public:
     MoveBox(const coor2d&, const std::string&);
-
+    MoveBox() = default;
+    
     float getScaledWidth() const { return g_BOX_HORIZONTAL_SCALE * m_textBounds.width; }
     float getScaledHeight() const { return g_BOX_VERTICAL_SCALE * m_textsf.getCharacterSize(); }
     void setPosition(const coor2d& coord_) { m_position = coord_; }

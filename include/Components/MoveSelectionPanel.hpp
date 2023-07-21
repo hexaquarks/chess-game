@@ -15,13 +15,11 @@ inline const Color g_BLUE = {102, 178, 255};
 inline const Color g_GRAY = {211, 211, 211};
 inline const Color g_LIGHT_WHITE = {240, 248, 255};
 
+// TODO make a singleton off this class? 
 class MoveSelectionPanel
 {
 public:
-    MoveSelectionPanel(RenderWindow& window, SidePanel& panel)
-    : m_window(window), m_sidePanel(panel)
-    {
-    }
+    MoveSelectionPanel(RenderWindow& window, SidePanel& panel);
 
     bool isHowered(const coor2d&) const;
     size_t getSelection() const { return m_selectionIndex; }

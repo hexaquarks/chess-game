@@ -29,7 +29,7 @@ public:
     Piece& operator=(Piece&&) = delete;
 
     // Rule of five
-    virtual ~Piece() {} 
+    virtual ~Piece() = default; 
 
     /* Getters */
     Team getTeam() const { return m_team; };

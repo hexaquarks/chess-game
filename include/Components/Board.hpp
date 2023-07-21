@@ -13,8 +13,9 @@ enum class Team;
 class Board
 {
 public:
-    Board();
+    Board(); // user-defined default constructor
     explicit Board(const std::string&);
+    
     void reset();
 
     // Getters and setters
