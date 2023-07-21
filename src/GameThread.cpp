@@ -221,9 +221,9 @@ namespace game
         if (!clickState_.pSelectedPiece) return false;
 
         // If clicked and mouse remained on the same square
-        int rank = ui::getRank(clickState_.mousePos, m_board.isFlipped());
         int file = ui::getFile(clickState_.mousePos, m_board.isFlipped());
-        if (rank == clickState_.pSelectedPiece->getRank() && file == clickState_.pSelectedPiece->getFile())
+        int rank = ui::getRank(clickState_.mousePos, m_board.isFlipped());
+        if (file == clickState_.pSelectedPiece->getFile() && rank == clickState_.pSelectedPiece->getRank())
         {
             if (!clickState_.pieceIsClicked)
             {
@@ -236,7 +236,7 @@ namespace game
         }
 
         // Try to match moves
-        std::optional<Move> pSelectedMoveOpt = m_board.findSelectedMove(clickState_.pSelectedPiece, rank, file);
+        std::optional<Move> pSelectedMoveOpt = m_board.findSelectedMove(clickState_.pSelectedPiece, file, rank);
 
         // If move is not allowed, place piece back, else apply the move
         if (!pSelectedMoveOpt.has_value())

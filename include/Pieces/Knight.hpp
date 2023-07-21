@@ -4,8 +4,8 @@
 // Represents a knight
 struct Knight: public Piece
 {
-    Knight(Team, int, int); // index-based
-    Knight(Team, int, char); // real coordinates
+    explicit Knight(Team, int, int); // index-based
+    explicit Knight(Team, coor2dChar&); // real coordinates
 
     std::vector<Move> calcPossibleMoves(Board&) const override;
 };

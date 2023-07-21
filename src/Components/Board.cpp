@@ -175,13 +175,13 @@ void Board::updateBoardInfosAfterNewMove(
     if (kingIsChecked()) pMove_->setChecked();
 }
 
-std::shared_ptr<Piece>& Board::getBoardTile(const std::pair<char, char>& coord_ /* <file, rank> : {'a', 2} */)  
+std::shared_ptr<Piece>& Board::getBoardTile(const std::pair<char, int>& coord_ /* <file, rank> : {'a', 2} */)  
 {
     assert(std::isalpha(coord_.first));
-    assert(coord_.second >= '1' && coord_.second <= '8');
+    assert(coord_.second >= 1 && coord_.second <= 8);
     assert(coord_.first >= 'a' && coord_.first <= 'h');
 
-    return m_board[7 - static_cast<int>(coord_.second - '1')][static_cast<int>(coord_.first - 'a')];
+    return m_board[8 - coord_.second][static_cast<int>(coord_.first - 'a')];
 }
 
 std::vector<Move> Board::possibleMovesFor(const std::shared_ptr<Piece>& piece)
@@ -285,8 +285,8 @@ void Board::checkIfMoveMakesKingChecked(const std::shared_ptr<Move>& move_)
 
 std::optional<Move> Board::findSelectedMove(
     const std::shared_ptr<Piece>& pSelectedPiece_, 
-    int rank_, 
-    int file_) const
+    int file_,
+    int rank_ ) const
 {
     for (auto& move : getAllCurrentlyAvailableMoves())
     {

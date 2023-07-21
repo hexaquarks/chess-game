@@ -7,8 +7,8 @@ Bishop::Bishop(Team team_, int rank_, int file_):
 }
 
 // Real coordinates constructor 
-Bishop::Bishop(Team team_, int rank_, char file_):
-    Piece(team_, rank_, file_, PieceType::BISHOP, "b")
+Bishop::Bishop(Team team_, coor2dChar& coords_):
+    Piece(team_, coords_.first, coords_.second, PieceType::BISHOP, "b")
 {
 }
 

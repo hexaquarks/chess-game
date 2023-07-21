@@ -10,8 +10,8 @@ Pawn::Pawn(Team team_, int rank_, int file_):
 }
 
 // Real coordinates constructor
-Pawn::Pawn(Team team_, int rank_, char file_):
-    Piece(team_, rank_, file_, PieceType::PAWN, "p")
+Pawn::Pawn(Team team_, coor2dChar& coords_):
+    Piece(team_, coords_.first, coords_.second, PieceType::PAWN, "p")
 {
 }
 std::vector<Move> Pawn::calcPossibleMoves(Board& board_) const

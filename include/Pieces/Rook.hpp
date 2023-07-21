@@ -4,8 +4,8 @@
 // Represents a rook
 struct Rook: public Piece
 {
-    Rook(Team, int, int); // index-based
-    Rook(Team, int, char); // real coordinates
+    explicit Rook(Team, int, int); // index-based
+    explicit Rook(Team, coor2dChar&); // real coordinates
 
     std::vector<Move> calcPossibleMoves(Board&) const override;
 };

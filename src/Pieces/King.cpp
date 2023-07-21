@@ -8,8 +8,8 @@ King::King(Team team, int rank, int file):
 }
 
 // Real coordinates constructor 
-King::King(Team team, int rank, char file): 
-    Piece(team, rank, file, PieceType::KING, "k")
+King::King(Team team, coor2dChar& coords_): 
+    Piece(team, coords_.first, coords_.second, PieceType::KING, "k")
 {
 }
 

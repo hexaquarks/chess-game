@@ -13,6 +13,7 @@ std::ostream& operator<<(std::ostream&, const PieceType&);
 
 typedef std::tuple<coor2d, MoveType> moveType;
 typedef std::vector<moveType> moveTypes;
+typedef std::pair<int, char> coor2dChar;
 
 class Board;
 
@@ -21,7 +22,7 @@ class Piece
 {
 public:
     explicit Piece(Team, int, int, PieceType, const std::string&);
-    explicit Piece(Team, int, char, PieceType, const std::string&); 
+    explicit Piece(Team, coor2dChar&, PieceType, const std::string&); 
 
     // C.67: A polymorphic class should suppress copying
     Piece(const Piece&) = delete;

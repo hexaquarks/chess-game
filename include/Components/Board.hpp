@@ -22,7 +22,7 @@ public:
     const auto& getWhitePieces() const { return m_whitePieces; }
     const auto& getBlackPieces() const { return m_blackPieces; }
     std::shared_ptr<Piece>& getBoardTile(int file_, int row_) { return m_board[row_][file_]; }
-    std::shared_ptr<Piece>& getBoardTile(const std::pair<char, char>&);
+    std::shared_ptr<Piece>& getBoardTile(const std::pair<char, int>&);
     const std::shared_ptr<King>& getKing() const;
     Team getTurn() const { return m_turn; }
     void setIsKingChecked(bool isKingChecked_) { m_isKingChecked = isKingChecked_; }

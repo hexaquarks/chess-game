@@ -14,10 +14,10 @@ Piece::Piece(Team team_, int rank_, int file_, PieceType type_, const string& pi
 }
 
 // real coordinates constructor ({8, 'a'} == {0, 0})
-Piece::Piece(Team team_, int file_, char rank_, PieceType type_, const string& pieceType_)
+Piece::Piece(Team team_, coor2dChar& coords_, PieceType type_, const string& pieceType_)
 : m_team(team_), 
-  m_rank(8 - rank_), 
-  m_file(file_ - 'a'), 
+  m_rank(8 - coords_.first), 
+  m_file(coords_.second - 'a'), 
   m_type(type_)
 {
     m_filename = pieceType_ + getColorCode() + fileExt;
