@@ -16,7 +16,7 @@ using namespace sf;
 class MoveList
 {
 public:
-    MoveList(Board&);
+    explicit MoveList(Board&);
 
     MoveTree::Iterator getNewIterator() { return m_moves.begin(); }
     MoveTree::Iterator& getIterator() { return m_moveIterator; }

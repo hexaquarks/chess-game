@@ -14,7 +14,7 @@ class Board
 {
 public:
     Board();
-    Board(const std::string&);
+    explicit Board(const std::string&);
     void reset();
 
     // Getters and setters

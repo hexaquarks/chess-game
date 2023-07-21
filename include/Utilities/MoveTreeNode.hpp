@@ -5,7 +5,7 @@
 class MoveTreeNode
 {
 public:
-    MoveTreeNode(const std::shared_ptr<Move>&); // Public for now for debbuging
+    explicit MoveTreeNode(const std::shared_ptr<Move>&); // Public for now for debbuging
     MoveTreeNode() {}
 
     int childNumber = 0;

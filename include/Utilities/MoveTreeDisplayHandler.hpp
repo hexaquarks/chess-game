@@ -16,7 +16,7 @@ struct MoveInfo
 class MoveTreeDisplayHandler 
 {
 public:
-    MoveTreeDisplayHandler(MoveTree& tree);
+    explicit MoveTreeDisplayHandler(MoveTree& tree);
 
     std::vector<MoveInfo> generateMoveInfo();
 
