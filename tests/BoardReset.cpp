@@ -1,5 +1,4 @@
 #define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE BoardReset
 #include <boost/test/unit_test.hpp>
 
 #include "../external/lib/project_pgn/pgnp/build/includes/pgnp.hpp"
