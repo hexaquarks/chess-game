@@ -3,16 +3,26 @@
 
 #include <iostream>
 
-Piece::Piece(
-    Team team_, 
-    int rank_, 
-    int file_, 
-    PieceType type_, 
-    const string& pieceType_)
-: m_team(team_), m_rank(rank_), m_file(file_), m_type(type_)
+// Index-based coordinates constructor ({0, 0} == {8, 'a'})
+Piece::Piece(Team team_, int rank_, int file_, PieceType type_, const string& pieceType_)
+: m_team(team_), 
+  m_rank(rank_), 
+  m_file(file_), 
+  m_type(type_)
 {
     m_filename = pieceType_ + getColorCode() + fileExt;
 }
+
+// real coordinates constructor ({8, 'a'} == {0, 0})
+Piece::Piece(Team team_, int file_, char rank_, PieceType type_, const string& pieceType_)
+: m_team(team_), 
+  m_rank(8 - rank_), 
+  m_file(file_ - 'a'), 
+  m_type(type_)
+{
+    m_filename = pieceType_ + getColorCode() + fileExt;
+}
+
 
 void Piece::addHorizontalAndVerticalMovements(Board& board_, vector<Move>& moves) const
 {

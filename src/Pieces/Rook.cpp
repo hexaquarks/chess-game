@@ -2,7 +2,14 @@
 
 #include <vector>
 
+// Index-based coordinates constructor
 Rook::Rook(Team team_, int rank_, int file_)
+: Piece(team_, rank_, file_, PieceType::ROOK, "r")
+{
+}
+
+// Real coordinates constructor
+Rook::Rook(Team team_, int rank_, char file_)
 : Piece(team_, rank_, file_, PieceType::ROOK, "r")
 {
 }

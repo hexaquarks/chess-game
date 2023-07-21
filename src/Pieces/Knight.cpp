@@ -3,7 +3,14 @@
 
 #include <vector>
 
+// Index-based constructor
 Knight::Knight(Team team_, int rank_, int file_):
+    Piece(team_, rank_, file_, PieceType::KNIGHT, "n")
+{
+}
+
+// Real coordinates constructor 
+Knight::Knight(Team team_, int rank_, char file_):
     Piece(team_, rank_, file_, PieceType::KNIGHT, "n")
 {
 }

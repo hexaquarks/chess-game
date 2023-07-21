@@ -3,11 +3,17 @@
 
 #include <vector>
 
+// Index-based coordinates constructor
 Pawn::Pawn(Team team_, int rank_, int file_):
     Piece(team_, rank_, file_, PieceType::PAWN, "p")
 {
 }
 
+// Real coordinates constructor
+Pawn::Pawn(Team team_, int rank_, char file_):
+    Piece(team_, rank_, file_, PieceType::PAWN, "p")
+{
+}
 std::vector<Move> Pawn::calcPossibleMoves(Board& board_) const
 {
     std::vector<Move> moves;

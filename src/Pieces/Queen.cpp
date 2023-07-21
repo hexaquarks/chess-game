@@ -2,7 +2,15 @@
 
 #include <vector>
 
-Queen::Queen(Team team_, int rank_, int file_): Piece(team_, rank_, file_, PieceType::QUEEN, "q")
+// Index-based coordinates constructor
+Queen::Queen(Team team_, int rank_, int file_): 
+    Piece(team_, rank_, file_, PieceType::QUEEN, "q")
+{
+}
+
+// Real coordinates constructor
+Queen::Queen(Team team_, int rank_, char file_): 
+    Piece(team_, rank_, file_, PieceType::QUEEN, "q")
 {
 }
 

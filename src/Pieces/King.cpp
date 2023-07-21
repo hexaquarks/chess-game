@@ -1,7 +1,15 @@
 #include "../../include/Pieces/King.hpp"
 #include "../../include/Components/Board.hpp"
 
-King::King(Team team, int rank, int file): Piece(team, rank, file, PieceType::KING, "k")
+// Index-based constructor
+King::King(Team team, int rank, int file): 
+    Piece(team, rank, file, PieceType::KING, "k")
+{
+}
+
+// Real coordinates constructor 
+King::King(Team team, int rank, char file): 
+    Piece(team, rank, file, PieceType::KING, "k")
 {
 }
 

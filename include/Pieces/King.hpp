@@ -6,7 +6,9 @@
 class King: public Piece
 {
 public:
-    King(Team, int, int); // Constructor
+    King(Team, int, int); // index-based
+    King(Team, int, char); // real coordinates
+
     std::vector<Move> calcPossibleMoves(Board&) const override;
     bool isChecked(Board&) const;
 

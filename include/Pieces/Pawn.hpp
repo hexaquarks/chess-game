@@ -5,7 +5,8 @@
 struct Pawn: public Piece
 {
     public:
-    Pawn(Team, int, int); // Constructor
+    Pawn(Team, int, int); // index-based
+    Pawn(Team, int, char); // real coordinates
 
     std::vector<Move> calcPossibleMoves(Board&) const override;
     void generateCaptureMoves(std::vector<Move>&, Board&, int) const;
