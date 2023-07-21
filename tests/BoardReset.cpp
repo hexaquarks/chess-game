@@ -1,8 +1,6 @@
 #define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
 
-#include "../external/lib/project_pgn/pgnp/build/includes/pgnp.hpp"
-
 #include "../include/GameThread.hpp"
 #include "../include/Components/Board.hpp"
 #include "../include/Pieces/Piece.hpp"
