@@ -10,6 +10,7 @@ enum class Team { WHITE, BLACK };
 enum class PieceType { PAWN, ROOK, KNIGHT, BISHOP, KING, QUEEN };
 
 std::ostream& operator<<(std::ostream&, const PieceType&);
+std::ostream& operator<<(std::ostream&, Team);
 
 typedef std::tuple<coor2d, MoveType> moveType;
 typedef std::vector<moveType> moveTypes;

@@ -16,16 +16,16 @@ BOOST_AUTO_TEST_CASE(TestStartPosition)
 {
     Board board(FEN_DEFAULT_POSITION);
 
-    BOOST_CHECK_EQUAL(board.getBoardTile({'a', '2'})->getType(), PieceType::PAWN);
-    BOOST_CHECK_EQUAL(board.getBoardTile({'g', '8'})->getType(), PieceType::ROOK);
+    BOOST_CHECK_EQUAL(board.getBoardTile({'a', 2})->getType(), PieceType::PAWN);
+    BOOST_CHECK_EQUAL(board.getBoardTile({'h', 8})->getType(), PieceType::ROOK);
 }
 
 BOOST_AUTO_TEST_CASE(TestCustomPosition)
 {
     Board board(FEN_SCOTCH_MAINLINE);
 
-    BOOST_CHECK_EQUAL(board.getBoardTile({'d', '4'})->getType(), PieceType::KNIGHT);
-    BOOST_CHECK_EQUAL(board.getBoardTile({'f', '6'})->getType(), PieceType::QUEEN);
-    BOOST_CHECK_EQUAL(board.getBoardTile({'c', '5'})->getType(), PieceType::BISHOP);
+    BOOST_CHECK_EQUAL(board.getBoardTile({'d', 4})->getType(), PieceType::KNIGHT);
+    BOOST_CHECK_EQUAL(board.getBoardTile({'f', 6})->getType(), PieceType::QUEEN);
+    BOOST_CHECK_EQUAL(board.getBoardTile({'c', 5})->getType(), PieceType::BISHOP);
 }
 

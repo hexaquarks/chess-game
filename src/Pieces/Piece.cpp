@@ -206,3 +206,14 @@ std::ostream& operator<<(std::ostream& os_, const PieceType& pieceType_)
     }
     return os_;
 }
+
+std::ostream& operator<<(std::ostream& os_, Team team_) 
+{
+    switch (team_) 
+    {
+        case Team::WHITE: os_ << "WHITE"; break;
+        case Team::BLACK: os_ << "BLACK"; break;
+        default: os_ << "UNIMPLEMENTED TEAM"; break;
+    }
+    return os_;
+}

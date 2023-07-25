@@ -72,6 +72,7 @@ void Board::reset()
     m_turn = Team::WHITE; // Reset the first move to be for white
     m_pLastMovedPiece.reset();
     setIsKingChecked(false);
+    m_isFlipped = false;
 }
 
 Board::Board(const std::string& fen_)
@@ -177,7 +178,6 @@ void Board::updateBoardInfosAfterNewMove(
 
 std::shared_ptr<Piece>& Board::getBoardTile(const std::pair<char, int>& coord_ /* <file, rank> : {'a', 2} */)  
 {
-    assert(std::isalpha(coord_.first));
     assert(coord_.second >= 1 && coord_.second <= 8);
     assert(coord_.first >= 'a' && coord_.first <= 'h');
 

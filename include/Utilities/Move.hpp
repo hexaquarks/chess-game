@@ -41,6 +41,7 @@ public:
     void setMoveArrows(const std::vector<Arrow> arrows_) { m_arrows = arrows_; }
 
     bool operator==(const Move&);
+    bool operator!=(const Move&);
 
 private:
     std::shared_ptr<Piece> m_selectedPiece; // Piece that is being selected
@@ -57,3 +58,5 @@ private:
 std::pair<char, int> findLetterCoord(const coor2d& target_);
 std::string parseMoveHelper(const Move& move_, int moveNumber_, bool showNumber_, bool showDots_);
 std::string parseMove(const Move& move_, int moveNumber_, bool showNumber_, bool showDots_ = false);
+
+std::ostream& operator<<(std::ostream&, const Move&);

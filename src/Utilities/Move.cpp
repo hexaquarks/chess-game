@@ -68,6 +68,11 @@ bool Move::operator==(const Move& other_)
     m_special == other_.m_special;
 }
 
+bool Move::operator!=(const Move& other_)
+{
+     return !(*this == other_);
+}
+
 // free functions
 
 std::pair<char, int> findLetterCoord(const coor2d& target_) 
@@ -113,4 +118,9 @@ std::string parseMove(const Move& move_, int moveNumber_, bool showNumber_, bool
     if (move_.kingIsCheckmated()) return text + std::string("#");
     if (move_.kingIsChecked()) return text + std::string("+");
     return text;
+}
+
+std::ostream& operator<<(std::ostream& os_, const Move& move_)
+{
+    return os_;
 }
