@@ -233,11 +233,11 @@ void Board::resetBoardTile(int file_, int rank_, bool record_)
 void Board::updateAllCurrentlyAvailableMoves()
 {
     std::vector<Move> moves;
-    std::vector<std::shared_ptr<Piece>> playerPieces = (m_turn == Team::WHITE)? m_whitePieces: m_blackPieces;
+    auto playerPieces = (m_turn == Team::WHITE)? m_whitePieces: m_blackPieces;
 
     for (auto& piece: playerPieces)
     {
-        if (piece->getRank() == -1 || piece->getFile() == -1) continue;
+        if (piece->isCached()) continue;
 
         std::vector<Move> pieceMoves = possibleMovesFor(piece);
         removeIllegalMoves(pieceMoves, piece);

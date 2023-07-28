@@ -42,6 +42,7 @@ public:
     static std::shared_ptr<Piece> getLastMovedPiece() { return m_lastPiece; }
     int getRank() const { return m_rank; }
     int getFile() const { return m_file; }
+    bool isCached() const { return m_rank == -1 || m_file == -1; }
     bool hasMoved() const { return m_moved; }
     void setAsFirstMovement() { m_moved = false; }
     void addHorizontalAndVerticalMovements(Board&, std::vector<Move>&) const;
