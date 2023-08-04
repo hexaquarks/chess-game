@@ -13,17 +13,17 @@
 
 using namespace sf;
 
-class MoveList
+class MoveTreeManager
 {
 public:
-    explicit MoveList(Board&);
+    explicit MoveTreeManager(Board&);
 
     // This class is an identity and has ownership over the uniques
     // MoveTree and  MoveTreeDisplayHandler.
-    MoveList(const MoveList&) = delete;
-    MoveList& operator=(const MoveList&) = delete;
+    MoveTreeManager(const MoveTreeManager&) = delete;
+    MoveTreeManager& operator=(const MoveTreeManager&) = delete;
 
-    ~MoveList() = default;
+    ~MoveTreeManager() = default;
 
     MoveTree::Iterator getNewIterator() { return m_moves.begin(); }
     MoveTree::Iterator& getIterator() { return m_moveIterator; }

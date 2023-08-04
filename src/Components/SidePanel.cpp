@@ -51,7 +51,7 @@ namespace
 }
 
 SidePanel::SidePanel(
-    RenderWindow& window_, MoveList& moveList_, bool& b_
+    RenderWindow& window_, MoveTreeManager& moveList_, bool& b_
 ):
     m_window(window_), m_moveList(moveList_),
     m_showMoveSelectionPanel(b_)

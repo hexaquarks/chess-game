@@ -6,7 +6,7 @@
 #include "Components/Board.hpp"
 #include "Utilities/Arrow.hpp"
 #include "Utilities/MoveTree.hpp"
-#include "Utilities/MoveList.hpp"
+#include "Utilities/MoveTreeManager.hpp"
 #include "Pieces/Pawn.hpp"
 #include "Pieces/Rook.hpp"
 #include "Pieces/Knight.hpp"
@@ -30,7 +30,7 @@ namespace game
 
     private:
         Board m_board;
-        MoveList m_moveList{m_board};
+        MoveTreeManager m_moveList{m_board};
         MoveTree::Iterator& m_treeIterator = m_moveList.getIterator();
         ui::UIManager m_uiManager{m_board, m_moveList};
 
