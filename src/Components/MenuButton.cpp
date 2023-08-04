@@ -1,6 +1,6 @@
 #include "../../include/Components/MenuButton.hpp"
 #include "../../include/GameThread.hpp"
-#include "../../include/Utilities/MoveList.hpp"
+#include "../../include/Utilities/MoveTreeManager.hpp"
 #include "../../include/Utilities/SFDrawUtil.hpp"
 
 enum class MenuButtonType
@@ -94,7 +94,7 @@ void MenuButton::doColorTransition()
     }
 }
 
-void MenuButton::doMouseClick(Board& game_, MoveList& moveList_)
+void MenuButton::doMouseClick(Board& game_, MoveTreeManager& moveList_)
 {
     switch (m_buttonType)
     {

@@ -2,7 +2,7 @@
 
 #include "../Utilities/Move.hpp"
 #include "../Pieces/Piece.hpp"
-#include "../Utilities/MoveList.hpp"
+#include "../Utilities/MoveTreeManager.hpp"
 #include "MoveBox.hpp"
 #include <SFML/Graphics.hpp>
 
@@ -21,7 +21,7 @@ struct MoveInfo;
 class SidePanel
 {
 public:
-    SidePanel(RenderWindow&, MoveList&, bool&);
+    SidePanel(RenderWindow&, MoveTreeManager&, bool&);
     SidePanel() = default;
 
     void resetNextPos() { m_nextPos = {ui::g_BORDER_SIZE + 10, 10}; }
@@ -39,7 +39,7 @@ public:
 
 private:
     RenderWindow& m_window;
-    MoveList& m_moveList;
+    MoveTreeManager& m_moveList;
     coor2d m_nextPos = {ui::g_BORDER_SIZE + 10, 10};
     int moveBoxCounter = 0;
     int m_row = 0;

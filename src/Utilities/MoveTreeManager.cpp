@@ -1,13 +1,13 @@
-#include "../../include/Utilities/MoveList.hpp"
+#include "../../include/Utilities/MoveTreeManager.hpp"
 #include "../../include/Utilities/PieceTransition.hpp"
 #include "../../include/Utilities/UIConstants.hpp"
 #include "../../include/GameThread.hpp"
 
-MoveList::MoveList(Board& board_): game(board_)
+MoveTreeManager::MoveTreeManager(Board& board_): game(board_)
 {
 }
 
-bool MoveList::goToPreviousMove(bool enableTransition_, vector<Arrow>& arrowList_)
+bool MoveTreeManager::goToPreviousMove(bool enableTransition_, vector<Arrow>& arrowList_)
 {
     if (!m_moveIterator.isAtTheBeginning())
     {
@@ -20,7 +20,7 @@ bool MoveList::goToPreviousMove(bool enableTransition_, vector<Arrow>& arrowList
     return false;
 }
 
-bool MoveList::goToNextMove(
+bool MoveTreeManager::goToNextMove(
     bool enableTransition_, 
     const std::optional<size_t>& moveChildNumber_, 
     vector<Arrow>& arrowList_)
@@ -39,19 +39,19 @@ bool MoveList::goToNextMove(
     return false;
 }
 
-void MoveList::addMove(shared_ptr<Move>& move_, vector<Arrow>& arrowList_)
+void MoveTreeManager::addMove(shared_ptr<Move>& move_, vector<Arrow>& arrowList_)
 {
     applyMove(move_, true, true, arrowList_);
 }
 
-void MoveList::applyMove(
+void MoveTreeManager::applyMove(
     bool enableTransition_, 
     vector<Arrow>& arrowList_)
 {
     applyMove(m_moveIterator->m_move, false, enableTransition_, arrowList_);
 }
 
-void MoveList::applyMove(
+void MoveTreeManager::applyMove(
     shared_ptr<Move>& move_, 
     bool addToList_, 
     bool enableTransition_, 
@@ -198,7 +198,7 @@ void MoveList::applyMove(
     }
 }
 
-void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
+void MoveTreeManager::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
 {
     shared_ptr<Move> m = m_moveIterator->m_move;
     if (!m) return;
@@ -281,7 +281,7 @@ void MoveList::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
     --m_moveIterator;
 }
 
-void MoveList::setTransitioningPiece(
+void MoveTreeManager::setTransitioningPiece(
     bool isUndo_, shared_ptr<Piece>& p_, int initialFile_, int initialRank_,
     int targetFile_, int targetRank_, shared_ptr<Piece>& captured_,
     int capturedFile_, int capturedRank_
@@ -297,7 +297,7 @@ void MoveList::setTransitioningPiece(
     m_transitioningPiece.setIncrement();
 }
 
-void MoveList::setSecondTransitioningPiece(
+void MoveTreeManager::setSecondTransitioningPiece(
     shared_ptr<Piece>& p_, int initialFile_, int initialRank_,
     int targetFile_, int targetRank_
 )

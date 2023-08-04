@@ -9,7 +9,7 @@ typedef std::pair<int, int> coor2d;
 
 // foward declarations
 class Board; 
-class MoveList; 
+class MoveTreeManager; 
 enum class MenuButtonType;
 
 class MenuButton
@@ -29,7 +29,7 @@ public:
     
     void drawMenuButton(sf::RenderWindow&) const;
     void doColorTransition();
-    void doMouseClick(Board&, MoveList&);
+    void doMouseClick(Board&, MoveTreeManager&);
     bool isMouseHovered(coor2d&) const;
     bool isBoardReset() const;
 

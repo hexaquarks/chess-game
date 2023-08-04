@@ -3,12 +3,12 @@
 #include "./Ressources/Shader.cpp"
 #include "../include/Components/SidePanel.hpp"
 
-class MoveList;
+class MoveTreeManager;
 
 namespace ui {
     UIManager::UIManager(
     Board& board_, 
-    MoveList& moveList_
+    MoveTreeManager& moveList_
     ) :
         m_board(board_),
         m_moveList(moveList_),

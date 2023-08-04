@@ -52,7 +52,7 @@ namespace ui {
     
     class UIManager {
         public:
-            UIManager(Board&, MoveList&);
+            UIManager(Board&, MoveTreeManager&);
             void draw(ClickState&, DragState&, ArrowsInfo&);
 
             void display() { m_window.display(); }
@@ -83,7 +83,7 @@ namespace ui {
             };
             Board& m_board;
             std::vector<MenuButton> m_menuBar;
-            MoveList& m_moveList;
+            MoveTreeManager& m_moveList;
             SidePanel m_sidePanel;
             MoveSelectionPanel m_moveSelectionPanel;
 
