@@ -5,21 +5,6 @@
 #include "../include/Components/Board.hpp"
 #include "../include/Pieces/Piece.hpp"
 
-std::ostream& operator<<(std::ostream& os, const Team& team) {
-    switch(team) {
-        case Team::WHITE:
-            os << "White";
-            break;
-        case Team::BLACK:
-            os << "Black";
-            break;
-        default:
-            os << "Unknown";
-            break;
-    }
-    return os;
-}
-
 BOOST_AUTO_TEST_CASE(BoardResetTest)
 {
     Board board;

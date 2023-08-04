@@ -46,10 +46,10 @@ public:
 private:
     std::shared_ptr<Piece> m_selectedPiece; // Piece that is being selected
     std::shared_ptr<Piece> m_capturedPiece; // Captured piece, the moved rook in castling, or taken pawn in en passant
-    MoveType m_MoveType; // Move type
-    coor2d m_target; // Destination square of the piece that is being moved
-    coor2d m_init; // Initial square of the piece moved
-    coor2d m_special; // En passant information
+    MoveType m_MoveType = MoveType::CAPTURE; // Move type
+    coor2d m_target = {0, 0}; // Destination square of the piece that is being moved
+    coor2d m_init = {0, 0}; // Initial square of the piece moved
+    coor2d m_special = {0, 0}; // En passant information
     std::vector<Arrow> m_arrows; // List of arrows drawn at that move
     bool m_kingChecked = false; 
     bool m_noMovesAvailable = false; // Flag that captures the availablility of possible moves in the position

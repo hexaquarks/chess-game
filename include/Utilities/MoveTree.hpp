@@ -15,7 +15,7 @@ public:
     {
         shared_ptr<MoveTreeNode> m_ptr;
 
-        public:
+    public:
         using iterator_category = bidirectional_iterator_tag;
         using difference_type = ptrdiff_t;
 
@@ -37,6 +37,11 @@ public:
         bool currentNodeHasMoreThanOneVariation()
         {
             return m_ptr->m_children.size() > 1;
+        }
+
+        const shared_ptr<MoveTreeNode>& getCurrentNode()
+        {
+            return m_ptr;
         }
 
         void goToChild(int i) { m_ptr = m_ptr->m_children.at(i); }
