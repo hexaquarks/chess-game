@@ -40,6 +40,34 @@ BOOST_AUTO_TEST_CASE(TestBlackInitialNumberOfMovesAvailable)
     BOOST_CHECK_EQUAL(m_board.getAllCurrentlyAvailableMoves().size(), 20);
 }
 
+BOOST_AUTO_TEST_CASE(TestKingInCheck)
+{
+    initBoard(testUtil::FEN_KING_IN_CHECK_POSITION);
+    m_board.switchTurn();
+    m_board.updateAllCurrentlyAvailableMoves();
+
+    // There should be only one legal move to get out of check.
+    BOOST_CHECK_EQUAL(m_board.getAllCurrentlyAvailableMoves().size(), 1);
+}
+
+BOOST_AUTO_TEST_CASE(TestCheckmate)
+{
+    initBoard(testUtil::FEN_FOOLS_CHECKMATE_REVERSED);
+    m_board.switchTurn();
+    m_board.updateAllCurrentlyAvailableMoves();
+
+    // There should be only one legal move to get out of check.
+    BOOST_CHECK_EQUAL(m_board.getAllCurrentlyAvailableMoves().size(), 0);
+}
+
+BOOST_AUTO_TEST_CASE(TestStalemate)
+{
+    initBoard(testUtil::FEN_STALEMATE_POSITION);
+    
+    // There should be no legal moves left.
+    BOOST_CHECK_EQUAL(m_board.getAllCurrentlyAvailableMoves().size(), 0);
+}
+
 BOOST_AUTO_TEST_CASE(TestRemovalOfIllegalMoves1)
 {
     initBoard(testUtil::FEN_POSITION_WITH_ILLEGAL_MOVES_1);

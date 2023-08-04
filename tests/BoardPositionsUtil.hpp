@@ -86,4 +86,40 @@ namespace testUtil
     // |R|N| |Q|R| |K| |
     // +-+-+-+-+-+-+-+-+
     inline const std::string FEN_POSITION_WITH_ILLEGAL_MOVES_2 = "r2qk2r/1pp1bppp/2np1n2/p4b2/1P1P1B2/P4NP1/2P2PBP/RN1QR1K1 w Qkq - 0 1";
+
+    // +-+-+-+-+-+-+-+-+
+    // |r| |b|q|k|b|n|r|
+    // |p|p|p| |p| | |p|
+    // | | |n|p| |P| | |
+    // | | | | | | | |Q|
+    // | | | | |P| | | |
+    // | | | | | | | | |
+    // |P|P|P|P| |P|P| |
+    // |R|N|B| |K|B|N|R|
+    // +-+-+-+-+-+-+-+-+
+    inline const std::string FEN_KING_IN_CHECK_POSITION = "r1bqkbnr/ppp1p2p/2np1P2/7Q/4P3/8/PPPP1PP1/RNB1KBNR w KQkq - 0 1";
+
+    // +-+-+-+-+-+-+-+-+
+    // | | | | | | | | |
+    // | | | | | | | | |
+    // | | | | | | | | |
+    // | | | | |b| | |p|
+    // | | | | | | | |P|
+    // | | | | | | |p|K|
+    // | | | | | | |P| |
+    // | | | | | | | | |
+    // +-+-+-+-+-+-+-+-+
+    inline const std::string FEN_STALEMATE_POSITION = "8/8/8/4b2p/7P/6pK/6P1/8 w - - 0 1";
+
+    // +-+-+-+-+-+-+-+-+
+    // |r|n|b|q|k|b|n|r|
+    // |p|p|p|p|p| | |p|
+    // | | | | | |p| | |
+    // | | | | | | |p|Q|
+    // | | | |P|P| | | |
+    // | | | | | | | | |
+    // |P|P|P| | |P|P|P|
+    // |R|N|B| |K|B|N|R|
+    // +-+-+-+-+-+-+-+-+
+    inline const std::string FEN_FOOLS_CHECKMATE_REVERSED = "rnbqkbnr/ppppp2p/5p2/6pQ/3PP3/8/PPP2PPP/RNB1KBNR w KQkq - 0 1";
 }
