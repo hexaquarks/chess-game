@@ -103,8 +103,8 @@ Board::Board(const std::string& fen_)
                 case 'q': m_board[rowIndex][colIndex] = std::make_shared<Queen>(Team::BLACK, rowIndex, colIndex); break;
                 case 'k': 
                 {
-                    m_board[rowIndex][colIndex] = std::make_shared<King>(Team::BLACK, rowIndex, colIndex); 
-                    // m_blackKing = dynamic_cast<King*>(m_board[rowIndex][colIndex]); 
+                    m_blackKing = std::make_shared<King>(Team::BLACK, rowIndex, colIndex); 
+                    m_board[rowIndex][colIndex] = m_blackKing;
                     break;
                 }
                 case 'p': m_board[rowIndex][colIndex] = std::make_shared<Pawn>(Team::BLACK, rowIndex, colIndex); break;
@@ -114,8 +114,8 @@ Board::Board(const std::string& fen_)
                 case 'Q': m_board[rowIndex][colIndex] = std::make_shared<Queen>(Team::WHITE, rowIndex, colIndex); break;
                 case 'K': 
                 {
-                    m_board[rowIndex][colIndex] = std::make_shared<King>(Team::WHITE, rowIndex, colIndex); 
-                    // m_whiteKing = dynamic_cast<King*>(m_board[rowIndex][colIndex]); 
+                    m_whiteKing = std::make_shared<King>(Team::WHITE, rowIndex, colIndex);
+                    m_board[rowIndex][colIndex] = m_whiteKing;
                     break;
                 }
                 case 'P': m_board[rowIndex][colIndex] = std::make_shared<Pawn>(Team::WHITE, rowIndex, colIndex); break;

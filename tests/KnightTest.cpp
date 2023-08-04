@@ -4,11 +4,10 @@
 
 #include "../include/Pieces/Knight.hpp"
 #include "../include/Components/Board.hpp"
+#include "BoardPositionsUtil.hpp"
 
 namespace
 {
-    const std::string FEN_KNIGHT_MOVES = "8/8/8/5n2/4p3/6N1/4P3/8 w - - 0 1";
-
     const std::shared_ptr<Piece>& initTestedPiece(Board& board, char file, int rank, Team expectedTeam)
     {
         auto& pPiece = board.getBoardTile({file, rank});   
@@ -23,7 +22,7 @@ namespace
 //    int dy[8] = {1, 2, 2, 1, -1, -2, -2, -1};
 BOOST_AUTO_TEST_CASE(TestAllMoves)
 {
-    Board board{FEN_KNIGHT_MOVES};    
+    Board board{testUtil::FEN_KNIGHT_MOVES};    
 
     const auto& pWhiteKnight = initTestedPiece(board, 'g', 3, Team::WHITE);
     const auto& pBlackPawn = initTestedPiece(board, 'e', 4, Team::BLACK);

@@ -4,11 +4,11 @@
 
 #include "../include/Pieces/Pawn.hpp"
 #include "../include/Components/Board.hpp"
+#include "BoardPositionsUtil.hpp"
 
 namespace
 {
-    const int pawnDir = -1; // White down black up.
-    const std::string FEN_PAWN_MOVES = "8/8/8/1pPp4/8/4p1pp/5P1P/8 w - - 0 1";
+    const int PAWN_DIR = -1; // White down black up.
 
     const std::shared_ptr<Piece>& initTestedPiece(Board& board, char file, int rank, Team expectedTeam)
     {
@@ -26,13 +26,13 @@ namespace
         // Generate the en passant moves
         pPawn->setLastMovedPiece(pBlackPawn);
         pBlackPawn->setLastMove(MoveType::INIT_SPECIAL);
-        pPawn->generateEnPassantMoves(actualMoves, board, pawnDir);
+        pPawn->generateEnPassantMoves(actualMoves, board, PAWN_DIR);
     }
 }
 
 BOOST_AUTO_TEST_CASE(TestEnPassantMoves)
 {
-    Board board{FEN_PAWN_MOVES};    
+    Board board{testUtil::FEN_PAWN_MOVES};    
 
     const auto& pWhitePawn = initTestedPiece(board, 'c', 5, Team::WHITE);
     const auto& pLeftBlackPawn = initTestedPiece(board, 'b', 5, Team::BLACK);
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(TestEnPassantMoves)
 
 BOOST_AUTO_TEST_CASE(TestMoveForwardMoves)
 {
-    Board board{FEN_PAWN_MOVES};
+    Board board{testUtil::FEN_PAWN_MOVES};
 
     const auto& pWhitePawnf2 = initTestedPiece(board, 'f', 2, Team::WHITE);
     const auto& pWhitePawnc5 = initTestedPiece(board, 'c', 5, Team::WHITE);
@@ -75,8 +75,8 @@ BOOST_AUTO_TEST_CASE(TestMoveForwardMoves)
     assert(pPawnc5 != nullptr);
 
     std::vector<Move> actualMoves;
-    pPawnf2->generateForwardMoves(actualMoves, board, pawnDir);
-    pPawnc5->generateForwardMoves(actualMoves, board, pawnDir);
+    pPawnf2->generateForwardMoves(actualMoves, board, PAWN_DIR);
+    pPawnc5->generateForwardMoves(actualMoves, board, PAWN_DIR);
 
     int rankf2 = 6, filef2 = 5;
     const coor2d initialPosf2{rankf2, filef2};
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(TestMoveForwardMoves)
 
 BOOST_AUTO_TEST_CASE(TestCaptureMoves)
 {
-    Board board{FEN_PAWN_MOVES};
+    Board board{testUtil::FEN_PAWN_MOVES};
 
     const auto& pWhitePawnf2 = initTestedPiece(board, 'f', 2, Team::WHITE);
     const auto& pWhitePawnh2 = initTestedPiece(board, 'h', 2, Team::WHITE);
@@ -110,8 +110,8 @@ BOOST_AUTO_TEST_CASE(TestCaptureMoves)
     assert(pPawnh2 != nullptr);
 
     std::vector<Move> actualMoves;
-    pPawnf2->generateCaptureMoves(actualMoves, board, pawnDir);
-    pPawnh2->generateCaptureMoves(actualMoves, board, pawnDir);
+    pPawnf2->generateCaptureMoves(actualMoves, board, PAWN_DIR);
+    pPawnh2->generateCaptureMoves(actualMoves, board, PAWN_DIR);
 
     int rankf2 = 6, filef2 = 5;
     const coor2d initialPosf2{rankf2, filef2};
