@@ -14,7 +14,16 @@ namespace
         MoveTreeFixture(): m_iterator(m_tree.begin()) 
         {
         }
+
+        void insertMoves(const std::vector<std::string>& moves_) 
+        {
+            for (const auto& move : moves_) 
+            {
+                m_tree.insertNode(std::make_shared<Move>(move), m_iterator);
+            }
+        }
     };
+
 
     void validateCurrentNode(
         const std::shared_ptr<MoveTreeNode>& currentNode_,
@@ -104,6 +113,67 @@ BOOST_AUTO_TEST_CASE(InsertNodeAtGrandParent)
 
     validateCurrentNode(m_iterator.getCurrentNode(), newVariation, 0, initialMove, 2);
     BOOST_CHECK(m_tree.getNumberOfMoves() == 4);
+}
+
+BOOST_AUTO_TEST_CASE(GoToNextNode)
+{
+    auto initialMove = make_shared<Move>("e2e4");
+    auto secondMove = make_shared<Move>("d7d5");
+    m_tree.insertNode(initialMove, m_iterator);
+    m_tree.insertNode(secondMove, m_iterator);
+
+    // Go to an existing variation.
+    m_iterator.goToParent();
+    m_tree.goToNextNode(0, m_iterator);
+    validateCurrentNode(m_iterator.getCurrentNode(), secondMove, std::nullopt, std::nullopt, std::nullopt);
+
+    // Leaf node, we don't do anything.
+    m_tree.goToNextNode(0, m_iterator);
+    validateCurrentNode(m_iterator.getCurrentNode(), secondMove, std::nullopt, std::nullopt, std::nullopt);
+}
+
+BOOST_AUTO_TEST_CASE(testGetNumberOfMoves) 
+{
+    // Insert some moves and then check the number of moves
+    auto move1 = make_shared<Move>("e2e4");
+    m_tree.insertNode(move1, m_iterator);
+    auto move2 = make_shared<Move>("d7d5");
+    m_tree.insertNode(move2, m_iterator);
+    BOOST_CHECK_EQUAL(m_tree.getNumberOfMoves(), 2); 
+}
+
+BOOST_AUTO_TEST_CASE(testGoToPreviousNode)
+{
+    auto move1 = make_shared<Move>("e2e4");
+    auto move2 = make_shared<Move>("d7d5");
+    m_tree.insertNode(move1, m_iterator);
+    m_tree.insertNode(move2, m_iterator);
+
+    m_tree.goToPreviousNode(m_iterator);
+    validateCurrentNode(m_iterator.getCurrentNode(), move1, 1, std::nullopt, std::nullopt);
+}
+
+BOOST_AUTO_TEST_CASE(testGetNodeLevel)
+{
+    auto move1 = make_shared<Move>("e2e4");
+    auto move2 = make_shared<Move>("d7d5");
+    m_tree.insertNode(move1, m_iterator);
+    m_tree.insertNode(move2, m_iterator);
+
+    int level = m_tree.getNodeLevel(m_iterator);
+    BOOST_CHECK_EQUAL(level, 2);
+}
+
+BOOST_AUTO_TEST_CASE(testClear)
+{
+    auto move1 = make_shared<Move>("e2e4");
+    auto move2 = make_shared<Move>("d7d5");
+    m_tree.insertNode(move1, m_iterator);
+    m_tree.insertNode(move2, m_iterator);
+
+    m_tree.clear();
+
+    BOOST_CHECK_EQUAL(m_tree.getNumberOfMoves(), 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

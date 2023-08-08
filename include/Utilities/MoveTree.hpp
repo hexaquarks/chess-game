@@ -26,12 +26,19 @@ public:
         shared_ptr<MoveTreeNode>& operator->() { return m_ptr; }
         shared_ptr<MoveTreeNode>& get() { return m_ptr; }
 
-        bool isAtTheBeginning() const {
+        bool isAtTheBeginning() const 
+        {
             return !m_ptr->m_parent;
         }
 
-        bool isAtTheEnd() const {
+        bool isAtTheEnd() const 
+        {
             return m_ptr->m_children.empty();
+        }
+
+        void reset() 
+        {
+            while (!isAtTheBeginning()) m_ptr = m_ptr->m_parent;
         }
 
         bool currentNodeHasMoreThanOneVariation()
@@ -61,7 +68,8 @@ public:
             }
         }
 
-        bool goToParent() {
+        bool goToParent() 
+        {
             shared_ptr<MoveTreeNode> parent = m_ptr->m_parent;
             if (parent) {
                 m_ptr = parent;
