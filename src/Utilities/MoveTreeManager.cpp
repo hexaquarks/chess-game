@@ -60,11 +60,10 @@ void MoveTreeManager::applyMove(
     if (!move_) return;
     
     const int castleRow = (game.getTurn() == Team::WHITE)? 7: 0;
-    shared_ptr<Piece> pOldPiece;
-    shared_ptr<Piece> pSecondPiece;
-    shared_ptr<Piece> pPromotingPiece;
+    std::optional<shared_ptr<Piece>> pSecondPieceOpt;
+    std::optional<shared_ptr<Piece>> pPromotingPieceOpt;
     shared_ptr<Piece> pSelectedPiece = move_->getSelectedPiece();
-    shared_ptr<Piece> pCapturedPiece;
+    shared_ptr<Piece> pCapturedPiece; // TODO change to optional. Requires some refactoring...
     int capturedFile = -1, capturedRank = -1;
 
     coor2d oldCoors;
@@ -88,10 +87,11 @@ void MoveTreeManager::applyMove(
             break;
 
         case MoveType::CAPTURE:
+        {
             pCapturedPiece = move_->getCapturedPiece();
             capturedFile = file;
             capturedRank = rank;
-            pOldPiece = game.getBoardTile(file, rank);
+            auto pOldPiece = game.getBoardTile(file, rank);
             game.setBoardTile(file, rank, pSelectedPiece);
             if (addToList_)
             {
@@ -99,6 +99,7 @@ void MoveTreeManager::applyMove(
             }
             // soundCapture.play();
             break;
+        }
 
         case MoveType::ENPASSANT:
             pCapturedPiece = move_->getCapturedPiece();
@@ -114,25 +115,28 @@ void MoveTreeManager::applyMove(
             break;
 
         case MoveType::CASTLE_KINGSIDE:
+        {
             secondFileInit = 7;
             secondFileTarget = 5;
-            pSecondPiece = game.getBoardTile(secondFileInit, castleRow);
+            pSecondPieceOpt = game.getBoardTile(secondFileInit, castleRow);
             game.resetBoardTile(secondFileInit, castleRow);
-            game.setBoardTile(secondFileTarget, castleRow, pSecondPiece);
+            game.setBoardTile(secondFileTarget, castleRow, pSecondPieceOpt.value());
             game.setBoardTile(6, castleRow, pSelectedPiece);
             game.setBoardTile(file, rank, pSelectedPiece);
             if (addToList_)
             {
                 coor2d target = {6, castleRow};
                 move_->setTarget(target);
-                m_moves.insertNode(make_shared<Move>(*move_, pSecondPiece), m_moveIterator);
+                m_moves.insertNode(make_shared<Move>(*move_, pSecondPieceOpt.value()), m_moveIterator);
             }
             break;
+        }
 
         case MoveType::CASTLE_QUEENSIDE:
+        {
             secondFileInit = 0;
             secondFileTarget = 3;
-            pSecondPiece = game.getBoardTile(secondFileInit, castleRow);
+            auto pSecondPiece = game.getBoardTile(secondFileInit, castleRow);
             game.resetBoardTile(secondFileInit, castleRow);
             game.setBoardTile(secondFileTarget, castleRow, pSecondPiece);
             game.setBoardTile(2, castleRow, pSelectedPiece);
@@ -144,6 +148,7 @@ void MoveTreeManager::applyMove(
                 m_moves.insertNode(make_shared<Move>(*move_, pSecondPiece), m_moveIterator);
             }
             break;
+        }
 
         case MoveType::INIT_SPECIAL:
             game.setBoardTile(file, rank, pSelectedPiece);
@@ -154,16 +159,18 @@ void MoveTreeManager::applyMove(
             break;
 
         case MoveType::NEWPIECE:
-            pOldPiece = game.getBoardTile(file, rank);
-            pPromotingPiece = make_shared<Queen>(pSelectedPiece->getTeam(), rank, file);
-            Piece::setLastMovedPiece(pPromotingPiece);
-            game.setBoardTile(file, rank, pPromotingPiece);
-            game.addPiece(pPromotingPiece);
+        {
+            auto pOldPiece = game.getBoardTile(file, rank);
+            pPromotingPieceOpt = make_shared<Queen>(pSelectedPiece->getTeam(), rank, file);
+            Piece::setLastMovedPiece(pPromotingPieceOpt.value());
+            game.setBoardTile(file, rank, pPromotingPieceOpt.value());
+            game.addPiece(pPromotingPieceOpt.value());
             if (addToList_)
             {
                 m_moves.insertNode(make_shared<Move>(*move_, pOldPiece), m_moveIterator);
             }
             break;
+        }
     }
 
     if (enableTransition_)
@@ -176,22 +183,22 @@ void MoveTreeManager::applyMove(
                 capturedFile, capturedRank
             );
 
-            if (pSecondPiece) {
+            if (pSecondPieceOpt.has_value()) {
                 setSecondTransitioningPiece(
-                    pSecondPiece, secondFileInit, castleRow,
+                    pSecondPieceOpt.value(), secondFileInit, castleRow,
                     secondFileTarget, castleRow
                 );
             }
 
-            if (pPromotingPiece) {
-                getTransitioningPiece().setPromotingPiece(pPromotingPiece);
+            if (pPromotingPieceOpt.has_value()) {
+                getTransitioningPiece().setPromotingPiece(pPromotingPieceOpt.value());
             }
         }
-        else if (pSecondPiece)
+        else if (pSecondPieceOpt.has_value())
         {
             // Enable rook sliding when user just castled
             setTransitioningPiece(
-                false, pSecondPiece, secondFileInit, castleRow, secondFileTarget, castleRow,
+                false, pSecondPieceOpt.value(), secondFileInit, castleRow, secondFileTarget, castleRow,
                 pCapturedPiece, capturedFile, capturedRank
             );
         }
