@@ -150,21 +150,25 @@ namespace ui {
 
         for (auto& move: possibleMoves_)
         {
-            auto [j, i] = move.getTarget();
-            if (m_board.isFlipped()) {i = 7-i; j = 7-j;}
+            auto [filePiece, rankPiece] = move.getTarget();
+            if (m_board.isFlipped()) 
+            {
+                rankPiece = 7 - rankPiece; 
+                filePiece = 7 - filePiece;
+            }
             if (move.getSelectedPiece() != pSelectedPiece_) continue;
-            int file = getFile(mousePos_), rank = getRank(mousePos_);
+            int rankMouse = getFile(mousePos_), fileMouse = getRank(mousePos_);
 
-            if (i == file && j == rank)
+            if (filePiece == fileMouse && rankPiece == rankMouse)
             {
                 // Currently hovering a square where the piece can move
                 RectangleShape square = createSquare();
                 SFDrawUtil::drawRectangleSf(
                     square, 
-                    getWindowXPos(i), 
-                    getWindowYPos(j), 
+                    getWindowXPos(rankPiece), 
+                    getWindowYPos(filePiece), 
                     square.getSize(), 
-                    colours[(i+j)%2]);
+                    colours[(rankPiece + filePiece) % 2]);
                 m_window.draw(square);
             }
         }

@@ -109,12 +109,12 @@ void Piece::addDiagonalMovements(Board& board_, vector<Move>& moves_) const
         shared_ptr<Piece> p = board_.getBoardTile(j, i);
         if (!p)
         {
-            moves_.push_back(Move({i, j}, {rank, file}, piece, MoveType::NORMAL));
+            moves_.push_back(Move({j, i}, {file, rank}, piece, MoveType::NORMAL));
             --i; --j;
         }
         else if (p->getTeam() != getTeam())
         {
-            moves_.push_back(Move({i, j}, {rank, file}, piece, MoveType::CAPTURE, p));
+            moves_.push_back(Move({j, i}, {file, rank}, piece, MoveType::CAPTURE, p));
             break;
         }
         else break;
@@ -128,12 +128,12 @@ void Piece::addDiagonalMovements(Board& board_, vector<Move>& moves_) const
         shared_ptr<Piece> p = board_.getBoardTile(j, i);
         if (!p)
         {
-            moves_.push_back(Move({i, j}, {rank, file}, piece, MoveType::NORMAL));
+            moves_.push_back(Move({j, i}, {file, rank}, piece, MoveType::NORMAL));
             --i; ++j;
         }
         else if (p->getTeam() != getTeam())
         {
-            moves_.push_back(Move({i, j}, {rank, file}, piece, MoveType::CAPTURE, p));
+            moves_.push_back(Move({j, i}, {file, rank}, piece, MoveType::CAPTURE, p));
             break;
         }
         else break;
@@ -147,12 +147,12 @@ void Piece::addDiagonalMovements(Board& board_, vector<Move>& moves_) const
         shared_ptr<Piece> p = board_.getBoardTile(j, i);
         if (!p)
         {
-            moves_.push_back(Move({i, j}, {rank, file}, piece, MoveType::NORMAL));
+            moves_.push_back(Move({j, i}, {file, rank}, piece, MoveType::NORMAL));
             ++i; --j;
         }
         else if (p->getTeam() != getTeam())
         {
-            moves_.push_back(Move({i, j}, {rank, file}, piece, MoveType::CAPTURE, p));
+            moves_.push_back(Move({j, i}, {file, rank}, piece, MoveType::CAPTURE, p));
             break;
         }
         else break;
@@ -166,12 +166,12 @@ void Piece::addDiagonalMovements(Board& board_, vector<Move>& moves_) const
         shared_ptr<Piece> p = board_.getBoardTile(j, i);
         if (!p)
         {
-            moves_.push_back(Move({i, j}, {rank, file}, piece, MoveType::NORMAL));
+            moves_.push_back(Move({j, i}, {file, rank}, piece, MoveType::NORMAL));
             ++i; ++j;
         }
         else if (p->getTeam() != getTeam())
         {
-            moves_.push_back(Move({i, j}, {rank, file}, piece, MoveType::CAPTURE, p));
+            moves_.push_back(Move({j, i}, {file, rank}, piece, MoveType::CAPTURE, p));
             break;
         }
         else break;
