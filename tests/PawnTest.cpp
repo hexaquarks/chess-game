@@ -48,10 +48,10 @@ BOOST_AUTO_TEST_CASE(TestEnPassantMoves)
     prepareEnPassantMove(board, actualMoves, pPawn, pRightBlackPawn);
 
     int rank = 3, file = 2;
-    const coor2d initialPos{rank, file};
+    const coor2d initialPos{file, rank};
     std::vector<Move> expectedMoves{
-        Move({rank - 1, file - 1}, initialPos, pWhitePawn, MoveType::ENPASSANT, pLeftBlackPawn),
-        Move({rank - 1, file + 1}, initialPos, pWhitePawn, MoveType::ENPASSANT, pRightBlackPawn)
+        Move({file - 1, rank - 1}, initialPos, pWhitePawn, MoveType::ENPASSANT, pLeftBlackPawn),
+        Move({file + 1, rank - 1}, initialPos, pWhitePawn, MoveType::ENPASSANT, pRightBlackPawn)
     };
 
     BOOST_CHECK_EQUAL_COLLECTIONS(
@@ -79,14 +79,14 @@ BOOST_AUTO_TEST_CASE(TestMoveForwardMoves)
     pPawnc5->generateForwardMoves(actualMoves, board, PAWN_DIR);
 
     int rankf2 = 6, filef2 = 5;
-    const coor2d initialPosf2{rankf2, filef2};
+    const coor2d initialPosf2{filef2, rankf2};
     int rankc5 = 3, filec5 = 2;
-    const coor2d initialPosc5{rankc5, filec5};
+    const coor2d initialPosc5{filec5, rankc5};
 
     std::vector<Move> expectedMoves{
-        Move({rankf2 - 1, filef2}, initialPosf2, pWhitePawnf2, MoveType::NORMAL),
-        Move({rankf2 - 2, filef2}, initialPosf2, pWhitePawnf2, MoveType::INIT_SPECIAL),
-        Move({rankc5 - 1, filec5}, initialPosc5, pWhitePawnc5, MoveType::NORMAL)
+        Move({filef2, rankf2 - 1}, initialPosf2, pWhitePawnf2, MoveType::NORMAL),
+        Move({filef2, rankf2 - 2}, initialPosf2, pWhitePawnf2, MoveType::INIT_SPECIAL),
+        Move({filec5, rankc5 - 1}, initialPosc5, pWhitePawnc5, MoveType::NORMAL)
     };
 
     BOOST_CHECK_EQUAL_COLLECTIONS(
@@ -114,15 +114,15 @@ BOOST_AUTO_TEST_CASE(TestCaptureMoves)
     pPawnh2->generateCaptureMoves(actualMoves, board, PAWN_DIR);
 
     int rankf2 = 6, filef2 = 5;
-    const coor2d initialPosf2{rankf2, filef2};
+    const coor2d initialPosf2{filef2, rankf2};
     int rankh2 = 6, fileh2 = 7;
-    const coor2d initialPosh2{rankh2, fileh2};
+    const coor2d initialPosh2{fileh2, rankh2};
 
     // Order matters lol. Right is calulated before left captures.
     std::vector<Move> expectedMoves{
-        Move({rankf2 - 1, filef2 + 1}, initialPosf2, pWhitePawnf2, MoveType::CAPTURE),
-        Move({rankf2 - 1, filef2 - 1}, initialPosf2, pWhitePawnf2, MoveType::CAPTURE),
-        Move({rankh2 - 1, fileh2 - 1}, initialPosh2, pWhitePawnh2, MoveType::CAPTURE)
+        Move({filef2 + 1, rankf2 - 1}, initialPosf2, pWhitePawnf2, MoveType::CAPTURE),
+        Move({filef2 - 1, rankf2 - 1}, initialPosf2, pWhitePawnf2, MoveType::CAPTURE),
+        Move({fileh2 - 1, rankh2 - 1}, initialPosh2, pWhitePawnh2, MoveType::CAPTURE)
     };
 
     BOOST_CHECK_EQUAL_COLLECTIONS(

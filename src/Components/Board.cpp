@@ -103,7 +103,7 @@ Board::Board(const std::string& fen_)
                 case 'q': m_board[rowIndex][colIndex] = std::make_shared<Queen>(Team::BLACK, colIndex, rowIndex); break;
                 case 'k': 
                 {
-                    m_blackKing = std::make_shared<King>(Team::BLACK, rowIndex, colIndex); 
+                    m_blackKing = std::make_shared<King>(Team::BLACK, colIndex, rowIndex); 
                     m_board[rowIndex][colIndex] = m_blackKing;
                     break;
                 }
@@ -253,22 +253,22 @@ void Board::removeIllegalMoves(std::vector<Move>& possibleMoves_, std::shared_pt
 
     while (it != possibleMoves_.end())
     {
-        const auto [x, y] = (*it).getTarget();
+        const auto [file, rank] = (*it).getTarget();
 
         // Store piece occupied by target square
-        std::shared_ptr<Piece> temp = getBoardTile(x, y);
+        std::shared_ptr<Piece> temp = getBoardTile(file, rank);
 
-        int initialX = pSelectedPiece_->getFile();
-        int initialY = pSelectedPiece_->getRank();
+        int initialFile = pSelectedPiece_->getFile();
+        int initialRank = pSelectedPiece_->getRank();
 
-        setBoardTile(x, y, pSelectedPiece_, false); // Move this piece to target square
-        resetBoardTile(initialX, initialY, false); // Set null to selected piece's square
+        setBoardTile(file, rank, pSelectedPiece_, false); // Move this piece to target square
+        resetBoardTile(initialFile, initialRank, false); // Set null to selected piece's square
 
         if (kingIsChecked()) it = possibleMoves_.erase(it);
         else ++it;
 
-        setBoardTile(initialX, initialY, pSelectedPiece_, false);
-        setBoardTile(x, y, temp, false);
+        setBoardTile(initialFile, initialRank, pSelectedPiece_, false);
+        setBoardTile(file, rank, temp, false);
     }
 }
 

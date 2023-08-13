@@ -77,13 +77,13 @@ BOOST_AUTO_TEST_CASE(TestRemovalOfIllegalMoves1)
     // Ensure that the illegal moves are filtered out
     auto& pBlackKing = m_board.getBoardTile({'e', 8});
     int rank = 0, file = 4;
-    const coor2d initialPosition1{rank, file};
-    Move illegalMove1({rank, file + 1}, initialPosition1, pBlackKing, MoveType::NORMAL);
+    const coor2d initialPosition1{file, rank};
+    Move illegalMove1({file + 1, rank}, initialPosition1, pBlackKing, MoveType::NORMAL);
 
     auto& pBlackPawn = m_board.getBoardTile({'f', 7});
     rank = 0, file = 5;
-    const coor2d initialPosition2{rank, file};
-    Move illegalMove2({rank + 1, file}, initialPosition2, pBlackPawn, MoveType::NORMAL);
+    const coor2d initialPosition2{file, rank};
+    Move illegalMove2({file, rank + 1}, initialPosition2, pBlackPawn, MoveType::NORMAL);
 
     for (auto& move : allMoves)
     {
@@ -102,13 +102,13 @@ BOOST_AUTO_TEST_CASE(TestRemovalOfIllegalMoves2)
     // Ensure that the illegal moves are filtered out
     auto& pBlackKing = m_board.getBoardTile({'e', 8});
     int rank = 0, file = 4;
-    const coor2d initialPosition1{rank, file};
-    Move illegalMove1({rank, file + 1}, initialPosition1, pBlackKing, MoveType::NORMAL);
+    const coor2d initialPosition1{file, rank};
+    Move illegalMove1({file + 1, rank}, initialPosition1, pBlackKing, MoveType::NORMAL);
 
     auto& pBlackPawn = m_board.getBoardTile({'f', 7});
     rank = 0, file = 5;
-    const coor2d initialPosition2{rank, file};
-    Move illegalMove2({rank + 1, file}, initialPosition2, pBlackPawn, MoveType::NORMAL);
+    const coor2d initialPosition2{file, rank};
+    Move illegalMove2({file, rank + 1}, initialPosition2, pBlackPawn, MoveType::NORMAL);
 
     for (auto& move : allMoves)
     {

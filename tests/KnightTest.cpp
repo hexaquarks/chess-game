@@ -35,13 +35,13 @@ BOOST_AUTO_TEST_CASE(TestAllMoves)
     std::vector<Move> actualMoves = pKnight->calcPossibleMoves(board);
 
     int rank = 5, file = 6;
-    const coor2d initialPos{rank, file};
+    const coor2d initialPos{file, rank};
     std::vector<Move> expectedMoves{
-        Move({rank + 2, file + 1}, initialPos, pWhiteKnight, MoveType::NORMAL),
-        Move({rank - 2, file + 1}, initialPos, pWhiteKnight, MoveType::NORMAL),
-        Move({rank - 2, file - 1}, initialPos, pWhiteKnight, MoveType::CAPTURE, pBlackKnight),
-        Move({rank - 1, file - 2}, initialPos, pWhiteKnight, MoveType::CAPTURE, pBlackPawn),
-        Move({rank + 2, file - 1}, initialPos, pWhiteKnight, MoveType::NORMAL)
+        Move({file + 1, rank + 2}, initialPos, pWhiteKnight, MoveType::NORMAL),
+        Move({file + 1, rank - 2}, initialPos, pWhiteKnight, MoveType::NORMAL),
+        Move({file - 1, rank - 2}, initialPos, pWhiteKnight, MoveType::CAPTURE, pBlackKnight),
+        Move({file - 2, rank - 1}, initialPos, pWhiteKnight, MoveType::CAPTURE, pBlackPawn),
+        Move({file - 1, rank + 2}, initialPos, pWhiteKnight, MoveType::NORMAL)
     };
 
     BOOST_CHECK_EQUAL_COLLECTIONS(
