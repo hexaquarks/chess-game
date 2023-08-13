@@ -4,8 +4,8 @@
 #include <vector>
 
 // Index-based coordinates constructor
-Pawn::Pawn(Team team_, int rank_, int file_):
-    Piece(team_, rank_, file_, PieceType::PAWN, "p")
+Pawn::Pawn(Team team_, int file_, int rank_):
+    Piece(team_, file_, rank_, PieceType::PAWN, "p")
 {
 }
 

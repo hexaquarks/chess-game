@@ -43,9 +43,13 @@ Move::Move(
 Move::Move(
     const Move& move_, const std::shared_ptr<Piece>& pSecondPiece_, const coor2d& capturedPawn_
 ):
-    m_target(move_.getTarget()), m_init(move_.getInit()), m_special(capturedPawn_),
-    m_selectedPiece(move_.getSelectedPiece()), m_capturedPiece(pSecondPiece_),
-    m_MoveType(move_.getMoveType()), m_kingChecked(move_.m_kingChecked),
+    m_target(move_.getTarget()), 
+    m_init(move_.getInit()), 
+    m_special(capturedPawn_),
+    m_selectedPiece(move_.getSelectedPiece()), 
+    m_capturedPiece(pSecondPiece_),
+    m_MoveType(move_.getMoveType()), 
+    m_kingChecked(move_.m_kingChecked),
     m_noMovesAvailable(move_.m_noMovesAvailable)
 {
 }
@@ -78,7 +82,7 @@ bool Move::operator!=(const Move& other_)
 std::pair<char, int> findLetterCoord(const coor2d& target_) 
 {
     char letter = 'a' + target_.first;
-    return {letter, 8-target_.second};
+    return {letter, 8 - target_.second};
 }
 
 std::string parseMoveHelper(const Move& move_, int moveNumber_, bool showNumber_, bool showDots_) 
@@ -101,7 +105,7 @@ std::string parseMoveHelper(const Move& move_, int moveNumber_, bool showNumber_
             // TODO fix promotion
             if (moveType == MoveType::CAPTURE || moveType == MoveType::ENPASSANT)
             {
-                return text + (static_cast<char>('a' + move_.getInit().first)) + "x" + letterCoordString;
+                return text + (static_cast<char>('a' + move_.getInit().second)) + "x" + letterCoordString;
             } break;
         case PieceType::KNIGHT: text += "N"; break;
         case PieceType::BISHOP: text += "B"; break;
