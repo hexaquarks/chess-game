@@ -3,8 +3,8 @@
 #include <vector>
 
 // Index-based coordinates constructor
-Queen::Queen(Team team_, int rank_, int file_): 
-    Piece(team_, rank_, file_, PieceType::QUEEN, "q")
+Queen::Queen(Team team_, int file_, int rank_): 
+    Piece(team_, file_, rank_, PieceType::QUEEN, "q")
 {
 }
 

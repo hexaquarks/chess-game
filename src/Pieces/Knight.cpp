@@ -4,8 +4,8 @@
 #include <vector>
 
 // Index-based constructor
-Knight::Knight(Team team_, int rank_, int file_):
-    Piece(team_, rank_, file_, PieceType::KNIGHT, "n")
+Knight::Knight(Team team_, int file_, int rank_):
+    Piece(team_, file_, rank_, PieceType::KNIGHT, "n")
 {
 }
 
@@ -34,9 +34,9 @@ std::vector<Move> Knight::calcPossibleMoves(Board& board_) const
         {
             std::shared_ptr<Piece> p = board_.getBoardTile(file, rank);
             if (!board_.getBoardTile(newFile, newRank))
-                moves.push_back(Move({newRank, newFile}, {rank, file}, p, MoveType::NORMAL));
+                moves.push_back(Move({newFile, newRank}, {file, rank}, p, MoveType::NORMAL));
             else if (board_.getBoardTile(newFile, newRank)->getTeam() != getTeam())
-                moves.push_back(Move({newRank, newFile}, {rank, file}, p, MoveType::CAPTURE));
+                moves.push_back(Move({newFile, newRank}, {file, rank}, p, MoveType::CAPTURE));
         }
     }
 

@@ -4,8 +4,8 @@
 #include <vector>
 
 // Index-based coordinates constructor
-Pawn::Pawn(Team team_, int rank_, int file_):
-    Piece(team_, rank_, file_, PieceType::PAWN, "p")
+Pawn::Pawn(Team team_, int file_, int rank_):
+    Piece(team_, file_, rank_, PieceType::PAWN, "p")
 {
 }
 
@@ -32,7 +32,7 @@ void Pawn::generateCaptureMoves(std::vector<Move>& moves_, Board& board_, int di
 {
     int rank = getRank();
     int file = getFile();
-    coor2d pawnCoor = { rank, file };
+    coor2d pawnCoor = {file, rank};
     std::shared_ptr<Piece> pPawnPos = board_.getBoardTile(file, rank);
 
     // Taking piece on the right
@@ -40,9 +40,9 @@ void Pawn::generateCaptureMoves(std::vector<Move>& moves_, Board& board_, int di
         if (board_.getBoardTile(file+1, rank+dir_) && board_.getBoardTile(file+1, rank+dir_)->getTeam() != getTeam())
         {
             if ((rank+dir_ == 0 || rank+dir_ == 7))
-                moves_.push_back(Move({rank+dir_, file+1}, pawnCoor, pPawnPos, MoveType::NEWPIECE));
+                moves_.push_back(Move({file+1, rank+dir_}, pawnCoor, pPawnPos, MoveType::NEWPIECE));
             else
-                moves_.push_back(Move({rank+dir_, file+1}, pawnCoor, pPawnPos, MoveType::CAPTURE));
+                moves_.push_back(Move({file+1, rank+dir_}, pawnCoor, pPawnPos, MoveType::CAPTURE));
         }
 
     // Taking piece on the left
@@ -50,9 +50,9 @@ void Pawn::generateCaptureMoves(std::vector<Move>& moves_, Board& board_, int di
         if (board_.getBoardTile(file-1, rank+dir_) && board_.getBoardTile(file-1, rank+dir_)->getTeam() != getTeam())
         {
             if ((rank+dir_ == 0 || rank+dir_ == 7))
-                moves_.push_back(Move({rank+dir_, file-1}, pawnCoor, pPawnPos, MoveType::NEWPIECE));
+                moves_.push_back(Move({file-1, rank+dir_}, pawnCoor, pPawnPos, MoveType::NEWPIECE));
             else
-                moves_.push_back(Move({rank+dir_, file-1}, pawnCoor, pPawnPos, MoveType::CAPTURE));
+                moves_.push_back(Move({file-1, rank+dir_}, pawnCoor, pPawnPos, MoveType::CAPTURE));
         }
 }
 
@@ -60,19 +60,19 @@ void Pawn::generateForwardMoves(std::vector<Move>& moves_, Board& board_, int di
 {
     int rank = getRank();
     int file = getFile();
-    coor2d pawnCoor = {rank, file};
+    coor2d pawnCoor = {file, rank};
     std::shared_ptr<Piece> pPawnPos = board_.getBoardTile(file, rank);
     bool hasNotMoved = (getTeam() == Team::WHITE && rank == 6) || (getTeam() == Team::BLACK && rank == 1);
 
     // Forward move
     if ((rank+dir_ == 0 || rank+dir_ == 7) && !board_.getBoardTile(file, rank+dir_))
-        moves_.push_back(Move({rank+dir_, file}, pawnCoor, pPawnPos, MoveType::NEWPIECE));
+        moves_.push_back(Move({file, rank+dir_}, pawnCoor, pPawnPos, MoveType::NEWPIECE));
     else if (!board_.getBoardTile(file, rank+dir_))
     {
-        moves_.push_back(Move({rank+dir_, file}, pawnCoor, pPawnPos, MoveType::NORMAL));
+        moves_.push_back(Move({file, rank+dir_}, pawnCoor, pPawnPos, MoveType::NORMAL));
         // Double square initial move
         if (hasNotMoved && !board_.getBoardTile(file, rank+2*dir_))
-            moves_.push_back(Move({rank+2*dir_, file}, pawnCoor, pPawnPos, MoveType::INIT_SPECIAL));
+            moves_.push_back(Move({file, rank+2*dir_}, pawnCoor, pPawnPos, MoveType::INIT_SPECIAL));
     }
 }
 
@@ -80,7 +80,7 @@ void Pawn::generateEnPassantMoves(std::vector<Move>& moves_, Board& board_, int 
 {
     int rank = getRank();
     int file = getFile();
-    coor2d pawnCoor = { rank, file };
+    coor2d pawnCoor = {file, rank};
     std::shared_ptr<Piece> pPawnPos = board_.getBoardTile(file, rank);
 
     // Edge case, should not happen
@@ -94,7 +94,7 @@ void Pawn::generateEnPassantMoves(std::vector<Move>& moves_, Board& board_, int 
         {
             if (getLastMovedPiece() == leftPiece && leftPiece->getLastMove() == MoveType::INIT_SPECIAL)
             {
-                moves_.push_back(Move({rank+dir, file-1}, pawnCoor, pPawnPos, MoveType::ENPASSANT, leftPiece));
+                moves_.push_back(Move({file-1, rank+dir}, pawnCoor, pPawnPos, MoveType::ENPASSANT, leftPiece));
             }
         }
     }
@@ -107,7 +107,7 @@ void Pawn::generateEnPassantMoves(std::vector<Move>& moves_, Board& board_, int 
         {
             if (getLastMovedPiece() == rightPiece && rightPiece->getLastMove() == MoveType::INIT_SPECIAL)
             {
-                moves_.push_back(Move({rank+dir, file+1}, pawnCoor, pPawnPos, MoveType::ENPASSANT, rightPiece));
+                moves_.push_back(Move({file+1, rank+dir}, pawnCoor, pPawnPos, MoveType::ENPASSANT, rightPiece));
             }
         }
     }

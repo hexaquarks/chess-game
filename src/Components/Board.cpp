@@ -24,50 +24,50 @@ void Board::reset()
     m_blackPieces.clear();
 
     // Set the kings
-    m_blackKing = std::make_shared<King>(Team::BLACK, 0, 4);
-    m_whiteKing = std::make_shared<King>(Team::WHITE, 7, 4);
+    m_blackKing = std::make_shared<King>(Team::BLACK, 4, 0);
+    m_whiteKing = std::make_shared<King>(Team::WHITE, 4, 7);
 
     // Set first row (black)
     m_board[0][0] = std::make_shared<Rook>(Team::BLACK, 0, 0);
-    m_board[0][1] = std::make_shared<Knight>(Team::BLACK, 0, 1);
-    m_board[0][2] = std::make_shared<Bishop>(Team::BLACK, 0, 2);
-    m_board[0][3] = std::make_shared<Queen>(Team::BLACK, 0, 3);
+    m_board[0][1] = std::make_shared<Knight>(Team::BLACK, 1, 0);
+    m_board[0][2] = std::make_shared<Bishop>(Team::BLACK, 2, 0);
+    m_board[0][3] = std::make_shared<Queen>(Team::BLACK, 3, 0);
     m_board[0][4] = m_blackKing;
-    m_board[0][5] = std::make_shared<Bishop>(Team::BLACK, 0, 5);
-    m_board[0][6] = std::make_shared<Knight>(Team::BLACK, 0, 6);
-    m_board[0][7] = std::make_shared<Rook>(Team::BLACK, 0, 7);
+    m_board[0][5] = std::make_shared<Bishop>(Team::BLACK, 5, 0);
+    m_board[0][6] = std::make_shared<Knight>(Team::BLACK, 6, 0);
+    m_board[0][7] = std::make_shared<Rook>(Team::BLACK, 7, 0);
 
     // Set last row (white)
-    m_board[7][0] = std::make_shared<Rook>(Team::WHITE, 7, 0);
-    m_board[7][1] = std::make_shared<Knight>(Team::WHITE, 7, 1);
-    m_board[7][2] = std::make_shared<Bishop>(Team::WHITE, 7, 2);
-    m_board[7][3] = std::make_shared<Queen>(Team::WHITE, 7, 3);
+    m_board[7][0] = std::make_shared<Rook>(Team::WHITE, 0, 7);
+    m_board[7][1] = std::make_shared<Knight>(Team::WHITE, 1, 7);
+    m_board[7][2] = std::make_shared<Bishop>(Team::WHITE, 2, 7);
+    m_board[7][3] = std::make_shared<Queen>(Team::WHITE, 3, 7);
     m_board[7][4] = m_whiteKing;
-    m_board[7][5] = std::make_shared<Bishop>(Team::WHITE, 7, 5);
-    m_board[7][6] = std::make_shared<Knight>(Team::WHITE, 7, 6);
+    m_board[7][5] = std::make_shared<Bishop>(Team::WHITE, 5, 7);
+    m_board[7][6] = std::make_shared<Knight>(Team::WHITE, 6, 7);
     m_board[7][7] = std::make_shared<Rook>(Team::WHITE, 7, 7);
 
     // Fill in white and black pawns
-    for (size_t col = 0; col < 8; ++col)
+    for (size_t file = 0; file < 8; ++file)
     {
-        m_board[1][col] = std::make_shared<Pawn>(Team::BLACK, 1, col); // Black pawn on row 1
-        m_board[6][col] = std::make_shared<Pawn>(Team::WHITE, 6, col); // White pawn on row 6
+        m_board[1][file] = std::make_shared<Pawn>(Team::BLACK, file, 1); // Black pawn on row 1
+        m_board[6][file] = std::make_shared<Pawn>(Team::WHITE, file, 6); // White pawn on row 6
     }
 
     // Add every black piece to the list of black pieces
-    for (size_t row = 0; row < 2; ++row)
-        for (size_t col = 0; col < 8; ++col)
-            m_blackPieces.push_back(m_board[row][col]);
+    for (size_t rank = 0; rank < 2; ++rank)
+        for (size_t file = 0; file < 8; ++file)
+            m_blackPieces.push_back(m_board[rank][file]);
 
     // Add every white piece to the list of white pieces
-    for (size_t row = 6; row < 8; ++row)
-        for (size_t col = 0; col < 8; ++col)
-            m_whitePieces.push_back(m_board[row][col]);
+    for (size_t rank = 6; rank < 8; ++rank)
+        for (size_t file = 0; file < 8; ++file)
+            m_whitePieces.push_back(m_board[rank][file]);
 
     // Delete pieces that have already moved
-    for (size_t row = 0; row < 8; ++row)
-        for (size_t col = 2; col < 6; ++col)
-            m_board[col][row].reset();
+    for (size_t rank = 0; rank < 8; ++rank)
+        for (size_t file = 2; file < 6; ++file)
+            m_board[file][rank].reset();
 
     m_turn = Team::WHITE; // Reset the first move to be for white
     m_pLastMovedPiece.reset();
@@ -97,28 +97,28 @@ Board::Board(const std::string& fen_)
         {
             switch(ch) 
             {
-                case 'r': m_board[rowIndex][colIndex] = std::make_shared<Rook>(Team::BLACK, rowIndex, colIndex); break;
-                case 'n': m_board[rowIndex][colIndex] = std::make_shared<Knight>(Team::BLACK, rowIndex, colIndex); break;
-                case 'b': m_board[rowIndex][colIndex] = std::make_shared<Bishop>(Team::BLACK, rowIndex, colIndex); break;
-                case 'q': m_board[rowIndex][colIndex] = std::make_shared<Queen>(Team::BLACK, rowIndex, colIndex); break;
+                case 'r': m_board[rowIndex][colIndex] = std::make_shared<Rook>(Team::BLACK, colIndex, rowIndex); break;
+                case 'n': m_board[rowIndex][colIndex] = std::make_shared<Knight>(Team::BLACK, colIndex, rowIndex); break;
+                case 'b': m_board[rowIndex][colIndex] = std::make_shared<Bishop>(Team::BLACK, colIndex, rowIndex); break;
+                case 'q': m_board[rowIndex][colIndex] = std::make_shared<Queen>(Team::BLACK, colIndex, rowIndex); break;
                 case 'k': 
                 {
-                    m_blackKing = std::make_shared<King>(Team::BLACK, rowIndex, colIndex); 
+                    m_blackKing = std::make_shared<King>(Team::BLACK, colIndex, rowIndex); 
                     m_board[rowIndex][colIndex] = m_blackKing;
                     break;
                 }
-                case 'p': m_board[rowIndex][colIndex] = std::make_shared<Pawn>(Team::BLACK, rowIndex, colIndex); break;
-                case 'R': m_board[rowIndex][colIndex] = std::make_shared<Rook>(Team::WHITE, rowIndex, colIndex); break;
-                case 'N': m_board[rowIndex][colIndex] = std::make_shared<Knight>(Team::WHITE, rowIndex, colIndex); break;
-                case 'B': m_board[rowIndex][colIndex] = std::make_shared<Bishop>(Team::WHITE, rowIndex, colIndex); break;
-                case 'Q': m_board[rowIndex][colIndex] = std::make_shared<Queen>(Team::WHITE, rowIndex, colIndex); break;
+                case 'p': m_board[rowIndex][colIndex] = std::make_shared<Pawn>(Team::BLACK, colIndex, rowIndex); break;
+                case 'R': m_board[rowIndex][colIndex] = std::make_shared<Rook>(Team::WHITE, colIndex, rowIndex); break;
+                case 'N': m_board[rowIndex][colIndex] = std::make_shared<Knight>(Team::WHITE, colIndex, rowIndex); break;
+                case 'B': m_board[rowIndex][colIndex] = std::make_shared<Bishop>(Team::WHITE, colIndex, rowIndex); break;
+                case 'Q': m_board[rowIndex][colIndex] = std::make_shared<Queen>(Team::WHITE, colIndex, rowIndex); break;
                 case 'K': 
                 {
-                    m_whiteKing = std::make_shared<King>(Team::WHITE, rowIndex, colIndex);
+                    m_whiteKing = std::make_shared<King>(Team::WHITE, colIndex, rowIndex);
                     m_board[rowIndex][colIndex] = m_whiteKing;
                     break;
                 }
-                case 'P': m_board[rowIndex][colIndex] = std::make_shared<Pawn>(Team::WHITE, rowIndex, colIndex); break;
+                case 'P': m_board[rowIndex][colIndex] = std::make_shared<Pawn>(Team::WHITE, colIndex, rowIndex); break;
                 default: break;
             }
             if (m_board[rowIndex][colIndex]->getTeam() == Team::BLACK)
@@ -253,22 +253,22 @@ void Board::removeIllegalMoves(std::vector<Move>& possibleMoves_, std::shared_pt
 
     while (it != possibleMoves_.end())
     {
-        const auto [y, x] = (*it).getTarget();
+        const auto [file, rank] = (*it).getTarget();
 
         // Store piece occupied by target square
-        std::shared_ptr<Piece> temp = getBoardTile(x, y);
+        std::shared_ptr<Piece> temp = getBoardTile(file, rank);
 
-        int initialX = pSelectedPiece_->getFile();
-        int initialY = pSelectedPiece_->getRank();
+        int initialFile = pSelectedPiece_->getFile();
+        int initialRank = pSelectedPiece_->getRank();
 
-        setBoardTile(x, y, pSelectedPiece_, false); // Move this piece to target square
-        resetBoardTile(initialX, initialY, false); // Set null to selected piece's square
+        setBoardTile(file, rank, pSelectedPiece_, false); // Move this piece to target square
+        resetBoardTile(initialFile, initialRank, false); // Set null to selected piece's square
 
         if (kingIsChecked()) it = possibleMoves_.erase(it);
         else ++it;
 
-        setBoardTile(initialX, initialY, pSelectedPiece_, false);
-        setBoardTile(x, y, temp, false);
+        setBoardTile(initialFile, initialRank, pSelectedPiece_, false);
+        setBoardTile(file, rank, temp, false);
     }
 }
 
@@ -292,7 +292,7 @@ std::optional<Move> Board::findSelectedMove(
     {
         if (move.getSelectedPiece() == pSelectedPiece_)
         {
-            if (move.getTarget().first == rank_ && move.getTarget().second == file_)
+            if (move.getTarget().first == file_ && move.getTarget().second == rank_)
             {
                 return move;
             }

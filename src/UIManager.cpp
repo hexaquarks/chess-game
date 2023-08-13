@@ -150,21 +150,26 @@ namespace ui {
 
         for (auto& move: possibleMoves_)
         {
-            auto [j, i] = move.getTarget();
-            if (m_board.isFlipped()) {i = 7-i; j = 7-j;}
+            auto [filePiece, rankPiece] = move.getTarget();
+            if (m_board.isFlipped()) 
+            {
+                rankPiece = 7 - rankPiece; 
+                filePiece = 7 - filePiece;
+            }
             if (move.getSelectedPiece() != pSelectedPiece_) continue;
-            int file = getFile(mousePos_), rank = getRank(mousePos_);
+            int fileMouse = getFile(mousePos_);
+            int rankMouse = getRank(mousePos_);
 
-            if (i == file && j == rank)
+            if (filePiece == fileMouse && rankPiece == rankMouse)
             {
                 // Currently hovering a square where the piece can move
                 RectangleShape square = createSquare();
                 SFDrawUtil::drawRectangleSf(
                     square, 
-                    getWindowXPos(i), 
-                    getWindowYPos(j), 
+                    getWindowXPos(filePiece), 
+                    getWindowYPos(rankPiece), 
                     square.getSize(), 
-                    colours[(i+j)%2]);
+                    colours[(rankPiece + filePiece) % 2]);
                 m_window.draw(square);
             }
         }
@@ -176,20 +181,20 @@ namespace ui {
     {
         for (auto& move: possibleMoves_)
         {
-            auto [j, i] = move.getTarget();
+            auto [file, rank] = move.getTarget();
 
             if (move.getSelectedPiece() != pSelectedPiece_) continue;
-            bool isEmpty = m_board.getBoardTile(i, j).get() == nullptr;
-            const shared_ptr<Texture> t = RessourceManager::getTexture(isEmpty? "circle.png": "empty_circle.png");
+            bool isEmpty = m_board.getBoardTile(file, rank).get() == nullptr;
+            auto texture = RessourceManager::getTexture(isEmpty? "circle.png": "empty_circle.png");
 
-            if (!t) return;
-            Sprite circle(*t);
+            if (!texture) return;
+            Sprite circle(*texture);
 
             if (isEmpty) circle.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
             else circle.setScale(g_SPECIAL_SCALE, g_SPECIAL_SCALE);
 
-            if (m_board.isFlipped()) {i = 7-i; j = 7-j;}
-            circle.setPosition(getWindowXPos(i), getWindowYPos(j));
+            if (m_board.isFlipped()) {file = 7-file; rank = 7-rank;}
+            circle.setPosition(getWindowXPos(file), getWindowYPos(rank));
             m_window.draw(circle);
         }
     }
@@ -245,15 +250,15 @@ namespace ui {
                     ) continue;
                 }
 
-                shared_ptr<Texture> t = RessourceManager::getTexture(piece);
-                if (!t) return;
+                auto texture = RessourceManager::getTexture(piece);
+                if (!texture) return;
 
-                Sprite s(*t);
-                s.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
-                s.setPosition(
+                Sprite sprite(*texture);
+                sprite.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
+                sprite.setPosition(
                     getWindowXPos(m_board.isFlipped() ? (7 - file): file), 
                     getWindowYPos(m_board.isFlipped() ? (7 - row): row));
-                m_window.draw(s);
+                m_window.draw(sprite);
             }
         }
     }
@@ -289,23 +294,23 @@ namespace ui {
         {
             if (!arrow.isDrawable()) continue;
 
-            shared_ptr<Texture> t = RessourceManager::getTexture(arrow.getFilename());
-            if (!t) return;
-            Sprite s(*t);
+            auto texture = RessourceManager::getTexture(arrow.getFilename());
+            if (!texture) return;
+            Sprite sprite(*texture);
             const coor2d& arrowOrigin = arrow.getFormattedOrigin();
 
             if (arrow.isLArrow())
             {
-                s.setOrigin(g_CELL_SIZE / 2, s.getLocalBounds().height - g_CELL_SIZE / 2);
-                s.setPosition(arrowOrigin.first, arrowOrigin.second);
+                sprite.setOrigin(g_CELL_SIZE / 2, sprite.getLocalBounds().height - g_CELL_SIZE / 2);
+                sprite.setPosition(arrowOrigin.first, arrowOrigin.second);
             }
             else
             {
-                s.setOrigin(0, s.getLocalBounds().height / 2);
-                s.setPosition(arrowOrigin.first, arrowOrigin.second);
+                sprite.setOrigin(0, sprite.getLocalBounds().height / 2);
+                sprite.setPosition(arrowOrigin.first, arrowOrigin.second);
             }
-            s.rotate(arrow.getRotation());
-            m_window.draw(s);
+            sprite.rotate(arrow.getRotation());
+            m_window.draw(sprite);
         }
         arrows_.pop_back();
     }
@@ -317,20 +322,20 @@ namespace ui {
         shader.setUniform("windowHeight", (float) m_window.getSize().y);
 
         const auto& king = m_board.getKing();
-        CircleShape c(g_CELL_SIZE / 2);
-        c.setFillColor(Color::Transparent);
+        CircleShape circle(g_CELL_SIZE / 2);
+        circle.setFillColor(Color::Transparent);
 
-        int row = m_board.isFlipped()? 7-king->getRank(): king->getRank();
+        int rank = m_board.isFlipped()? 7-king->getRank(): king->getRank();
         int file = m_board.isFlipped()? 7-king->getFile(): king->getFile();
-        c.setPosition(getWindowXPos(file), getWindowYPos(row));
+        circle.setPosition(getWindowXPos(file), getWindowYPos(rank));
         shader.setUniform("color", Glsl::Vec4(1.f, 0.f, 0.f, 1.f));
         shader.setUniform("center", Vector2f(
-            c.getPosition().x + c.getRadius(), c.getPosition().y + + c.getRadius()
+            circle.getPosition().x + circle.getRadius(), circle.getPosition().y + circle.getRadius()
         ));
-        shader.setUniform("radius", c.getRadius());
+        shader.setUniform("radius", circle.getRadius());
         shader.setUniform("expand", 0.15f);
 
-        m_window.draw(c, &shader);
+        m_window.draw(circle, &shader);
     }
 
     void UIManager::drawEndResults(bool isKingChecked_)
@@ -339,10 +344,10 @@ namespace ui {
         if (isKingChecked_)
         {
             const auto& king = m_board.getKing();
-            Texture t; 
-            t.loadFromFile(RessourceManager::getIconPath("checkmate.png"));
+            Texture texture; 
+            texture.loadFromFile(RessourceManager::getIconPath("checkmate.png"));
 
-            Sprite checkmate(t);
+            Sprite checkmate(texture);
             checkmate.setColor({255, 255, 255, 200});
             checkmate.setScale(g_SPECIAL_SCALE / 2, g_SPECIAL_SCALE / 2);
             checkmate.setOrigin(40, 40);
@@ -360,38 +365,38 @@ namespace ui {
         const shared_ptr<Piece>& captured = piece_.getCapturedPiece();
         piece_.move();
         
-        shared_ptr<Texture> t = RessourceManager::getTexture(piece_.getPiece());
-        if (!t) return;
+        auto texture1 = RessourceManager::getTexture(piece_.getPiece());
+        if (!texture1) return;
 
         // Draw captured piece while transition is happening
         if (captured)
         {
-            shared_ptr<Texture> t2 = RessourceManager::getTexture(captured);
-            if (!t2) return;
+            auto texture2 = RessourceManager::getTexture(captured);
+            if (!texture2) return;
 
-            Sprite s2(*t2);
-            s2.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
-            s2.setPosition(piece_.getCapturedX(), piece_.getCapturedY());
+            Sprite sprite2(*texture2);
+            sprite2.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
+            sprite2.setPosition(piece_.getCapturedX(), piece_.getCapturedY());
 
             uint8_t percentage = static_cast<uint8_t>(piece_.getPercentageLeft() * 255);
             if (piece_.isUndo()) percentage = static_cast<uint8_t>(255-percentage);
-            s2.setColor({255, 255, 255, percentage});
-            m_window.draw(s2);
+            sprite2.setColor({255, 255, 255, percentage});
+            m_window.draw(sprite2);
         }
 
         // If we castle, draw the rook first so it appears under the king
         if (piece_.getSecondPiece()) {
             shared_ptr<Texture> t2 = RessourceManager::getTexture(piece_.getSecondPiece());
-            Sprite s2(*t2);
-            s2.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
-            s2.setPosition(piece_.getSecondCurrPos().first, piece_.getSecondCurrPos().second);
-            m_window.draw(s2);
+            Sprite sprite2(*t2);
+            sprite2.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
+            sprite2.setPosition(piece_.getSecondCurrPos().first, piece_.getSecondCurrPos().second);
+            m_window.draw(sprite2);
         }
 
-        Sprite s(*t);
-        s.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
-        s.setPosition(piece_.getCurrPos().first, piece_.getCurrPos().second);
-        m_window.draw(s);
+        Sprite sprite1(*texture1);
+        sprite1.setScale(g_SPRITE_SCALE, g_SPRITE_SCALE);
+        sprite1.setPosition(piece_.getCurrPos().first, piece_.getCurrPos().second);
+        m_window.draw(sprite1);
     }
 
     void UIManager::handleSidePanelMoveBoxClick(const coor2d& mousePos_)
