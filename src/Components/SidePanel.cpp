@@ -53,7 +53,7 @@ namespace
 SidePanel::SidePanel(
     RenderWindow& window_, MoveTreeManager& moveList_, bool& b_
 ):
-    m_window(window_), m_moveList(moveList_),
+    m_window(window_), m_moveTreeManager(moveList_),
     m_showMoveSelectionPanel(b_)
 {
 }
@@ -133,13 +133,13 @@ void SidePanel::handleMoveBoxClicked(const coor2d& mousePos_) const
 
         if ((x >= xPos && x < xPos + width) && (y >= yPos && y < yPos + height))
         {
-            int currMoveIndex = m_moveList.getMoveListSize() - m_moveList.getIteratorIndex() -1;
+            int currMoveIndex = m_moveTreeManager.getMoveListSize() - m_moveTreeManager.getIteratorIndex() -1;
             vector<Arrow> temp; // For testing
             if (newMoveIndex > currMoveIndex)
             {
                 while (newMoveIndex > currMoveIndex)
                 {
-                    m_moveList.goToNextMove(false, std::nullopt, temp);
+                    m_moveTreeManager.goToNextMove(false, std::nullopt, temp);
                     --newMoveIndex;
                 }
             }
@@ -147,7 +147,7 @@ void SidePanel::handleMoveBoxClicked(const coor2d& mousePos_) const
             {
                 while (newMoveIndex < currMoveIndex)
                 {
-                    m_moveList.goToPreviousMove(false, temp);
+                    m_moveTreeManager.goToPreviousMove(false, temp);
                     ++newMoveIndex;
                 }
             }
@@ -254,7 +254,7 @@ void SidePanel::drawMoves(std::vector<MoveInfo> moveTreeInfo_, const coor2d& mou
     size_t idx = 0;
     for (const MoveInfo& moveInfo : moveTreeInfo_)
     {
-        const bool isActualCurrentMove = moveInfo.m_movePtr == m_moveList.getIterator()->m_move.get();
+        const bool isActualCurrentMove = moveInfo.m_movePtr == m_moveTreeManager.getIterator()->m_move.get();
         drawMove(moveTreeInfo_, idx, mousePos_, isActualCurrentMove);
         ++idx;
     }

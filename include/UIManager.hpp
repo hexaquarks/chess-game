@@ -83,7 +83,7 @@ namespace ui {
             };
             Board& m_board;
             std::vector<MenuButton> m_menuBar;
-            MoveTreeManager& m_moveList;
+            MoveTreeManager& m_moveTreeManager;
             SidePanel m_sidePanel;
             MoveSelectionPanel m_moveSelectionPanel;
 

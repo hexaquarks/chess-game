@@ -39,7 +39,7 @@ public:
 
 private:
     RenderWindow& m_window;
-    MoveTreeManager& m_moveList;
+    MoveTreeManager& m_moveTreeManager;
     coor2d m_nextPos = {ui::g_BORDER_SIZE + 10, 10};
     int moveBoxCounter = 0;
     int m_row = 0;

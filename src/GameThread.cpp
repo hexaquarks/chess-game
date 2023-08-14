@@ -194,7 +194,7 @@ namespace game
         for (auto& menuButton: uiManager_.getMenuBar()) 
         {
             if (!menuButton.isMouseHovered(clickState_.mousePos)) continue;
-            menuButton.doMouseClick(m_board, m_moveList);
+            menuButton.doMouseClick(m_board, m_moveTreeManager);
             if (!menuButton.isBoardReset()) continue;
             
             clickState_.pSelectedPiece.reset();
@@ -251,7 +251,7 @@ namespace game
                 std::make_pair(dragState_.lastFile, dragState_.lastRank),
                 clickState_.pSelectedPiece, 
                 arrowsInfo_.arrows);
-            m_moveList.addMove(pMove, arrowsInfo_.arrows);
+            m_moveTreeManager.addMove(pMove, arrowsInfo_.arrows);
             m_board.updateBoardInfosAfterNewMove(clickState_.pSelectedPiece, pMove);
             arrowsInfo_.arrows.clear();
 
@@ -300,8 +300,8 @@ namespace game
     )
     {
         // If a piece is already moving, make it arrive
-        if (m_moveList.isTransitionningPiece()) {
-            m_moveList.setTransitioningPieceArrived();
+        if (m_moveTreeManager.isTransitionningPiece()) {
+            m_moveTreeManager.setTransitioningPieceArrived();
         }
 
         shared_ptr<Move> move;
@@ -309,7 +309,7 @@ namespace game
         switch (event_.key.code)
         {
             case Keyboard::Left:
-                m_moveList.goToPreviousMove(true, arrowList_);
+                m_moveTreeManager.goToPreviousMove(true, arrowList_);
 
                 move = m_treeIterator.get()->m_move;
                 m_board.checkIfMoveMakesKingChecked(move);
@@ -323,7 +323,7 @@ namespace game
                         return;
                     }
 
-                    m_moveList.goToNextMove(true, moveSelectionPanel.getSelection(), arrowList_);
+                    m_moveTreeManager.goToNextMove(true, moveSelectionPanel.getSelection(), arrowList_);
 
                     move = m_treeIterator.get()->m_move;
                     m_board.checkIfMoveMakesKingChecked(move);
@@ -331,7 +331,7 @@ namespace game
                     uiManager_.closeMoveSelectionPanel();
                     return;
                 }
-                m_moveList.goToNextMove(true, std::nullopt, arrowList_);
+                m_moveTreeManager.goToNextMove(true, std::nullopt, arrowList_);
 
                 move = m_treeIterator.get()->m_move;
                 m_board.checkIfMoveMakesKingChecked(move);
@@ -342,17 +342,17 @@ namespace game
             case Keyboard::Up:
                 uiManager_.isMoveSelectionPanelOpen()
                     ? moveSelectionPanel.goToPreviousVariation()
-                    : m_moveList.goToCurrentMove(arrowList_);
+                    : m_moveTreeManager.goToCurrentMove(arrowList_);
                 break;
             case Keyboard::Down:
                 uiManager_.isMoveSelectionPanelOpen()
                     ? moveSelectionPanel.goToNextVariation()
-                    : m_moveList.goToInitialMove(arrowList_);
+                    : m_moveTreeManager.goToInitialMove(arrowList_);
                 break;
             case Keyboard::Enter:
                 if (uiManager_.isMoveSelectionPanelOpen())
                 {
-                    m_moveList.goToNextMove(true, moveSelectionPanel.getSelection(), arrowList_);
+                    m_moveTreeManager.goToNextMove(true, moveSelectionPanel.getSelection(), arrowList_);
                     
                     move = m_treeIterator.get()->m_move;
                     m_board.checkIfMoveMakesKingChecked(move);

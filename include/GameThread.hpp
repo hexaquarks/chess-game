@@ -30,9 +30,9 @@ namespace game
 
     private:
         Board m_board;
-        MoveTreeManager m_moveList{m_board};
-        MoveTree::Iterator& m_treeIterator = m_moveList.getIterator();
-        ui::UIManager m_uiManager{m_board, m_moveList};
+        MoveTreeManager m_moveTreeManager{m_board};
+        MoveTree::Iterator& m_treeIterator = m_moveTreeManager.getIterator();
+        ui::UIManager m_uiManager{m_board, m_moveTreeManager};
 
         /* Event handles */
         bool handleMouseButtonPressedLeft(Event&, ui::ClickState& clickState, ui::DragState&, ui::UIManager&);

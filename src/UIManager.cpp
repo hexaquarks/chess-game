@@ -11,7 +11,7 @@ namespace ui {
     MoveTreeManager& moveList_
     ) :
         m_board(board_),
-        m_moveList(moveList_),
+        m_moveTreeManager(moveList_),
         m_sidePanel(m_window, moveList_, m_showMoveSelectionPanel),
         m_moveSelectionPanel(m_window, m_sidePanel)
     {
@@ -52,15 +52,15 @@ namespace ui {
         highlightLastMove();
         drawPieces();
         if (dragState_.pieceIsMoving) drawDraggedPiece(clickState_.pSelectedPiece, clickState_.mousePos);
-        if (m_moveList.getTransitioningPiece().getIsTransitioning()) {
-            drawTransitioningPiece(m_moveList.getTransitioningPiece());
+        if (m_moveTreeManager.getTransitioningPiece().getIsTransitioning()) {
+            drawTransitioningPiece(m_moveTreeManager.getTransitioningPiece());
         }
         drawAllArrows(arrowsInfo_.arrows, arrowsInfo_.currArrow);
 
         if (m_showMoveSelectionPanel)
         {
             drawGrayCover();
-            m_moveSelectionPanel.drawMoveSelectionPanel(m_moveList.getIterator());
+            m_moveSelectionPanel.drawMoveSelectionPanel(m_moveTreeManager.getIterator());
         }   
 
         // End conditions
@@ -126,7 +126,7 @@ namespace ui {
         Vector2i position = sf::Mouse::getPosition(m_window);
         coor2d mousePos = {position.x, position.y};
         m_sidePanel.drawMoves(
-            m_moveList.getMoveTreeDisplayHandler().generateMoveInfo(),
+            m_moveTreeManager.getMoveTreeDisplayHandler().generateMoveInfo(),
             mousePos);
     }
 
@@ -201,7 +201,7 @@ namespace ui {
 
     void UIManager::highlightLastMove()
     {
-        shared_ptr<Move> move = m_moveList.getIterator()->m_move;
+        shared_ptr<Move> move = m_moveTreeManager.getIterator()->m_move;
         if (!move) return;
         
         RectangleShape squareBefore = ui::createSquare();
@@ -239,7 +239,7 @@ namespace ui {
                 if (!piece) continue;
 
                 // Do not draw transitioning pieces
-                auto& pieceTransition = m_moveList.getTransitioningPiece();
+                auto& pieceTransition = m_moveTreeManager.getTransitioningPiece();
                 if (pieceTransition.getIsTransitioning())
                 {
                     if (
