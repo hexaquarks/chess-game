@@ -1,6 +1,8 @@
 #include "../../include/Utilities/Move.hpp"
 #include "../../include/Components/Board.hpp"
 
+#include <cassert>
+
 namespace // anonymous namespace
 {
     coor2d fromRepr(char first_, char second_) 
@@ -19,27 +21,52 @@ namespace // anonymous namespace
         return coorRepr(init_) + coorRepr(target_);
     }
 }
-// For NORMAL, INIT SPECIAL and CASTLE
-Move::Move(
-    const coor2d&& target_, const coor2d& initial_, const std::shared_ptr<Piece>& pSelectedPiece_,
-    MoveType moveType_, const std::shared_ptr<Piece>& pSecondPiece_
-):
-    m_target(target_), m_init(initial_),
-    m_selectedPiece(pSelectedPiece_), m_capturedPiece(pSecondPiece_),
-    m_MoveType(moveType_)
-{
-}
 
+// For generating moves when user interacts with the board
+// Index-based representation
 Move::Move(
     const coor2d&& target_, const coor2d& initial_, const std::shared_ptr<Piece>& pSelectedPiece_, MoveType moveType_
 ):
-    m_target(target_), m_init(initial_),
+    m_target(target_), 
+    m_init(initial_),
     m_selectedPiece(pSelectedPiece_),
     m_MoveType(moveType_)
 {
 }
 
-// For CAPTURE and ENPASSANT
+// For generating moves when user interacts with the board
+// Board coordinate representation (Used for testing preferably)
+Move::Move(
+    const coor2dChar&& target_, const coor2dChar& initial_, const std::shared_ptr<Piece>& pSelectedPiece_, MoveType moveType_
+):
+    m_selectedPiece(pSelectedPiece_),
+    m_MoveType(moveType_)
+{
+    assert(initial_.second >= 1 && initial_.second <= 8);
+    assert(initial_.first >= 'a' && initial_.first <= 'h');
+    assert(target_.second >= 1 && target_.second <= 8);
+    assert(target_.first >= 'a' && target_.first <= 'h');
+    
+    m_init = coor2d{static_cast<int>(initial_.first - 'a'), 8 - initial_.second};
+    m_target = coor2d{static_cast<int>(target_.first - 'a'), 8 - target_.second};
+}
+
+// For generating moves when calculating all possible moves for a piece.
+// Move types are: NORMAL, INIT SPECIAL and CASTLE
+Move::Move(
+    const coor2d&& target_, const coor2d& initial_, const std::shared_ptr<Piece>& pSelectedPiece_,
+    MoveType moveType_, const std::shared_ptr<Piece>& pSecondPiece_
+):
+    m_target(target_), 
+    m_init(initial_),
+    m_selectedPiece(pSelectedPiece_), 
+    m_capturedPiece(pSecondPiece_),
+    m_MoveType(moveType_)
+{
+}
+
+// For generating moves when calculating all possible moves for a piece.
+// Move types are: CAPTURE and ENPASSANT.
 Move::Move(
     const Move& move_, const std::shared_ptr<Piece>& pSecondPiece_, const coor2d& capturedPawn_
 ):

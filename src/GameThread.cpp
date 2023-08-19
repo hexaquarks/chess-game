@@ -246,7 +246,7 @@ namespace game
         else
         {
             auto pMove = m_board.applyMoveOnBoard(
-                pSelectedMoveOpt, 
+                pSelectedMoveOpt.value().getMoveType(), 
                 std::make_pair(file, rank), 
                 std::make_pair(dragState_.lastFile, dragState_.lastRank),
                 clickState_.pSelectedPiece, 

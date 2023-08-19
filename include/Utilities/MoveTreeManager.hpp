@@ -10,6 +10,10 @@
 #include <functional>
 #include <iterator>
 #include <SFML/Graphics.hpp>
+#include <stack>
+#include <string>
+#include <vector>
+#include <sstream>
 
 using namespace sf;
 
@@ -43,7 +47,14 @@ public:
     bool isTransitionningPiece() { return m_transitioningPiece.getIsTransitioning(); }
     void setTransitioningPieceArrived() { m_transitioningPiece.setHasArrived(); }
 
-private:
+    void initializeMoveSequenceFromPNG(const std::string&);
+
+    std::vector<std::string> tokenizePGN(const std::string& pgn);
+    void parseAllTokens(const std::vector<std::string>& tokens, size_t& index, int& moveCount, std::stack<int>& undoStack);
+    void addMoveToPGNTree(const std::string& token_);
+
+
+private: 
     MoveTree m_moves;
     MoveTreeDisplayHandler m_moveTreeDisplayHandler{m_moves};
     MoveTree::Iterator m_moveIterator = m_moves.begin();

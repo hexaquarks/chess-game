@@ -33,7 +33,8 @@ public:
     const auto& getLastMovedPiece() const { return m_pLastMovedPiece; }
 
     // Utility functions
-    std::shared_ptr<Move> applyMoveOnBoard(const std::optional<Move>&, coor2d, coor2d, const std::shared_ptr<Piece>&, const std::vector<Arrow>&);
+    std::shared_ptr<Move> applyMoveOnBoard(MoveType, coor2d, coor2d, const std::shared_ptr<Piece>&, const std::vector<Arrow>&);
+    std::shared_ptr<Move> applyMoveOnBoardTesting(MoveType, coor2d, coor2d, const std::shared_ptr<Piece>&);    
     void updateBoardInfosAfterNewMove(const std::shared_ptr<Piece>&, const std::shared_ptr<Move>&);
 
     std::optional<Move> findSelectedMove(const std::shared_ptr<Piece>&, int, int) const;

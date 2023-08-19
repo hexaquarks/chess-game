@@ -40,15 +40,18 @@ void MoveTree::printTreeRec(shared_ptr<MoveTreeNode>& root_, vector<bool> flag_,
     }
 
     coor2d tar = root_->m_move->getTarget();
+    char file = static_cast<char>(tar.first + 'a');
+    int rank = 8 - tar.second;
+
     if (depth_ == 0)
-        cout << "(" << tar.first << "," << tar.second << ")" << '\n';
+        cout << "(" << file << "," << rank << ")" << '\n';
     else if (isLast_)
     {
-        cout << "+--- " << "(" << tar.first << "," << tar.second << ")" << '\n';
+        cout << "+--- " << "(" << file << "," << rank << ")"<< '\n';
         flag_[depth_] = false;
     }
     else
-        cout << "+--- " << "(" << tar.first << "," << tar.second << ")" << '\n';
+        cout << "+--- " << "(" << file << "," << rank << ")" << '\n';
 
     int it = 0;
     for (auto i = root_->m_children.begin(); i != root_->m_children.end(); ++i, ++it)
@@ -73,7 +76,7 @@ void MoveTree::printPreorder(shared_ptr<MoveTreeNode>& m_root)
     int i = 0;
     shared_ptr<MoveTreeNode> temp;
     coor2d tar = m_root->m_move->getTarget();
-    cout << " " << "(" << tar.first << "," << tar.second << ")";
+    cout << " " << "(" << tar.first + 'a' << "," << 8 - tar.second << ")";
     // Iterating the child of given node
     while (i < m_root->m_children.size())
     {

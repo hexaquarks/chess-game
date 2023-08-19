@@ -14,7 +14,6 @@ std::ostream& operator<<(std::ostream&, Team);
 
 typedef std::tuple<coor2d, MoveType> moveType;
 typedef std::vector<moveType> moveTypes;
-typedef std::pair<int, char> coor2dChar;
 
 class Board;
 

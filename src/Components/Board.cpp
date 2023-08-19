@@ -135,22 +135,37 @@ Board::Board(const std::string& fen_)
 }
 
 std::shared_ptr<Move> Board::applyMoveOnBoard(
-    const std::optional<Move>& pSelectedMoveOpt_,
+    MoveType moveType_,
     coor2d currPos_,
     coor2d initialPos_,
     const std::shared_ptr<Piece>& pSelectedPiece_,
     const std::vector<Arrow>& arrows_)
 {
-    MoveType type = pSelectedMoveOpt_->getMoveType();
     auto pMove = std::make_shared<Move>(
         std::move(currPos_), 
         std::move(initialPos_), 
         pSelectedPiece_, 
-        type);
+        moveType_);
 
     pMove->setCapturedPiece(getLastMovedPiece());
     pMove->setMoveArrows(arrows_);
 
+    return pMove; 
+}
+
+std::shared_ptr<Move> Board::applyMoveOnBoardTesting(
+    MoveType moveType_,
+    coor2d currPos_,
+    coor2d initialPos_,
+    const std::shared_ptr<Piece>& pSelectedPiece_)
+{
+    auto pMove = std::make_shared<Move>(
+        std::move(currPos_), 
+        std::move(initialPos_), 
+        pSelectedPiece_, 
+        moveType_);
+
+    pMove->setCapturedPiece(getLastMovedPiece());
     return pMove; 
 }
 
