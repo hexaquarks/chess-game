@@ -372,22 +372,41 @@ void MoveTreeManager::setSecondTransitioningPiece(
 
 
 
-std::vector<std::string> MoveTreeManager::tokenizePGN(const std::string& pgn_) {
-     std::string processedPgn = pgn_;
+std::vector<std::string> MoveTreeManager::tokenizePGN(const std::string& pgn_) 
+{
+    if (pgn_.size() == 0) return {};
+    std::string processedPgn = pgn_;
+   
+    // Remove move numbers with three dots
+    for (size_t i = 3; i < processedPgn.size(); ++i) 
+    {
+        if (processedPgn[i] == '.' && 
+            processedPgn[i - 1] == '.' &&
+            processedPgn[i - 2] == '.' &&
+            std::isdigit(processedPgn[i - 3])) 
+        {
+            processedPgn.erase(i - 3, 4); 
+            i -= 3; 
+        }
+    }
 
-    // Remove move numbers with dots
-    for (std::size_t i = 0; i < processedPgn.size(); ++i) {
-        if (processedPgn[i] == '.' && i > 0 && std::isdigit(processedPgn[i - 1])) {
-            processedPgn.erase(i - 1, 2); // Erase the digit and the dot
-            --i; // Adjust the index after erasing
+    // Remove move numbers with one dot
+    for (size_t i = 1; i < processedPgn.size(); ++i) 
+    {
+        if (processedPgn[i] == '.' && std::isdigit(processedPgn[i - 1])) 
+        {
+            processedPgn.erase(i - 1, 2); 
+            --i; 
         }
     }
 
     // Add space before each right parenthesis
-    for (std::size_t i = 0; i < processedPgn.size(); ++i) {
-        if (processedPgn[i] == ')') {
+    for (size_t i = 0; i < processedPgn.size(); ++i) 
+    {
+        if (processedPgn[i] == ')') 
+        {
             processedPgn.insert(i, " ");
-            ++i; // Adjust the index after inserting
+            ++i; 
         }
     }
 
@@ -395,9 +414,7 @@ std::vector<std::string> MoveTreeManager::tokenizePGN(const std::string& pgn_) {
     std::vector<std::string> tokens;
     std::istringstream ss(processedPgn);
     std::string token;
-    while (ss >> token) {
-        tokens.push_back(token);
-    }
+    while (ss >> token) tokens.push_back(token);
 
     return tokens;
 }
@@ -459,6 +476,32 @@ void MoveTreeManager::parseAllTokens(
 void MoveTreeManager::addMoveToPGNTree(const std::string& token_)
 {   
     std::string move = token_;
+    int temp = 0;
+    if (token_ == "Qxd4") {
+        auto piece = game.getBoardTile({'d', 4});
+        if (piece->getType() == PieceType::KNIGHT) {
+            cout << "knight" << endl;
+        }
+        if (piece->getType() == PieceType::PAWN) {
+            cout << "pawn" << endl;
+        }
+        if (piece->getType() == PieceType::QUEEN) {
+            cout << "q" << endl;
+        }
+
+        if (piece->getType() == PieceType::ROOK) {
+            cout << "r" << endl;
+        }
+        if (piece->getType() == PieceType::BISHOP) {
+            cout << "b" << endl;
+        }
+        auto moves = game.getAllCurrentlyAvailableMoves();
+        for (const auto& move : moves)
+        {
+            if (move.getSelectedPiece()->getType() == PieceType::QUEEN) ++temp;
+        }
+        cout << "temp is " << temp << endl;
+    }
     std::cout << "trying to add token : " << token_ << std::endl;;
 
     const bool isPawnMove = move.size() == 2 || std::islower(move[0]);
@@ -511,6 +554,9 @@ void MoveTreeManager::addMoveToPGNTree(const std::string& token_)
     const auto [moveTargetFile, moveTargetRank] =  selectedMove.getTarget();
     
     // Apply the move on the board and update the move tree
+    if (token_ == "Nxd4") {
+        cout  << ", " << moveTargetFile << ", " << moveTargetRank << endl;
+    }
     auto pMove = game.applyMoveOnBoardTesting(
         selectedMove.getMoveType(),
         std::make_pair(moveTargetFile, moveTargetRank),
@@ -519,8 +565,8 @@ void MoveTreeManager::addMoveToPGNTree(const std::string& token_)
 
     std::vector<Arrow> arrows;
     addMove(pMove, arrows); 
-    game.switchTurn();
-    game.updateAllCurrentlyAvailableMoves();
+
+    game.updateBoardInfosAfterNewMove(selectedMove.getSelectedPiece(), pMove);
 }
 
 void MoveTreeManager::initializeMoveSequenceFromPNG(const std::string& pgn_)
@@ -528,6 +574,7 @@ void MoveTreeManager::initializeMoveSequenceFromPNG(const std::string& pgn_)
     game.updateAllCurrentlyAvailableMoves();
     // Tokenize the PGN string 
     std::vector<std::string> tokens = tokenizePGN(pgn_);
+    if (tokens.size() == 0) return;
 
     size_t index = 0;
     int moveCount = 0;

@@ -36,20 +36,20 @@ Move::Move(
 
 // For generating moves when user interacts with the board
 // Board coordinate representation (Used for testing preferably)
-Move::Move(
-    const coor2dChar&& target_, const coor2dChar& initial_, const std::shared_ptr<Piece>& pSelectedPiece_, MoveType moveType_
-):
-    m_selectedPiece(pSelectedPiece_),
-    m_MoveType(moveType_)
-{
-    assert(initial_.second >= 1 && initial_.second <= 8);
-    assert(initial_.first >= 'a' && initial_.first <= 'h');
-    assert(target_.second >= 1 && target_.second <= 8);
-    assert(target_.first >= 'a' && target_.first <= 'h');
+// Move::Move(
+//     const coor2dChar&& target_, const coor2dChar& initial_, const std::shared_ptr<Piece>& pSelectedPiece_, MoveType moveType_
+// ):
+//     m_selectedPiece(pSelectedPiece_),
+//     m_MoveType(moveType_)
+// {
+//     assert(initial_.second >= 1 && initial_.second <= 8);
+//     assert(initial_.first >= 'a' && initial_.first <= 'h');
+//     assert(target_.second >= 1 && target_.second <= 8);
+//     assert(target_.first >= 'a' && target_.first <= 'h');
     
-    m_init = coor2d{static_cast<int>(initial_.first - 'a'), 8 - initial_.second};
-    m_target = coor2d{static_cast<int>(target_.first - 'a'), 8 - target_.second};
-}
+//     m_init = coor2d{static_cast<int>(initial_.first - 'a'), 8 - initial_.second};
+//     m_target = coor2d{static_cast<int>(target_.first - 'a'), 8 - target_.second};
+// }
 
 // For generating moves when calculating all possible moves for a piece.
 // Move types are: NORMAL, INIT SPECIAL and CASTLE

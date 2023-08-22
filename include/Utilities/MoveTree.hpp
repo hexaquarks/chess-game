@@ -2,6 +2,8 @@
 #include "MoveTreeNode.hpp"
 
 using namespace std;
+#include <iostream>
+#include <sstream>
 
 class MoveTree
 {
@@ -173,8 +175,9 @@ public:
     void insertNode(const shared_ptr<Move>&, MoveTree::Iterator&);
     void goToNextNode(int, MoveTree::Iterator&);
     void goToPreviousNode(MoveTree::Iterator&);
-    void printTree() const;
-    void printTreeRec(shared_ptr<MoveTreeNode>&, vector<bool>, int a = 0, bool b = false) const;
+    void printTree(std::ostream& os_ = std::cout) const;
+    std::string printTreeGet() const;
+    void printTreeRec(shared_ptr<MoveTreeNode>&, vector<bool>, std::ostream& os_, int a = 0, bool b = false) const;
     int getNumberOfMoves() const { return numberOfMoves; }
     void printPreorder(shared_ptr<MoveTreeNode>&);
     int getNodeLevel(MoveTree::Iterator&);

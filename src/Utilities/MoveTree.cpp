@@ -1,6 +1,5 @@
 #include "../../include/Utilities/MoveTree.hpp"
 
-
 void MoveTree::insertNode(const shared_ptr<Move>& newMove_, MoveTree::Iterator& it_)
 {
     for (int i = 0; i < it_->m_children.size(); ++i)
@@ -29,14 +28,19 @@ void MoveTree::goToPreviousNode(MoveTree::Iterator& it_)
     if (it_->m_parent) --it_;
 }
 
-void MoveTree::printTreeRec(shared_ptr<MoveTreeNode>& root_, vector<bool> flag_, int depth_, bool isLast_) const
+void MoveTree::printTreeRec(
+    shared_ptr<MoveTreeNode>& root_, 
+    vector<bool> flag_, 
+    std::ostream& os_,
+    int depth_, 
+    bool isLast_) const
 {
     if (!root_->m_move) return;
 
     for (int i = 1; i < depth_; ++i)
     {
-        if (flag_[i]) cout << "| " << " " << " " << " ";
-        else cout << " " << " " << " " << " ";
+        if (flag_[i]) os_ << "| " << " " << " " << " ";
+        else os_ << " " << " " << " " << " ";
     }
 
     coor2d tar = root_->m_move->getTarget();
@@ -44,30 +48,37 @@ void MoveTree::printTreeRec(shared_ptr<MoveTreeNode>& root_, vector<bool> flag_,
     int rank = 8 - tar.second;
 
     if (depth_ == 0)
-        cout << "(" << file << "," << rank << ")" << '\n';
+        os_ << "(" << file << "," << rank << ")" << '\n';
     else if (isLast_)
     {
-        cout << "+--- " << "(" << file << "," << rank << ")"<< '\n';
+        os_ << "+--- " << "(" << file << "," << rank << ")"<< '\n';
         flag_[depth_] = false;
     }
     else
-        cout << "+--- " << "(" << file << "," << rank << ")" << '\n';
+        os_ << "+--- " << "(" << file << "," << rank << ")" << '\n';
 
     int it = 0;
     for (auto i = root_->m_children.begin(); i != root_->m_children.end(); ++i, ++it)
-        printTreeRec(*i, flag_, depth_ + 1, it == (root_->m_children.size()) - 1);
+        printTreeRec(*i, flag_, os_, depth_ + 1, it == (root_->m_children.size()) - 1);
 
     flag_[depth_] = true;
 }
 
-void MoveTree::printTree() const
+void MoveTree::printTree(std::ostream& os_) const
 {
     vector<bool> flag(getNumberOfMoves(), true);
-    cout << "===== Printing the move tree =====" << endl;
+    if (m_root->m_children.size() == 0) return;
+    os_ << "===== Printing the move tree =====" << endl;
     shared_ptr<MoveTreeNode> movePtr = m_root->m_children.at(0);
-    printTreeRec(movePtr, flag);
+    printTreeRec(movePtr, flag, os_);
 }
 
+std::string MoveTree::printTreeGet() const
+{
+    std::ostringstream oss;
+    printTree(oss);
+    return oss.str();
+}
 
 void MoveTree::printPreorder(shared_ptr<MoveTreeNode>& m_root)
 {
