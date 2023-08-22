@@ -19,9 +19,9 @@ namespace
         // Piece should not be nullptr. Every move has a piece assocaited
         assert(pMovePiece); 
 
-        return !(pMovePiece->getType() != pieceType_ || 
-                pMovePiece->getTeam() != currTeamTurn_ ||
-                (isCapture_ && (possibleMove_.getCapturedPiece() == nullptr)));
+        //(isCapture_ && (possibleMove_.getCapturedPiece() == nullptr))
+        return (pMovePiece->getType() == pieceType_ && 
+                pMovePiece->getTeam() == currTeamTurn_ );
     }
 
     PieceType pieceTypeletterToEnum(char pngPieceTypeLetter_)
@@ -80,7 +80,7 @@ bool MoveTreeManager::goToNextMove(
     return false;
 }
 
-void MoveTreeManager::addMove(shared_ptr<Move>& move_, vector<Arrow>& arrowList_)
+void MoveTreeManager::addMove(const shared_ptr<Move>& move_, vector<Arrow>& arrowList_)
 {
     applyMove(move_, true, true, arrowList_);
 }
@@ -93,7 +93,7 @@ void MoveTreeManager::applyMove(
 }
 
 void MoveTreeManager::applyMove(
-    shared_ptr<Move>& move_, 
+    const shared_ptr<Move>& move_, 
     bool addToList_, 
     bool enableTransition_, 
     vector<Arrow>& arrowList_)
@@ -477,7 +477,7 @@ void MoveTreeManager::addMoveToPGNTree(const std::string& token_)
 {   
     std::string move = token_;
     int temp = 0;
-    if (token_ == "Qxd4") {
+    if (token_ == "Nxd4") {
         auto piece = game.getBoardTile({'d', 4});
         if (piece->getType() == PieceType::KNIGHT) {
             cout << "knight" << endl;
@@ -530,9 +530,9 @@ void MoveTreeManager::addMoveToPGNTree(const std::string& token_)
         int pgnTargetRankInt = 8 - pgnTargetRank;
 
         const bool preValidation = pngIsPossibleMove(move_, pngPieceType, currTeamTurn, isCapture);
-        const bool moveSquaresMatch = moveTargetFile == pgnTargetFileInt && moveTargetRank == pgnTargetRankInt;
+        const bool moveTargetSquareMatch = moveTargetFile == pgnTargetFileInt && moveTargetRank == pgnTargetRankInt;
 
-        return moveSquaresMatch;
+        return preValidation && moveTargetSquareMatch;
     };
     
     std::vector<Move> actualPossibleMoves;
@@ -565,7 +565,6 @@ void MoveTreeManager::addMoveToPGNTree(const std::string& token_)
 
     std::vector<Arrow> arrows;
     addMove(pMove, arrows); 
-
     game.updateBoardInfosAfterNewMove(selectedMove.getSelectedPiece(), pMove);
 }
 

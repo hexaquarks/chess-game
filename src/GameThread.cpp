@@ -245,12 +245,13 @@ namespace game
         }
         else
         {
-            auto pMove = m_board.applyMoveOnBoard(
-                pSelectedMoveOpt.value().getMoveType(), 
-                std::make_pair(file, rank), 
-                std::make_pair(dragState_.lastFile, dragState_.lastRank),
-                clickState_.pSelectedPiece, 
-                arrowsInfo_.arrows);
+            // auto pMove = m_board.applyMoveOnBoard(
+            //     pSelectedMoveOpt.value().getMoveType(), 
+            //     std::make_pair(file, rank), 
+            //     std::make_pair(dragState_.lastFile, dragState_.lastRank),
+            //     clickState_.pSelectedPiece, 
+            //     arrowsInfo_.arrows);
+            const auto pMove = std::make_shared<Move>(pSelectedMoveOpt.value());
             m_moveTreeManager.addMove(pMove, arrowsInfo_.arrows);
             m_board.updateBoardInfosAfterNewMove(clickState_.pSelectedPiece, pMove);
             arrowsInfo_.arrows.clear();

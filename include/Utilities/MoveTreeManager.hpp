@@ -42,7 +42,7 @@ public:
     bool goToNextMove(bool, const std::optional<size_t>&, vector<Arrow>&);
     void goToCurrentMove(vector<Arrow>& arrowList) { while (goToNextMove(false, std::nullopt, arrowList)); }
     void goToInitialMove(vector<Arrow>& arrowList) { while (goToPreviousMove(false, arrowList)); }
-    void addMove(shared_ptr<Move>&, vector<Arrow>& arrowList);
+    void addMove(const shared_ptr<Move>&, vector<Arrow>& arrowList);
 
     bool isTransitionningPiece() { return m_transitioningPiece.getIsTransitioning(); }
     void setTransitioningPieceArrived() { m_transitioningPiece.setHasArrived(); }
@@ -63,7 +63,7 @@ private:
 
     std::function<void(std::shared_ptr<Piece>&, const coor2d&, bool)> m_transitionPieceCallback;
 
-    void applyMove(shared_ptr<Move>&, bool, bool, vector<Arrow>&);
+    void applyMove(const shared_ptr<Move>&, bool, bool, vector<Arrow>&);
     void applyMove(bool, vector<Arrow>&);
     void undoMove(bool, vector<Arrow>&);
 
