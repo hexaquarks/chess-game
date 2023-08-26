@@ -25,6 +25,7 @@ public:
     std::shared_ptr<Piece>& getBoardTile(const std::pair<char, int>&);
     const std::shared_ptr<King>& getKing() const;
     Team getTurn() const { return m_turn; }
+    void setTurn(Team turn_) { m_turn = turn_; }
     void setIsKingChecked(bool isKingChecked_) { m_isKingChecked = isKingChecked_; }
     void setBoardTile(int, int, std::shared_ptr<Piece>&, bool = true);
     void resetBoardTile(int, int, bool = true);

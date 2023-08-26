@@ -165,7 +165,7 @@ std::shared_ptr<Move> Board::applyMoveOnBoardTesting(
         pSelectedPiece_, 
         moveType_);
 
-    //pMove->setCapturedPiece(getLastMovedPiece());
+    pMove->setCapturedPiece(getLastMovedPiece());
     return pMove; 
 }
 

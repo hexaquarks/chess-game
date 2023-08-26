@@ -428,19 +428,26 @@ void MoveTreeManager::parseAllTokens(
     bool lastTokenWasCloseParenthesis = false;
 
     while (index < tokens.size()) {
+        std::vector<Arrow> dummyArrows{};
+
         const std::string& token = tokens[index++];
         std::cout << "treating token " << token << std::endl;
 
+        //1. e4 e5 2. Nf3 (2. Bc4 d6 (2... Nc6 3. Bd5) 3. Bd5) (2. Qh5 g6 3. Qxe5+) 2... f5
         if (token == "(") {
             // Only undo the previous move if the last token was not ")"
             if (!lastTokenWasCloseParenthesis) {
-                std::vector<Arrow> dummyArrows{};
                 goToPreviousMove(false, dummyArrows);
-                --moveCount;
-            } 
 
-            // Save the current move count
-            undoStack.push(moveCount);
+                // Save the current move count
+                undoStack.push(moveCount);
+            }  else {
+                goToPreviousMove(false, dummyArrows);
+                undoStack.push(moveCount);
+                //game.switchTurn();
+                //game.updateAllCurrentlyAvailableMoves();
+            }
+
 
             // Reset the move count for the variation
             moveCount = 0;
@@ -456,9 +463,11 @@ void MoveTreeManager::parseAllTokens(
 
             // Undo the moves in the current variation
             for (size_t i = 0; i < moveCount; ++i) {
+                cout << "undoing " << moveCount<< endl;
                 std::vector<Arrow> dummyArrows{};
                 goToPreviousMove(false, dummyArrows);
             }
+            goToNextMove(false, 0, dummyArrows);
             moveCount = undoCount;
 
             lastTokenWasCloseParenthesis = true;
@@ -475,33 +484,9 @@ void MoveTreeManager::parseAllTokens(
 
 void MoveTreeManager::addMoveToPGNTree(const std::string& token_)
 {   
-    std::string move = token_;
-    int temp = 0;
-    if (token_ == "Nxd4") {
-        auto piece = game.getBoardTile({'d', 4});
-        if (piece->getType() == PieceType::KNIGHT) {
-            cout << "knight" << endl;
-        }
-        if (piece->getType() == PieceType::PAWN) {
-            cout << "pawn" << endl;
-        }
-        if (piece->getType() == PieceType::QUEEN) {
-            cout << "q" << endl;
-        }
-
-        if (piece->getType() == PieceType::ROOK) {
-            cout << "r" << endl;
-        }
-        if (piece->getType() == PieceType::BISHOP) {
-            cout << "b" << endl;
-        }
-        auto moves = game.getAllCurrentlyAvailableMoves();
-        for (const auto& move : moves)
-        {
-            if (move.getSelectedPiece()->getType() == PieceType::QUEEN) ++temp;
-        }
-        cout << "temp is " << temp << endl;
-    }
+    std::string move = token_;;
+    int temp =  0;
+    
     std::cout << "trying to add token : " << token_ << std::endl;;
 
     const bool isPawnMove = move.size() == 2 || std::islower(move[0]);
