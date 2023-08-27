@@ -55,6 +55,51 @@ BOOST_AUTO_TEST_CASE(TestNormalMainLineScotch)
     BOOST_CHECK_EQUAL(m_manager.getMoves().printTreeGet(), expectedString);
 }
 
+BOOST_AUTO_TEST_CASE(TestCastleKingSide)
+{
+    const std::string castleKingSidePGN = 
+        "1. e4 e5 2. Bc4 Bc5 3. Nf3 Nf6 4. O-O O-O 5. Nxe5";
+    m_manager.initializeMoveSequenceFromPNG(castleKingSidePGN);
+    const std::string expectedString = 
+        "===== Printing the move tree =====\n"
+        "(e,4)\n"
+        "+--- (e,5)\n"
+        "    +--- (c,4)\n"
+        "        +--- (c,5)\n"
+        "            +--- (f,3)\n"
+        "                +--- (f,6)\n"
+        "                    +--- (g,1)\n"
+        "                        +--- (g,8)\n"
+        "                            +--- (e,5)\n";
+    
+    BOOST_CHECK_EQUAL(m_manager.getMoves().printTreeGet(), expectedString);
+}
+
+BOOST_AUTO_TEST_CASE(TestCastleQueenSide)
+{
+    const std::string castleQueenSidePGN = 
+        "1. b3 b6 2. Bb2 Bb7 3. Nc3 Nc6 4. d4 d6 "
+        "5. Qd3 Qd7 6. O-O-O O-O-O 7. d5";
+    m_manager.initializeMoveSequenceFromPNG(castleQueenSidePGN);
+    const std::string expectedString = 
+        "===== Printing the move tree =====\n"
+        "(b,3)\n"
+        "+--- (b,6)\n"
+        "    +--- (b,2)\n"
+        "        +--- (b,7)\n"
+        "            +--- (c,3)\n"
+        "                +--- (c,6)\n"
+        "                    +--- (d,4)\n"
+        "                        +--- (d,6)\n"
+        "                            +--- (d,3)\n"
+        "                                +--- (d,7)\n"
+        "                                    +--- (c,1)\n"
+        "                                        +--- (c,8)\n"
+        "                                            +--- (d,5)\n";
+    
+    BOOST_CHECK_EQUAL(m_manager.getMoves().printTreeGet(), expectedString);
+}
+
 BOOST_AUTO_TEST_CASE(TestCheckAndCaptures)
 {
     const std::string checkAndCapturesPGN = 
@@ -209,7 +254,9 @@ BOOST_AUTO_TEST_CASE(TestBlackInitialNumberOfMovesAvailable)
     MoveTreeManager moveTreeManager{m_board};
     const std::string myPNG = "1. e4 e5 2. d4 (2. Nf3 Nc6 3. h3) (2. Nc3)";
     moveTreeManager.initializeMoveSequenceFromPNG(myPNG);
-    moveTreeManager.getMoves().printTree();
+
+    const std::string expectedString = "";
+    BOOST_CHECK_EQUAL(m_manager.getMoves().printTreeGet(), expectedString);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

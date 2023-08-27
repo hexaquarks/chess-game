@@ -441,64 +441,47 @@ std::vector<std::string> MoveTreeManager::tokenizePGN(const std::string& pgn_)
 }
 
 void MoveTreeManager::parseAllTokens(
-    const std::vector<std::string>& tokens, 
-    size_t& index, 
-    int& moveCount, 
-    std::stack<int>& undoStack) 
+    const std::vector<std::string>& tokens_, 
+    size_t& index_, 
+    int& moveCount_, 
+    std::stack<int>& undoStack_) 
 {
-    bool lastTokenWasCloseParenthesis = false;
-
-    while (index < tokens.size()) {
+    while (index_ < tokens_.size()) 
+    {
         std::vector<Arrow> dummyArrows{};
 
-        const std::string& token = tokens[index++];
-        std::cout << "treating token " << token << std::endl;
+        const std::string& token = tokens_[index_++];
 
-        //1. e4 e5 2. Nf3 (2. Bc4 d6 (2... Nc6 3. Bd5) 3. Bd5) (2. Qh5 g6 3. Qxe5+) 2... f5
-        if (token == "(") {
-            // Only undo the previous move if the last token was not ")"
-            if (!lastTokenWasCloseParenthesis) {
-                goToPreviousMove(false, dummyArrows);
-
-                // Save the current move count
-                undoStack.push(moveCount);
-            }  else {
-                goToPreviousMove(false, dummyArrows);
-                undoStack.push(moveCount);
-                //game.switchTurn();
-                //game.updateAllCurrentlyAvailableMoves();
-            }
-
+        if (token == "(") 
+        {
+            goToPreviousMove(false, dummyArrows);
+            undoStack_.push(moveCount_);
 
             // Reset the move count for the variation
-            moveCount = 0;
-            
-            lastTokenWasCloseParenthesis = false;
+            moveCount_ = 0;
             continue;
         }
 
-        if (token == ")") {
+        if (token == ")") 
+        {
             // Get the number of moves to undo
-            int undoCount = undoStack.top();
-            undoStack.pop();
+            int undoCount = undoStack_.top();
+            undoStack_.pop();
 
             // Undo the moves in the current variation
-            for (size_t i = 0; i < moveCount; ++i) {
-                cout << "undoing " << moveCount<< endl;
+            for (size_t i = 0; i < moveCount_; ++i) 
+            {
                 std::vector<Arrow> dummyArrows{};
                 goToPreviousMove(false, dummyArrows);
             }
             goToNextMove(false, 0, dummyArrows);
-            moveCount = undoCount;
-
-            lastTokenWasCloseParenthesis = true;
+            moveCount_ = undoCount;
             continue;
         }
 
         addMoveToPGNTree(token);
-        ++moveCount;
-        lastTokenWasCloseParenthesis = false;
-        getMoves().printTree();
+        ++moveCount_;
+        //getMoves().printTree();
     }
 }
 
@@ -506,7 +489,6 @@ void MoveTreeManager::parseAllTokens(
 void MoveTreeManager::addMoveToPGNTree(const std::string& token_)
 {   
     std::string moveToken = token_;
-    std::cout << "trying to add token : " << token_ << std::endl;
 
     std::vector<Move> allPossibleMoves = game.getAllCurrentlyAvailableMoves();
     std::vector<Move> actualPossibleMoves;
@@ -566,7 +548,6 @@ void MoveTreeManager::addMoveToPGNTree(const std::string& token_)
             normalMoveFilterFunc);
     }
 
-    std::cout << "there are " << actualPossibleMoves.size() << " moves found from initially " << allPossibleMoves.size() << std::endl;
     // Every png token should match with at least one move from all currently available moves
     assert(actualPossibleMoves.size() != 0);
 

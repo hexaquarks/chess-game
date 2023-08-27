@@ -39,7 +39,6 @@ BOOST_AUTO_TEST_CASE(TestBlackInitialNumberOfMovesAvailable)
     MoveTreeManager moveTreeManager{m_board};
     const std::string myPNG = "1. e4 e5 2. d4 (2. Nf3 Nc6 3. h3) (2. Nc3)";
     moveTreeManager.initializeMoveSequenceFromPNG(myPNG);
-    moveTreeManager.getMoves().printTree();
 }
 
 BOOST_AUTO_TEST_SUITE_END()
