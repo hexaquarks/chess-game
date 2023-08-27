@@ -3,6 +3,68 @@
 #include "../../include/Utilities/UIConstants.hpp"
 #include "../../include/GameThread.hpp"
 
+#include <cassert> 
+#include <algorithm>
+#include <iterator>
+
+namespace 
+{
+    std::pair<char, int> getTargetFileAndRank(
+        const std::string& move_, 
+        bool isCapture_, 
+        bool isCheckOrCheckMate_) 
+    {
+        size_t targetFileIndex = 0;
+        size_t targetRankIndex = 0;
+
+        if (isCapture_) {
+            targetFileIndex = move_.find('x') + 1;
+            targetRankIndex = move_.find('x') + 2;
+        } else if (isCheckOrCheckMate_) {
+            targetFileIndex = move_.size() - 3;
+            targetRankIndex = move_.size() - 2;
+        } else {
+            targetFileIndex = move_.size() - 2;
+            targetRankIndex = move_.size() - 1;
+        }
+
+        return std::make_pair(move_[targetFileIndex], move_[targetRankIndex] - '0');
+    }
+
+    bool pngIsPossibleMove(
+        const Move& possibleMove_, 
+        PieceType pieceType_, 
+        Team currTeamTurn_,
+        bool isCapture_)
+    {
+        const auto pMovePiece = possibleMove_.getSelectedPiece();
+        // Piece should not be nullptr. Every move has a piece assocaited
+        assert(pMovePiece); 
+
+        return (pMovePiece->getType() == pieceType_ && 
+                pMovePiece->getTeam() == currTeamTurn_ );
+    }
+
+    PieceType pieceTypeletterToEnum(char pngPieceTypeLetter_)
+    {
+         switch (pngPieceTypeLetter_) 
+         {
+            case 'N': return PieceType::KNIGHT;
+            case 'B': return PieceType::BISHOP;
+            case 'R': return PieceType::ROOK;
+            case 'Q': return PieceType::QUEEN;
+            case 'K': return PieceType::KING;
+            case 'p': return PieceType::PAWN;
+            default: {
+                std::cout << "actual letter is " << pngPieceTypeLetter_<< std::endl;
+                assert(false); // Handle new piece type.
+            }
+        }
+
+        return PieceType::PAWN;
+    }
+}
+
 MoveTreeManager::MoveTreeManager(Board& board_): game(board_)
 {
 }
@@ -39,7 +101,7 @@ bool MoveTreeManager::goToNextMove(
     return false;
 }
 
-void MoveTreeManager::addMove(shared_ptr<Move>& move_, vector<Arrow>& arrowList_)
+void MoveTreeManager::addMove(const shared_ptr<Move>& move_, vector<Arrow>& arrowList_)
 {
     applyMove(move_, true, true, arrowList_);
 }
@@ -52,14 +114,14 @@ void MoveTreeManager::applyMove(
 }
 
 void MoveTreeManager::applyMove(
-    shared_ptr<Move>& move_, 
+    const shared_ptr<Move>& move_, 
     bool addToList_, 
     bool enableTransition_, 
     vector<Arrow>& arrowList_)
 {
     if (!move_) return;
     
-    const int castleRow = (game.getTurn() == Team::WHITE)? 7: 0;
+    const int castleRank = (game.getTurn() == Team::WHITE)? 7: 0;
     std::optional<shared_ptr<Piece>> pSecondPieceOpt;
     std::optional<shared_ptr<Piece>> pPromotingPieceOpt;
     shared_ptr<Piece> pSelectedPiece = move_->getSelectedPiece();
@@ -118,14 +180,14 @@ void MoveTreeManager::applyMove(
         {
             secondFileInit = 7;
             secondFileTarget = 5;
-            pSecondPieceOpt = game.getBoardTile(secondFileInit, castleRow);
-            game.resetBoardTile(secondFileInit, castleRow);
-            game.setBoardTile(secondFileTarget, castleRow, pSecondPieceOpt.value());
-            game.setBoardTile(6, castleRow, pSelectedPiece);
+            pSecondPieceOpt = game.getBoardTile(secondFileInit, castleRank);
+            game.resetBoardTile(secondFileInit, castleRank);
+            game.setBoardTile(secondFileTarget, castleRank, pSecondPieceOpt.value());
+            game.setBoardTile(6, castleRank, pSelectedPiece);
             game.setBoardTile(file, rank, pSelectedPiece);
             if (addToList_)
             {
-                coor2d target = {6, castleRow};
+                coor2d target = {6, castleRank};
                 move_->setTarget(target);
                 m_moves.insertNode(make_shared<Move>(*move_, pSecondPieceOpt.value()), m_moveIterator);
             }
@@ -136,14 +198,14 @@ void MoveTreeManager::applyMove(
         {
             secondFileInit = 0;
             secondFileTarget = 3;
-            auto pSecondPiece = game.getBoardTile(secondFileInit, castleRow);
-            game.resetBoardTile(secondFileInit, castleRow);
-            game.setBoardTile(secondFileTarget, castleRow, pSecondPiece);
-            game.setBoardTile(2, castleRow, pSelectedPiece);
+            auto pSecondPiece = game.getBoardTile(secondFileInit, castleRank);
+            game.resetBoardTile(secondFileInit, castleRank);
+            game.setBoardTile(secondFileTarget, castleRank, pSecondPiece);
+            game.setBoardTile(2, castleRank, pSelectedPiece);
             game.setBoardTile(file, rank, pSelectedPiece);
             if (addToList_)
             {
-                coor2d target = {2, castleRow};
+                coor2d target = {2, castleRank};
                 move_->setTarget(target);
                 m_moves.insertNode(make_shared<Move>(*move_, pSecondPiece), m_moveIterator);
             }
@@ -185,8 +247,8 @@ void MoveTreeManager::applyMove(
 
             if (pSecondPieceOpt.has_value()) {
                 setSecondTransitioningPiece(
-                    pSecondPieceOpt.value(), secondFileInit, castleRow,
-                    secondFileTarget, castleRow
+                    pSecondPieceOpt.value(), secondFileInit, castleRank,
+                    secondFileTarget, castleRank
                 );
             }
 
@@ -198,7 +260,7 @@ void MoveTreeManager::applyMove(
         {
             // Enable rook sliding when user just castled
             setTransitioningPiece(
-                false, pSecondPieceOpt.value(), secondFileInit, castleRow, secondFileTarget, castleRow,
+                false, pSecondPieceOpt.value(), secondFileInit, castleRank, secondFileTarget, castleRank,
                 pCapturedPiece, capturedFile, capturedRank
             );
         }
@@ -218,7 +280,7 @@ void MoveTreeManager::undoMove(bool enableTransition_, vector<Arrow>& arrowList_
     int capturedFile = -1, capturedRank = -1;
     int secondFileInit = -1, secondFileTarget = -1;
 
-    const int castleRow = (m->getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0;
+    const int castleRank = (m->getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0;
     arrowList_ = m->getMoveArrows();
     // TODO smooth transition for castle
     switch (m->getMoveType())
@@ -244,18 +306,18 @@ void MoveTreeManager::undoMove(bool enableTransition_, vector<Arrow>& arrowList_
             secondFileTarget = 7;
             pSecondPiece = pCaptured;
             game.setKingAsFirstMovement();
-            game.resetBoardTile(secondFileInit, castleRow);
-            game.resetBoardTile(6, castleRow);
-            game.setBoardTile(secondFileTarget, castleRow, pSecondPiece);
+            game.resetBoardTile(secondFileInit, castleRank);
+            game.resetBoardTile(6, castleRank);
+            game.setBoardTile(secondFileTarget, castleRank, pSecondPiece);
             break;
         case MoveType::CASTLE_QUEENSIDE:
             secondFileInit = 3;
             secondFileTarget = 0;
             pSecondPiece = pCaptured;
             game.setKingAsFirstMovement();
-            game.resetBoardTile(secondFileInit, castleRow);
-            game.resetBoardTile(2, castleRow);
-            game.setBoardTile(secondFileTarget, castleRow, pSecondPiece);
+            game.resetBoardTile(secondFileInit, castleRank);
+            game.resetBoardTile(2, castleRank);
+            game.setBoardTile(secondFileTarget, castleRank, pSecondPiece);
             break;
         case MoveType::INIT_SPECIAL:
             game.resetBoardTile(file, rank);
@@ -279,8 +341,8 @@ void MoveTreeManager::undoMove(bool enableTransition_, vector<Arrow>& arrowList_
 
         if (pSecondPiece) {
             setSecondTransitioningPiece(
-                pSecondPiece, secondFileInit, castleRow,
-                secondFileTarget, castleRow
+                pSecondPiece, secondFileInit, castleRank,
+                secondFileTarget, castleRank
             );
         }
     }
@@ -316,3 +378,212 @@ void MoveTreeManager::setSecondTransitioningPiece(
     m_transitioningPiece.setSecondIncrement();
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+std::vector<std::string> MoveTreeManager::tokenizePGN(const std::string& pgn_) 
+{
+    if (pgn_.size() == 0) return {};
+    std::string processedPgn = pgn_;
+   
+    // Remove move numbers with three dots
+    for (size_t i = 3; i < processedPgn.size(); ++i) 
+    {
+        if (processedPgn[i] == '.' && 
+            processedPgn[i - 1] == '.' &&
+            processedPgn[i - 2] == '.' &&
+            std::isdigit(processedPgn[i - 3])) 
+        {
+            processedPgn.erase(i - 3, 4); 
+            i -= 3; 
+        }
+    }
+
+    // Remove move numbers with one dot
+    for (size_t i = 1; i < processedPgn.size(); ++i) 
+    {
+        if (processedPgn[i] == '.' && std::isdigit(processedPgn[i - 1])) 
+        {
+            processedPgn.erase(i - 1, 2); 
+            --i; 
+        }
+    }
+
+    // Add space before each right parenthesis
+    for (size_t i = 0; i < processedPgn.size(); ++i) 
+    {
+        if (processedPgn[i] == ')') 
+        {
+            processedPgn.insert(i, " ");
+            ++i; 
+        }
+    }
+
+    // Split by spaces
+    std::vector<std::string> tokens;
+    std::istringstream ss(processedPgn);
+    std::string token;
+    while (ss >> token) tokens.push_back(token);
+
+    return tokens;
+}
+
+void MoveTreeManager::parseAllTokens(
+    const std::vector<std::string>& tokens_, 
+    size_t& index_, 
+    int& moveCount_, 
+    std::stack<int>& undoStack_) 
+{
+    while (index_ < tokens_.size()) 
+    {
+        std::vector<Arrow> dummyArrows{};
+
+        const std::string& token = tokens_[index_++];
+
+        if (token == "(") 
+        {
+            goToPreviousMove(false, dummyArrows);
+            undoStack_.push(moveCount_);
+
+            // Reset the move count for the variation
+            moveCount_ = 0;
+            continue;
+        }
+
+        if (token == ")") 
+        {
+            // Get the number of moves to undo
+            int undoCount = undoStack_.top();
+            undoStack_.pop();
+
+            // Undo the moves in the current variation
+            for (size_t i = 0; i < moveCount_; ++i) 
+            {
+                std::vector<Arrow> dummyArrows{};
+                goToPreviousMove(false, dummyArrows);
+            }
+            goToNextMove(false, 0, dummyArrows);
+            moveCount_ = undoCount;
+            continue;
+        }
+
+        addMoveToPGNTree(token);
+        ++moveCount_;
+        //getMoves().printTree();
+    }
+}
+
+
+void MoveTreeManager::addMoveToPGNTree(const std::string& token_)
+{   
+    std::string moveToken = token_;
+
+    std::vector<Move> allPossibleMoves = game.getAllCurrentlyAvailableMoves();
+    std::vector<Move> actualPossibleMoves;
+
+    const bool isCastle = moveToken == "O-O" || moveToken == "O-O-O";
+    if (isCastle) {
+        auto castleMoveFilterFunc = [&moveToken](const Move& move_)
+        {
+            return (moveToken == "O-O" && move_.getMoveType() == MoveType::CASTLE_KINGSIDE) ||
+                   (moveToken == "O-O-O" && move_.getMoveType() == MoveType::CASTLE_QUEENSIDE);
+        };
+        std::copy_if(
+            allPossibleMoves.begin(), 
+            allPossibleMoves.end(), 
+            std::back_inserter(actualPossibleMoves),
+            castleMoveFilterFunc);
+
+        // There should be exactly one matching castle move in all posssible 
+        // moves, given a castling move token.
+        assert(actualPossibleMoves.size() == 1);
+    } else {
+        // Normal move, i.e., anything besides castling
+
+        // Flags for special conditions
+        const bool isCapture = moveToken.find('x') != std::string::npos;
+        const bool isCheck = moveToken.find('+') != std::string::npos;
+        const bool isCheckMate = moveToken.find('#') != std::string::npos;
+
+        auto [pgnTargetFile, pgnTargetRank] = getTargetFileAndRank(moveToken, isCapture, isCheck || isCheckMate);
+
+        // Determine piece type letter from PNG
+        const bool isPawnMove = moveToken.size() == 2 || std::islower(moveToken[0]);
+        char pngPieceTypeLetter = isPawnMove ? 'p' : moveToken[0];
+
+        // Determine the piece and source square
+        PieceType pngPieceType = pieceTypeletterToEnum(pngPieceTypeLetter);
+
+        Team currTeamTurn = game.getTurn();
+        auto normalMoveFilterFunc = 
+            [&pngPieceType, &currTeamTurn, &isCapture, &pgnTargetFile = pgnTargetFile, &pgnTargetRank = pgnTargetRank]
+            (const Move& move_)
+            {
+                const auto [moveTargetFile, moveTargetRank] =  move_.getTarget();
+                    // Transform to array-based coordinates
+                int pgnTargetFileInt = pgnTargetFile - 'a';
+                int pgnTargetRankInt = 8 - pgnTargetRank;
+
+                const bool preValidation = pngIsPossibleMove(move_, pngPieceType, currTeamTurn, isCapture);
+                const bool moveTargetSquareMatch = moveTargetFile == pgnTargetFileInt && moveTargetRank == pgnTargetRankInt;
+
+                return preValidation && moveTargetSquareMatch;
+            };
+        std::copy_if(
+            allPossibleMoves.begin(), 
+            allPossibleMoves.end(), 
+            std::back_inserter(actualPossibleMoves),
+            normalMoveFilterFunc);
+    }
+
+    // Every png token should match with at least one move from all currently available moves
+    assert(actualPossibleMoves.size() != 0);
+
+    // TODO treat edge cases for multiple moves available, for instance
+    // There could be 2 knights that can capture the same piece.
+
+    Move selectedMove = actualPossibleMoves[0];
+    const auto [moveInitialFile, moveInitialRank] =  selectedMove.getInit();
+    const auto [moveTargetFile, moveTargetRank] =  selectedMove.getTarget();
+    
+    auto pMove = game.applyMoveOnBoardTesting(
+        selectedMove.getMoveType(),
+        std::make_pair(moveTargetFile, moveTargetRank),
+        std::make_pair(moveInitialFile, moveInitialRank),
+        selectedMove.getSelectedPiece());
+
+    std::vector<Arrow> arrows;
+    addMove(pMove, arrows); 
+    game.updateBoardInfosAfterNewMove(selectedMove.getSelectedPiece(), pMove);
+}
+
+void MoveTreeManager::initializeMoveSequenceFromPNG(const std::string& pgn_)
+{
+    game.updateAllCurrentlyAvailableMoves();
+    // Tokenize the PGN string 
+    std::vector<std::string> tokens = tokenizePGN(pgn_);
+    if (tokens.size() == 0) return;
+
+    size_t index = 0;
+    int moveCount = 0;
+    std::stack<int> undoStack;
+    parseAllTokens(tokens, index, moveCount, undoStack);
+
+    for (const std::string& token : tokens) {
+        // Filter out non-move tokens
+        if (token.find('.') != std::string::npos) {}
+    }
+
+}

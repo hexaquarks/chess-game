@@ -25,6 +25,7 @@ public:
     std::shared_ptr<Piece>& getBoardTile(const std::pair<char, int>&);
     const std::shared_ptr<King>& getKing() const;
     Team getTurn() const { return m_turn; }
+    void setTurn(Team turn_) { m_turn = turn_; }
     void setIsKingChecked(bool isKingChecked_) { m_isKingChecked = isKingChecked_; }
     void setBoardTile(int, int, std::shared_ptr<Piece>&, bool = true);
     void resetBoardTile(int, int, bool = true);
@@ -33,8 +34,11 @@ public:
     const auto& getLastMovedPiece() const { return m_pLastMovedPiece; }
 
     // Utility functions
-    std::shared_ptr<Move> applyMoveOnBoard(const std::optional<Move>&, coor2d, coor2d, const std::shared_ptr<Piece>&, const std::vector<Arrow>&);
+    std::shared_ptr<Move> applyMoveOnBoard(MoveType, coor2d, coor2d, const std::shared_ptr<Piece>&, const std::vector<Arrow>&);
+    std::shared_ptr<Move> applyMoveOnBoardTesting(MoveType, coor2d, coor2d, const std::shared_ptr<Piece>&);    
     void updateBoardInfosAfterNewMove(const std::shared_ptr<Piece>&, const std::shared_ptr<Move>&);
+    void printBoard() const;
+
 
     std::optional<Move> findSelectedMove(const std::shared_ptr<Piece>&, int, int) const;
     std::vector<Move> possibleMovesFor(const std::shared_ptr<Piece>&);

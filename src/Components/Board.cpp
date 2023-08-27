@@ -135,22 +135,37 @@ Board::Board(const std::string& fen_)
 }
 
 std::shared_ptr<Move> Board::applyMoveOnBoard(
-    const std::optional<Move>& pSelectedMoveOpt_,
+    MoveType moveType_,
     coor2d currPos_,
     coor2d initialPos_,
     const std::shared_ptr<Piece>& pSelectedPiece_,
     const std::vector<Arrow>& arrows_)
 {
-    MoveType type = pSelectedMoveOpt_->getMoveType();
     auto pMove = std::make_shared<Move>(
         std::move(currPos_), 
         std::move(initialPos_), 
         pSelectedPiece_, 
-        type);
+        moveType_);
 
     pMove->setCapturedPiece(getLastMovedPiece());
     pMove->setMoveArrows(arrows_);
 
+    return pMove; 
+}
+
+std::shared_ptr<Move> Board::applyMoveOnBoardTesting(
+    MoveType moveType_,
+    coor2d currPos_,
+    coor2d initialPos_,
+    const std::shared_ptr<Piece>& pSelectedPiece_)
+{
+    auto pMove = std::make_shared<Move>(
+        std::move(currPos_), 
+        std::move(initialPos_), 
+        pSelectedPiece_, 
+        moveType_);
+
+    pMove->setCapturedPiece(getLastMovedPiece());
     return pMove; 
 }
 
@@ -300,3 +315,49 @@ std::optional<Move> Board::findSelectedMove(
     }
     return std::nullopt;
 }
+
+void Board::printBoard() const 
+{
+    std::cout << "==Current state of Board==\n";
+    for (int rank = 0; rank < 8; ++rank) 
+    {
+        std::cout << 8 - rank << ' ';
+        for (int file = 0; file < 8; ++file) 
+        {
+            auto piece = m_board[rank][file];
+            if (piece) 
+            {
+                char pieceChar = ' ';
+                switch (piece->getType()) {
+                    case PieceType::PAWN:
+                        pieceChar = 'P';
+                        break;
+                    case PieceType::ROOK:
+                        pieceChar = 'R';
+                        break;
+                    case PieceType::KNIGHT:
+                        pieceChar = 'N';
+                        break;
+                    case PieceType::BISHOP:
+                        pieceChar = 'B';
+                        break;
+                    case PieceType::KING:
+                        pieceChar = 'K';
+                        break;
+                    case PieceType::QUEEN:
+                        pieceChar = 'Q';
+                        break;
+                }
+
+                if (piece->getTeam() == Team::BLACK) 
+                {
+                    pieceChar = std::tolower(pieceChar);
+                }
+
+                std::cout << pieceChar << ' ';
+            } else std::cout << ". ";
+        }
+        std::cout << '\n';
+    }
+    std::cout << "  a b c d e f g h\n";
+};

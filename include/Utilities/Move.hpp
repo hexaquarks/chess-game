@@ -11,11 +11,14 @@ class Board;
 
 enum class MoveType { NORMAL, CASTLE_KINGSIDE, CASTLE_QUEENSIDE, ENPASSANT, NEWPIECE, CAPTURE, INIT_SPECIAL };
 
+typedef std::pair<int, char> coor2dChar;
+
 class Move
 {
 public:
     Move(const coor2d&&, const coor2d&, const std::shared_ptr<Piece>&, MoveType, const std::shared_ptr<Piece>&);
     Move(const coor2d&&, const coor2d&, const std::shared_ptr<Piece>&, MoveType);
+    //Move(const coor2dChar&&, const coor2dChar&, const std::shared_ptr<Piece>&, MoveType);
     Move(const Move&, const std::shared_ptr<Piece>&, const coor2d& = std::make_pair(-1, -1)); // Constructor for CAPTURE, EN PASSANT
     Move(const std::string&);
     Move() = default;
