@@ -31,7 +31,6 @@ BOOST_FIXTURE_TEST_SUITE(PGNToMoveTreeTests, PGNToMoveTreeFixture)
 
 BOOST_AUTO_TEST_CASE(TestEmptyPGN)
 {
-    //initBoard(testUtil::FEN_DEFAULT_POSITION);
     const std::string emptyPGN{""};
     m_manager.initializeMoveSequenceFromPNG(emptyPGN);
     const std::string expectedString{""};
@@ -56,11 +55,57 @@ BOOST_AUTO_TEST_CASE(TestNormalMainLineScotch)
     BOOST_CHECK_EQUAL(m_manager.getMoves().printTreeGet(), expectedString);
 }
 
-BOOST_AUTO_TEST_CASE(TestNormalMainLineScotchWithVariations)
+BOOST_AUTO_TEST_CASE(TestCheckAndCaptures)
 {
-    const std::string scotchClassicalPNGWithVariations = 
+    const std::string checkAndCapturesPGN = 
+        "1. e4 d5 2. exd5 f5 (2... e5 3. Qf3 (3. f3 Qh4+)) 3. Qh5+ g6";
+    m_manager.initializeMoveSequenceFromPNG(checkAndCapturesPGN);
+    const std::string expectedString = 
+        "===== Printing the move tree =====\n"
+        "(e,4)\n"
+        "+--- (d,5)\n"
+        "    +--- (d,5)\n"
+        "        +--- (f,5)\n"
+        "        |    +--- (h,5)\n"
+        "        |        +--- (g,6)\n"
+        "        +--- (e,5)\n"
+        "            +--- (f,3)\n"
+        "            +--- (f,3)\n"
+        "                +--- (h,4)\n";
+    
+    BOOST_CHECK_EQUAL(m_manager.getMoves().printTreeGet(), expectedString);
+}
+
+
+BOOST_AUTO_TEST_CASE(TestMultipleEndings)
+{
+    const std::string multipleEndingsPGN = 
+        "1. e4 e5 2. Nf3 (2. d4 exd4 3. c3 (3. Nf3 Nc6) "
+        "3... dxc3) (2. f4 d5) 2... Nf6";
+    m_manager.initializeMoveSequenceFromPNG(multipleEndingsPGN);
+    const std::string expectedString = 
+        "===== Printing the move tree =====\n"
+        "(e,4)\n"
+        "+--- (e,5)\n"
+        "    +--- (f,3)\n"
+        "    |    +--- (f,6)\n"
+        "    +--- (d,4)\n"
+        "    |    +--- (d,4)\n"
+        "    |        +--- (c,3)\n"
+        "    |        |    +--- (c,3)\n"
+        "    |        +--- (f,3)\n"
+        "    |            +--- (c,6)\n"
+        "    +--- (f,4)\n"
+        "        +--- (d,5)\n";
+    
+    BOOST_CHECK_EQUAL(m_manager.getMoves().printTreeGet(), expectedString);
+}
+
+BOOST_AUTO_TEST_CASE(TestRandomVariationWithSubvariations)
+{
+    const std::string randomPGN = 
         "1. e4 e5 2. Nf3 (2. Bc4 d6 (2... Nc6 3. Bd5) 3. Bd5) (2. Qh5 g6 3. Qxe5+) 2... f5";
-    m_manager.initializeMoveSequenceFromPNG(scotchClassicalPNGWithVariations);
+    m_manager.initializeMoveSequenceFromPNG(randomPGN);
     const std::string expectedString = 
         "===== Printing the move tree =====\n"
         "(e,4)\n"
@@ -80,40 +125,81 @@ BOOST_AUTO_TEST_CASE(TestNormalMainLineScotchWithVariations)
 
 }
 
-// BOOST_AUTO_TEST_CASE(TestNormalMainLineScotchWithVariations)
-// {
-//     const std::string scotchClassicalPNGWithVariations = 
-//         "1. e4 e5 2. Nf3 Nc6 3. d4 exd4 4. Nxd4 Bc5 (4... Nxd4 5. Qxd4) "
-//         "5. Be3 Qf6 6. c3 Nge7 7. Bc4 (7. g3 d5 (7... h5 8. h3) 8. Bg2) "
-//         "7... Ne5 8. Be2 Qg6";
-//     m_manager.initializeMoveSequenceFromPNG(scotchClassicalPNGWithVariations);
-//     const std::string expectedString = 
-//         "===== Printing the move tree =====\n"
-//         "(e,4)\n"
-//         "+--- (e,5)\n"
-//         "    +--- (f,3)\n"
-//         "        +--- (c,6)\n"
-//         "            +--- (d,4)\n"
-//         "                +--- (d,4)\n"
-//         "                    +--- (d,4)\n";
-    
-//     BOOST_CHECK_EQUAL(m_manager.getMoves().printTreeGet(), expectedString);
-// }
-
-BOOST_AUTO_TEST_CASE(TestX)
+BOOST_AUTO_TEST_CASE(TestKingsPawnWithSubvariations)
 {
-    //initBoard(testUtil::FEN_DEFAULT_POSITION);
-    const std::string anyPNG{"1. e4 e5 2. d4 (2. Nf3 Nc6 3. h3) (2. Nc3)"};
-    m_manager.initializeMoveSequenceFromPNG(anyPNG);
+    const std::string scotchClassicalPNGWithVariations = 
+        "1. e4 e5 2. Nf3 (2. Bc4 Nf6 (2... Nc6 3. Nf3 Bc5 "
+        "(3... Nf6 4. d3)) 3. d3) (2. f4 exf4 3. Nf3 (3. Nc3 Qh4+)) 2... Nc6";
+    m_manager.initializeMoveSequenceFromPNG(scotchClassicalPNGWithVariations);
     const std::string expectedString = 
         "===== Printing the move tree =====\n"
         "(e,4)\n"
         "+--- (e,5)\n"
-        "    +--- (d,4)\n"
         "    +--- (f,3)\n"
         "    |    +--- (c,6)\n"
-        "    |        +--- (h,3)\n"
-        "    +--- (c,3)\n";
+        "    +--- (c,4)\n"
+        "    |    +--- (f,6)\n"
+        "    |    |    +--- (d,3)\n"
+        "    |    +--- (c,6)\n"
+        "    |        +--- (f,3)\n"
+        "    |            +--- (c,5)\n"
+        "    |            +--- (f,6)\n"
+        "    |                +--- (d,3)\n"
+        "    +--- (f,4)\n"
+        "        +--- (f,4)\n"
+        "            +--- (f,3)\n"
+        "            +--- (c,3)\n"
+        "                +--- (h,4)\n";
+    
+    BOOST_CHECK_EQUAL(m_manager.getMoves().printTreeGet(), expectedString);
+}
+
+BOOST_AUTO_TEST_CASE(TestScandinavianWithSubvariations)
+{
+    const std::string scandiPGN = 
+        "1. e4 d5 2. exd5 (2. Nc3 d4 (2... dxe4 3. Nxe4)) "
+        "(2. e5 c5) 2... Qxd5 (2... Nf6 3. Bb5+ (3. d4 Nxd5))";
+    m_manager.initializeMoveSequenceFromPNG(scandiPGN);
+    const std::string expectedString = 
+        "===== Printing the move tree =====\n"
+        "(e,4)\n"
+        "+--- (d,5)\n"
+        "    +--- (d,5)\n"
+        "    |    +--- (d,5)\n"
+        "    |    +--- (f,6)\n"
+        "    |        +--- (b,5)\n"
+        "    |        +--- (d,4)\n"
+        "    |            +--- (d,5)\n"
+        "    +--- (c,3)\n"
+        "    |    +--- (d,4)\n"
+        "    |    +--- (e,4)\n"
+        "    |        +--- (e,4)\n"
+        "    +--- (e,5)\n"
+        "        +--- (c,5)\n";
+    
+    BOOST_CHECK_EQUAL(m_manager.getMoves().printTreeGet(), expectedString);
+}
+
+BOOST_AUTO_TEST_CASE(TestDeepNestedSubvariations)
+{
+    const std::string deepNestedPGN = 
+        "1. e4 e5 (1... f5 2. exf5 (2. e5 e6 "
+        "(2... d6 3. e6 (3. Bd3 d5 (3... c6))))) 2. Bc4";
+    m_manager.initializeMoveSequenceFromPNG(deepNestedPGN);
+    const std::string expectedString = 
+        "===== Printing the move tree =====\n"
+        "(e,4)\n"
+        "+--- (e,5)\n"
+        "|    +--- (c,4)\n"
+        "+--- (f,5)\n"
+        "    +--- (f,5)\n"
+        "    +--- (e,5)\n"
+        "        +--- (e,6)\n"
+        "        +--- (d,6)\n"
+        "            +--- (e,6)\n"
+        "            +--- (d,3)\n"
+        "                +--- (d,5)\n"
+        "                +--- (c,6)\n";
     
     BOOST_CHECK_EQUAL(m_manager.getMoves().printTreeGet(), expectedString);
 }

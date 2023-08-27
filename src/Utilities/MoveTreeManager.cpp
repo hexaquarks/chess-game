@@ -9,6 +9,28 @@
 
 namespace 
 {
+    std::pair<char, int> getTargetFileAndRank(
+        const std::string& move_, 
+        bool isCapture_, 
+        bool isCheckOrCheckMate_) 
+    {
+        size_t targetFileIndex = 0;
+        size_t targetRankIndex = 0;
+
+        if (isCapture_) {
+            targetFileIndex = move_.find('x') + 1;
+            targetRankIndex = move_.find('x') + 2;
+        } else if (isCheckOrCheckMate_) {
+            targetFileIndex = move_.size() - 3;
+            targetRankIndex = move_.size() - 2;
+        } else {
+            targetFileIndex = move_.size() - 2;
+            targetRankIndex = move_.size() - 1;
+        }
+
+        return std::make_pair(move_[targetFileIndex], move_[targetRankIndex] - '0');
+    }
+
     bool pngIsPossibleMove(
         const Move& possibleMove_, 
         PieceType pieceType_, 
@@ -19,7 +41,6 @@ namespace
         // Piece should not be nullptr. Every move has a piece assocaited
         assert(pMovePiece); 
 
-        //(isCapture_ && (possibleMove_.getCapturedPiece() == nullptr))
         return (pMovePiece->getType() == pieceType_ && 
                 pMovePiece->getTeam() == currTeamTurn_ );
     }
@@ -484,64 +505,78 @@ void MoveTreeManager::parseAllTokens(
 
 void MoveTreeManager::addMoveToPGNTree(const std::string& token_)
 {   
-    std::string move = token_;;
-    int temp =  0;
-    
-    std::cout << "trying to add token : " << token_ << std::endl;;
+    std::string moveToken = token_;
+    std::cout << "trying to add token : " << token_ << std::endl;
 
-    const bool isPawnMove = move.size() == 2 || std::islower(move[0]);
-
-    // Determine if it's a capture
-    bool isCapture = move.find('x') != std::string::npos;
-
-    // Extract destination square
-    char pgnTargetFile = isCapture ? move[move.find('x') + 1] : move[move.size() - 2];
-    int pgnTargetRank = isCapture ? move[move.find('x') + 2] - '0' : move[move.size() - 1] - '0';
-
-    // Determine piece type from PNG
-    char pngPieceTypeLetter = isPawnMove ? 'p' : move[0];
-
-    // Determine the piece and source square
-    //MoveType moveType = MoveType::NORMAL;
-    PieceType pngPieceType = pieceTypeletterToEnum(pngPieceTypeLetter);
-
-    auto allPossibleMoves = game.getAllCurrentlyAvailableMoves();
-    Team currTeamTurn = game.getTurn();
-    auto moveFilterFunc = [&pngPieceType, &currTeamTurn, &isCapture, &pgnTargetFile, &pgnTargetRank](const Move& move_)
-    {
-        const auto [moveTargetFile, moveTargetRank] =  move_.getTarget();
-            // Transform to array-based coordinates
-        int pgnTargetFileInt = pgnTargetFile - 'a';
-        int pgnTargetRankInt = 8 - pgnTargetRank;
-
-        const bool preValidation = pngIsPossibleMove(move_, pngPieceType, currTeamTurn, isCapture);
-        const bool moveTargetSquareMatch = moveTargetFile == pgnTargetFileInt && moveTargetRank == pgnTargetRankInt;
-
-        return preValidation && moveTargetSquareMatch;
-    };
-    
+    std::vector<Move> allPossibleMoves = game.getAllCurrentlyAvailableMoves();
     std::vector<Move> actualPossibleMoves;
-    std::copy_if(
-        allPossibleMoves.begin(), 
-        allPossibleMoves.end(), 
-        std::back_inserter(actualPossibleMoves),
-        moveFilterFunc);
+
+    const bool isCastle = moveToken == "O-O" || moveToken == "O-O-O";
+    if (isCastle) {
+        auto castleMoveFilterFunc = [&moveToken](const Move& move_)
+        {
+            return (moveToken == "O-O" && move_.getMoveType() == MoveType::CASTLE_KINGSIDE) ||
+                   (moveToken == "O-O-O" && move_.getMoveType() == MoveType::CASTLE_QUEENSIDE);
+        };
+        std::copy_if(
+            allPossibleMoves.begin(), 
+            allPossibleMoves.end(), 
+            std::back_inserter(actualPossibleMoves),
+            castleMoveFilterFunc);
+
+        // There should be exactly one matching castle move in all posssible 
+        // moves, given a castling move token.
+        assert(actualPossibleMoves.size() == 1);
+    } else {
+        // Normal move, i.e., anything besides castling
+
+        // Flags for special conditions
+        const bool isCapture = moveToken.find('x') != std::string::npos;
+        const bool isCheck = moveToken.find('+') != std::string::npos;
+        const bool isCheckMate = moveToken.find('#') != std::string::npos;
+
+        auto [pgnTargetFile, pgnTargetRank] = getTargetFileAndRank(moveToken, isCapture, isCheck || isCheckMate);
+
+        // Determine piece type letter from PNG
+        const bool isPawnMove = moveToken.size() == 2 || std::islower(moveToken[0]);
+        char pngPieceTypeLetter = isPawnMove ? 'p' : moveToken[0];
+
+        // Determine the piece and source square
+        PieceType pngPieceType = pieceTypeletterToEnum(pngPieceTypeLetter);
+
+        Team currTeamTurn = game.getTurn();
+        auto normalMoveFilterFunc = 
+            [&pngPieceType, &currTeamTurn, &isCapture, &pgnTargetFile = pgnTargetFile, &pgnTargetRank = pgnTargetRank]
+            (const Move& move_)
+            {
+                const auto [moveTargetFile, moveTargetRank] =  move_.getTarget();
+                    // Transform to array-based coordinates
+                int pgnTargetFileInt = pgnTargetFile - 'a';
+                int pgnTargetRankInt = 8 - pgnTargetRank;
+
+                const bool preValidation = pngIsPossibleMove(move_, pngPieceType, currTeamTurn, isCapture);
+                const bool moveTargetSquareMatch = moveTargetFile == pgnTargetFileInt && moveTargetRank == pgnTargetRankInt;
+
+                return preValidation && moveTargetSquareMatch;
+            };
+        std::copy_if(
+            allPossibleMoves.begin(), 
+            allPossibleMoves.end(), 
+            std::back_inserter(actualPossibleMoves),
+            normalMoveFilterFunc);
+    }
 
     std::cout << "there are " << actualPossibleMoves.size() << " moves found from initially " << allPossibleMoves.size() << std::endl;
     // Every png token should match with at least one move from all currently available moves
     assert(actualPossibleMoves.size() != 0);
 
-    // TODO treat edge cases for multiple moves available
+    // TODO treat edge cases for multiple moves available, for instance
+    // There could be 2 knights that can capture the same piece.
 
-    // establish MoveType
     Move selectedMove = actualPossibleMoves[0];
     const auto [moveInitialFile, moveInitialRank] =  selectedMove.getInit();
     const auto [moveTargetFile, moveTargetRank] =  selectedMove.getTarget();
     
-    // Apply the move on the board and update the move tree
-    if (token_ == "Nxd4") {
-        cout  << ", " << moveTargetFile << ", " << moveTargetRank << endl;
-    }
     auto pMove = game.applyMoveOnBoardTesting(
         selectedMove.getMoveType(),
         std::make_pair(moveTargetFile, moveTargetRank),
