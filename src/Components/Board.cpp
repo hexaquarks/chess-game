@@ -315,3 +315,49 @@ std::optional<Move> Board::findSelectedMove(
     }
     return std::nullopt;
 }
+
+void Board::printBoard() const 
+{
+    std::cout << "==Current state of Board==\n";
+    for (int rank = 0; rank < 8; ++rank) 
+    {
+        std::cout << 8 - rank << ' ';
+        for (int file = 0; file < 8; ++file) 
+        {
+            auto piece = m_board[rank][file];
+            if (piece) 
+            {
+                char pieceChar = ' ';
+                switch (piece->getType()) {
+                    case PieceType::PAWN:
+                        pieceChar = 'P';
+                        break;
+                    case PieceType::ROOK:
+                        pieceChar = 'R';
+                        break;
+                    case PieceType::KNIGHT:
+                        pieceChar = 'N';
+                        break;
+                    case PieceType::BISHOP:
+                        pieceChar = 'B';
+                        break;
+                    case PieceType::KING:
+                        pieceChar = 'K';
+                        break;
+                    case PieceType::QUEEN:
+                        pieceChar = 'Q';
+                        break;
+                }
+
+                if (piece->getTeam() == Team::BLACK) 
+                {
+                    pieceChar = std::tolower(pieceChar);
+                }
+
+                std::cout << pieceChar << ' ';
+            } else std::cout << ". ";
+        }
+        std::cout << '\n';
+    }
+    std::cout << "  a b c d e f g h\n";
+};

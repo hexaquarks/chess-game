@@ -37,6 +37,8 @@ public:
     std::shared_ptr<Move> applyMoveOnBoard(MoveType, coor2d, coor2d, const std::shared_ptr<Piece>&, const std::vector<Arrow>&);
     std::shared_ptr<Move> applyMoveOnBoardTesting(MoveType, coor2d, coor2d, const std::shared_ptr<Piece>&);    
     void updateBoardInfosAfterNewMove(const std::shared_ptr<Piece>&, const std::shared_ptr<Move>&);
+    void printBoard() const;
+
 
     std::optional<Move> findSelectedMove(const std::shared_ptr<Piece>&, int, int) const;
     std::vector<Move> possibleMovesFor(const std::shared_ptr<Piece>&);
