@@ -41,4 +41,16 @@ BOOST_AUTO_TEST_CASE(TestBlackInitialNumberOfMovesAvailable)
     moveTreeManager.initializeMoveSequenceFromPNG(myPNG);
 }
 
+BOOST_AUTO_TEST_CASE(TestSimple)
+{
+    MoveTreeManager moveTreeManager{m_board};
+    const std::string PGNString = "1. e4 e5 2. d4 (2. Nf3 Nc6 3. h3) (2. Nc3)";
+    moveTreeManager.initializeMoveSequenceFromPNG(PGNString);
+
+    const MoveTree& moveTree = moveTreeManager.getMoves();
+    MoveTreeDisplayHandler handler{moveTree};
+    std::vector<MoveInfo> actualMovesInfo = handler.generateMoveInfo();
+    printMoveInfos(actualMovesInfo);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

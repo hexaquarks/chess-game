@@ -27,8 +27,8 @@ namespace
     }
 }
 
-MoveTreeDisplayHandler::MoveTreeDisplayHandler(MoveTree& tree) 
-: m_tree(tree) 
+MoveTreeDisplayHandler::MoveTreeDisplayHandler(const MoveTree& tree_) 
+: m_tree(tree_) 
 {
 }
 
@@ -126,4 +126,31 @@ std::vector<MoveInfo> MoveTreeDisplayHandler::generateMoveInfo()
     
     //printMoves(m_moveInfos);
     return m_moveInfos;
+}
+
+void printMoveInfos(const std::vector<MoveInfo>& moveInfos_) 
+{
+    int currentRow = -1; 
+
+    for (const auto& info : moveInfos_) 
+    {
+        if (info.m_row != currentRow) 
+        {
+            std::cout << std::endl;
+            currentRow = info.m_row;
+        }
+
+        for (int i = 0; i < info.m_indentLevel; ++i) {
+            std::cout << " ";
+        }
+
+        if (info.m_letterPrefix.has_value()) {
+            std::cout << "+--- " << info.m_letterPrefix.value() << " ";
+        }
+
+        std::cout << info.m_content;
+
+        if (info.m_indentLevel == 0) std::cout << " ";
+    }
+    std::cout << std::endl;
 }
