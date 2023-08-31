@@ -27,8 +27,8 @@ namespace
     }
 }
 
-MoveTreeDisplayHandler::MoveTreeDisplayHandler(MoveTree& tree) 
-: m_tree(tree) 
+MoveTreeDisplayHandler::MoveTreeDisplayHandler(const MoveTree& tree_) 
+: m_tree(tree_) 
 {
 }
 
@@ -100,10 +100,11 @@ void MoveTreeDisplayHandler::processNodeRec(
 
         // after the loop, goToGrandChild(0) and increase row if 
         // main line stretches after.
-        if (iter_.goToGrandChild(0))
+        MoveTree::Iterator temp_iter = iter_; 
+        if (temp_iter.goToGrandChild(0))
         {
             ++row_;
-            processNodeRec(iter_, level_, row_);
+            processNodeRec(temp_iter, level_, row_);
         }
     }
 }
@@ -126,4 +127,72 @@ std::vector<MoveInfo> MoveTreeDisplayHandler::generateMoveInfo()
     
     //printMoves(m_moveInfos);
     return m_moveInfos;
+}
+
+void printMoveInfos(const std::vector<MoveInfo>& moveInfos_) 
+{
+    int currentRow = -1; 
+
+    for (const auto& info : moveInfos_) 
+    {
+        if (info.m_row != currentRow) 
+        {
+            std::cout << std::endl;
+            currentRow = info.m_row;
+        }
+
+        for (int i = 0; i < info.m_indentLevel; ++i) {
+            std::cout << " ";
+        }
+
+        if (info.m_letterPrefix.has_value()) {
+            std::cout << "+--- " << info.m_letterPrefix.value() << " ";
+        }
+
+        std::cout << info.m_content;
+
+        if (info.m_indentLevel == 0) std::cout << " ";
+    }
+    std::cout << std::endl;
+}
+
+std::string printMoveInfos(const std::vector<MoveInfo>& moveInfos_, bool printToConsole) 
+{
+    std::ostringstream oss;
+    int currentRow = -1; 
+    bool isFirstMoveInSubvariation = true;
+
+    for (const auto& info : moveInfos_) 
+    {
+        if (info.m_row != currentRow) 
+        {
+            if (currentRow != -1) oss << std::endl;
+            currentRow = info.m_row;
+            isFirstMoveInSubvariation = true;
+        }
+
+        if (isFirstMoveInSubvariation) {
+            for (int i = 0; i < 4 * (info.m_indentLevel - 1); ++i) {
+                oss << " ";
+            }
+        } else oss << " ";
+
+        if (info.m_letterPrefix.has_value()) {
+            oss << "+--- " << info.m_letterPrefix.value() << " ";
+        }
+        isFirstMoveInSubvariation = false;
+
+        oss << info.m_content;
+    }
+
+    std::string result = oss.str();
+    if (printToConsole) std::cout << result;
+
+    return result;
+}
+
+
+std::string printMoveInfosGet(const std::vector<MoveInfo>& moveInfos_)
+{
+    return printMoveInfos(moveInfos_, false);
 }
