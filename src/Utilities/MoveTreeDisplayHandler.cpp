@@ -154,3 +154,44 @@ void printMoveInfos(const std::vector<MoveInfo>& moveInfos_)
     }
     std::cout << std::endl;
 }
+
+std::string printMoveInfos(const std::vector<MoveInfo>& moveInfos_, bool printToConsole) 
+{
+    std::ostringstream oss;
+    int currentRow = -1; 
+    bool isFirstMoveInSubvariation = true;
+
+    for (const auto& info : moveInfos_) 
+    {
+        if (info.m_row != currentRow) 
+        {
+            if (currentRow != -1) oss << std::endl;
+            currentRow = info.m_row;
+            isFirstMoveInSubvariation = true;
+        }
+
+        if (isFirstMoveInSubvariation) {
+            for (int i = 0; i < 4 * (info.m_indentLevel - 1); ++i) {
+                oss << " ";
+            }
+        } else oss << " ";
+
+        if (info.m_letterPrefix.has_value()) {
+            oss << "+--- " << info.m_letterPrefix.value() << " ";
+        }
+        isFirstMoveInSubvariation = false;
+
+        oss << info.m_content;
+    }
+
+    std::string result = oss.str();
+    if (printToConsole) std::cout << result;
+
+    return result;
+}
+
+
+std::string printMoveInfosGet(const std::vector<MoveInfo>& moveInfos_)
+{
+    return printMoveInfos(moveInfos_, false);
+}

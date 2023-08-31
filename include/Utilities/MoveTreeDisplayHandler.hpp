@@ -29,4 +29,7 @@ private:
     void processNode(MoveTree::Iterator& iter_, int level_, int& row_, bool isNewLineSubvariation_ = false);
 };
 
-void printMoveInfos(const std::vector<MoveInfo>& moveInfos_);
+std::string printMoveInfos(
+    const std::vector<MoveInfo>& moveInfos_, 
+    bool printToConsole = true);
+std::string printMoveInfosGet(const std::vector<MoveInfo>& moveInfos_);
