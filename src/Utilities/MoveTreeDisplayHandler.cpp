@@ -100,10 +100,11 @@ void MoveTreeDisplayHandler::processNodeRec(
 
         // after the loop, goToGrandChild(0) and increase row if 
         // main line stretches after.
-        if (iter_.goToGrandChild(0))
+        MoveTree::Iterator temp_iter = iter_;
+        if (temp_iter.goToGrandChild(0))
         {
             ++row_;
-            processNodeRec(iter_, level_, row_);
+            processNodeRec(temp_iter, level_, row_); // Use the copy
         }
     }
 }
@@ -161,6 +162,8 @@ std::string printMoveInfos(const std::vector<MoveInfo>& moveInfos_, bool printTo
     int currentRow = -1; 
     bool isFirstMoveInSubvariation = true;
 
+    oss << "===== Printing the generated moves info =====" << std::endl;
+    
     for (const auto& info : moveInfos_) 
     {
         if (info.m_row != currentRow) 
@@ -170,13 +173,16 @@ std::string printMoveInfos(const std::vector<MoveInfo>& moveInfos_, bool printTo
             isFirstMoveInSubvariation = true;
         }
 
-        if (isFirstMoveInSubvariation) {
-            for (int i = 0; i < 4 * (info.m_indentLevel - 1); ++i) {
+        if (isFirstMoveInSubvariation) 
+        {
+            for (int i = 0; i < 4 * (info.m_indentLevel - info.m_letterPrefix.has_value()); ++i) 
+            {
                 oss << " ";
             }
         } else oss << " ";
 
-        if (info.m_letterPrefix.has_value()) {
+        if (info.m_letterPrefix.has_value()) 
+        {
             oss << "+--- " << info.m_letterPrefix.value() << " ";
         }
         isFirstMoveInSubvariation = false;
@@ -193,5 +199,6 @@ std::string printMoveInfos(const std::vector<MoveInfo>& moveInfos_, bool printTo
 
 std::string printMoveInfosGet(const std::vector<MoveInfo>& moveInfos_)
 {
+    if (moveInfos_.size() == 0) return "";
     return printMoveInfos(moveInfos_, false);
 }
