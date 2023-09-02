@@ -421,8 +421,11 @@ std::vector<std::string> MoveTreeManager::tokenizePGN(const std::string& pgn_)
             processedPgn[i - 2] == '.' &&
             std::isdigit(processedPgn[i - 3])) 
         {
-            processedPgn.erase(i - 3, 4); 
-            i -= 3; 
+            int k = 0;
+            if (i - 4 > 0 && std::isdigit(processedPgn[i - 4])) ++k;
+            if (i - 5 > 0 && std::isdigit(processedPgn[i - 5])) ++k;
+            processedPgn.erase(i - 3 - k, 4 + k); 
+            i -= (3 + k); 
         }
     }
 
@@ -431,8 +434,12 @@ std::vector<std::string> MoveTreeManager::tokenizePGN(const std::string& pgn_)
     {
         if (processedPgn[i] == '.' && std::isdigit(processedPgn[i - 1])) 
         {
-            processedPgn.erase(i - 1, 2); 
-            --i; 
+             int k = 0;
+            if (i - 2 > 0 && std::isdigit(processedPgn[i - 2])) ++k;
+            if (i - 3 > 0 && std::isdigit(processedPgn[i - 3])) ++k;
+            processedPgn.erase(i - 1 - k, 2 + k); 
+            i -= (1 + k); 
+
         }
     }
 

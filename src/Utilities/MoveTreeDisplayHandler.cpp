@@ -162,6 +162,8 @@ std::string printMoveInfos(const std::vector<MoveInfo>& moveInfos_, bool printTo
     int currentRow = -1; 
     bool isFirstMoveInSubvariation = true;
 
+    oss << "===== Printing the generated moves info =====" << std::endl;
+    
     for (const auto& info : moveInfos_) 
     {
         if (info.m_row != currentRow) 
@@ -171,14 +173,17 @@ std::string printMoveInfos(const std::vector<MoveInfo>& moveInfos_, bool printTo
             isFirstMoveInSubvariation = true;
         }
 
-        if (isFirstMoveInSubvariation) {
-            for (int i = 0; i < 4 * (info.m_indentLevel - 1); ++i) {
+        if (isFirstMoveInSubvariation) 
+        {
+            for (int i = 0; i < 4 * (info.m_indentLevel - info.m_letterPrefix.has_value()); ++i) 
+            {
                 oss << " ";
             }
         } else oss << " ";
 
-        if (info.m_letterPrefix.has_value()) {
-            oss << "+--- " << info.m_letterPrefix.value() << " ";
+        if (info.m_letterPrefix.has_value()) 
+        {
+            oss << "    " << info.m_letterPrefix.value() << " ";
         }
         isFirstMoveInSubvariation = false;
 
@@ -194,5 +199,6 @@ std::string printMoveInfos(const std::vector<MoveInfo>& moveInfos_, bool printTo
 
 std::string printMoveInfosGet(const std::vector<MoveInfo>& moveInfos_)
 {
+    if (moveInfos_.size() == 0) return "";
     return printMoveInfos(moveInfos_, false);
 }
