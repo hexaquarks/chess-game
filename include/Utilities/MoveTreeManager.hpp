@@ -32,6 +32,7 @@ public:
     MoveTree::Iterator getNewIterator() { return m_moves.begin(); }
     MoveTree::Iterator& getIterator() { return m_moveIterator; }
     const MoveTree& getMoves() const { return m_moves; }
+    Board& getBoard() { return m_game; }
     MoveTreeDisplayHandler& getMoveTreeDisplayHandler() { return m_moveTreeDisplayHandler; }
     PieceTransition& getTransitioningPiece() { return m_transitioningPiece; }
     int getIteratorIndex() { return 0; }
@@ -46,13 +47,6 @@ public:
 
     bool isTransitionningPiece() { return m_transitioningPiece.getIsTransitioning(); }
     void setTransitioningPieceArrived() { m_transitioningPiece.setHasArrived(); }
-
-    void initializeMoveSequenceFromPNG(const std::string&);
-
-    std::vector<std::string> tokenizePGN(const std::string& pgn);
-    void parseAllTokens(const std::vector<std::string>& tokens, size_t& index, int& moveCount, std::stack<int>& undoStack);
-    void addMoveToPGNTree(const std::string& token_);
-
 
 private: 
     MoveTree m_moves;
