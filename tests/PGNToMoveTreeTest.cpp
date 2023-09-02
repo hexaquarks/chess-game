@@ -14,6 +14,7 @@ namespace
     {
         Board m_board;
         MoveTreeManager m_manager{m_board};
+        PGNParser m_PGNParser{m_manager};
         
         PGNToMoveTreeFixture() = default;
         ~PGNToMoveTreeFixture() = default;
@@ -25,7 +26,7 @@ BOOST_FIXTURE_TEST_SUITE(PGNToMoveTreeTests, PGNToMoveTreeFixture)
 BOOST_AUTO_TEST_CASE(TestEmptyPGN)
 {
     const std::string emptyPGN{""};
-    m_manager.initializeMoveSequenceFromPNG(emptyPGN);
+    m_PGNParser.initializeMoveSequenceFromPNG(emptyPGN);
     const std::string expectedString{""};
     
     BOOST_CHECK_EQUAL(m_manager.getMoves().printTreeGet(), expectedString);
@@ -34,7 +35,7 @@ BOOST_AUTO_TEST_CASE(TestEmptyPGN)
 BOOST_AUTO_TEST_CASE(TestNormalMainLineScotch)
 {
     const std::string scotchClassicalPNG{"1. e4 e5 2. Nf3 Nc6 3. d4 exd4 4. Nxd4"};
-    m_manager.initializeMoveSequenceFromPNG(scotchClassicalPNG);
+    m_PGNParser.initializeMoveSequenceFromPNG(scotchClassicalPNG);
     const std::string expectedString = 
         "===== Printing the move tree =====\n"
         "(e,4)\n"
@@ -52,7 +53,7 @@ BOOST_AUTO_TEST_CASE(TestCastleKingSide)
 {
     const std::string castleKingSidePGN = 
         "1. e4 e5 2. Bc4 Bc5 3. Nf3 Nf6 4. O-O O-O 5. Nxe5";
-    m_manager.initializeMoveSequenceFromPNG(castleKingSidePGN);
+    m_PGNParser.initializeMoveSequenceFromPNG(castleKingSidePGN);
     const std::string expectedString = 
         "===== Printing the move tree =====\n"
         "(e,4)\n"
@@ -73,7 +74,7 @@ BOOST_AUTO_TEST_CASE(TestCastleQueenSide)
     const std::string castleQueenSidePGN = 
         "1. b3 b6 2. Bb2 Bb7 3. Nc3 Nc6 4. d4 d6 "
         "5. Qd3 Qd7 6. O-O-O O-O-O 7. d5";
-    m_manager.initializeMoveSequenceFromPNG(castleQueenSidePGN);
+    m_PGNParser.initializeMoveSequenceFromPNG(castleQueenSidePGN);
     const std::string expectedString = 
         "===== Printing the move tree =====\n"
         "(b,3)\n"
@@ -97,7 +98,7 @@ BOOST_AUTO_TEST_CASE(TestCheckAndCaptures)
 {
     const std::string checkAndCapturesPGN = 
         "1. e4 d5 2. exd5 f5 (2... e5 3. Qf3 (3. f3 Qh4+)) 3. Qh5+ g6";
-    m_manager.initializeMoveSequenceFromPNG(checkAndCapturesPGN);
+    m_PGNParser.initializeMoveSequenceFromPNG(checkAndCapturesPGN);
     const std::string expectedString = 
         "===== Printing the move tree =====\n"
         "(e,4)\n"
@@ -120,7 +121,7 @@ BOOST_AUTO_TEST_CASE(TestMultipleEndings)
     const std::string multipleEndingsPGN = 
         "1. e4 e5 2. Nf3 (2. d4 exd4 3. c3 (3. Nf3 Nc6) "
         "3... dxc3) (2. f4 d5) 2... Nf6";
-    m_manager.initializeMoveSequenceFromPNG(multipleEndingsPGN);
+    m_PGNParser.initializeMoveSequenceFromPNG(multipleEndingsPGN);
     const std::string expectedString = 
         "===== Printing the move tree =====\n"
         "(e,4)\n"
@@ -143,7 +144,7 @@ BOOST_AUTO_TEST_CASE(TestRandomVariationWithSubvariations)
 {
     const std::string randomPGN = 
         "1. e4 e5 2. Nf3 (2. Bc4 d6 (2... Nc6 3. Bd5) 3. Bd5) (2. Qh5 g6 3. Qxe5+) 2... f5";
-    m_manager.initializeMoveSequenceFromPNG(randomPGN);
+    m_PGNParser.initializeMoveSequenceFromPNG(randomPGN);
     const std::string expectedString = 
         "===== Printing the move tree =====\n"
         "(e,4)\n"
@@ -168,7 +169,7 @@ BOOST_AUTO_TEST_CASE(TestKingsPawnWithSubvariations)
     const std::string scotchClassicalPNGWithVariations = 
         "1. e4 e5 2. Nf3 (2. Bc4 Nf6 (2... Nc6 3. Nf3 Bc5 "
         "(3... Nf6 4. d3)) 3. d3) (2. f4 exf4 3. Nf3 (3. Nc3 Qh4+)) 2... Nc6";
-    m_manager.initializeMoveSequenceFromPNG(scotchClassicalPNGWithVariations);
+    m_PGNParser.initializeMoveSequenceFromPNG(scotchClassicalPNGWithVariations);
     const std::string expectedString = 
         "===== Printing the move tree =====\n"
         "(e,4)\n"
@@ -197,7 +198,7 @@ BOOST_AUTO_TEST_CASE(TestScandinavianWithSubvariations)
     const std::string scandiPGN = 
         "1. e4 d5 2. exd5 (2. Nc3 d4 (2... dxe4 3. Nxe4)) "
         "(2. e5 c5) 2... Qxd5 (2... Nf6 3. Bb5+ (3. d4 Nxd5))";
-    m_manager.initializeMoveSequenceFromPNG(scandiPGN);
+    m_PGNParser.initializeMoveSequenceFromPNG(scandiPGN);
     const std::string expectedString = 
         "===== Printing the move tree =====\n"
         "(e,4)\n"
@@ -223,7 +224,7 @@ BOOST_AUTO_TEST_CASE(TestDeepNestedSubvariations)
     const std::string deepNestedPGN = 
         "1. e4 e5 (1... f5 2. exf5 (2. e5 e6 "
         "(2... d6 3. e6 (3. Bd3 d5 (3... c6))))) 2. Bc4";
-    m_manager.initializeMoveSequenceFromPNG(deepNestedPGN);
+    m_PGNParser.initializeMoveSequenceFromPNG(deepNestedPGN);
     const std::string expectedString = 
         "===== Printing the move tree =====\n"
         "(e,4)\n"
@@ -244,11 +245,10 @@ BOOST_AUTO_TEST_CASE(TestDeepNestedSubvariations)
 
 BOOST_AUTO_TEST_CASE(TestBlackInitialNumberOfMovesAvailable)
 {
-    MoveTreeManager moveTreeManager{m_board};
     const std::string myPNG = "1. e4 e5 2. d4 (2. Nf3 Nc6 3. h3) (2. Nc3)";
-    moveTreeManager.initializeMoveSequenceFromPNG(myPNG);
-
+    m_PGNParser.initializeMoveSequenceFromPNG(myPNG);
     const std::string expectedString = "";
+
     BOOST_CHECK_EQUAL(m_manager.getMoves().printTreeGet(), expectedString);
 }
 

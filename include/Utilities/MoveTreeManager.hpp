@@ -32,7 +32,7 @@ public:
     MoveTree::Iterator getNewIterator() { return m_moves.begin(); }
     MoveTree::Iterator& getIterator() { return m_moveIterator; }
     const MoveTree& getMoves() const { return m_moves; }
-    Board& getBoard() { return m_game; }
+    Board& getBoard() { return m_board; }
     MoveTreeDisplayHandler& getMoveTreeDisplayHandler() { return m_moveTreeDisplayHandler; }
     PieceTransition& getTransitioningPiece() { return m_transitioningPiece; }
     int getIteratorIndex() { return 0; }
@@ -52,7 +52,7 @@ private:
     MoveTree m_moves;
     MoveTreeDisplayHandler m_moveTreeDisplayHandler{m_moves};
     MoveTree::Iterator m_moveIterator = m_moves.begin();
-    Board& game;
+    Board& m_board;
     PieceTransition m_transitioningPiece;
 
     std::function<void(std::shared_ptr<Piece>&, const coor2d&, bool)> m_transitionPieceCallback;
