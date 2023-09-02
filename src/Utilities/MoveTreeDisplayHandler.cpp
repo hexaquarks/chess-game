@@ -183,7 +183,7 @@ std::string printMoveInfos(const std::vector<MoveInfo>& moveInfos_, bool printTo
 
         if (info.m_letterPrefix.has_value()) 
         {
-            oss << "+--- " << info.m_letterPrefix.value() << " ";
+            oss << "    " << info.m_letterPrefix.value() << " ";
         }
         isFirstMoveInSubvariation = false;
 
