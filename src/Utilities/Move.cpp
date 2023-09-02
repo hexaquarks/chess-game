@@ -132,7 +132,7 @@ std::string parseMoveHelper(const Move& move_, int moveNumber_, bool showNumber_
             // TODO fix promotion
             if (moveType == MoveType::CAPTURE || moveType == MoveType::ENPASSANT)
             {
-                return text + (static_cast<char>('a' + move_.getInit().second)) + "x" + letterCoordString;
+                return text + (static_cast<char>('a' + move_.getInit().first)) + "x" + letterCoordString;
             } break;
         case PieceType::KNIGHT: text += "N"; break;
         case PieceType::BISHOP: text += "B"; break;
