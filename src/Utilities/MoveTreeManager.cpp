@@ -512,6 +512,8 @@ void MoveTreeManager::addMoveToPGNTree(const std::string& token_)
 {   
     std::string moveToken = token_;
 
+    std::cout <<"treating token : " << token_ << std::endl;
+
     std::vector<Move> allPossibleMoves = game.getAllCurrentlyAvailableMoves();
     std::vector<Move> actualPossibleMoves;
 

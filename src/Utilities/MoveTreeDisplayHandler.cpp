@@ -100,11 +100,11 @@ void MoveTreeDisplayHandler::processNodeRec(
 
         // after the loop, goToGrandChild(0) and increase row if 
         // main line stretches after.
-        MoveTree::Iterator temp_iter = iter_;
+        MoveTree::Iterator temp_iter = iter_; 
         if (temp_iter.goToGrandChild(0))
         {
             ++row_;
-            processNodeRec(temp_iter, level_, row_); // Use the copy
+            processNodeRec(temp_iter, level_, row_);
         }
     }
 }
