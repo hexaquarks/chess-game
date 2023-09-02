@@ -43,7 +43,6 @@ BOOST_AUTO_TEST_CASE(TestEmptyTree)
 
 BOOST_AUTO_TEST_CASE(TestSimple)
 {
-    MoveTreeManager moveTreeManager{m_board};
     const std::string PGNString = "1. e4 e5 2. d4 (2. Nf3 Nc6 3. h3) (2. Nc3)";
     const std::string expectedString = 
         "===== Printing generated moves info =====\n"
@@ -190,11 +189,11 @@ BOOST_AUTO_TEST_CASE(TestNestedMultiSubvariationWraps)
         "1.Nc3 Nf6\n"
         "    A) 1...d5 2.d4\n"
         "        A1) 2.Nb1 e5 3.d3 Nc6\n"
-        "            A0,1) 3...Bc5 4.Nf3 e4\n"
-        "                A1,0,1) 4...Nf6 5.Nxe5\n"
+        "            A1,1) 3...Bc5 4.Nf3 e4\n"
+        "                A1,1,1) 4...Nf6 5.Nxe5\n"
         "            5.dxe4\n"
-        "            A0,2) 3...Nf6 4.f4\n"
-        "                A0,2,1) 4.Nf3 Ne4\n"
+        "            A1,2) 3...Nf6 4.f4\n"
+        "                A1,2,1) 4.Nf3 Ne4\n"
         "            exf4 5.e4\n"
         "    Nc6 3.Nf3\n"
         "2.e4 e5 3.d3";

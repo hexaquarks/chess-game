@@ -17,13 +17,6 @@ namespace
         
         PGNToMoveTreeFixture() = default;
         ~PGNToMoveTreeFixture() = default;
-
-        // void init(const std::string& fen_) 
-        // {
-        //     m_board = Board(fen_);
-        //     if (m_board.getTurn() != Team::WHITE) m_board.switchTurn();
-        //     m_board.updateAllCurrentlyAvailableMoves();
-        // }
     };
 }
 
