@@ -21,7 +21,7 @@ namespace
 
         std::string getDisplayedGeneratedMoves(const std::string& inputPGNString_)
         {
-            m_PGNParser.initializeMoveSequenceFromPNG(inputPGNString_);
+            m_PGNParser.generatedMoveTreeFromPGNSequence(inputPGNString_);
             const MoveTree& moveTree = m_moveTreeManager.getMoves();
 
             MoveTreeDisplayHandler handler{moveTree};
