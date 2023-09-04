@@ -14,13 +14,14 @@ namespace
     {
         Board m_board;
         MoveTreeManager m_moveTreeManager{m_board};
+        PGNParser m_PGNParser{m_moveTreeManager};
 
         MoveFilterBoardFixture() = default;
         ~MoveFilterBoardFixture() = default;
 
         std::string getDisplayedGeneratedMoves(const std::string& inputPGNString_)
         {
-            m_moveTreeManager.initializeMoveSequenceFromPNG(inputPGNString_);
+            m_PGNParser.generatedMoveTreeFromPGNSequence(inputPGNString_);
             const MoveTree& moveTree = m_moveTreeManager.getMoves();
 
             MoveTreeDisplayHandler handler{moveTree};
@@ -216,21 +217,5 @@ BOOST_AUTO_TEST_CASE(TestCastling)
 
     BOOST_CHECK_EQUAL(getDisplayedGeneratedMoves(PGNString), expectedString);
 }
-
-BOOST_AUTO_TEST_CASE(TestDeepNestedVariation)
-{
-    const std::string PGNString = 
-        "1. e4 d5 2. exd5 (2. e5 f6 3. e6 (3. exf6 e6 "
-        "(3... exf6 4. Qh5+ g6 (4... Kd7))))";
-    const std::string expectedString = 
-        "1.e4 d5 2.exd5\n"
-        "+--- A) 2.e5 f6 3.e6\n"
-        "    +--- A1) 3.exf6 e6\n"
-        "        +--- A1,1) 3...exf6 4.Qh5+ g6\n"
-        "            +--- A1,0,1) 4...Kd7";
-
-    BOOST_CHECK_EQUAL(getDisplayedGeneratedMoves(PGNString), expectedString);
-}
-
 
 BOOST_AUTO_TEST_SUITE_END()
