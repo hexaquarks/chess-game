@@ -1,29 +1,75 @@
 #include "../../include/Utilities/MoveTreeDisplayHandler.hpp"
 
+#include <algorithm>
+
 namespace 
 {
-    std::string getLetterPrefix(MoveTree::Iterator iter_, int indentationLevel_)
+    bool shouldContinueTraversingUp(MoveTree::Iterator& iter)
     {
-        // Base case
-        if (indentationLevel_ == 1) 
-        {
-            return std::string(1, static_cast<char>( 
-                'A' + 
-                iter_.getNodeIdxAmongSiblings() - 
-                ((iter_.getNbOfNodesAtCurrentLevel() % 2 == 0) ? 1 : 0)
-            )) + ")";
-        }
-            
-        // Go to subvariations that are indented by more than 1 level.
-        // For these we use the sibling index of the ancestors to establish
-        // the correct number and letter prefix.    
-        const int currentNodeIdx = iter_.getNodeIdxAmongSiblings();
-        iter_.goToParent();
-        const auto parentLetterPrefix = getLetterPrefix(iter_, indentationLevel_ - 1);
-        const auto numberSuffix = std::to_string(currentNodeIdx);
+        return !iter.isAtTheBeginning() && 
+                iter.getNbOfNodesAtCurrentLevel() == 1;
+    }
+
+    bool checkLineWrap(MoveTree::Iterator& iter)
+    {
+        MoveTree::Iterator it_temp = iter;
+        it_temp.goToParent();
+        return it_temp.getNbOfNodesAtCurrentLevel() != 1 && 
+               it_temp.getNodeIdxAmongSiblings() == 0;
+    }
+
+    std::string getLetterPrefixNew(
+        MoveTree::Iterator iter_, 
+        int indentationLevel_) 
+    {
+        std::vector<int> indices;
         
-        if (indentationLevel_ > 2) return parentLetterPrefix.substr(0, parentLetterPrefix.size() - 1) + "," + numberSuffix + ")";
-        return parentLetterPrefix.substr(0, parentLetterPrefix.size() - 1) + numberSuffix + ")";
+        // Traverse the tree upwards to collect indices
+        bool isLineWrap = false;
+        while (!iter_.isAtTheBeginning() && !isLineWrap) 
+        {
+            indices.push_back(iter_.getNodeIdxAmongSiblings());
+            iter_.goToParent();
+
+            while (shouldContinueTraversingUp(iter_)) 
+            {
+                isLineWrap = checkLineWrap(iter_);
+                if (isLineWrap) break;
+                iter_.goToParent();
+            }
+
+        }
+
+        std::reverse(indices.begin(), indices.end()); 
+        
+        // Construct the letter and number prefix
+        std::stringstream prefix_ss;
+        if (indices.size() == 1) 
+        {
+            char letter = 'A' + indices[0] - 1;
+            prefix_ss << letter;
+        }
+        else 
+        {
+            for (int i = 0; i < indices.size(); ++i) 
+            {
+                if (i == 0) {
+                    // The first letter
+                    char letter = 'A' + indices[i] - 1;
+                    prefix_ss << letter;
+                } else {
+                    // Subsequent numbers
+                    if (i != 0) { 
+                        if (i == 1) prefix_ss << indices[i];
+                        else {
+                            prefix_ss << "," << indices[i];
+                        }
+                    }
+                }
+            }
+        }
+        prefix_ss << ")";
+        return prefix_ss.str();
     }
 }
 
@@ -60,7 +106,7 @@ void MoveTreeDisplayHandler::processNode(
 
     if (isNewLineSubvariation_)
     {
-        info.m_letterPrefix = getLetterPrefix(iter_, level_);
+        info.m_letterPrefix = getLetterPrefixNew(iter_, level_);
     }
 
     m_moveInfos.push_back(info);
@@ -127,33 +173,6 @@ std::vector<MoveInfo> MoveTreeDisplayHandler::generateMoveInfo()
     
     //printMoves(m_moveInfos);
     return m_moveInfos;
-}
-
-void printMoveInfos(const std::vector<MoveInfo>& moveInfos_) 
-{
-    int currentRow = -1; 
-
-    for (const auto& info : moveInfos_) 
-    {
-        if (info.m_row != currentRow) 
-        {
-            std::cout << std::endl;
-            currentRow = info.m_row;
-        }
-
-        for (int i = 0; i < info.m_indentLevel; ++i) {
-            std::cout << " ";
-        }
-
-        if (info.m_letterPrefix.has_value()) {
-            std::cout << "+--- " << info.m_letterPrefix.value() << " ";
-        }
-
-        std::cout << info.m_content;
-
-        if (info.m_indentLevel == 0) std::cout << " ";
-    }
-    std::cout << std::endl;
 }
 
 std::string printMoveInfos(const std::vector<MoveInfo>& moveInfos_, bool printToConsole) 
