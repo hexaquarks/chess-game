@@ -107,6 +107,8 @@ public:
         int getNodeIdxAmongSiblings() 
         {
             auto temp = m_ptr;
+            if (!temp) return -1;
+
             auto parent = temp->m_parent;
             
             if (!parent) return -1;
@@ -122,7 +124,7 @@ public:
 
         int getNbOfNodesAtCurrentLevel()
         {
-            if (!m_ptr) return 1;
+            if (!m_ptr || !m_ptr->m_parent) return 1;
             return m_ptr->m_parent->m_children.size();
         }
 

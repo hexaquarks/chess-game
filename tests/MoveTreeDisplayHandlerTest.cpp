@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(TestSimple)
 {
     const std::string PGNString = "1. e4 e5 2. d4 (2. Nf3 Nc6 3. h3) (2. Nc3)";
     const std::string expectedString = 
-        "===== Printing generated moves info =====\n"
+        "===== Printing the generated moves info =====\n"
         "1.e4 e5 2.d4\n"
         "    A) 2.Nf3 Nc6 3.h3\n"
         "    B) 2.Nc3";
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(TestBlackSubvariations)
         "1. e4 e5 (1... d5 2. exd5 Nf6 (2... Qxd5 3. "
         "Qg4 Qxg2 (3... Nf6)) (2... Bf5 3. Bd3 Bxd3 (3... Bg4)))";
     const std::string expectedString = 
-        "===== Printing generated moves info =====\n"
+        "===== Printing the generated moves info =====\n"
         "1.e4 e5\n"
         "    A) 1...d5 2.exd5 Nf6\n"
         "        A1) 2...Qxd5 3.Qg4 Qxg2\n"
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(TestWhiteSubvariations)
         "===== Printing the generated moves info =====\n"
         "1.e4 d5 2.exd5\n"
         "    A) 2.e5 Nf6 3.Bb5+\n"
-        "        A1) 3.dxf6\n"
+        "        A1) 3.exf6\n"
         "Qxd5 3.Qf3\n"
         "    A) 3.Bb5+\n"
         "    B) 3.Nf3 Qe5+ 4.Nxe5\n"
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(TestBlackAndWhiteMixSubvariations)
         "            A1,1) 2...Nf6 3.e3\n"
         "        A2) 2.e3 Qd7\n"
         "            A2,1) 2...Bg4 3.h3 Bxf3\n"
-        "                C2,1,1) 3...Bh5\n"
+        "                A2,1,1) 3...Bh5\n"
         "2.d4 d5\n"
         "    A) 2...e6";
 
