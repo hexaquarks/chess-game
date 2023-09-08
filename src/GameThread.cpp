@@ -40,9 +40,8 @@ namespace game
 
         m_board.updateAllCurrentlyAvailableMoves();
         
-        // Sounds for piece movement and capture
-        AudioManager::getInstance().loadSound(SoundEffect::MOVE, "move.wav");
-        AudioManager::getInstance().loadSound(SoundEffect::CAPTURE, "captures.wav");
+        // Load all sounds
+        AudioManager::getInstance().loadAllSounds();
 
         // This is the main loop (a.k.a game loop) this ensures that the program does not terminate until we exit
         Event event;
