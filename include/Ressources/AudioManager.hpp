@@ -19,7 +19,7 @@ public:
     }
 
     void loadAllSounds();
-    void playSound(SoundEffect effect_) const;
+    void playSound(SoundEffect effect_);
     bool canPlaySound(SoundEffect effect_) const;
     size_t getNumberOfLoadedSounds() const noexcept;
 
