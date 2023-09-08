@@ -26,7 +26,7 @@ size_t AudioManager::getNumberOfLoadedSounds() const noexcept {
     return m_sounds.size();
 }
 
-void AudioManager::playSound(SoundEffect effect_) const
+void AudioManager::playSound(SoundEffect effect_)
 {
     auto iter = m_sounds.find(effect_);
     if (iter != m_sounds.end())
