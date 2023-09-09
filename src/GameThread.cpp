@@ -382,7 +382,7 @@ namespace game
             m_moveTreeManager.setTransitioningPieceArrived();
         }
 
-        std::map<int, std::function<void()>> keyMap = 
+        static std::map<int, std::function<void()>> keyMap = 
         {
             { Keyboard::Left, [this, &arrowList_] { handleKeyPressLeft(arrowList_); } },
             { Keyboard::Right, [this, &uiManager_, &arrowList_] { handleKeyPressRight(uiManager_, arrowList_); } },
