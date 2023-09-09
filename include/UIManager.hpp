@@ -60,10 +60,7 @@ namespace ui {
 
             void handleSidePanelMoveBoxClick(const coor2d&);
             bool ignoreInputWhenSelectionPanelIsActive(const coor2d&) const;
-            
-            bool isMoveSelectionPanelOpen() { return m_showMoveSelectionPanel; }
-            void closeMoveSelectionPanel() { m_showMoveSelectionPanel = false; m_moveSelectionPanel.reset(); }
-            void openMoveSelectionPanel() { m_showMoveSelectionPanel = true; }
+        
 
             // TODO architecture issue here. Should return a const ref ideally.
             MoveSelectionPanel& getMoveSelectionPanel() { return m_moveSelectionPanel; }

@@ -21,6 +21,8 @@
 class SidePanel; 
 class MoveSelectionPanel;
 
+using KeyHandler = std::function<void()>;
+
 namespace game 
 {
     class GameThread
@@ -34,6 +36,8 @@ namespace game
         MoveTree::Iterator& m_treeIterator = m_moveTreeManager.getIterator();
         ui::UIManager m_uiManager{m_board, m_moveTreeManager};
 
+        shared_ptr<Move> getCurrMoveTreeIteratorMove();
+
         /* Event handles */
         bool handleMouseButtonPressedLeft(Event&, ui::ClickState& clickState, ui::DragState&, ui::UIManager&);
         bool handleMouseButtonPressedRight(Event&, ui::ClickState& clickState, ui::DragState&, ui::ArrowsInfo&);
@@ -43,5 +47,15 @@ namespace game
         void handleKeyPressed(const Event&, ui::UIManager&, vector<Arrow>&);
 
         void handleMouseButtonReleasedOnMenuBar(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&, ui::UIManager&);
+
+        void handleKeyPressLeft(vector<Arrow>& arrowList_);
+        void handleKeyPressRight(ui::UIManager& uiManager_, vector<Arrow>& arrowList_);
+        void handleKeyPressLControl();  
+        void handleKeyPressUp(ui::UIManager& uiManager_, vector<Arrow>& arrowList_);
+        void handleKeyPressDown(ui::UIManager& uiManager_, vector<Arrow>& arrowList_);
+        void handleKeyPressEnter(ui::UIManager& uiManager_, vector<Arrow>& arrowList_);
+
+        void executeKeyHandler(const std::map<int, std::function<void()>>& keyMap_, int keyCode_);
+
     };
 }

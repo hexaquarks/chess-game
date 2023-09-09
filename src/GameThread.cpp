@@ -8,6 +8,7 @@
 #include "./Ressources/Shader.cpp"
 
 #include <iostream>
+#include <cassert>
 #include <vector>
 #include <list>
 #include <SFML/Audio.hpp>
@@ -31,6 +32,9 @@ namespace game
         }
     }
 
+    // =================================================
+    // Main game loop
+    // =================================================
     void GameThread::startGame()
     {
         // Parameters to handle a piece being dragged
@@ -101,6 +105,9 @@ namespace game
         }
     }
 
+    // =================================================
+    // Mouse button handles
+    // =================================================
     bool GameThread::handleMouseButtonPressedLeft(
         Event& event_, 
         ui::ClickState& clickState_, 
@@ -293,74 +300,109 @@ namespace game
         return true;
     }
 
+    // =================================================
+    // Key press handles
+    // =================================================
+    void GameThread::handleKeyPressLeft(vector<Arrow>& arrowList_) 
+    {
+        m_moveTreeManager.goToPreviousMove(true, arrowList_);
+        auto prevMove = getCurrMoveTreeIteratorMove();
+        m_board.checkIfMoveMakesKingChecked(prevMove);
+    }
+
+    void GameThread::handleKeyPressRight(ui::UIManager& uiManager_, vector<Arrow>& arrowList_) 
+    {
+        MoveSelectionPanel& moveSelectionPanel = uiManager_.getMoveSelectionPanel();
+        
+        // Handle case with more than one variation
+        if (m_treeIterator.currentNodeHasMoreThanOneVariation()) 
+        {
+            if (!moveSelectionPanel.isOpen()) 
+            {
+                moveSelectionPanel.open();
+                return;
+            }
+            m_moveTreeManager.goToNextMove(true, moveSelectionPanel.getSelection(), arrowList_);
+
+            auto nextMove = getCurrMoveTreeIteratorMove();
+            m_board.checkIfMoveMakesKingChecked(nextMove);
+            moveSelectionPanel.close();
+            return;
+        }
+        m_moveTreeManager.goToNextMove(true, std::nullopt, arrowList_);
+        auto nextMove = getCurrMoveTreeIteratorMove();
+        m_board.checkIfMoveMakesKingChecked(nextMove);
+    }
+
+    void GameThread::handleKeyPressLControl() 
+    {
+        m_board.flipBoard();
+    }
+
+    void GameThread::handleKeyPressUp(ui::UIManager& uiManager_, vector<Arrow>& arrowList_) 
+    {
+        MoveSelectionPanel& moveSelectionPanel = uiManager_.getMoveSelectionPanel();
+        moveSelectionPanel.isOpen()
+            ? moveSelectionPanel.goToPreviousVariation()
+            : m_moveTreeManager.goToCurrentMove(arrowList_);
+    }
+
+    void GameThread::handleKeyPressDown(ui::UIManager& uiManager_, vector<Arrow>& arrowList_) 
+    {
+        MoveSelectionPanel& moveSelectionPanel = uiManager_.getMoveSelectionPanel();
+        moveSelectionPanel.isOpen()
+            ? moveSelectionPanel.goToNextVariation()
+            : m_moveTreeManager.goToInitialMove(arrowList_);
+    }
+
+    void GameThread::handleKeyPressEnter(ui::UIManager& uiManager_, vector<Arrow>& arrowList_) 
+    {
+        MoveSelectionPanel& moveSelectionPanel = uiManager_.getMoveSelectionPanel();
+
+        // Currently, enter is only relevent when the move selection
+        // panel is up, in which enter executes the selected move.
+        if (!moveSelectionPanel.isOpen()) return;
+        
+        m_moveTreeManager.goToNextMove(true, moveSelectionPanel.getSelection(), arrowList_);
+        auto nextMove = getCurrMoveTreeIteratorMove();
+        m_board.checkIfMoveMakesKingChecked(nextMove);
+        moveSelectionPanel.close();
+    }
+
+    void GameThread::executeKeyHandler(
+        const std::map<int, std::function<void()>>& keyMap_, 
+        int keyCode_)
+    {
+        auto it = keyMap_.find(keyCode_);
+        if (it != keyMap_.end()) it->second();
+    }
+
     void GameThread::handleKeyPressed(
         const Event& event_, 
-        ui::UIManager& uiManager_,
-        vector<Arrow>& arrowList_
-    )
+        ui::UIManager& uiManager_, 
+        vector<Arrow>& arrowList_)
     {
-        // If a piece is already moving, make it arrive
-        if (m_moveTreeManager.isTransitionningPiece()) {
+        if (m_moveTreeManager.isTransitionningPiece()) 
+        {
             m_moveTreeManager.setTransitioningPieceArrived();
         }
 
-        shared_ptr<Move> move;
-        MoveSelectionPanel& moveSelectionPanel = uiManager_.getMoveSelectionPanel();
-        switch (event_.key.code)
+        static std::map<int, std::function<void()>> keyMap = 
         {
-            case Keyboard::Left:
-                m_moveTreeManager.goToPreviousMove(true, arrowList_);
+            { Keyboard::Left, [this, &arrowList_] { handleKeyPressLeft(arrowList_); } },
+            { Keyboard::Right, [this, &uiManager_, &arrowList_] { handleKeyPressRight(uiManager_, arrowList_); } },
+            { Keyboard::LControl, [this] { handleKeyPressLControl(); } },
+            { Keyboard::Up, [this, &uiManager_, &arrowList_] { handleKeyPressUp(uiManager_, arrowList_); } },
+            { Keyboard::Down, [this, &uiManager_, &arrowList_] { handleKeyPressDown(uiManager_, arrowList_); } },
+            { Keyboard::Enter, [this, &uiManager_, &arrowList_] { handleKeyPressEnter(uiManager_, arrowList_); } }
+        };
 
-                move = m_treeIterator.get()->m_move;
-                m_board.checkIfMoveMakesKingChecked(move);
-                break;
-            case Keyboard::Right:
-                if (m_treeIterator.currentNodeHasMoreThanOneVariation())
-                {
-                    if (!uiManager_.isMoveSelectionPanelOpen()) 
-                    {
-                        uiManager_.openMoveSelectionPanel();
-                        return;
-                    }
+        executeKeyHandler(keyMap, event_.key.code);
+    }
 
-                    m_moveTreeManager.goToNextMove(true, moveSelectionPanel.getSelection(), arrowList_);
-
-                    move = m_treeIterator.get()->m_move;
-                    m_board.checkIfMoveMakesKingChecked(move);
-
-                    uiManager_.closeMoveSelectionPanel();
-                    return;
-                }
-                m_moveTreeManager.goToNextMove(true, std::nullopt, arrowList_);
-
-                move = m_treeIterator.get()->m_move;
-                m_board.checkIfMoveMakesKingChecked(move);
-                break;
-            case Keyboard::LControl:
-                m_board.flipBoard();
-                break;
-            case Keyboard::Up:
-                uiManager_.isMoveSelectionPanelOpen()
-                    ? moveSelectionPanel.goToPreviousVariation()
-                    : m_moveTreeManager.goToCurrentMove(arrowList_);
-                break;
-            case Keyboard::Down:
-                uiManager_.isMoveSelectionPanelOpen()
-                    ? moveSelectionPanel.goToNextVariation()
-                    : m_moveTreeManager.goToInitialMove(arrowList_);
-                break;
-            case Keyboard::Enter:
-                if (uiManager_.isMoveSelectionPanelOpen())
-                {
-                    m_moveTreeManager.goToNextMove(true, moveSelectionPanel.getSelection(), arrowList_);
-                    
-                    move = m_treeIterator.get()->m_move;
-                    m_board.checkIfMoveMakesKingChecked(move);
-
-                    uiManager_.closeMoveSelectionPanel();
-                }
-                break;
-            default: break; // Avoid pattern matching not exhaustive warning
-        }
+    shared_ptr<Move> GameThread::getCurrMoveTreeIteratorMove() 
+    {
+        assert(m_treeIterator.get());
+        return m_treeIterator.get()->m_move;
     }
 } // game namespace
