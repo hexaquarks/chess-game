@@ -32,6 +32,10 @@ public:
     void goToPreviousVariation();
     void reset();
 
+    bool isOpen() const { return m_isOpen; }
+    void open() { m_isOpen = true; }
+    void close() { m_isOpen = false; reset(); }
+
 private:
     RenderWindow& m_window;
     SidePanel& m_sidePanel;
@@ -45,4 +49,6 @@ private:
     size_t m_selectionIndex = 0;
     int m_numberOfVariations = 0;
     bool m_isHowered = false;
+
+    bool m_isOpen = false;
 };

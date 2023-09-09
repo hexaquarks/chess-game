@@ -36,6 +36,8 @@ namespace game
         MoveTree::Iterator& m_treeIterator = m_moveTreeManager.getIterator();
         ui::UIManager m_uiManager{m_board, m_moveTreeManager};
 
+        shared_ptr<Move> getCurrMoveTreeIteratorMove();
+
         /* Event handles */
         bool handleMouseButtonPressedLeft(Event&, ui::ClickState& clickState, ui::DragState&, ui::UIManager&);
         bool handleMouseButtonPressedRight(Event&, ui::ClickState& clickState, ui::DragState&, ui::ArrowsInfo&);
