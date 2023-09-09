@@ -21,6 +21,8 @@
 class SidePanel; 
 class MoveSelectionPanel;
 
+using KeyHandler = std::function<void()>;
+
 namespace game 
 {
     class GameThread
@@ -43,5 +45,15 @@ namespace game
         void handleKeyPressed(const Event&, ui::UIManager&, vector<Arrow>&);
 
         void handleMouseButtonReleasedOnMenuBar(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&, ui::UIManager&);
+
+        void handleKeyPressLeft(vector<Arrow>& arrowList_);
+        void handleKeyPressRight(ui::UIManager& uiManager_, vector<Arrow>& arrowList_);
+        void handleKeyPressLControl();  
+        void handleKeyPressUp(ui::UIManager& uiManager_, vector<Arrow>& arrowList_);
+        void handleKeyPressDown(ui::UIManager& uiManager_, vector<Arrow>& arrowList_);
+        void handleKeyPressEnter(ui::UIManager& uiManager_, vector<Arrow>& arrowList_);
+
+        void executeKeyHandler(const std::map<int, std::function<void()>>& keyMap_, int keyCode_);
+
     };
 }
