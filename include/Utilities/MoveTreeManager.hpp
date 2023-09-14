@@ -17,6 +17,16 @@
 
 using namespace sf;
 
+struct ApplyUndoMoveInfo
+{
+    int m_initialFile = -1;
+    int m_initialRank = -1;
+    int m_targetFile = -1;
+    int m_targetRank = -1;
+    std::shared_ptr<Piece> m_selectedPiece = nullptr;
+    std::shared_ptr<Piece> m_capturedPiece = nullptr;
+};
+
 class MoveTreeManager
 {
 public:
@@ -70,4 +80,12 @@ private:
         shared_ptr<Piece>&, int, int,
         int, int
     );
+
+    void handleUndoMoveNormal(ApplyUndoMoveInfo& moveInfo_);
+    void handleUndoMoveCapture(ApplyUndoMoveInfo& moveInfo_, int& capturedRank_, int& capturedFile_);
+    void handleUndoMoveEnpassant(ApplyUndoMoveInfo& moveInfo_);
+    void handleUndoMoveCastleKingSide(ApplyUndoMoveInfo& moveInfo_);
+    void handleUndoMoveCastleQueenSide(ApplyUndoMoveInfo& moveInfo_);
+    void handleUndoMoveInitSpecial(ApplyUndoMoveInfo& moveInfo_);
+    void handleUndoMoveNewPiece(ApplyUndoMoveInfo& moveInfo_);
 };
