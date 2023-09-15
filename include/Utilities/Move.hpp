@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "Arrow.hpp"
+#include <optional>
 
 // Forward declarations
 class Piece;
@@ -29,7 +30,7 @@ public:
     const std::shared_ptr<Piece>& getCapturedPiece() const { return m_capturedPiece; }
     const coor2d& getTarget() const { return m_target; }
     const coor2d& getInit() const { return m_init; }
-    const coor2d& getSpecial() const { return m_special; }
+    const std::optional<coor2d>& getEnPassantCapturedPieceInitialPos() const { return m_enPassantInitialPos; }
 
     bool kingIsChecked() const { return m_kingChecked; }
     bool hasNoMovesAvailable() const { return m_noMovesAvailable; }
@@ -52,7 +53,7 @@ private:
     MoveType m_MoveType = MoveType::CAPTURE; // Move type
     coor2d m_target = {0, 0}; // Destination square of the piece that is being moved
     coor2d m_init = {0, 0}; // Initial square of the piece moved
-    coor2d m_special = {0, 0}; // En passant information
+    std::optional<coor2d> m_enPassantInitialPos; // En passant information
     std::vector<Arrow> m_arrows; // List of arrows drawn at that move
     bool m_kingChecked = false; 
     bool m_noMovesAvailable = false; // Flag that captures the availablility of possible moves in the position

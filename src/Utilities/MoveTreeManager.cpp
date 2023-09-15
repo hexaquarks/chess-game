@@ -246,8 +246,11 @@ void MoveTreeManager::undoMove(bool enableTransition_, vector<Arrow>& arrowList_
             break;
         case MoveType::ENPASSANT:
             pUndoPiece = pCaptured;
-            capturedFile = m->getSpecial().first;
-            capturedRank = m->getSpecial().second;
+
+            assert(m->getEnPassantCapturedPieceInitialPos().has_value());
+            capturedFile = m->getEnPassantCapturedPieceInitialPos().value().first;
+            capturedRank = m->getEnPassantCapturedPieceInitialPos().value().second;
+
             m_board.resetBoardTile(file, rank);
             m_board.setBoardTile(capturedFile, capturedRank, pCaptured);
             m_board.setBoardTile(prevFile, prevRank, selected);

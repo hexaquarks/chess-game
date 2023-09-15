@@ -68,11 +68,11 @@ Move::Move(
 // For generating moves when calculating all possible moves for a piece.
 // Move types are: CAPTURE and ENPASSANT.
 Move::Move(
-    const Move& move_, const std::shared_ptr<Piece>& pSecondPiece_, const coor2d& capturedPawn_
+    const Move& move_, const std::shared_ptr<Piece>& pSecondPiece_, const coor2d& capturedPawnInitialPos_
 ):
     m_target(move_.getTarget()), 
     m_init(move_.getInit()), 
-    m_special(capturedPawn_),
+    m_enPassantInitialPos(capturedPawnInitialPos_),
     m_selectedPiece(move_.getSelectedPiece()), 
     m_capturedPiece(pSecondPiece_),
     m_MoveType(move_.getMoveType()), 
@@ -96,7 +96,7 @@ bool Move::operator==(const Move& other_)
     m_MoveType == other_.m_MoveType &&
     m_target == other_.m_target &&
     m_init == other_.m_init &&
-    m_special == other_.m_special;
+    m_enPassantInitialPos == other_.m_enPassantInitialPos;
 }
 
 bool Move::operator!=(const Move& other_)
