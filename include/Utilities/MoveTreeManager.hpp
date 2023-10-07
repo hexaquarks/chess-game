@@ -17,15 +17,7 @@
 
 using namespace sf;
 
-struct ApplyUndoMoveInfo
-{
-    int m_initialFile = -1;
-    int m_initialRank = -1;
-    int m_targetFile = -1;
-    int m_targetRank = -1;
-    std::shared_ptr<Piece> m_selectedPiece = nullptr;
-    std::shared_ptr<Piece> m_capturedPiece = nullptr;
-};
+struct UndoMoveInfo;
 
 class MoveTreeManager
 {
@@ -81,11 +73,14 @@ private:
         int, int
     );
 
-    void handleUndoMoveNormal(ApplyUndoMoveInfo& moveInfo_);
-    void handleUndoMoveCapture(ApplyUndoMoveInfo& moveInfo_, int& capturedRank_, int& capturedFile_);
-    void handleUndoMoveEnpassant(ApplyUndoMoveInfo& moveInfo_);
-    void handleUndoMoveCastleKingSide(ApplyUndoMoveInfo& moveInfo_);
-    void handleUndoMoveCastleQueenSide(ApplyUndoMoveInfo& moveInfo_);
-    void handleUndoMoveInitSpecial(ApplyUndoMoveInfo& moveInfo_);
-    void handleUndoMoveNewPiece(ApplyUndoMoveInfo& moveInfo_);
+    void handleUndoMoveNormal(UndoMoveInfo& undoMoveInfo_);
+    void handleUndoMoveCapture(UndoMoveInfo& undoMoveInfo_);
+    void handleUndoMoveEnpassant(UndoMoveInfo& undoMoveInfo_);
+    void handleUndoMoveCastle(UndoMoveInfo& undoMoveInfo_, std::pair<int, int>);
+    void handleUndoMoveInitSpecial(UndoMoveInfo& undoMoveInfo_);
+    void handleUndoMoveNewPiece(UndoMoveInfo& undoMoveInfo_);
+
+    void executeUndoHandler(const std::map<MoveType, std::function<void()>>& undoMap_, MoveType moveType_);
+
 };
+

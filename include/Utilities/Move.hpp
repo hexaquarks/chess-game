@@ -27,7 +27,11 @@ public:
     const std::vector<Arrow>& getMoveArrows() { return m_arrows; }
     MoveType getMoveType() const { return m_MoveType; }
     const std::shared_ptr<Piece>& getSelectedPiece() const { return m_selectedPiece; }
+    std::shared_ptr<Piece>& getSelectedPiece() { return m_selectedPiece; }
+
     const std::shared_ptr<Piece>& getCapturedPiece() const { return m_capturedPiece; }
+    std::shared_ptr<Piece>& getCapturedPiece() { return m_capturedPiece; }
+
     const coor2d& getTarget() const { return m_target; }
     const coor2d& getInit() const { return m_init; }
     const std::optional<coor2d>& getEnPassantCapturedPieceInitialPos() const { return m_enPassantInitialPos; }

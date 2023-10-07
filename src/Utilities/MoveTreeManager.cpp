@@ -6,6 +6,16 @@
 #include <cassert> 
 #include <iterator>
 
+#define ENABLE_TRANSITION_IF_ENABLED(ENABLE, TRANSITION_FUNC, SECOND_TRANSITION_FUNC, ...) \
+do { \
+    if (ENABLE) { \
+        TRANSITION_FUNC(__VA_ARGS__); \
+        if (pSecondPiece) { \
+            SECOND_TRANSITION_FUNC(pSecondPiece, secondFileInit, castleRank, secondFileTarget, castleRank); \
+        } \
+    } \
+} while (0)
+
 MoveTreeManager::MoveTreeManager(Board& board_): m_board(board_)
 {
 }
@@ -208,171 +218,197 @@ void MoveTreeManager::applyMove(
     }
 }
 
-void MoveTreeManager::handleUndoMoveNormal(ApplyUndoMoveInfo& moveInfo_)
+struct UndoMoveInfo
+{
+    int m_targetFile;
+    int m_targetRank;
+    int m_initFile;
+    int m_initRank;
+    std::shared_ptr<Piece> m_selectedPiece;
+    std::shared_ptr<Piece> m_capturedPiece; 
+    std::optional<coor2d> m_enPassantCapturedPieceInitCoords;
+
+    // information for castling
+    std::optional<int> m_secondPieceTargetFile;
+    std::optional<int> m_secondPieceTargetRank;
+    std::optional<int> m_secondPieceInitFile;
+    std::optional<int> m_secondPieceInitRank;
+    std::optional<std::shared_ptr<Piece>> m_castlingSecondPiece;
+};
+
+void MoveTreeManager::handleUndoMoveNormal( UndoMoveInfo& undoMoveInfo_)
 {   
-    m_board.resetBoardTile(moveInfo_.m_targetFile, moveInfo_.m_targetRank);
-    m_board.setBoardTile(moveInfo_.m_initialFile, moveInfo_.m_initialRank, moveInfo_.m_selectedPiece);
+    auto& selectedPiece = undoMoveInfo_.m_selectedPiece;
 
-    King* kingPiece = dynamic_cast<King*>(moveInfo_.m_selectedPiece.get());
-    if (kingPiece) moveInfo_.m_selectedPiece->setAsFirstMovement();
+    m_board.resetBoardTile(undoMoveInfo_.m_targetFile, undoMoveInfo_.m_targetRank);
+    m_board.setBoardTile(undoMoveInfo_.m_initFile, undoMoveInfo_.m_initRank, selectedPiece);
+
+    King* kingPiece = dynamic_cast<King*>(selectedPiece.get());
+    if (kingPiece) selectedPiece->setAsFirstMovement();
 }
 
-void MoveTreeManager::handleUndoMoveCapture(
-    ApplyUndoMoveInfo& moveInfo_,
-    int& capturedFile_,
-    int& capturedRank_)
+void MoveTreeManager::handleUndoMoveCapture(UndoMoveInfo& undoMoveInfo_)
 {
-    // pUndoPiece = pCaptured;
-    capturedFile_ = moveInfo_.m_targetFile;
-    capturedRank_ = moveInfo_.m_targetRank;
-    std::shared_ptr<Piece>& capturedPiece = moveInfo_.m_capturedPiece;
+    auto& capturedPiece = undoMoveInfo_.m_capturedPiece;
 
     // If we get here, there should be a captured piece available.
     assert(capturedPiece);
 
-    m_board.setBoardTile(moveInfo_.m_targetFile, moveInfo_.m_targetRank, capturedPiece);
-    m_board.setBoardTile(moveInfo_.m_initialFile, moveInfo_.m_initialRank, moveInfo_.m_selectedPiece);
+    m_board.setBoardTile(undoMoveInfo_.m_targetFile,undoMoveInfo_.m_targetRank, capturedPiece);
+    m_board.setBoardTile(undoMoveInfo_.m_initFile, undoMoveInfo_.m_initRank, undoMoveInfo_.m_selectedPiece);
 }
 
-void MoveTreeManager::handleUndoMoveEnpassant(
-    ApplyUndoMoveInfo& moveInfo_,
-    int& capturedFile_,
-    int& capturedRank_)
+void MoveTreeManager::handleUndoMoveEnpassant(UndoMoveInfo& undoMoveInfo_)
 {
+    auto& capturedPiece = undoMoveInfo_.m_capturedPiece;
 
-    pUndoPiece = pCaptured;
-    capturedFile = m->getSpecial().first;
-    capturedRank = m->getSpecial().second;
-    m_board.resetBoardTile(file, rank);
-    m_board.setBoardTile(capturedFile, capturedRank, pCaptured);
-    m_board.setBoardTile(prevFile, prevRank, selected);
+    // If we get here, there should be a captured piece available.
+    assert(capturedPiece);
+
+    // The en passant infos should be set.
+    assert(undoMoveInfo_.m_enPassantCapturedPieceInitCoords.has_value());
+    int capturedFile = undoMoveInfo_.m_enPassantCapturedPieceInitCoords.value().first;
+    int capturedRank = undoMoveInfo_.m_enPassantCapturedPieceInitCoords.value().second;
+
+    m_board.resetBoardTile(undoMoveInfo_.m_targetFile,undoMoveInfo_.m_targetRank);
+    m_board.setBoardTile(capturedFile, capturedRank, capturedPiece);
+    m_board.setBoardTile(undoMoveInfo_.m_initFile, undoMoveInfo_.m_initRank, undoMoveInfo_.m_selectedPiece);
+}
+
+void MoveTreeManager::handleUndoMoveCastle(
+    UndoMoveInfo& undoMoveInfo_,
+    std::pair<int, int> rookFileBeforeAndAfterCastling_)
+{
+    const int castleRank = (undoMoveInfo_.m_selectedPiece->getTeam() == Team::WHITE)? 7: 0;
+
+    // We define the target and initial squares to be clear
+    auto& [rookFileAfterCastling, rookFileBeforeCastling] = rookFileBeforeAndAfterCastling_; 
+    int kingFileAfterCastling = undoMoveInfo_.m_targetFile;
+    int kingFileBeforeCastling = undoMoveInfo_.m_initFile;
     
-    // pUndoPiece = pCaptured;
-    capturedFile_ = moveInfo_.m_targetFile;
-    capturedRank_ = moveInfo_.m_targetRank;
-    std::shared_ptr<Piece>& capturedPiece = moveInfo_.m_capturedPiece;
+    auto& king = undoMoveInfo_.m_selectedPiece;
+    auto& rook = undoMoveInfo_.m_capturedPiece;
 
-    // If we get here, there should be a captured piece available.
-    assert(capturedPiece);
+    // Undo the castling.
+    m_board.resetBoardTile(rookFileAfterCastling, castleRank);
+    m_board.resetBoardTile(kingFileAfterCastling, castleRank);
+    m_board.setBoardTile(rookFileBeforeCastling, castleRank, rook);
+    m_board.setBoardTile(kingFileBeforeCastling, castleRank, king);
 
-    m_board.setBoardTile(moveInfo_.m_targetFile, moveInfo_.m_targetRank, capturedPiece);
-    m_board.setBoardTile(moveInfo_.m_initialFile, moveInfo_.m_initialRank, moveInfo_.m_selectedPiece);
+    undoMoveInfo_.m_selectedPiece->setAsFirstMovement();
+    undoMoveInfo_.m_capturedPiece->setAsFirstMovement();
+
+    // Update the UndoMoveInfo struct
+    undoMoveInfo_.m_secondPieceTargetFile = rookFileBeforeCastling;
+    undoMoveInfo_.m_secondPieceTargetRank = castleRank;
+    undoMoveInfo_.m_secondPieceInitFile = rookFileAfterCastling;
+    undoMoveInfo_.m_secondPieceInitRank = castleRank;
+    undoMoveInfo_.m_castlingSecondPiece = rook;
+}
+
+void MoveTreeManager::handleUndoMoveInitSpecial(UndoMoveInfo& undoMoveInfo_)
+{
+    auto& selectedPiece = undoMoveInfo_.m_selectedPiece;
+
+    m_board.resetBoardTile(undoMoveInfo_.m_targetFile, undoMoveInfo_.m_targetRank);
+    m_board.setBoardTile(undoMoveInfo_.m_initFile, undoMoveInfo_.m_initRank, selectedPiece);
+
+    selectedPiece->setAsFirstMovement();
+}
+
+void MoveTreeManager::handleUndoMoveNewPiece(UndoMoveInfo& undoMoveInfo_)
+{
+    shared_ptr<Piece> newPawn = make_shared<Pawn>(
+        undoMoveInfo_.m_selectedPiece->getTeam(),
+        undoMoveInfo_.m_initFile, 
+        undoMoveInfo_.m_initRank);
+        
+    m_board.setBoardTile(undoMoveInfo_.m_targetFile, undoMoveInfo_.m_targetRank, undoMoveInfo_.m_capturedPiece);
+    m_board.setBoardTile(undoMoveInfo_.m_initFile, undoMoveInfo_.m_initRank, newPawn);
+}
+
+void MoveTreeManager::executeUndoHandler(
+    const std::map<MoveType, std::function<void()>>& keyMap_, 
+    MoveType moveType_)
+{
+    auto it = keyMap_.find(moveType_);
+    if (it != keyMap_.end()) it->second();
 }
 
 void MoveTreeManager::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
 {
-    shared_ptr<Move> m = m_moveIterator->m_move;
-    if (!m) return;
+    shared_ptr<Move> move = m_moveIterator->m_move;
+    if (!move) return;
+    
+    arrowList_ = move->getMoveArrows();
 
-    shared_ptr<Piece> pCaptured = m->getCapturedPiece();
-    shared_ptr<Piece> pSecondPiece;
-    shared_ptr<Piece> pUndoPiece;
-    auto [targetFile, targetRank] = m->getTarget();
-    auto [initialFile, initialRank] = m->getInit();
-    int capturedFile = -1, capturedRank = -1;
-    int secondFileInit = -1, secondFileTarget = -1;
-
-    const int castleRank = (m->getSelectedPiece()->getTeam() == Team::WHITE)? 7: 0;
-    arrowList_ = m->getMoveArrows();
-    shared_ptr<Piece> selected = m->getSelectedPiece();
-
-    ApplyUndoMoveInfo moveInfo{
-        initialFile, 
-        initialRank, 
-        targetFile, 
-        targetRank, 
-        m->getSelectedPiece(),
-        m->getCapturedPiece()
+    // Defining the UndoMoveInfo
+    UndoMoveInfo undoMoveInfo{
+        move->getTarget().first,
+        move->getTarget().second,
+        move->getInit().first,
+        move->getInit().second,
+        move->getSelectedPiece(),
+        move->getCapturedPiece(),
+        move->getEnPassantCapturedPieceInitialPos()
     };
+
+    int rookFileAfterCastlingKingSide = 5; 
+    int rookFileBeforeCastlingKingSide = 7;  
 
     static map<MoveType, std::function<void()>> undoMoveHandlers
     {
-        { MoveType::NORMAL, [this, &moveInfo] { handleUndoMoveNormal(moveInfo); } },
-        { MoveType::CAPTURE, [this, &moveInfo, &capturedFile, &capturedRank] { handleUndoMoveCapture(moveInfo, capturedFile, capturedRank); } },
-        { MoveType::ENPASSANT, [this, &moveInfo] { handleUndoMoveEnpassant(moveInfo); } },
-        { MoveType::CASTLE_KINGSIDE, [this, &moveInfo] { handleUndoMoveCastleKingSide(moveInfo); } },
-        { MoveType::CASTLE_QUEENSIDE, [this, &moveInfo] { handleUndoMoveCastleQueenSide(moveInfo); } },
-        { MoveType::INIT_SPECIAL, [this, &moveInfo] { handleUndoMoveInitSpecial(moveInfo); } },
-        { MoveType::NEWPIECE, [this, &moveInfo] { handleUndoMoveNewPiece(moveInfo); } }
+        { MoveType::NORMAL, [this, &undoMoveInfo] { handleUndoMoveNormal(undoMoveInfo); } },
+        { MoveType::CAPTURE, [this, &undoMoveInfo] { handleUndoMoveCapture(undoMoveInfo); } },
+        { MoveType::ENPASSANT, [this, &undoMoveInfo] { handleUndoMoveEnpassant(undoMoveInfo); } },
+        { MoveType::CASTLE_KINGSIDE, [this, &undoMoveInfo] 
+        { 
+            int rookFileAfterCastlingKingSide = 5; 
+            int rookFileBeforeCastlingKingSide = 7; 
+
+            handleUndoMoveCastle(undoMoveInfo, std::make_pair(
+                rookFileAfterCastlingKingSide,
+                rookFileBeforeCastlingKingSide
+            )); 
+        } },
+        { MoveType::CASTLE_QUEENSIDE, [this, &undoMoveInfo] 
+        { 
+            int rookFileAfterCastlingQueenSide = 3; 
+            int rookFileBeforeCastlingQueenSide = 0; 
+
+            handleUndoMoveCastle(undoMoveInfo, std::make_pair(
+                rookFileAfterCastlingQueenSide,
+                rookFileBeforeCastlingQueenSide
+            )); 
+        } },
+        { MoveType::INIT_SPECIAL, [this, &undoMoveInfo] { handleUndoMoveInitSpecial(undoMoveInfo); } },
+        { MoveType::NEWPIECE, [this, &undoMoveInfo] { handleUndoMoveNewPiece(undoMoveInfo); } }
     };
 
-    // TODO smooth transition for castle
-    switch (m->getMoveType())
-    {
-        case MoveType::NORMAL:
-            m_board.resetBoardTile(file, rank);
-            m_board.setBoardTile(prevFile, prevRank, selected);
-            if (dynamic_cast<King*>(selected.get()))
-            {
-                selected->setAsFirstMovement();
-            }
-
-            break;
-        case MoveType::CAPTURE:
-            pUndoPiece = pCaptured;
-            capturedFile = file;
-            capturedRank = rank;
-            m_board.setBoardTile(file, rank, pCaptured);
-            m_board.setBoardTile(prevFile, prevRank, selected);
-            break;
-        case MoveType::ENPASSANT:
-            pUndoPiece = pCaptured;
-
-            assert(m->getEnPassantCapturedPieceInitialPos().has_value());
-            capturedFile = m->getEnPassantCapturedPieceInitialPos().value().first;
-            capturedRank = m->getEnPassantCapturedPieceInitialPos().value().second;
-
-            m_board.resetBoardTile(file, rank);
-            m_board.setBoardTile(capturedFile, capturedRank, pCaptured);
-            m_board.setBoardTile(prevFile, prevRank, selected);
-            break;
-        case MoveType::CASTLE_KINGSIDE:
-            secondFileInit = 5;
-            secondFileTarget = 7;
-            pSecondPiece = pCaptured;
-            m_board.resetBoardTile(secondFileInit, castleRank);
-            m_board.resetBoardTile(6, castleRank);
-            m_board.setBoardTile(secondFileTarget, castleRank, pSecondPiece);
-            m_board.setBoardTile(prevFile, prevRank, selected);
-
-            selected->setAsFirstMovement();
-            pSecondPiece->setAsFirstMovement();
-            break;
-        case MoveType::CASTLE_QUEENSIDE:
-            secondFileInit = 3;
-            secondFileTarget = 0;
-            pSecondPiece = pCaptured;
-            m_board.resetBoardTile(secondFileInit, castleRank);
-            m_board.resetBoardTile(2, castleRank);
-            m_board.setBoardTile(secondFileTarget, castleRank, pSecondPiece);
-            m_board.setBoardTile(prevFile, prevRank, selected);
-
-            selected->setAsFirstMovement();
-            pSecondPiece->setAsFirstMovement();
-            break;
-        case MoveType::INIT_SPECIAL:
-            m_board.resetBoardTile(file, rank);
-            m_board.setBoardTile(prevFile, prevRank, selected);
-            selected->setAsFirstMovement();
-            break;
-        case MoveType::NEWPIECE:
-            shared_ptr<Piece> pawn = make_shared<Pawn>(m->getSelectedPiece()->getTeam(), prevRank, prevFile);
-            m_board.setBoardTile(file, rank, pCaptured);
-            m_board.setBoardTile(prevFile, prevRank, pawn);
-    }
+    executeUndoHandler(undoMoveHandlers, move->getMoveType());
 
     if (enableTransition_)
     {
         // Enable transition movement
         setTransitioningPiece(
-            true, selected, file, rank, prevFile, prevRank, pUndoPiece,
-                capturedFile, capturedRank
+            true, 
+            undoMoveInfo.m_selectedPiece, 
+            undoMoveInfo.m_targetFile, 
+            undoMoveInfo.m_targetRank, 
+            undoMoveInfo.m_initFile, 
+            undoMoveInfo.m_initRank, 
+            undoMoveInfo.m_capturedPiece,
+            undoMoveInfo.m_targetFile, 
+            undoMoveInfo.m_targetRank
         );
 
-        if (pSecondPiece) {
+        if (undoMoveInfo.m_castlingSecondPiece) {
             setSecondTransitioningPiece(
-                pSecondPiece, secondFileInit, castleRank,
-                secondFileTarget, castleRank
+                undoMoveInfo.m_castlingSecondPiece.value(), 
+                undoMoveInfo.m_secondPieceInitFile.value(), 
+                undoMoveInfo.m_secondPieceInitRank.value(),
+                undoMoveInfo.m_secondPieceTargetFile.value(),
+                undoMoveInfo.m_secondPieceTargetRank.value()
             );
         }
     }

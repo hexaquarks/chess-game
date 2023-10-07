@@ -55,7 +55,7 @@ namespace game
         void handleKeyPressDown(ui::UIManager& uiManager_, vector<Arrow>& arrowList_);
         void handleKeyPressEnter(ui::UIManager& uiManager_, vector<Arrow>& arrowList_);
 
-        void executeKeyHandler(const std::map<int, std::function<void()>>& keyMap_, int keyCode_);
+        void executeKeyHandler(const std::map<int, KeyHandler>& keyMap_, int keyCode_);
 
     };
 }
