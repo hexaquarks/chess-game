@@ -238,7 +238,7 @@ struct UndoMoveInfo
 
 void MoveTreeManager::handleUndoMoveNormal( UndoMoveInfo& undoMoveInfo_)
 {   
-    auto& selectedPiece = undoMoveInfo_.m_selectedPiece;
+    shared_ptr<Piece> selectedPiece = undoMoveInfo_.m_selectedPiece;
 
     m_board.resetBoardTile(undoMoveInfo_.m_targetFile, undoMoveInfo_.m_targetRank);
     m_board.setBoardTile(undoMoveInfo_.m_initFile, undoMoveInfo_.m_initRank, selectedPiece);
@@ -249,7 +249,7 @@ void MoveTreeManager::handleUndoMoveNormal( UndoMoveInfo& undoMoveInfo_)
 
 void MoveTreeManager::handleUndoMoveCapture(UndoMoveInfo& undoMoveInfo_)
 {
-    auto& capturedPiece = undoMoveInfo_.m_capturedPiece;
+    auto capturedPiece = undoMoveInfo_.m_capturedPiece;
 
     // If we get here, there should be a captured piece available.
     assert(capturedPiece);
@@ -260,7 +260,7 @@ void MoveTreeManager::handleUndoMoveCapture(UndoMoveInfo& undoMoveInfo_)
 
 void MoveTreeManager::handleUndoMoveEnpassant(UndoMoveInfo& undoMoveInfo_)
 {
-    auto& capturedPiece = undoMoveInfo_.m_capturedPiece;
+    auto capturedPiece = undoMoveInfo_.m_capturedPiece;
 
     // If we get here, there should be a captured piece available.
     assert(capturedPiece);
@@ -286,8 +286,8 @@ void MoveTreeManager::handleUndoMoveCastle(
     int kingFileAfterCastling = undoMoveInfo_.m_targetFile;
     int kingFileBeforeCastling = undoMoveInfo_.m_initFile;
     
-    auto& king = undoMoveInfo_.m_selectedPiece;
-    auto& rook = undoMoveInfo_.m_capturedPiece;
+    auto king = undoMoveInfo_.m_selectedPiece;
+    auto rook = undoMoveInfo_.m_capturedPiece;
 
     // Undo the castling.
     m_board.resetBoardTile(rookFileAfterCastling, castleRank);
@@ -308,7 +308,7 @@ void MoveTreeManager::handleUndoMoveCastle(
 
 void MoveTreeManager::handleUndoMoveInitSpecial(UndoMoveInfo& undoMoveInfo_)
 {
-    auto& selectedPiece = undoMoveInfo_.m_selectedPiece;
+    auto selectedPiece = undoMoveInfo_.m_selectedPiece;
 
     m_board.resetBoardTile(undoMoveInfo_.m_targetFile, undoMoveInfo_.m_targetRank);
     m_board.setBoardTile(undoMoveInfo_.m_initFile, undoMoveInfo_.m_initRank, selectedPiece);
@@ -356,7 +356,11 @@ void MoveTreeManager::undoMove(bool enableTransition_, vector<Arrow>& arrowList_
     int rookFileAfterCastlingKingSide = 5; 
     int rookFileBeforeCastlingKingSide = 7;  
 
-    static map<MoveType, std::function<void()>> undoMoveHandlers
+    // TODO: Review design here. Ideally, this would be a static map, but 
+    // it causes dangling references to members of undoMoveInfo. I tried 
+    // wrapping it in a shared_ptr, making undoMoveInfo static, but with no
+    // success. 
+    const map<MoveType, std::function<void()>> undoMoveHandlers
     {
         { MoveType::NORMAL, [this, &undoMoveInfo] { handleUndoMoveNormal(undoMoveInfo); } },
         { MoveType::CAPTURE, [this, &undoMoveInfo] { handleUndoMoveCapture(undoMoveInfo); } },
@@ -398,8 +402,12 @@ void MoveTreeManager::undoMove(bool enableTransition_, vector<Arrow>& arrowList_
             undoMoveInfo.m_initFile, 
             undoMoveInfo.m_initRank, 
             undoMoveInfo.m_capturedPiece,
-            undoMoveInfo.m_targetFile, 
-            undoMoveInfo.m_targetRank
+            undoMoveInfo.m_enPassantCapturedPieceInitCoords.value_or(
+                std::make_pair(undoMoveInfo.m_targetFile, undoMoveInfo.m_targetRank)
+            ).first, 
+            undoMoveInfo.m_enPassantCapturedPieceInitCoords.value_or(
+                std::make_pair(undoMoveInfo.m_targetFile, undoMoveInfo.m_targetRank)
+            ).second
         );
 
         if (undoMoveInfo.m_castlingSecondPiece) {
