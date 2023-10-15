@@ -17,6 +17,8 @@
 
 using namespace sf;
 
+struct UndoRedoMoveInfo;
+
 class MoveTreeManager
 {
 public:
@@ -70,4 +72,22 @@ private:
         shared_ptr<Piece>&, int, int,
         int, int
     );
+
+    void handleUndoMoveNormal(UndoRedoMoveInfo& undoRedoMoveInfo_);
+    void handleUndoMoveCapture(UndoRedoMoveInfo& undoRedoMoveInfo_);
+    void handleUndoMoveEnpassant(UndoRedoMoveInfo& undoRedoMoveInfo_);
+    void handleUndoMoveCastle(UndoRedoMoveInfo& undoRedoMoveInfo_, std::pair<int, int>);
+    void handleUndoMoveInitSpecial(UndoRedoMoveInfo& undoRedoMoveInfo_);
+    void handleUndoMoveNewPiece(UndoRedoMoveInfo& undoRedoMoveInfo_);
+
+    void handleRedoMoveNormal(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_);
+    void handleRedoMoveCapture(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_);
+    void handleRedoMoveEnpassant(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_);
+    void handleRedoMoveCastle(UndoRedoMoveInfo& undoRedoMoveInfo_, std::pair<int, int>, bool addToList_);
+    void handleRedoMoveInitSpecial(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_);
+    void handleRedoMoveNewPiece(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_);
+
+    void executeUndoRedoHandler(const std::map<MoveType, std::function<void()>>& undoRedoMap_, MoveType moveType_);
+
 };
+
