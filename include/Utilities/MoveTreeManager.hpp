@@ -17,7 +17,7 @@
 
 using namespace sf;
 
-struct UndoMoveInfo;
+struct UndoRedoMoveInfo;
 
 class MoveTreeManager
 {
@@ -73,14 +73,21 @@ private:
         int, int
     );
 
-    void handleUndoMoveNormal(UndoMoveInfo& undoMoveInfo_);
-    void handleUndoMoveCapture(UndoMoveInfo& undoMoveInfo_);
-    void handleUndoMoveEnpassant(UndoMoveInfo& undoMoveInfo_);
-    void handleUndoMoveCastle(UndoMoveInfo& undoMoveInfo_, std::pair<int, int>);
-    void handleUndoMoveInitSpecial(UndoMoveInfo& undoMoveInfo_);
-    void handleUndoMoveNewPiece(UndoMoveInfo& undoMoveInfo_);
+    void handleUndoMoveNormal(UndoRedoMoveInfo& undoRedoMoveInfo_);
+    void handleUndoMoveCapture(UndoRedoMoveInfo& undoRedoMoveInfo_);
+    void handleUndoMoveEnpassant(UndoRedoMoveInfo& undoRedoMoveInfo_);
+    void handleUndoMoveCastle(UndoRedoMoveInfo& undoRedoMoveInfo_, std::pair<int, int>);
+    void handleUndoMoveInitSpecial(UndoRedoMoveInfo& undoRedoMoveInfo_);
+    void handleUndoMoveNewPiece(UndoRedoMoveInfo& undoRedoMoveInfo_);
 
-    void executeUndoHandler(const std::map<MoveType, std::function<void()>>& undoMap_, MoveType moveType_);
+    void handleRedoMoveNormal(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_);
+    void handleRedoMoveCapture(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_);
+    void handleRedoMoveEnpassant(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_);
+    void handleRedoMoveCastle(UndoRedoMoveInfo& undoRedoMoveInfo_, std::pair<int, int>, bool addToList_);
+    void handleRedoMoveInitSpecial(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_);
+    void handleRedoMoveNewPiece(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_);
+
+    void executeUndoRedoHandler(const std::map<MoveType, std::function<void()>>& undoMap_, MoveType moveType_);
 
 };
 

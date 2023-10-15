@@ -6,15 +6,27 @@
 #include <cassert> 
 #include <iterator>
 
-#define ENABLE_TRANSITION_IF_ENABLED(ENABLE, TRANSITION_FUNC, SECOND_TRANSITION_FUNC, ...) \
-do { \
-    if (ENABLE) { \
-        TRANSITION_FUNC(__VA_ARGS__); \
-        if (pSecondPiece) { \
-            SECOND_TRANSITION_FUNC(pSecondPiece, secondFileInit, castleRank, secondFileTarget, castleRank); \
-        } \
-    } \
-} while (0)
+struct UndoRedoMoveInfo
+{
+    const std::shared_ptr<Move>& m_move;
+    int m_targetFile;
+    int m_targetRank;
+    int m_initFile;
+    int m_initRank;
+    std::shared_ptr<Piece> m_selectedPiece;
+    std::shared_ptr<Piece> m_capturedPiece; 
+
+    // Edge-case information 
+    std::optional<std::shared_ptr<Piece>> m_promotingPieceOpt;
+    std::optional<coor2d> m_enPassantCapturedPieceInitCoords;
+
+    // Information for castling
+    std::optional<int> m_secondPieceTargetFile;
+    std::optional<int> m_secondPieceTargetRank;
+    std::optional<int> m_secondPieceInitFile;
+    std::optional<int> m_secondPieceInitRank;
+    std::optional<std::shared_ptr<Piece>> m_castlingSecondPiece;
+};
 
 MoveTreeManager::MoveTreeManager(Board& board_): m_board(board_)
 {
@@ -64,6 +76,112 @@ void MoveTreeManager::applyMove(
     applyMove(m_moveIterator->m_move, false, enableTransition_, arrowList_);
 }
 
+void MoveTreeManager::handleRedoMoveNormal( UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_)
+{   
+    shared_ptr<Piece> selectedPiece = undoRedoMoveInfo_.m_selectedPiece;
+    m_board.setBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank, selectedPiece);
+
+    if (addToList_) m_moves.insertNode(undoRedoMoveInfo_.m_move, m_moveIterator);
+}
+
+void MoveTreeManager::handleRedoMoveCapture(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_)
+{
+    auto pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
+    auto pCapturedPiece = m_board.getBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank);
+
+    // If we get here, there should be a captured piece available.
+    assert(pSelectedPiece);
+    assert(pCapturedPiece);
+
+    m_board.setBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank, pSelectedPiece);
+
+    if (addToList_) m_moves.insertNode(make_shared<Move>(*undoRedoMoveInfo_.m_move, pCapturedPiece), m_moveIterator);
+}
+
+void MoveTreeManager::handleRedoMoveEnpassant(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_)
+{
+    auto pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
+    auto pCapturedPiece = undoRedoMoveInfo_.m_capturedPiece;
+
+    assert(pSelectedPiece);
+    assert(pCapturedPiece);    
+
+    int capturedPieceFile = pCapturedPiece->getFile();
+    int capturedPieceRank = pCapturedPiece->getRank();
+    
+    m_board.resetBoardTile(capturedPieceFile, capturedPieceRank);
+    m_board.setBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank, pSelectedPiece);
+
+    if (addToList_)
+    {
+        m_moves.insertNode(make_shared<Move>(
+            *undoRedoMoveInfo_.m_move, 
+            pCapturedPiece, 
+            std::make_pair(capturedPieceFile, capturedPieceRank)), 
+        m_moveIterator);
+    }
+}
+
+// TODO : I realize memeory is heavily misshandled in piece movement. A copy is done 
+// of the piece and then the previous piece pointer is reseted at the board tile. 
+// A std::move() should probably be done? 
+void MoveTreeManager::handleRedoMoveCastle(
+    UndoRedoMoveInfo& undoRedoMoveInfo_,
+    std::pair<int, int> rookFileBeforeAndAfterCastling_, 
+    bool addToList_)
+{   
+    const int castleRank = (undoRedoMoveInfo_.m_selectedPiece->getTeam() == Team::WHITE)? 7: 0;
+
+    // We define the target and initial squares to be clear
+    auto& [rookFileAfterCastling, rookFileBeforeCastling] = rookFileBeforeAndAfterCastling_; 
+    int kingFileAfterCastling = undoRedoMoveInfo_.m_targetFile;
+    int kingFileBeforeCastling = undoRedoMoveInfo_.m_initFile;
+    
+    auto king = undoRedoMoveInfo_.m_selectedPiece;
+    auto rook = m_board.getBoardTile(rookFileBeforeCastling, castleRank);
+
+    // Undo the castling.
+    m_board.resetBoardTile(rookFileBeforeCastling, castleRank);
+    m_board.setBoardTile(rookFileAfterCastling, castleRank, rook);
+    m_board.setBoardTile(kingFileAfterCastling, castleRank, king);
+
+    // Update the UndoRedoMoveInfo struct
+    undoRedoMoveInfo_.m_secondPieceTargetFile = rookFileAfterCastling;
+    undoRedoMoveInfo_.m_secondPieceTargetRank = castleRank;
+    undoRedoMoveInfo_.m_secondPieceInitFile = rookFileBeforeCastling;
+    undoRedoMoveInfo_.m_secondPieceInitRank = castleRank;
+    undoRedoMoveInfo_.m_castlingSecondPiece = rook;
+
+    if (addToList_) m_moves.insertNode(make_shared<Move>(*undoRedoMoveInfo_.m_move, rook), m_moveIterator);
+}
+
+void MoveTreeManager::handleRedoMoveInitSpecial(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_)
+{
+    auto pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
+
+    m_board.setBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank, pSelectedPiece);
+
+    if (addToList_) m_moves.insertNode(undoRedoMoveInfo_.m_move, m_moveIterator);
+}
+
+void MoveTreeManager::handleRedoMoveNewPiece(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_)
+{
+    auto pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
+    std::shared_ptr<Piece> pPromotingPiece = make_shared<Queen>(
+        undoRedoMoveInfo_.m_selectedPiece->getTeam(), 
+        undoRedoMoveInfo_.m_targetFile, 
+        undoRedoMoveInfo_.m_targetRank);
+    Piece::setLastMovedPiece(pPromotingPiece);
+    m_board.setBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank, pPromotingPiece);
+    m_board.addPiece(pPromotingPiece);
+
+    // Update the UndoRedoMove structure - we add the new piece that was created through promotion.
+    undoRedoMoveInfo_.m_promotingPieceOpt = pPromotingPiece;
+
+    if (addToList_) m_moves.insertNode(make_shared<Move>(*undoRedoMoveInfo_.m_move, pSelectedPiece), m_moveIterator);
+    
+}
+
 void MoveTreeManager::applyMove(
     const shared_ptr<Move>& move_, 
     bool addToList_, 
@@ -72,134 +190,85 @@ void MoveTreeManager::applyMove(
 {
     if (!move_) return;
     
-    const int castleRank = (m_board.getTurn() == Team::WHITE)? 7: 0;
-    std::optional<shared_ptr<Piece>> pSecondPieceOpt;
-    std::optional<shared_ptr<Piece>> pPromotingPieceOpt;
-    shared_ptr<Piece> pSelectedPiece = move_->getSelectedPiece();
-    shared_ptr<Piece> pCapturedPiece; // TODO change to optional. Requires some refactoring...
-    int capturedFile = -1, capturedRank = -1;
-
-    coor2d oldCoors;
-    const auto [prevFile, prevRank] = move_->getInit();
-    const auto [file, rank] = move_->getTarget();
-    int secondFileInit = -1, secondFileTarget = -1;
-
     // Set the current tile of the piece null. Necessary for navigating back to current move through goToNextMove()
+    const auto [prevFile, prevRank] = move_->getInit();
     m_board.resetBoardTile(prevFile, prevRank);
     arrowList_ = move_->getMoveArrows();
+    std::optional<shared_ptr<Piece>> pPromotingPieceOpt;
 
-    switch (move_->getMoveType())
+    // Defining the UndoRedoMoveInfo
+    UndoRedoMoveInfo undoRedoMoveInfo{
+        move_,
+        move_->getTarget().first,
+        move_->getTarget().second,
+        move_->getInit().first,
+        move_->getInit().second,
+        move_->getSelectedPiece(),
+        move_->getCapturedPiece(),
+        pPromotingPieceOpt,
+        std::nullopt
+    };
+
+    // TODO: Review design here. Ideally, this would be a static map, but 
+    // it causes dangling references to members of undoRedoMoveInfo. I tried 
+    // wrapping it in a shared_ptr, making undoRedoMoveInfo static, but with no
+    // success. 
+    const map<MoveType, std::function<void()>> redoMoveHandlers
     {
-        case MoveType::NORMAL:
-            m_board.setBoardTile(file, rank, pSelectedPiece);
-            if (addToList_)
-            {
-                m_moves.insertNode(move_, m_moveIterator);
-            }
-            // soundMove.play();
-            break;
+        { MoveType::NORMAL, [this, &undoRedoMoveInfo, &addToList_] { handleRedoMoveNormal(undoRedoMoveInfo, addToList_); } },
+        { MoveType::CAPTURE, [this, &undoRedoMoveInfo, &addToList_] { handleRedoMoveCapture(undoRedoMoveInfo, addToList_); } },
+        { MoveType::ENPASSANT, [this, &undoRedoMoveInfo, &addToList_] { handleRedoMoveEnpassant(undoRedoMoveInfo, addToList_); } },
+        { MoveType::CASTLE_KINGSIDE, [this, &undoRedoMoveInfo, &addToList_] 
+        { 
+            int rookFileAfterCastlingKingSide = 5; 
+            int rookFileBeforeCastlingKingSide = 7; 
 
-        case MoveType::CAPTURE:
-        {
-            pCapturedPiece = move_->getCapturedPiece();
-            capturedFile = file;
-            capturedRank = rank;
-            auto pOldPiece = m_board.getBoardTile(file, rank);
-            m_board.setBoardTile(file, rank, pSelectedPiece);
-            if (addToList_)
-            {
-                m_moves.insertNode(make_shared<Move>(*move_, pOldPiece), m_moveIterator);
-            }
-            // soundCapture.play();
-            break;
-        }
+            handleRedoMoveCastle(undoRedoMoveInfo, std::make_pair(
+                rookFileAfterCastlingKingSide,
+                rookFileBeforeCastlingKingSide
+            ), addToList_); 
+        } },
+        { MoveType::CASTLE_QUEENSIDE, [this, &undoRedoMoveInfo, &addToList_] 
+        { 
+            int rookFileAfterCastlingQueenSide = 3; 
+            int rookFileBeforeCastlingQueenSide = 0; 
 
-        case MoveType::ENPASSANT:
-            pCapturedPiece = move_->getCapturedPiece();
-            capturedFile = pCapturedPiece->getFile();
-            capturedRank = pCapturedPiece->getRank();
-            oldCoors = {capturedFile, capturedRank};
-            m_board.resetBoardTile(oldCoors.first, oldCoors.second);
-            m_board.setBoardTile(file, rank, pSelectedPiece);
-            if (addToList_)
-            {
-                m_moves.insertNode(make_shared<Move>(*move_, pCapturedPiece, oldCoors), m_moveIterator);
-            }
-            break;
+            handleRedoMoveCastle(undoRedoMoveInfo, std::make_pair(
+                rookFileAfterCastlingQueenSide,
+                rookFileBeforeCastlingQueenSide 
+            ), addToList_); 
+        } },
+        { MoveType::INIT_SPECIAL, [this, &undoRedoMoveInfo, &addToList_] { handleRedoMoveInitSpecial(undoRedoMoveInfo, addToList_); } },
+        { MoveType::NEWPIECE, [this, &undoRedoMoveInfo, &addToList_] { handleRedoMoveNewPiece(undoRedoMoveInfo, addToList_); } }
+    };
 
-        case MoveType::CASTLE_KINGSIDE:
-        {
-            secondFileInit = 7;
-            secondFileTarget = 5;
-            pSecondPieceOpt = m_board.getBoardTile(secondFileInit, castleRank);
-            m_board.resetBoardTile(secondFileInit, castleRank);
-            m_board.setBoardTile(secondFileTarget, castleRank, pSecondPieceOpt.value());
-            m_board.setBoardTile(6, castleRank, pSelectedPiece);
-            m_board.setBoardTile(file, rank, pSelectedPiece);
-            if (addToList_)
-            {
-                coor2d target = {6, castleRank};
-                move_->setTarget(target);
-                m_moves.insertNode(make_shared<Move>(*move_, pSecondPieceOpt.value()), m_moveIterator);
-            }
-            break;
-        }
-
-        case MoveType::CASTLE_QUEENSIDE:
-        {
-            secondFileInit = 0;
-            secondFileTarget = 3;
-            auto pSecondPiece = m_board.getBoardTile(secondFileInit, castleRank);
-            m_board.resetBoardTile(secondFileInit, castleRank);
-            m_board.setBoardTile(secondFileTarget, castleRank, pSecondPiece);
-            m_board.setBoardTile(2, castleRank, pSelectedPiece);
-            m_board.setBoardTile(file, rank, pSelectedPiece);
-            if (addToList_)
-            {
-                coor2d target = {2, castleRank};
-                move_->setTarget(target);
-                m_moves.insertNode(make_shared<Move>(*move_, pSecondPiece), m_moveIterator);
-            }
-            break;
-        }
-
-        case MoveType::INIT_SPECIAL:
-            m_board.setBoardTile(file, rank, pSelectedPiece);
-            if (addToList_)
-            {
-                m_moves.insertNode(move_, m_moveIterator);
-            }
-            break;
-
-        case MoveType::NEWPIECE:
-        {
-            auto pOldPiece = m_board.getBoardTile(file, rank);
-            pPromotingPieceOpt = make_shared<Queen>(pSelectedPiece->getTeam(), rank, file);
-            Piece::setLastMovedPiece(pPromotingPieceOpt.value());
-            m_board.setBoardTile(file, rank, pPromotingPieceOpt.value());
-            m_board.addPiece(pPromotingPieceOpt.value());
-            if (addToList_)
-            {
-                m_moves.insertNode(make_shared<Move>(*move_, pOldPiece), m_moveIterator);
-            }
-            break;
-        }
-    }
+    executeUndoRedoHandler(redoMoveHandlers, move_->getMoveType());
 
     if (enableTransition_)
     {
-        if (!addToList_ && pSelectedPiece)
+        if (!addToList_ && undoRedoMoveInfo.m_selectedPiece)
         {
-            // Enable piece visual transition
+
+            // Enable transition movement
             setTransitioningPiece(
-                false, pSelectedPiece, prevFile, prevRank, file, rank, pCapturedPiece,
-                capturedFile, capturedRank
+                true, 
+                undoRedoMoveInfo.m_selectedPiece, 
+                undoRedoMoveInfo.m_initFile, 
+                undoRedoMoveInfo.m_initRank, 
+                undoRedoMoveInfo.m_targetFile, 
+                undoRedoMoveInfo.m_targetRank, 
+                undoRedoMoveInfo.m_capturedPiece,
+                undoRedoMoveInfo.m_targetFile,
+                undoRedoMoveInfo.m_targetRank
             );
 
-            if (pSecondPieceOpt.has_value()) {
+            if (undoRedoMoveInfo.m_castlingSecondPiece.has_value()) {
                 setSecondTransitioningPiece(
-                    pSecondPieceOpt.value(), secondFileInit, castleRank,
-                    secondFileTarget, castleRank
+                    undoRedoMoveInfo.m_castlingSecondPiece.value(), 
+                    undoRedoMoveInfo.m_secondPieceInitFile.value(), 
+                    undoRedoMoveInfo.m_secondPieceInitRank.value(),
+                    undoRedoMoveInfo.m_secondPieceTargetFile.value(),
+                    undoRedoMoveInfo.m_secondPieceTargetRank.value()
                 );
             }
 
@@ -207,87 +276,83 @@ void MoveTreeManager::applyMove(
                 getTransitioningPiece().setPromotingPiece(pPromotingPieceOpt.value());
             }
         }
-        else if (pSecondPieceOpt.has_value())
+        // If the user manually drags and drops the king or castles through clicking,
+        // We need to enable smooth transition for the rook. 
+        // TODO: It seems that if we castle through clicking, only the rook will be 
+        // transitioning smoothly - the king will teleport. Need to implement this.
+        else if (undoRedoMoveInfo.m_castlingSecondPiece.has_value())
         {
             // Enable rook sliding when user just castled
+            // TODO try non-second piece transition if this doesnt work?
+            std::shared_ptr<Piece> temp = nullptr;
             setTransitioningPiece(
-                false, pSecondPieceOpt.value(), secondFileInit, castleRank, secondFileTarget, castleRank,
-                pCapturedPiece, capturedFile, capturedRank
+                false,
+                undoRedoMoveInfo.m_castlingSecondPiece.value(), 
+                undoRedoMoveInfo.m_secondPieceInitFile.value(), 
+                undoRedoMoveInfo.m_secondPieceInitRank.value(),
+                undoRedoMoveInfo.m_secondPieceTargetFile.value(),
+                undoRedoMoveInfo.m_secondPieceTargetRank.value(),
+                temp,
+                -1, 
+                -1
             );
         }
     }
 }
 
-struct UndoMoveInfo
-{
-    int m_targetFile;
-    int m_targetRank;
-    int m_initFile;
-    int m_initRank;
-    std::shared_ptr<Piece> m_selectedPiece;
-    std::shared_ptr<Piece> m_capturedPiece; 
-    std::optional<coor2d> m_enPassantCapturedPieceInitCoords;
-
-    // information for castling
-    std::optional<int> m_secondPieceTargetFile;
-    std::optional<int> m_secondPieceTargetRank;
-    std::optional<int> m_secondPieceInitFile;
-    std::optional<int> m_secondPieceInitRank;
-    std::optional<std::shared_ptr<Piece>> m_castlingSecondPiece;
-};
-
-void MoveTreeManager::handleUndoMoveNormal( UndoMoveInfo& undoMoveInfo_)
+void MoveTreeManager::handleUndoMoveNormal( UndoRedoMoveInfo& undoRedoMoveInfo_)
 {   
-    shared_ptr<Piece> selectedPiece = undoMoveInfo_.m_selectedPiece;
+    shared_ptr<Piece> selectedPiece = undoRedoMoveInfo_.m_selectedPiece;
 
-    m_board.resetBoardTile(undoMoveInfo_.m_targetFile, undoMoveInfo_.m_targetRank);
-    m_board.setBoardTile(undoMoveInfo_.m_initFile, undoMoveInfo_.m_initRank, selectedPiece);
+    m_board.resetBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank);
+    m_board.setBoardTile(undoRedoMoveInfo_.m_initFile, undoRedoMoveInfo_.m_initRank, selectedPiece);
 
     King* kingPiece = dynamic_cast<King*>(selectedPiece.get());
     if (kingPiece) selectedPiece->setAsFirstMovement();
 }
 
-void MoveTreeManager::handleUndoMoveCapture(UndoMoveInfo& undoMoveInfo_)
+void MoveTreeManager::handleUndoMoveCapture(UndoRedoMoveInfo& undoRedoMoveInfo_)
 {
-    auto capturedPiece = undoMoveInfo_.m_capturedPiece;
+    auto capturedPiece = undoRedoMoveInfo_.m_capturedPiece;
 
     // If we get here, there should be a captured piece available.
     assert(capturedPiece);
 
-    m_board.setBoardTile(undoMoveInfo_.m_targetFile,undoMoveInfo_.m_targetRank, capturedPiece);
-    m_board.setBoardTile(undoMoveInfo_.m_initFile, undoMoveInfo_.m_initRank, undoMoveInfo_.m_selectedPiece);
+    m_board.setBoardTile(undoRedoMoveInfo_.m_targetFile,undoRedoMoveInfo_.m_targetRank, capturedPiece);
+    m_board.setBoardTile(undoRedoMoveInfo_.m_initFile, undoRedoMoveInfo_.m_initRank, undoRedoMoveInfo_.m_selectedPiece);
 }
 
-void MoveTreeManager::handleUndoMoveEnpassant(UndoMoveInfo& undoMoveInfo_)
+void MoveTreeManager::handleUndoMoveEnpassant(UndoRedoMoveInfo& undoRedoMoveInfo_)
 {
-    auto capturedPiece = undoMoveInfo_.m_capturedPiece;
+    auto capturedPiece = undoRedoMoveInfo_.m_capturedPiece;
 
     // If we get here, there should be a captured piece available.
     assert(capturedPiece);
 
     // The en passant infos should be set.
-    assert(undoMoveInfo_.m_enPassantCapturedPieceInitCoords.has_value());
-    int capturedFile = undoMoveInfo_.m_enPassantCapturedPieceInitCoords.value().first;
-    int capturedRank = undoMoveInfo_.m_enPassantCapturedPieceInitCoords.value().second;
+    assert(undoRedoMoveInfo_.m_enPassantCapturedPieceInitCoords.has_value());
+    int capturedFile = undoRedoMoveInfo_.m_enPassantCapturedPieceInitCoords.value().first;
+    int capturedRank = undoRedoMoveInfo_.m_enPassantCapturedPieceInitCoords.value().second;
 
-    m_board.resetBoardTile(undoMoveInfo_.m_targetFile,undoMoveInfo_.m_targetRank);
+    std::cout << "considering "<< capturedFile << ", " << capturedRank << std::endl;
+    m_board.resetBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank);
     m_board.setBoardTile(capturedFile, capturedRank, capturedPiece);
-    m_board.setBoardTile(undoMoveInfo_.m_initFile, undoMoveInfo_.m_initRank, undoMoveInfo_.m_selectedPiece);
+    m_board.setBoardTile(undoRedoMoveInfo_.m_initFile, undoRedoMoveInfo_.m_initRank, undoRedoMoveInfo_.m_selectedPiece);
 }
 
 void MoveTreeManager::handleUndoMoveCastle(
-    UndoMoveInfo& undoMoveInfo_,
+    UndoRedoMoveInfo& undoRedoMoveInfo_,
     std::pair<int, int> rookFileBeforeAndAfterCastling_)
 {
-    const int castleRank = (undoMoveInfo_.m_selectedPiece->getTeam() == Team::WHITE)? 7: 0;
+    const int castleRank = (undoRedoMoveInfo_.m_selectedPiece->getTeam() == Team::WHITE)? 7: 0;
 
     // We define the target and initial squares to be clear
     auto& [rookFileAfterCastling, rookFileBeforeCastling] = rookFileBeforeAndAfterCastling_; 
-    int kingFileAfterCastling = undoMoveInfo_.m_targetFile;
-    int kingFileBeforeCastling = undoMoveInfo_.m_initFile;
+    int kingFileAfterCastling = undoRedoMoveInfo_.m_targetFile;
+    int kingFileBeforeCastling = undoRedoMoveInfo_.m_initFile;
     
-    auto king = undoMoveInfo_.m_selectedPiece;
-    auto rook = undoMoveInfo_.m_capturedPiece;
+    auto king = undoRedoMoveInfo_.m_selectedPiece;
+    auto rook = undoRedoMoveInfo_.m_capturedPiece;
 
     // Undo the castling.
     m_board.resetBoardTile(rookFileAfterCastling, castleRank);
@@ -295,39 +360,39 @@ void MoveTreeManager::handleUndoMoveCastle(
     m_board.setBoardTile(rookFileBeforeCastling, castleRank, rook);
     m_board.setBoardTile(kingFileBeforeCastling, castleRank, king);
 
-    undoMoveInfo_.m_selectedPiece->setAsFirstMovement();
-    undoMoveInfo_.m_capturedPiece->setAsFirstMovement();
+    undoRedoMoveInfo_.m_selectedPiece->setAsFirstMovement();
+    undoRedoMoveInfo_.m_capturedPiece->setAsFirstMovement();
 
-    // Update the UndoMoveInfo struct
-    undoMoveInfo_.m_secondPieceTargetFile = rookFileBeforeCastling;
-    undoMoveInfo_.m_secondPieceTargetRank = castleRank;
-    undoMoveInfo_.m_secondPieceInitFile = rookFileAfterCastling;
-    undoMoveInfo_.m_secondPieceInitRank = castleRank;
-    undoMoveInfo_.m_castlingSecondPiece = rook;
+    // Update the UndoRedoMoveInfo struct
+    undoRedoMoveInfo_.m_secondPieceTargetFile = rookFileBeforeCastling;
+    undoRedoMoveInfo_.m_secondPieceTargetRank = castleRank;
+    undoRedoMoveInfo_.m_secondPieceInitFile = rookFileAfterCastling;
+    undoRedoMoveInfo_.m_secondPieceInitRank = castleRank;
+    undoRedoMoveInfo_.m_castlingSecondPiece = rook;
 }
 
-void MoveTreeManager::handleUndoMoveInitSpecial(UndoMoveInfo& undoMoveInfo_)
+void MoveTreeManager::handleUndoMoveInitSpecial(UndoRedoMoveInfo& undoRedoMoveInfo_)
 {
-    auto selectedPiece = undoMoveInfo_.m_selectedPiece;
+    auto selectedPiece = undoRedoMoveInfo_.m_selectedPiece;
 
-    m_board.resetBoardTile(undoMoveInfo_.m_targetFile, undoMoveInfo_.m_targetRank);
-    m_board.setBoardTile(undoMoveInfo_.m_initFile, undoMoveInfo_.m_initRank, selectedPiece);
+    m_board.resetBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank);
+    m_board.setBoardTile(undoRedoMoveInfo_.m_initFile, undoRedoMoveInfo_.m_initRank, selectedPiece);
 
     selectedPiece->setAsFirstMovement();
 }
 
-void MoveTreeManager::handleUndoMoveNewPiece(UndoMoveInfo& undoMoveInfo_)
+void MoveTreeManager::handleUndoMoveNewPiece(UndoRedoMoveInfo& undoRedoMoveInfo_)
 {
     shared_ptr<Piece> newPawn = make_shared<Pawn>(
-        undoMoveInfo_.m_selectedPiece->getTeam(),
-        undoMoveInfo_.m_initFile, 
-        undoMoveInfo_.m_initRank);
+        undoRedoMoveInfo_.m_selectedPiece->getTeam(),
+        undoRedoMoveInfo_.m_initFile, 
+        undoRedoMoveInfo_.m_initRank);
         
-    m_board.setBoardTile(undoMoveInfo_.m_targetFile, undoMoveInfo_.m_targetRank, undoMoveInfo_.m_capturedPiece);
-    m_board.setBoardTile(undoMoveInfo_.m_initFile, undoMoveInfo_.m_initRank, newPawn);
+    m_board.setBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank, undoRedoMoveInfo_.m_capturedPiece);
+    m_board.setBoardTile(undoRedoMoveInfo_.m_initFile, undoRedoMoveInfo_.m_initRank, newPawn);
 }
 
-void MoveTreeManager::executeUndoHandler(
+void MoveTreeManager::executeUndoRedoHandler(
     const std::map<MoveType, std::function<void()>>& keyMap_, 
     MoveType moveType_)
 {
@@ -342,14 +407,16 @@ void MoveTreeManager::undoMove(bool enableTransition_, vector<Arrow>& arrowList_
     
     arrowList_ = move->getMoveArrows();
 
-    // Defining the UndoMoveInfo
-    UndoMoveInfo undoMoveInfo{
+    // Defining the UndoRedoMoveInfo
+    UndoRedoMoveInfo undoRedoMoveInfo{
+        move,
         move->getTarget().first,
         move->getTarget().second,
         move->getInit().first,
         move->getInit().second,
         move->getSelectedPiece(),
         move->getCapturedPiece(),
+        std::nullopt,
         move->getEnPassantCapturedPieceInitialPos()
     };
 
@@ -357,66 +424,66 @@ void MoveTreeManager::undoMove(bool enableTransition_, vector<Arrow>& arrowList_
     int rookFileBeforeCastlingKingSide = 7;  
 
     // TODO: Review design here. Ideally, this would be a static map, but 
-    // it causes dangling references to members of undoMoveInfo. I tried 
-    // wrapping it in a shared_ptr, making undoMoveInfo static, but with no
+    // it causes dangling references to members of undoRedoMoveInfo. I tried 
+    // wrapping it in a shared_ptr, making undoRedoMoveInfo static, but with no
     // success. 
     const map<MoveType, std::function<void()>> undoMoveHandlers
     {
-        { MoveType::NORMAL, [this, &undoMoveInfo] { handleUndoMoveNormal(undoMoveInfo); } },
-        { MoveType::CAPTURE, [this, &undoMoveInfo] { handleUndoMoveCapture(undoMoveInfo); } },
-        { MoveType::ENPASSANT, [this, &undoMoveInfo] { handleUndoMoveEnpassant(undoMoveInfo); } },
-        { MoveType::CASTLE_KINGSIDE, [this, &undoMoveInfo] 
+        { MoveType::NORMAL, [this, &undoRedoMoveInfo] { handleUndoMoveNormal(undoRedoMoveInfo); } },
+        { MoveType::CAPTURE, [this, &undoRedoMoveInfo] { handleUndoMoveCapture(undoRedoMoveInfo); } },
+        { MoveType::ENPASSANT, [this, &undoRedoMoveInfo] { handleUndoMoveEnpassant(undoRedoMoveInfo); } },
+        { MoveType::CASTLE_KINGSIDE, [this, &undoRedoMoveInfo] 
         { 
             int rookFileAfterCastlingKingSide = 5; 
             int rookFileBeforeCastlingKingSide = 7; 
 
-            handleUndoMoveCastle(undoMoveInfo, std::make_pair(
+            handleUndoMoveCastle(undoRedoMoveInfo, std::make_pair(
                 rookFileAfterCastlingKingSide,
                 rookFileBeforeCastlingKingSide
             )); 
         } },
-        { MoveType::CASTLE_QUEENSIDE, [this, &undoMoveInfo] 
+        { MoveType::CASTLE_QUEENSIDE, [this, &undoRedoMoveInfo] 
         { 
             int rookFileAfterCastlingQueenSide = 3; 
             int rookFileBeforeCastlingQueenSide = 0; 
 
-            handleUndoMoveCastle(undoMoveInfo, std::make_pair(
+            handleUndoMoveCastle(undoRedoMoveInfo, std::make_pair(
                 rookFileAfterCastlingQueenSide,
                 rookFileBeforeCastlingQueenSide
             )); 
         } },
-        { MoveType::INIT_SPECIAL, [this, &undoMoveInfo] { handleUndoMoveInitSpecial(undoMoveInfo); } },
-        { MoveType::NEWPIECE, [this, &undoMoveInfo] { handleUndoMoveNewPiece(undoMoveInfo); } }
+        { MoveType::INIT_SPECIAL, [this, &undoRedoMoveInfo] { handleUndoMoveInitSpecial(undoRedoMoveInfo); } },
+        { MoveType::NEWPIECE, [this, &undoRedoMoveInfo] { handleUndoMoveNewPiece(undoRedoMoveInfo); } }
     };
 
-    executeUndoHandler(undoMoveHandlers, move->getMoveType());
+    executeUndoRedoHandler(undoMoveHandlers, move->getMoveType());
 
     if (enableTransition_)
     {
         // Enable transition movement
         setTransitioningPiece(
             true, 
-            undoMoveInfo.m_selectedPiece, 
-            undoMoveInfo.m_targetFile, 
-            undoMoveInfo.m_targetRank, 
-            undoMoveInfo.m_initFile, 
-            undoMoveInfo.m_initRank, 
-            undoMoveInfo.m_capturedPiece,
-            undoMoveInfo.m_enPassantCapturedPieceInitCoords.value_or(
-                std::make_pair(undoMoveInfo.m_targetFile, undoMoveInfo.m_targetRank)
+            undoRedoMoveInfo.m_selectedPiece, 
+            undoRedoMoveInfo.m_targetFile, 
+            undoRedoMoveInfo.m_targetRank, 
+            undoRedoMoveInfo.m_initFile, 
+            undoRedoMoveInfo.m_initRank, 
+            undoRedoMoveInfo.m_capturedPiece,
+            undoRedoMoveInfo.m_enPassantCapturedPieceInitCoords.value_or(
+                std::make_pair(undoRedoMoveInfo.m_targetFile, undoRedoMoveInfo.m_targetRank)
             ).first, 
-            undoMoveInfo.m_enPassantCapturedPieceInitCoords.value_or(
-                std::make_pair(undoMoveInfo.m_targetFile, undoMoveInfo.m_targetRank)
+            undoRedoMoveInfo.m_enPassantCapturedPieceInitCoords.value_or(
+                std::make_pair(undoRedoMoveInfo.m_targetFile, undoRedoMoveInfo.m_targetRank)
             ).second
         );
 
-        if (undoMoveInfo.m_castlingSecondPiece) {
+        if (undoRedoMoveInfo.m_castlingSecondPiece.has_value()) {
             setSecondTransitioningPiece(
-                undoMoveInfo.m_castlingSecondPiece.value(), 
-                undoMoveInfo.m_secondPieceInitFile.value(), 
-                undoMoveInfo.m_secondPieceInitRank.value(),
-                undoMoveInfo.m_secondPieceTargetFile.value(),
-                undoMoveInfo.m_secondPieceTargetRank.value()
+                undoRedoMoveInfo.m_castlingSecondPiece.value(), 
+                undoRedoMoveInfo.m_secondPieceInitFile.value(), 
+                undoRedoMoveInfo.m_secondPieceInitRank.value(),
+                undoRedoMoveInfo.m_secondPieceTargetFile.value(),
+                undoRedoMoveInfo.m_secondPieceTargetRank.value()
             );
         }
     }
