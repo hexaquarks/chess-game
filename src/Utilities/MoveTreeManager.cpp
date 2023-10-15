@@ -16,11 +16,11 @@ struct UndoRedoMoveInfo
     std::shared_ptr<Piece> m_selectedPiece;
     std::shared_ptr<Piece> m_capturedPiece; 
 
-    // Edge-case information 
+    // Optional edge-case information 
     std::optional<std::shared_ptr<Piece>> m_promotingPieceOpt;
     std::optional<coor2d> m_enPassantCapturedPieceInitCoords;
 
-    // Information for castling
+    // Optional information for castling
     std::optional<int> m_secondPieceTargetFile;
     std::optional<int> m_secondPieceTargetRank;
     std::optional<int> m_secondPieceInitFile;
@@ -78,8 +78,8 @@ void MoveTreeManager::applyMove(
 
 void MoveTreeManager::handleRedoMoveNormal( UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_)
 {   
-    shared_ptr<Piece> selectedPiece = undoRedoMoveInfo_.m_selectedPiece;
-    m_board.setBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank, selectedPiece);
+    auto pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
+    m_board.setBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank, pSelectedPiece);
 
     if (addToList_) m_moves.insertNode(undoRedoMoveInfo_.m_move, m_moveIterator);
 }
@@ -191,7 +191,8 @@ void MoveTreeManager::applyMove(
 {
     if (!move_) return;
     
-    // Set the current tile of the piece null. Necessary for navigating back to current move through goToNextMove()
+    // Set the current tile of the piece null. Necessary for navigating
+    // back to current move through goToNextMove().
     const auto [prevFile, prevRank] = move_->getInit();
     m_board.resetBoardTile(prevFile, prevRank);
     arrowList_ = move_->getMoveArrows();
@@ -212,7 +213,7 @@ void MoveTreeManager::applyMove(
 
     // TODO: Review design here. Ideally, this would be a static map, but 
     // it causes dangling references to members of undoRedoMoveInfo. I tried 
-    // wrapping it in a shared_ptr, making undoRedoMoveInfo static, but with no
+    // wrapping it in a shared_ptr, tried making undoRedoMoveInfo static, but with no
     // success. 
     const map<MoveType, std::function<void()>> redoMoveHandlers
     {
@@ -293,6 +294,7 @@ void MoveTreeManager::applyMove(
                 undoRedoMoveInfo.m_secondPieceInitRank.value(),
                 undoRedoMoveInfo.m_secondPieceTargetFile.value(),
                 undoRedoMoveInfo.m_secondPieceTargetRank.value(),
+                // TODO make some mebers in PieceTransition optional.
                 temp,
                 -1, 
                 -1
@@ -335,7 +337,6 @@ void MoveTreeManager::handleUndoMoveEnpassant(UndoRedoMoveInfo& undoRedoMoveInfo
     int capturedFile = undoRedoMoveInfo_.m_enPassantCapturedPieceInitCoords.value().first;
     int capturedRank = undoRedoMoveInfo_.m_enPassantCapturedPieceInitCoords.value().second;
 
-    std::cout << "considering "<< capturedFile << ", " << capturedRank << std::endl;
     m_board.resetBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank);
     m_board.setBoardTile(capturedFile, capturedRank, capturedPiece);
     m_board.setBoardTile(undoRedoMoveInfo_.m_initFile, undoRedoMoveInfo_.m_initRank, undoRedoMoveInfo_.m_selectedPiece);
@@ -374,31 +375,31 @@ void MoveTreeManager::handleUndoMoveCastle(
 
 void MoveTreeManager::handleUndoMoveInitSpecial(UndoRedoMoveInfo& undoRedoMoveInfo_)
 {
-    auto selectedPiece = undoRedoMoveInfo_.m_selectedPiece;
+    auto pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
 
     m_board.resetBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank);
-    m_board.setBoardTile(undoRedoMoveInfo_.m_initFile, undoRedoMoveInfo_.m_initRank, selectedPiece);
+    m_board.setBoardTile(undoRedoMoveInfo_.m_initFile, undoRedoMoveInfo_.m_initRank, pSelectedPiece);
 
-    selectedPiece->setAsFirstMovement();
+    pSelectedPiece->setAsFirstMovement();
 }
 
 void MoveTreeManager::handleUndoMoveNewPiece(UndoRedoMoveInfo& undoRedoMoveInfo_)
 {
-    shared_ptr<Piece> newPawn = make_shared<Pawn>(
+    shared_ptr<Piece> pNewPawn = make_shared<Pawn>(
         undoRedoMoveInfo_.m_selectedPiece->getTeam(),
         undoRedoMoveInfo_.m_initFile, 
         undoRedoMoveInfo_.m_initRank);
         
     m_board.setBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank, undoRedoMoveInfo_.m_capturedPiece);
-    m_board.setBoardTile(undoRedoMoveInfo_.m_initFile, undoRedoMoveInfo_.m_initRank, newPawn);
+    m_board.setBoardTile(undoRedoMoveInfo_.m_initFile, undoRedoMoveInfo_.m_initRank, pNewPawn);
 }
 
 void MoveTreeManager::executeUndoRedoHandler(
-    const std::map<MoveType, std::function<void()>>& keyMap_, 
+    const std::map<MoveType, std::function<void()>>& undoRedoMap_, 
     MoveType moveType_)
 {
-    auto it = keyMap_.find(moveType_);
-    if (it != keyMap_.end()) it->second();
+    auto it = undoRedoMap_.find(moveType_);
+    if (it != undoRedoMap_.end()) it->second();
 }
 
 void MoveTreeManager::undoMove(bool enableTransition_, vector<Arrow>& arrowList_)
@@ -420,9 +421,6 @@ void MoveTreeManager::undoMove(bool enableTransition_, vector<Arrow>& arrowList_
         std::nullopt,
         move->getEnPassantCapturedPieceInitialPos()
     };
-
-    int rookFileAfterCastlingKingSide = 5; 
-    int rookFileBeforeCastlingKingSide = 7;  
 
     // TODO: Review design here. Ideally, this would be a static map, but 
     // it causes dangling references to members of undoRedoMoveInfo. I tried 
@@ -470,6 +468,7 @@ void MoveTreeManager::undoMove(bool enableTransition_, vector<Arrow>& arrowList_
             undoRedoMoveInfo.m_initFile, 
             undoRedoMoveInfo.m_initRank, 
             undoRedoMoveInfo.m_capturedPiece,
+            // TODO Yikes, refactor this here.
             undoRedoMoveInfo.m_enPassantCapturedPieceInitCoords.value_or(
                 std::make_pair(undoRedoMoveInfo.m_targetFile, undoRedoMoveInfo.m_targetRank)
             ).first, 

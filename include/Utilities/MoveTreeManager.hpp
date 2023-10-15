@@ -87,7 +87,7 @@ private:
     void handleRedoMoveInitSpecial(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_);
     void handleRedoMoveNewPiece(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_);
 
-    void executeUndoRedoHandler(const std::map<MoveType, std::function<void()>>& undoMap_, MoveType moveType_);
+    void executeUndoRedoHandler(const std::map<MoveType, std::function<void()>>& undoRedoMap_, MoveType moveType_);
 
 };
 
