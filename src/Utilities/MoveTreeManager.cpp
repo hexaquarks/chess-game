@@ -167,6 +167,8 @@ void MoveTreeManager::handleRedoMoveInitSpecial(UndoRedoMoveInfo& undoRedoMoveIn
 void MoveTreeManager::handleRedoMoveNewPiece(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_)
 {
     auto pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
+    auto pCapturedPiece = m_board.getBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank);
+
     std::shared_ptr<Piece> pPromotingPiece = make_shared<Queen>(
         undoRedoMoveInfo_.m_selectedPiece->getTeam(), 
         undoRedoMoveInfo_.m_targetFile, 
@@ -178,8 +180,7 @@ void MoveTreeManager::handleRedoMoveNewPiece(UndoRedoMoveInfo& undoRedoMoveInfo_
     // Update the UndoRedoMove structure - we add the new piece that was created through promotion.
     undoRedoMoveInfo_.m_promotingPieceOpt = pPromotingPiece;
 
-    if (addToList_) m_moves.insertNode(make_shared<Move>(*undoRedoMoveInfo_.m_move, pSelectedPiece), m_moveIterator);
-    
+    if (addToList_) m_moves.insertNode(make_shared<Move>(*undoRedoMoveInfo_.m_move, pCapturedPiece), m_moveIterator);
 }
 
 void MoveTreeManager::applyMove(
