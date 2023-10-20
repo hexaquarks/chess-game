@@ -63,15 +63,6 @@ private:
     void applyMove(bool, vector<Arrow>&);
     void undoMove(bool, vector<Arrow>&);
 
-    void setTransitioningPiece(TransitionInfo&& info_, bool isUndo_) {
-        setTransitioningPieceImpl(std::move(info_), isUndo_);
-    }
-    void setSecondTransitioningPiece(TransitionInfo&& info_) {
-        setTransitioningPieceImpl(std::move(info_), false /* isUndo_ */, true /* isSecondPiece_ */);
-    }
-    void setTransitioningPieceImpl(TransitionInfo&& info_, bool isUndo_, bool isSecondPiece_ = false);
-
-
     void handleUndoMoveNormal(UndoRedoMoveInfo& undoRedoMoveInfo_);
     void handleUndoMoveCapture(UndoRedoMoveInfo& undoRedoMoveInfo_);
     void handleUndoMoveEnpassant(UndoRedoMoveInfo& undoRedoMoveInfo_);
@@ -88,4 +79,14 @@ private:
 
     void executeUndoRedoHandler(const std::map<MoveType, std::function<void()>>& undoRedoMap_, MoveType moveType_);
 
+    // Piece transition handlers
+    void setTransitioningPiece(TransitionInfo&& info_, bool isUndo_) {
+        setTransitioningPieceImpl(std::move(info_), isUndo_);
+    }
+    void setSecondTransitioningPiece(TransitionInfo&& info_) {
+        setTransitioningPieceImpl(std::move(info_), false /* isUndo_ */, true /* isSecondPiece_ */);
+    }
+    void setTransitioningPieceImpl(TransitionInfo&& info_, bool isUndo_, bool isSecondPiece_ = false);  
+    void enableUndoPieceTransition(UndoRedoMoveInfo& undoRedoMoveInfo_);
+    void enableRedoPieceTransition(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_, std::optional<std::shared_ptr<Piece>>& pPromotingPieceOpt_);
 };

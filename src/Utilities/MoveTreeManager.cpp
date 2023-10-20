@@ -245,62 +245,7 @@ void MoveTreeManager::applyMove(
     };
 
     executeUndoRedoHandler(redoMoveHandlers, move_->getMoveType());
-
-    if (enableTransition_)
-    {
-        if (!addToList_ && undoRedoMoveInfo.m_selectedPiece)
-        {
-            // Enable transition movement
-            setTransitioningPiece(
-                TransitionInfo{
-                    undoRedoMoveInfo.m_selectedPiece,
-                    undoRedoMoveInfo.m_initFile,
-                    undoRedoMoveInfo.m_initRank,
-                    undoRedoMoveInfo.m_targetFile,
-                    undoRedoMoveInfo.m_targetRank,
-                    undoRedoMoveInfo.m_capturedPiece,
-                    undoRedoMoveInfo.m_targetFile,
-                    undoRedoMoveInfo.m_targetRank
-                },
-                true
-            );
-
-            if (undoRedoMoveInfo.m_castlingSecondPiece.has_value()) {
-                setSecondTransitioningPiece(
-                    TransitionInfo{
-                        undoRedoMoveInfo.m_castlingSecondPiece.value(),
-                        undoRedoMoveInfo.m_secondPieceInitFile.value(),
-                        undoRedoMoveInfo.m_secondPieceInitRank.value(),
-                        undoRedoMoveInfo.m_secondPieceTargetFile.value(),
-                        undoRedoMoveInfo.m_secondPieceTargetRank.value(),
-                    }
-                );
-            }
-
-            if (pPromotingPieceOpt.has_value()) {
-                getTransitioningPiece().setPromotingPiece(pPromotingPieceOpt.value());
-            }
-        }
-        // If the user manually drags and drops the king or castles through clicking,
-        // We need to enable smooth transition for the rook. 
-        // TODO: It seems that if we castle through clicking, only the rook will be 
-        // transitioning smoothly - the king will teleport. Need to implement this.
-        else if (undoRedoMoveInfo.m_castlingSecondPiece.has_value())
-        {
-            // Enable rook sliding when user just castled
-            // TODO try non-second piece transition if this doesnt work?
-            setTransitioningPiece(
-                TransitionInfo{
-                    undoRedoMoveInfo.m_castlingSecondPiece.value(), 
-                    undoRedoMoveInfo.m_secondPieceInitFile.value(), 
-                    undoRedoMoveInfo.m_secondPieceInitRank.value(),
-                    undoRedoMoveInfo.m_secondPieceTargetFile.value(),
-                    undoRedoMoveInfo.m_secondPieceTargetRank.value(),
-                }, 
-                false
-            );
-        }
-    }
+    if (enableTransition_) enableRedoPieceTransition(undoRedoMoveInfo, addToList_, pPromotingPieceOpt);
 }
 
 void MoveTreeManager::handleUndoMoveNormal( UndoRedoMoveInfo& undoRedoMoveInfo_)
@@ -456,41 +401,101 @@ void MoveTreeManager::undoMove(bool enableTransition_, vector<Arrow>& arrowList_
     };
 
     executeUndoRedoHandler(undoMoveHandlers, move->getMoveType());
+    if (enableTransition_) enableUndoPieceTransition(undoRedoMoveInfo);
 
-    if (enableTransition_)
+    --m_moveIterator;
+}
+
+void MoveTreeManager::enableRedoPieceTransition(
+    UndoRedoMoveInfo& undoRedoMoveInfo_, 
+    bool addToList_,
+    std::optional<std::shared_ptr<Piece>>& pPromotingPieceOpt_)
+{
+    if (!addToList_ && undoRedoMoveInfo_.m_selectedPiece)
     {
+        // Enable transition movement
         setTransitioningPiece(
             TransitionInfo{
-                undoRedoMoveInfo.m_selectedPiece,
-                undoRedoMoveInfo.m_targetFile,
-                undoRedoMoveInfo.m_targetRank,
-                undoRedoMoveInfo.m_initFile,
-                undoRedoMoveInfo.m_initRank,
-                undoRedoMoveInfo.m_capturedPiece,
-                undoRedoMoveInfo.m_enPassantCapturedPieceInitCoords.value_or(
-                    std::make_pair(undoRedoMoveInfo.m_targetFile, undoRedoMoveInfo.m_targetRank)
-                ).first,
-                undoRedoMoveInfo.m_enPassantCapturedPieceInitCoords.value_or(
-                    std::make_pair(undoRedoMoveInfo.m_targetFile, undoRedoMoveInfo.m_targetRank)
-                ).second
-            }, 
+                undoRedoMoveInfo_.m_selectedPiece,
+                undoRedoMoveInfo_.m_initFile,
+                undoRedoMoveInfo_.m_initRank,
+                undoRedoMoveInfo_.m_targetFile,
+                undoRedoMoveInfo_.m_targetRank,
+                undoRedoMoveInfo_.m_capturedPiece,
+                undoRedoMoveInfo_.m_targetFile,
+                undoRedoMoveInfo_.m_targetRank
+            },
             true
         );
 
-        if (undoRedoMoveInfo.m_castlingSecondPiece.has_value()) {
+        if (undoRedoMoveInfo_.m_castlingSecondPiece.has_value()) {
             setSecondTransitioningPiece(
                 TransitionInfo{
-                    undoRedoMoveInfo.m_castlingSecondPiece.value(),
-                    undoRedoMoveInfo.m_secondPieceInitFile.value(),
-                    undoRedoMoveInfo.m_secondPieceInitRank.value(),
-                    undoRedoMoveInfo.m_secondPieceTargetFile.value(),
-                    undoRedoMoveInfo.m_secondPieceTargetRank.value(),
+                    undoRedoMoveInfo_.m_castlingSecondPiece.value(),
+                    undoRedoMoveInfo_.m_secondPieceInitFile.value(),
+                    undoRedoMoveInfo_.m_secondPieceInitRank.value(),
+                    undoRedoMoveInfo_.m_secondPieceTargetFile.value(),
+                    undoRedoMoveInfo_.m_secondPieceTargetRank.value(),
                 }
             );
         }
-    }
 
-    --m_moveIterator;
+        if (pPromotingPieceOpt_.has_value()) {
+            getTransitioningPiece().setPromotingPiece(pPromotingPieceOpt_.value());
+        }
+    }
+    // If the user manually drags and drops the king or castles through clicking,
+    // We need to enable smooth transition for the rook. 
+    // TODO: It seems that if we castle through clicking, only the rook will be 
+    // transitioning smoothly - the king will teleport. Need to implement this.
+    else if (undoRedoMoveInfo_.m_castlingSecondPiece.has_value())
+    {
+        // Enable rook sliding when user just castled
+        // TODO try non-second piece transition if this doesnt work?
+        setTransitioningPiece(
+            TransitionInfo{
+                undoRedoMoveInfo_.m_castlingSecondPiece.value(), 
+                undoRedoMoveInfo_.m_secondPieceInitFile.value(), 
+                undoRedoMoveInfo_.m_secondPieceInitRank.value(),
+                undoRedoMoveInfo_.m_secondPieceTargetFile.value(),
+                undoRedoMoveInfo_.m_secondPieceTargetRank.value(),
+            }, 
+            false
+        );
+    }
+}
+
+void MoveTreeManager::enableUndoPieceTransition(UndoRedoMoveInfo& undoRedoMoveInfo_)
+{
+    setTransitioningPiece(
+        TransitionInfo{
+            undoRedoMoveInfo_.m_selectedPiece,
+            undoRedoMoveInfo_.m_targetFile,
+            undoRedoMoveInfo_.m_targetRank,
+            undoRedoMoveInfo_.m_initFile,
+            undoRedoMoveInfo_.m_initRank,
+            undoRedoMoveInfo_.m_capturedPiece,
+            undoRedoMoveInfo_.m_enPassantCapturedPieceInitCoords.value_or(
+                std::make_pair(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank)
+            ).first,
+            undoRedoMoveInfo_.m_enPassantCapturedPieceInitCoords.value_or(
+                std::make_pair(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank)
+            ).second
+        }, 
+        true
+    );
+
+    if (undoRedoMoveInfo_.m_castlingSecondPiece.has_value()) {
+        setSecondTransitioningPiece(
+            TransitionInfo{
+                undoRedoMoveInfo_.m_castlingSecondPiece.value(),
+                undoRedoMoveInfo_.m_secondPieceInitFile.value(),
+                undoRedoMoveInfo_.m_secondPieceInitRank.value(),
+                undoRedoMoveInfo_.m_secondPieceTargetFile.value(),
+                undoRedoMoveInfo_.m_secondPieceTargetRank.value(),
+            }
+        );
+    }
 }
 
 void MoveTreeManager::setTransitioningPieceImpl(
