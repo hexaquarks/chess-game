@@ -6,6 +6,17 @@
 typedef std::pair<int, int> coor2d;
 constexpr uint16_t g_FPS = 60;
 
+struct TransitionInfo {
+    std::shared_ptr<Piece> m_piece;
+    int m_initialFile;
+    int m_initialRank;
+    int m_targetFile;
+    int m_targetRank;
+    std::optional<std::shared_ptr<Piece>> m_capturedPiece;
+    std::optional<int> m_capturedFile;
+    std::optional<int> m_capturedRank;
+};
+
 class PieceTransition
 {
 public:

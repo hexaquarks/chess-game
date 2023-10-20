@@ -250,27 +250,30 @@ void MoveTreeManager::applyMove(
     {
         if (!addToList_ && undoRedoMoveInfo.m_selectedPiece)
         {
-
             // Enable transition movement
             setTransitioningPiece(
-                true, 
-                undoRedoMoveInfo.m_selectedPiece, 
-                undoRedoMoveInfo.m_initFile, 
-                undoRedoMoveInfo.m_initRank, 
-                undoRedoMoveInfo.m_targetFile, 
-                undoRedoMoveInfo.m_targetRank, 
-                undoRedoMoveInfo.m_capturedPiece,
-                undoRedoMoveInfo.m_targetFile,
-                undoRedoMoveInfo.m_targetRank
+                TransitionInfo{
+                    undoRedoMoveInfo.m_selectedPiece,
+                    undoRedoMoveInfo.m_initFile,
+                    undoRedoMoveInfo.m_initRank,
+                    undoRedoMoveInfo.m_targetFile,
+                    undoRedoMoveInfo.m_targetRank,
+                    undoRedoMoveInfo.m_capturedPiece,
+                    undoRedoMoveInfo.m_targetFile,
+                    undoRedoMoveInfo.m_targetRank
+                },
+                true
             );
 
             if (undoRedoMoveInfo.m_castlingSecondPiece.has_value()) {
                 setSecondTransitioningPiece(
-                    undoRedoMoveInfo.m_castlingSecondPiece.value(), 
-                    undoRedoMoveInfo.m_secondPieceInitFile.value(), 
-                    undoRedoMoveInfo.m_secondPieceInitRank.value(),
-                    undoRedoMoveInfo.m_secondPieceTargetFile.value(),
-                    undoRedoMoveInfo.m_secondPieceTargetRank.value()
+                    TransitionInfo{
+                        undoRedoMoveInfo.m_castlingSecondPiece.value(),
+                        undoRedoMoveInfo.m_secondPieceInitFile.value(),
+                        undoRedoMoveInfo.m_secondPieceInitRank.value(),
+                        undoRedoMoveInfo.m_secondPieceTargetFile.value(),
+                        undoRedoMoveInfo.m_secondPieceTargetRank.value(),
+                    }
                 );
             }
 
@@ -286,18 +289,15 @@ void MoveTreeManager::applyMove(
         {
             // Enable rook sliding when user just castled
             // TODO try non-second piece transition if this doesnt work?
-            std::shared_ptr<Piece> temp = nullptr;
             setTransitioningPiece(
-                false,
-                undoRedoMoveInfo.m_castlingSecondPiece.value(), 
-                undoRedoMoveInfo.m_secondPieceInitFile.value(), 
-                undoRedoMoveInfo.m_secondPieceInitRank.value(),
-                undoRedoMoveInfo.m_secondPieceTargetFile.value(),
-                undoRedoMoveInfo.m_secondPieceTargetRank.value(),
-                // TODO make some mebers in PieceTransition optional.
-                temp,
-                -1, 
-                -1
+                TransitionInfo{
+                    undoRedoMoveInfo.m_castlingSecondPiece.value(), 
+                    undoRedoMoveInfo.m_secondPieceInitFile.value(), 
+                    undoRedoMoveInfo.m_secondPieceInitRank.value(),
+                    undoRedoMoveInfo.m_secondPieceTargetFile.value(),
+                    undoRedoMoveInfo.m_secondPieceTargetRank.value(),
+                }, 
+                false
             );
         }
     }
@@ -459,31 +459,33 @@ void MoveTreeManager::undoMove(bool enableTransition_, vector<Arrow>& arrowList_
 
     if (enableTransition_)
     {
-        // Enable transition movement
         setTransitioningPiece(
-            true, 
-            undoRedoMoveInfo.m_selectedPiece, 
-            undoRedoMoveInfo.m_targetFile, 
-            undoRedoMoveInfo.m_targetRank, 
-            undoRedoMoveInfo.m_initFile, 
-            undoRedoMoveInfo.m_initRank, 
-            undoRedoMoveInfo.m_capturedPiece,
-            // TODO Yikes, refactor this here.
-            undoRedoMoveInfo.m_enPassantCapturedPieceInitCoords.value_or(
-                std::make_pair(undoRedoMoveInfo.m_targetFile, undoRedoMoveInfo.m_targetRank)
-            ).first, 
-            undoRedoMoveInfo.m_enPassantCapturedPieceInitCoords.value_or(
-                std::make_pair(undoRedoMoveInfo.m_targetFile, undoRedoMoveInfo.m_targetRank)
-            ).second
+            TransitionInfo{
+                undoRedoMoveInfo.m_selectedPiece,
+                undoRedoMoveInfo.m_targetFile,
+                undoRedoMoveInfo.m_targetRank,
+                undoRedoMoveInfo.m_initFile,
+                undoRedoMoveInfo.m_initRank,
+                undoRedoMoveInfo.m_capturedPiece,
+                undoRedoMoveInfo.m_enPassantCapturedPieceInitCoords.value_or(
+                    std::make_pair(undoRedoMoveInfo.m_targetFile, undoRedoMoveInfo.m_targetRank)
+                ).first,
+                undoRedoMoveInfo.m_enPassantCapturedPieceInitCoords.value_or(
+                    std::make_pair(undoRedoMoveInfo.m_targetFile, undoRedoMoveInfo.m_targetRank)
+                ).second
+            }, 
+            true
         );
 
         if (undoRedoMoveInfo.m_castlingSecondPiece.has_value()) {
             setSecondTransitioningPiece(
-                undoRedoMoveInfo.m_castlingSecondPiece.value(), 
-                undoRedoMoveInfo.m_secondPieceInitFile.value(), 
-                undoRedoMoveInfo.m_secondPieceInitRank.value(),
-                undoRedoMoveInfo.m_secondPieceTargetFile.value(),
-                undoRedoMoveInfo.m_secondPieceTargetRank.value()
+                TransitionInfo{
+                    undoRedoMoveInfo.m_castlingSecondPiece.value(),
+                    undoRedoMoveInfo.m_secondPieceInitFile.value(),
+                    undoRedoMoveInfo.m_secondPieceInitRank.value(),
+                    undoRedoMoveInfo.m_secondPieceTargetFile.value(),
+                    undoRedoMoveInfo.m_secondPieceTargetRank.value(),
+                }
             );
         }
     }
@@ -491,30 +493,40 @@ void MoveTreeManager::undoMove(bool enableTransition_, vector<Arrow>& arrowList_
     --m_moveIterator;
 }
 
-void MoveTreeManager::setTransitioningPiece(
-    bool isUndo_, shared_ptr<Piece>& p_, int initialFile_, int initialRank_,
-    int targetFile_, int targetRank_, shared_ptr<Piece>& captured_,
-    int capturedFile_, int capturedRank_
-)
+void MoveTreeManager::setTransitioningPieceImpl(
+    TransitionInfo&& info_,
+     bool isUndo_, 
+     bool isSecondPiece_) 
 {
-    m_transitioningPiece.resetPieces();
-    m_transitioningPiece.setTransitioningPiece(p_);
-    m_transitioningPiece.setDestination({ui::getWindowXPos(targetFile_), ui::getWindowYPos(targetRank_)});
-    m_transitioningPiece.setCurrPos({ui::getWindowXPos(initialFile_), ui::getWindowYPos(initialRank_)});
-    m_transitioningPiece.setCapturedPiece(captured_, ui::getWindowXPos(capturedFile_), ui::getWindowYPos(capturedRank_));
-    m_transitioningPiece.setUndo(isUndo_);
-    m_transitioningPiece.setIsTransitioning(true);
-    m_transitioningPiece.setIncrement();
-}
+    coor2d destination = {ui::getWindowXPos(info_.m_targetFile), ui::getWindowYPos(info_.m_targetRank)};
+    coor2d initialPos = {ui::getWindowXPos(info_.m_initialFile), ui::getWindowYPos(info_.m_initialRank)};
 
-void MoveTreeManager::setSecondTransitioningPiece(
-    shared_ptr<Piece>& p_, int initialFile_, int initialRank_,
-    int targetFile_, int targetRank_
-)
-{
-    m_transitioningPiece.setSecondTransitioningPiece(p_);
-    m_transitioningPiece.setSecondDestination({ui::getWindowXPos(targetFile_), ui::getWindowYPos(targetRank_)});
-    m_transitioningPiece.setSecondCurrPos({ui::getWindowXPos(initialFile_), ui::getWindowYPos(initialRank_)});
-    m_transitioningPiece.setSecondIsTransitioning(true);
-    m_transitioningPiece.setSecondIncrement();
+    if (isSecondPiece_) 
+    {
+        m_transitioningPiece.setSecondTransitioningPiece(info_.m_piece);
+        m_transitioningPiece.setSecondDestination(std::move(destination));
+        m_transitioningPiece.setSecondCurrPos(std::move(initialPos));
+        m_transitioningPiece.setSecondIsTransitioning(true);
+        m_transitioningPiece.setSecondIncrement();
+    } 
+    else 
+    {
+        m_transitioningPiece.resetPieces();
+        m_transitioningPiece.setTransitioningPiece(info_.m_piece);
+        m_transitioningPiece.setDestination(std::move(destination));
+        m_transitioningPiece.setCurrPos(std::move(initialPos));
+        m_transitioningPiece.setUndo(isUndo_);
+        m_transitioningPiece.setIsTransitioning(true);
+        m_transitioningPiece.setIncrement();
+    }
+
+    if (info_.m_capturedPiece) 
+    {
+        int capturedX = info_.m_capturedFile.value_or(info_.m_targetFile);
+        int capturedY = info_.m_capturedRank.value_or(info_.m_targetRank);
+        m_transitioningPiece.setCapturedPiece(
+            info_.m_capturedPiece.value(), 
+            ui::getWindowXPos(capturedX), 
+            ui::getWindowYPos(capturedY));
+    }
 }
