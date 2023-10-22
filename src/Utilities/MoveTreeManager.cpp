@@ -13,8 +13,8 @@ struct UndoRedoMoveInfo
     int m_targetRank;
     int m_initFile;
     int m_initRank;
-    std::shared_ptr<Piece> m_selectedPiece;
-    std::shared_ptr<Piece> m_capturedPiece; 
+    std::shared_ptr<Piece>& m_selectedPiece;
+    std::shared_ptr<Piece>& m_capturedPiece; 
 
     // Optional edge-case information 
     std::optional<std::shared_ptr<Piece>> m_promotingPieceOpt;
@@ -78,7 +78,7 @@ void MoveTreeManager::applyMove(
 
 void MoveTreeManager::handleRedoMoveNormal( UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_)
 {   
-    auto pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
+    auto& pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
     m_board.setBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank, pSelectedPiece);
 
     if (addToList_) m_moves.insertNode(undoRedoMoveInfo_.m_move, m_moveIterator);
@@ -86,7 +86,9 @@ void MoveTreeManager::handleRedoMoveNormal( UndoRedoMoveInfo& undoRedoMoveInfo_,
 
 void MoveTreeManager::handleRedoMoveCapture(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_)
 {
-    auto pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
+    auto& pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
+
+    // Must pass by copy, otherwise tests break. TODO: investigate.
     auto pCapturedPiece = m_board.getBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank);
 
     // If we get here, there should be a captured piece available.
@@ -100,8 +102,8 @@ void MoveTreeManager::handleRedoMoveCapture(UndoRedoMoveInfo& undoRedoMoveInfo_,
 
 void MoveTreeManager::handleRedoMoveEnpassant(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_)
 {
-    auto pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
-    auto pCapturedPiece = undoRedoMoveInfo_.m_capturedPiece;
+    auto& pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
+    auto& pCapturedPiece = undoRedoMoveInfo_.m_capturedPiece;
 
     assert(pSelectedPiece);
     assert(pCapturedPiece);    
@@ -137,7 +139,7 @@ void MoveTreeManager::handleRedoMoveCastle(
     int kingFileAfterCastling = undoRedoMoveInfo_.m_targetFile;
     int kingFileBeforeCastling = undoRedoMoveInfo_.m_initFile;
     
-    auto king = undoRedoMoveInfo_.m_selectedPiece;
+    auto& king = undoRedoMoveInfo_.m_selectedPiece;
     auto rook = m_board.getBoardTile(rookFileBeforeCastling, castleRank);
 
     // Undo the castling.
@@ -157,7 +159,7 @@ void MoveTreeManager::handleRedoMoveCastle(
 
 void MoveTreeManager::handleRedoMoveInitSpecial(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_)
 {
-    auto pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
+    auto& pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
 
     m_board.setBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank, pSelectedPiece);
 
@@ -166,7 +168,7 @@ void MoveTreeManager::handleRedoMoveInitSpecial(UndoRedoMoveInfo& undoRedoMoveIn
 
 void MoveTreeManager::handleRedoMoveNewPiece(UndoRedoMoveInfo& undoRedoMoveInfo_, bool addToList_)
 {
-    auto pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
+    auto& pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
     auto pCapturedPiece = m_board.getBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank);
 
     std::shared_ptr<Piece> pPromotingPiece = make_shared<Queen>(
@@ -250,32 +252,36 @@ void MoveTreeManager::applyMove(
 
 void MoveTreeManager::handleUndoMoveNormal( UndoRedoMoveInfo& undoRedoMoveInfo_)
 {   
-    shared_ptr<Piece> selectedPiece = undoRedoMoveInfo_.m_selectedPiece;
+    auto& pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
 
     m_board.resetBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank);
-    m_board.setBoardTile(undoRedoMoveInfo_.m_initFile, undoRedoMoveInfo_.m_initRank, selectedPiece);
+    m_board.setBoardTile(undoRedoMoveInfo_.m_initFile, undoRedoMoveInfo_.m_initRank, pSelectedPiece);
 
-    King* kingPiece = dynamic_cast<King*>(selectedPiece.get());
-    if (kingPiece) selectedPiece->setAsFirstMovement();
+    King* pKingPiece = dynamic_cast<King*>(pSelectedPiece.get());
+    if (pKingPiece) pSelectedPiece->setAsFirstMovement();
 }
 
 void MoveTreeManager::handleUndoMoveCapture(UndoRedoMoveInfo& undoRedoMoveInfo_)
 {
-    auto capturedPiece = undoRedoMoveInfo_.m_capturedPiece;
+    auto& pCapturedPiece = undoRedoMoveInfo_.m_capturedPiece;
+    auto& pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
 
     // If we get here, there should be a captured piece available.
-    assert(capturedPiece);
+    assert(pCapturedPiece);
+    assert(pSelectedPiece);
 
-    m_board.setBoardTile(undoRedoMoveInfo_.m_targetFile,undoRedoMoveInfo_.m_targetRank, capturedPiece);
+    m_board.setBoardTile(undoRedoMoveInfo_.m_targetFile,undoRedoMoveInfo_.m_targetRank, pCapturedPiece);
     m_board.setBoardTile(undoRedoMoveInfo_.m_initFile, undoRedoMoveInfo_.m_initRank, undoRedoMoveInfo_.m_selectedPiece);
 }
 
 void MoveTreeManager::handleUndoMoveEnpassant(UndoRedoMoveInfo& undoRedoMoveInfo_)
 {
-    auto capturedPiece = undoRedoMoveInfo_.m_capturedPiece;
+    auto& pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
+    auto& pCapturedPiece = undoRedoMoveInfo_.m_capturedPiece;
 
     // If we get here, there should be a captured piece available.
-    assert(capturedPiece);
+    assert(pCapturedPiece);
+    assert(pSelectedPiece);
 
     // The en passant infos should be set.
     assert(undoRedoMoveInfo_.m_enPassantCapturedPieceInitCoords.has_value());
@@ -283,8 +289,8 @@ void MoveTreeManager::handleUndoMoveEnpassant(UndoRedoMoveInfo& undoRedoMoveInfo
     int capturedRank = undoRedoMoveInfo_.m_enPassantCapturedPieceInitCoords.value().second;
 
     m_board.resetBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank);
-    m_board.setBoardTile(capturedFile, capturedRank, capturedPiece);
-    m_board.setBoardTile(undoRedoMoveInfo_.m_initFile, undoRedoMoveInfo_.m_initRank, undoRedoMoveInfo_.m_selectedPiece);
+    m_board.setBoardTile(capturedFile, capturedRank, pCapturedPiece);
+    m_board.setBoardTile(undoRedoMoveInfo_.m_initFile, undoRedoMoveInfo_.m_initRank, pSelectedPiece);
 }
 
 void MoveTreeManager::handleUndoMoveCastle(
@@ -298,14 +304,18 @@ void MoveTreeManager::handleUndoMoveCastle(
     int kingFileAfterCastling = undoRedoMoveInfo_.m_targetFile;
     int kingFileBeforeCastling = undoRedoMoveInfo_.m_initFile;
     
-    auto king = undoRedoMoveInfo_.m_selectedPiece;
-    auto rook = undoRedoMoveInfo_.m_capturedPiece;
+    auto& pKing = undoRedoMoveInfo_.m_selectedPiece;
+    auto& pRook = undoRedoMoveInfo_.m_capturedPiece;
+
+    // If we get here, there should be a king and a rook available.
+    assert(pKing);
+    assert(pRook);
 
     // Undo the castling.
     m_board.resetBoardTile(rookFileAfterCastling, castleRank);
     m_board.resetBoardTile(kingFileAfterCastling, castleRank);
-    m_board.setBoardTile(rookFileBeforeCastling, castleRank, rook);
-    m_board.setBoardTile(kingFileBeforeCastling, castleRank, king);
+    m_board.setBoardTile(rookFileBeforeCastling, castleRank, pRook);
+    m_board.setBoardTile(kingFileBeforeCastling, castleRank, pKing);
 
     undoRedoMoveInfo_.m_selectedPiece->setAsFirstMovement();
     undoRedoMoveInfo_.m_capturedPiece->setAsFirstMovement();
@@ -315,12 +325,12 @@ void MoveTreeManager::handleUndoMoveCastle(
     undoRedoMoveInfo_.m_secondPieceTargetRank = castleRank;
     undoRedoMoveInfo_.m_secondPieceInitFile = rookFileAfterCastling;
     undoRedoMoveInfo_.m_secondPieceInitRank = castleRank;
-    undoRedoMoveInfo_.m_castlingSecondPiece = rook;
+    undoRedoMoveInfo_.m_castlingSecondPiece = pRook;
 }
 
 void MoveTreeManager::handleUndoMoveInitSpecial(UndoRedoMoveInfo& undoRedoMoveInfo_)
 {
-    auto pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
+    auto& pSelectedPiece = undoRedoMoveInfo_.m_selectedPiece;
 
     m_board.resetBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank);
     m_board.setBoardTile(undoRedoMoveInfo_.m_initFile, undoRedoMoveInfo_.m_initRank, pSelectedPiece);
@@ -330,12 +340,15 @@ void MoveTreeManager::handleUndoMoveInitSpecial(UndoRedoMoveInfo& undoRedoMoveIn
 
 void MoveTreeManager::handleUndoMoveNewPiece(UndoRedoMoveInfo& undoRedoMoveInfo_)
 {
+    auto& pCapturePiece = undoRedoMoveInfo_.m_capturedPiece;
+    assert(pCapturePiece);
+
     shared_ptr<Piece> pNewPawn = make_shared<Pawn>(
         undoRedoMoveInfo_.m_selectedPiece->getTeam(),
         undoRedoMoveInfo_.m_initFile, 
         undoRedoMoveInfo_.m_initRank);
         
-    m_board.setBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank, undoRedoMoveInfo_.m_capturedPiece);
+    m_board.setBoardTile(undoRedoMoveInfo_.m_targetFile, undoRedoMoveInfo_.m_targetRank, pCapturePiece);
     m_board.setBoardTile(undoRedoMoveInfo_.m_initFile, undoRedoMoveInfo_.m_initRank, pNewPawn);
 }
 
