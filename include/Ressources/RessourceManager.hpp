@@ -1,5 +1,5 @@
 #pragma once
-#include "../Pieces/Piece.hpp"
+#include "../Logic/Pieces/Piece.hpp"
 
 #include <vector>
 #include <unordered_map>

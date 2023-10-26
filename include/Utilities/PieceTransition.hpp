@@ -1,6 +1,6 @@
 #pragma once
-#include "../Pieces/Piece.hpp"
-#include "../Components/Board.hpp"
+#include "../Logic/Pieces/Piece.hpp"
+#include "../Logic/Board.hpp"
 #include <vector>
 
 typedef std::pair<int, int> coor2d;

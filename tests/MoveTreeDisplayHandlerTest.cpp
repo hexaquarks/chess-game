@@ -3,8 +3,8 @@
 
 #include "../include/Components/Board.hpp"
 #include "../include/Pieces/Piece.hpp"
-#include "../include/Utilities/MoveTreeDisplayHandler.hpp"
-#include "../include/Utilities/MoveTreeManager.hpp"
+#include "../include/Logic/MoveTreeDisplayHandler.hpp"
+#include "../include/Logic/MoveTreeManager.hpp"
 #include "../include/Utilities/PGNParser.hpp"
 #include "BoardPositionsUtil.hpp"
 
