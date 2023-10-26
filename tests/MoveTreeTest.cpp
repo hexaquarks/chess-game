@@ -1,8 +1,8 @@
 #define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
 
-#include "../include/Utilities/MoveTree.hpp"
-#include "../include/Utilities/Move.hpp"
+#include "../include/Logic/MoveTree.hpp"
+#include "../include/Logic/Move.hpp"
 
 namespace 
 {

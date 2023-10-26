@@ -1,9 +1,9 @@
 #define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
 
-#include "../include/Components/Board.hpp"
-#include "../include/Pieces/Piece.hpp"
-#include "../include/Pieces/King.hpp"
+#include "../include/Logic/Board.hpp"
+#include "../include/Logic/Pieces/Piece.hpp"
+#include "../include/Logic/Pieces/King.hpp"
 #include "BoardPositionsUtil.hpp"
 
 namespace 

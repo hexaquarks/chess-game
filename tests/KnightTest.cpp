@@ -2,8 +2,8 @@
 #include <boost/test/unit_test.hpp>
 #include <iostream>
 
-#include "../include/Pieces/Knight.hpp"
-#include "../include/Components/Board.hpp"
+#include "../include/Logic/Pieces/Knight.hpp"
+#include "../include/Logic/Board.hpp"
 #include "BoardPositionsUtil.hpp"
 
 namespace

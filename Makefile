@@ -16,7 +16,8 @@ TEST_SRC := tests/
 TEST_SRCS := $(wildcard $(TEST_SRC)*.cpp)
 TEST_OBJS := $(patsubst $(TEST_SRC)%.cpp,$(OBJ)%.o,$(TEST_SRCS))
 TEST_APP := $(BIN)Test
-TEST_OBJS += $(filter-out $(OBJ)main.o, $(OBJS))  # Include necessary objects for tests
+TEST_OBJS += $(filter-out $(OBJ)Application/main.o, $(OBJS))
+
 
 app: OBJS := $(filter-out $(OBJ)main_test.o, $(OBJS))  # Exclude main_test.o for app
 app: $(APP)
