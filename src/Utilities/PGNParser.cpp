@@ -1,6 +1,6 @@
 #include "../../include/Utilities/PGNParser.hpp"
-#include "../../include/Utilities/MoveTreeManager.hpp"
-#include "../../include/Utilities/Move.hpp"
+#include "../../include/Logic/MoveTreeManager.hpp"
+#include "../../include/Logic/Move.hpp"
 
 #include <fstream>
 #include <cassert> 

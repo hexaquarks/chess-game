@@ -1,7 +1,6 @@
 #include "iostream"
 #include "array"
 
-
 class StockfishConnector
 {
 public:

@@ -3,7 +3,7 @@
 #include <boost/test/unit_test.hpp>
 #include <iostream>
 
-#include "../include/Components/Board.hpp"
+#include "../include/Logic/Board.hpp"
 #include "BoardPositionsUtil.hpp"
 
 BOOST_AUTO_TEST_CASE(TestStartPosition)

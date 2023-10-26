@@ -1,9 +1,9 @@
 #define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
 
-#include "../include/GameThread.hpp"
-#include "../include/Components/Board.hpp"
-#include "../include/Pieces/Piece.hpp"
+#include "../include/Application/GameThread.hpp"
+#include "../include/Logic/Board.hpp"
+#include "../include/Logic/Pieces/Piece.hpp"
 
 BOOST_AUTO_TEST_CASE(BoardResetTest)
 {

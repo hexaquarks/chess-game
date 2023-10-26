@@ -1,6 +1,6 @@
-#include "../../include/Pieces/Piece.hpp"
+#include "../../include/Logic/Pieces/Piece.hpp"
 #include "../../include/Utilities/PieceTransition.hpp"
-#include "../../include/GameThread.hpp"
+#include "../../include/Application/GameThread.hpp"
 #include <math.h>
 
 // Divide by 6 so the increment is in base 10, that is 60 / 10
