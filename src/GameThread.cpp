@@ -119,7 +119,7 @@ namespace game
         // Allow user to make moves only if they're at the current live position,
         // and if the click is on the chess board
         int rank = ui::getRank(clickState_.mousePos, m_board.isFlipped());
-        if (rank < 0) return false;
+        if (rank < 0 || clickState_.mousePos.first >= ui::g_PANEL_SIZE) return false;
 
         // Do not register click if Moveselection panel is activated
         // and the mouse is not within the panel's bounds
