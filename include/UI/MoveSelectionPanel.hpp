@@ -38,7 +38,6 @@ public:
 
 private:
     RenderWindow& m_window;
-    SidePanel& m_sidePanel;
     Text m_title;
     RectangleShape m_panel;
     RectangleShape m_variationsPanel;

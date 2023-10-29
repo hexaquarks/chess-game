@@ -5,7 +5,7 @@
 MoveSelectionPanel::MoveSelectionPanel(
     RenderWindow& window_,
     SidePanel& panel_)
-: m_window(window_), m_sidePanel(panel_)
+: m_window(window_)
 {
 }
 

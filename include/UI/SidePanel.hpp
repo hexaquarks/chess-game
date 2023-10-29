@@ -21,7 +21,7 @@ struct MoveInfo;
 class SidePanel
 {
 public:
-    SidePanel(RenderWindow&, MoveTreeManager&, bool&);
+    SidePanel(RenderWindow&, MoveTreeManager&);
     SidePanel() = default;
 
     void resetNextPos() { m_nextPos = {ui::g_BORDER_SIZE + 10, 10}; }
@@ -44,5 +44,4 @@ private:
     int moveBoxCounter = 0;
     int m_row = 0;
     int m_previousRow = 0;
-    bool& m_showMoveSelectionPanel;
 };

@@ -84,8 +84,6 @@ namespace ui {
             SidePanel m_sidePanel;
             MoveSelectionPanel m_moveSelectionPanel;
 
-            bool m_showMoveSelectionPanel = false;
-
             void initializeMenuBar();
             void drawMenuBar();
             void drawSidePanel();
@@ -101,5 +99,6 @@ namespace ui {
             void drawGrayCover();
             void drawBoardSquares();
             void highlightLastMove();
+            bool needToShowMoveSelectionPanel() const;
     }; 
 }

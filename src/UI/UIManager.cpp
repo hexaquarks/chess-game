@@ -12,7 +12,7 @@ namespace ui {
     ) :
         m_board(board_),
         m_moveTreeManager(moveList_),
-        m_sidePanel(m_window, moveList_, m_showMoveSelectionPanel),
+        m_sidePanel(m_window, moveList_),
         m_moveSelectionPanel(m_window, m_sidePanel)
     {
         m_window.setFramerateLimit(60);
@@ -57,8 +57,9 @@ namespace ui {
         }
         drawAllArrows(arrowsInfo_.arrows, arrowsInfo_.currArrow);
 
-        if (m_showMoveSelectionPanel)
+        if (needToShowMoveSelectionPanel())
         {
+            std::cout << "in drawing" << std::endl;
             drawGrayCover();
             m_moveSelectionPanel.drawMoveSelectionPanel(m_moveTreeManager.getIterator());
         }   
@@ -401,12 +402,17 @@ namespace ui {
 
     void UIManager::handleSidePanelMoveBoxClick(const coor2d& mousePos_)
     {
-        if (!m_showMoveSelectionPanel) m_sidePanel.handleMoveBoxClicked(mousePos_);
+        if (!needToShowMoveSelectionPanel()) m_sidePanel.handleMoveBoxClicked(mousePos_);
     }
 
     bool UIManager::ignoreInputWhenSelectionPanelIsActive(const coor2d& mousePos_) const
     {
-        return m_showMoveSelectionPanel && !m_moveSelectionPanel.isHowered(mousePos_);
+        return needToShowMoveSelectionPanel() && !m_moveSelectionPanel.isHowered(mousePos_);
+    }
+
+    bool UIManager::needToShowMoveSelectionPanel() const 
+    {
+        return m_moveSelectionPanel.isOpen();
     }
 
     void UIManager::resetUserInputStatesAfterNewMove(ClickState& clickState_, DragState& dragState_)
