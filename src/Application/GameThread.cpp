@@ -61,7 +61,7 @@ namespace game
                 {
                     if (event.mouseButton.button == Mouse::Left)
                     {
-                        if (!handleMouseButtonPressedLeft(event, clickState, dragState, m_uiManager)) continue;
+                        if (!handleMouseButtonPressedLeft(event, clickState, dragState)) continue;
                     }
                     if (event.mouseButton.button == Mouse::Right)
                     {
@@ -74,7 +74,7 @@ namespace game
                 // Dragging a piece around
                 if (event.type == Event::MouseMoved && isAPieceHandled)
                 {
-                    if (!handleMouseMoved(clickState, arrowsInfo, m_uiManager)) continue;
+                    if (!handleMouseMoved(clickState, arrowsInfo)) continue;
                 }
 
                 // Mouse button released
@@ -82,7 +82,7 @@ namespace game
                 {
                     if (event.mouseButton.button == Mouse::Left)
                     {    
-                        if (!handleMouseButtonReleasedLeft(clickState, dragState, arrowsInfo, m_uiManager)) continue;
+                        if (!handleMouseButtonReleasedLeft(clickState, dragState, arrowsInfo)) continue;
                     }
                     if (event.mouseButton.button == Mouse::Right)
                     {
@@ -92,7 +92,7 @@ namespace game
 
                 if (event.type == Event::KeyPressed)
                 {
-                    handleKeyPressed(event, m_uiManager, arrowsInfo.arrows);
+                    handleKeyPressed(event, arrowsInfo.arrows);
                 }
             }
             
@@ -111,8 +111,7 @@ namespace game
     bool GameThread::handleMouseButtonPressedLeft(
         Event& event_, 
         ui::ClickState& clickState_, 
-        ui::DragState& dragState_,
-        ui::UIManager& uiManager_)
+        ui::DragState& dragState_)
     {
         clickState_.mousePos = {event_.mouseButton.x, event_.mouseButton.y};
 
@@ -173,11 +172,10 @@ namespace game
 
     bool GameThread::handleMouseMoved(
         ui::ClickState& clickState_, 
-        ui::ArrowsInfo& arrowsInfo_, 
-        ui::UIManager& uiManager_)
+        ui::ArrowsInfo& arrowsInfo_)
     {
         // Update the position of the piece that is being moved
-        Vector2i mousePosition = Mouse::getPosition(uiManager_.getWindow());
+        Vector2i mousePosition = Mouse::getPosition(m_uiManager.getWindow());
         clickState_.mousePos = {mousePosition.x, mousePosition.y};
 
         if (clickState_.isRightClicking)
@@ -192,12 +190,11 @@ namespace game
     void GameThread::handleMouseButtonReleasedOnMenuBar(
         ui::ClickState& clickState_, 
         ui::DragState& dragState_, 
-        ui::ArrowsInfo& arrowsInfo_, 
-        ui::UIManager& uiManager_)
+        ui::ArrowsInfo& arrowsInfo_)
     {
         if (clickState_.mousePos.second >= ui::g_MENUBAR_HEIGHT) return;
         
-        for (auto& menuButton: uiManager_.getMenuBar()) 
+        for (auto& menuButton: m_uiManager.getMenuBar()) 
         {
             if (!menuButton.isMouseHovered(clickState_.mousePos)) continue;
             menuButton.doMouseClick(m_board, m_moveTreeManager);
@@ -214,13 +211,12 @@ namespace game
     bool GameThread::handleMouseButtonReleasedLeft(
         ui::ClickState& clickState_, 
         ui::DragState& dragState_, 
-        ui::ArrowsInfo& arrowsInfo_, 
-        ui::UIManager& uiManager_)
+        ui::ArrowsInfo& arrowsInfo_)
     {
-        handleMouseButtonReleasedOnMenuBar(clickState_, dragState_, arrowsInfo_, uiManager_);
+        handleMouseButtonReleasedOnMenuBar(clickState_, dragState_, arrowsInfo_);
 
         // Handle Side Panel Move Box buttons click
-        uiManager_.handleSidePanelMoveBoxClick(clickState_.mousePos);
+        m_uiManager.handleSidePanelMoveBoxClick(clickState_.mousePos);
         
         // ^^^ Possible bug here when moveboxe and moveselection panel overlap
 
@@ -305,14 +301,17 @@ namespace game
     // =================================================
     void GameThread::handleKeyPressLeft(vector<Arrow>& arrowList_) 
     {
+        // Disable left navigation if the user is prompted to select a variation.
+        if (m_uiManager.getMoveSelectionPanel().isOpen()) return;
+
         m_moveTreeManager.goToPreviousMove(true, arrowList_);
         auto prevMove = getCurrMoveTreeIteratorMove();
         m_board.checkIfMoveMakesKingChecked(prevMove);
     }
 
-    void GameThread::handleKeyPressRight(ui::UIManager& uiManager_, vector<Arrow>& arrowList_) 
+    void GameThread::handleKeyPressRight(vector<Arrow>& arrowList_) 
     {
-        MoveSelectionPanel& moveSelectionPanel = uiManager_.getMoveSelectionPanel();
+        MoveSelectionPanel& moveSelectionPanel = m_uiManager.getMoveSelectionPanel();
         
         // Handle case with more than one variation
         if (m_treeIterator.currentNodeHasMoreThanOneVariation()) 
@@ -339,25 +338,25 @@ namespace game
         m_board.flipBoard();
     }
 
-    void GameThread::handleKeyPressUp(ui::UIManager& uiManager_, vector<Arrow>& arrowList_) 
+    void GameThread::handleKeyPressUp(vector<Arrow>& arrowList_) 
     {
-        MoveSelectionPanel& moveSelectionPanel = uiManager_.getMoveSelectionPanel();
+        MoveSelectionPanel& moveSelectionPanel = m_uiManager.getMoveSelectionPanel();
         moveSelectionPanel.isOpen()
             ? moveSelectionPanel.goToPreviousVariation()
             : m_moveTreeManager.goToCurrentMove(arrowList_);
     }
 
-    void GameThread::handleKeyPressDown(ui::UIManager& uiManager_, vector<Arrow>& arrowList_) 
+    void GameThread::handleKeyPressDown(vector<Arrow>& arrowList_) 
     {
-        MoveSelectionPanel& moveSelectionPanel = uiManager_.getMoveSelectionPanel();
+        MoveSelectionPanel& moveSelectionPanel = m_uiManager.getMoveSelectionPanel();
         moveSelectionPanel.isOpen()
             ? moveSelectionPanel.goToNextVariation()
             : m_moveTreeManager.goToInitialMove(arrowList_);
     }
 
-    void GameThread::handleKeyPressEnter(ui::UIManager& uiManager_, vector<Arrow>& arrowList_) 
+    void GameThread::handleKeyPressEnter(vector<Arrow>& arrowList_) 
     {
-        MoveSelectionPanel& moveSelectionPanel = uiManager_.getMoveSelectionPanel();
+        MoveSelectionPanel& moveSelectionPanel = m_uiManager.getMoveSelectionPanel();
 
         // Currently, enter is only relevent when the move selection
         // panel is up, in which enter executes the selected move.
@@ -378,8 +377,7 @@ namespace game
     }
 
     void GameThread::handleKeyPressed(
-        const Event& event_, 
-        ui::UIManager& uiManager_, 
+        const Event& event_,  
         vector<Arrow>& arrowList_)
     {
         if (m_moveTreeManager.isTransitionningPiece()) 
@@ -390,11 +388,11 @@ namespace game
         static std::map<int, std::function<void()>> keyMap = 
         {
             { Keyboard::Left, [this, &arrowList_] { handleKeyPressLeft(arrowList_); } },
-            { Keyboard::Right, [this, &uiManager_, &arrowList_] { handleKeyPressRight(uiManager_, arrowList_); } },
+            { Keyboard::Right, [this, &arrowList_] { handleKeyPressRight(arrowList_); } },
             { Keyboard::LControl, [this] { handleKeyPressLControl(); } },
-            { Keyboard::Up, [this, &uiManager_, &arrowList_] { handleKeyPressUp(uiManager_, arrowList_); } },
-            { Keyboard::Down, [this, &uiManager_, &arrowList_] { handleKeyPressDown(uiManager_, arrowList_); } },
-            { Keyboard::Enter, [this, &uiManager_, &arrowList_] { handleKeyPressEnter(uiManager_, arrowList_); } }
+            { Keyboard::Up, [this, &arrowList_] { handleKeyPressUp(arrowList_); } },
+            { Keyboard::Down, [this, &arrowList_] { handleKeyPressDown(arrowList_); } },
+            { Keyboard::Enter, [this, &arrowList_] { handleKeyPressEnter(arrowList_); } }
         };
 
         executeKeyHandler(keyMap, event_.key.code);

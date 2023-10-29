@@ -39,21 +39,21 @@ namespace game
         shared_ptr<Move> getCurrMoveTreeIteratorMove();
 
         /* Event handles */
-        bool handleMouseButtonPressedLeft(Event&, ui::ClickState& clickState, ui::DragState&, ui::UIManager&);
+        bool handleMouseButtonPressedLeft(Event&, ui::ClickState& clickState, ui::DragState&);
         bool handleMouseButtonPressedRight(Event&, ui::ClickState& clickState, ui::DragState&, ui::ArrowsInfo&);
-        bool handleMouseMoved(ui::ClickState&, ui::ArrowsInfo&, ui::UIManager&);
-        bool handleMouseButtonReleasedLeft(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&, ui::UIManager&);
+        bool handleMouseMoved(ui::ClickState&, ui::ArrowsInfo&);
+        bool handleMouseButtonReleasedLeft(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&);
         bool handleMouseButtonReleasedRight(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&);
-        void handleKeyPressed(const Event&, ui::UIManager&, vector<Arrow>&);
+        void handleKeyPressed(const Event&, vector<Arrow>&);
 
-        void handleMouseButtonReleasedOnMenuBar(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&, ui::UIManager&);
+        void handleMouseButtonReleasedOnMenuBar(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&);
 
         void handleKeyPressLeft(vector<Arrow>& arrowList_);
-        void handleKeyPressRight(ui::UIManager& uiManager_, vector<Arrow>& arrowList_);
+        void handleKeyPressRight(vector<Arrow>& arrowList_);
         void handleKeyPressLControl();  
-        void handleKeyPressUp(ui::UIManager& uiManager_, vector<Arrow>& arrowList_);
-        void handleKeyPressDown(ui::UIManager& uiManager_, vector<Arrow>& arrowList_);
-        void handleKeyPressEnter(ui::UIManager& uiManager_, vector<Arrow>& arrowList_);
+        void handleKeyPressUp(vector<Arrow>& arrowList_);
+        void handleKeyPressDown(vector<Arrow>& arrowList_);
+        void handleKeyPressEnter(vector<Arrow>& arrowList_);
 
         void executeKeyHandler(const std::map<int, KeyHandler>& keyMap_, int keyCode_);
 
