@@ -85,11 +85,27 @@ namespace ui {
             MoveSelectionPanel m_moveSelectionPanel;
 
             void initializeMenuBar();
+
+            // TODO: Make Draw class
+            // Main driver draw functions
+            void drawBasicUIComponents();
+            void drawSpecialBoardStates();
+            void drawInteractionFeatures(ui::ClickState& clickState_, ui::DragState& dragState_);
+            void drawAdditionalUIComponents();
+            void drawDynamicUIComponents(ui::ClickState& clickState_, ui::DragState& dragState_);
+            void drawArrowComponents(ui::ArrowsInfo& arrowsInfo_);
+            void drawEndGameStates();
+            void drawMoveSelectionPanel();
+
+            // Draw util functions
+            bool shouldDrawCirclesAndHighlightSquares(ui::ClickState& clickState_, ui::DragState& dragState_);
+            bool needToShowMoveSelectionPanel() const;
+
+            // Draw individual components
+            void drawPieces();
             void drawMenuBar();
             void drawSidePanel();
             void drawCaptureCircles(const std::shared_ptr<Piece>&, const vector<Move>&);
-            void highlightHoveredSquare(const std::shared_ptr<Piece>&, const coor2d&, const vector<Move>&);
-            void drawPieces();
             void drawDraggedPiece(const std::shared_ptr<Piece>&, const coor2d&);
             void drawTransitioningPiece(PieceTransition&);
             void drawAllArrows(std::vector<Arrow>&, const Arrow&);
@@ -98,7 +114,7 @@ namespace ui {
             void drawMoveSelectionPanel(int);
             void drawGrayCover();
             void drawBoardSquares();
+            void highlightHoveredSquare(const std::shared_ptr<Piece>&, const coor2d&, const vector<Move>&);
             void highlightLastMove();
-            bool needToShowMoveSelectionPanel() const;
     }; 
 }

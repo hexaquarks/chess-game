@@ -33,40 +33,79 @@ namespace ui {
     void UIManager::draw(
         ClickState& clickState_, 
         DragState& dragState_, 
-        ArrowsInfo& arrowsInfo_)
+        ArrowsInfo& arrowsInfo_
+    ) {
+        // ================================================
+        // Note: The function order call here is critical.
+        //       Altering it could cause visual inconsistencies.
+        // 
+        // TODO: Introduce UI testing framework this is 
+        //       getting ridiculous bruh
+        // ================================================
+        drawBasicUIComponents();
+        drawSpecialBoardStates();
+        drawInteractionFeatures(clickState_, dragState_);
+        drawAdditionalUIComponents();
+        drawDynamicUIComponents(clickState_, dragState_);
+        drawArrowComponents(arrowsInfo_);
+        drawEndGameStates();
+    }
+
+    void UIManager::drawBasicUIComponents() 
     {
-        // Note that order of function calls in this function is important
-        // otherwise drawing is affected negatively.
         drawMenuBar();
         drawBoardSquares();
         drawSidePanel();
+    }
 
+    void UIManager::drawSpecialBoardStates() 
+    {
         if (m_board.isKingChecked()) drawKingCheckCircle();
+    }
 
-        const bool needToDrawCirclesAndHighlightSquares = (dragState_.pieceIsMoving || clickState_.pieceIsClicked) && clickState_.pSelectedPiece;
-        if (needToDrawCirclesAndHighlightSquares)
-        {
-            drawCaptureCircles(clickState_.pSelectedPiece, m_board.getAllCurrentlyAvailableMoves());
-            highlightHoveredSquare(clickState_.pSelectedPiece, clickState_.mousePos,  m_board.getAllCurrentlyAvailableMoves());
-        }
+    void UIManager::drawInteractionFeatures(ClickState& clickState_, DragState& dragState_) 
+    {
+        if (!shouldDrawCirclesAndHighlightSquares(clickState_, dragState_)) return;
+
+        drawCaptureCircles(clickState_.pSelectedPiece, m_board.getAllCurrentlyAvailableMoves());
+        highlightHoveredSquare(clickState_.pSelectedPiece, clickState_.mousePos, m_board.getAllCurrentlyAvailableMoves());
+    }
+
+    bool UIManager::shouldDrawCirclesAndHighlightSquares(ClickState& clickState_, DragState& dragState_) 
+    {
+        return (dragState_.pieceIsMoving || clickState_.pieceIsClicked) && 
+               clickState_.pSelectedPiece;
+    }
+
+    void UIManager::drawAdditionalUIComponents() 
+    {
         highlightLastMove();
         drawPieces();
-        if (dragState_.pieceIsMoving) drawDraggedPiece(clickState_.pSelectedPiece, clickState_.mousePos);
+    }
+
+    void UIManager::drawDynamicUIComponents(ClickState& clickState_, DragState& dragState_) 
+    {
+        if (dragState_.pieceIsMoving) {
+            drawDraggedPiece(clickState_.pSelectedPiece, clickState_.mousePos);
+        }
         if (m_moveTreeManager.getTransitioningPiece().getIsTransitioning()) {
             drawTransitioningPiece(m_moveTreeManager.getTransitioningPiece());
         }
+        if (needToShowMoveSelectionPanel()) drawMoveSelectionPanel();
+    }
+
+    void UIManager::drawMoveSelectionPanel() 
+    {
+        drawGrayCover();
+        m_moveSelectionPanel.drawMoveSelectionPanel(m_moveTreeManager.getIterator());
+    }
+
+    void UIManager::drawArrowComponents(ArrowsInfo& arrowsInfo_) {
         drawAllArrows(arrowsInfo_.arrows, arrowsInfo_.currArrow);
+    }
 
-        if (needToShowMoveSelectionPanel())
-        {
-            std::cout << "in drawing" << std::endl;
-            drawGrayCover();
-            m_moveSelectionPanel.drawMoveSelectionPanel(m_moveTreeManager.getIterator());
-        }   
-
-        // End conditions
-        if (m_board.areThereNoMovesAvailableAtCurrentPosition()) 
-        {
+    void UIManager::drawEndGameStates() {
+        if (m_board.areThereNoMovesAvailableAtCurrentPosition()) {
             drawEndResults(m_board.isKingChecked());
         }
     }
