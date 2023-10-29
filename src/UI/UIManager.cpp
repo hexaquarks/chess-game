@@ -58,16 +58,18 @@ namespace ui {
         drawSidePanel();
     }
 
-    void UIManager::drawSpecialBoardStates() 
+    void UIManager::drawSpecialBoardStates()
     {
         if (m_board.isKingChecked()) drawKingCheckCircle();
     }
 
     void UIManager::drawInteractionFeatures(ClickState& clickState_, DragState& dragState_) 
     {
+        highlightLastMove();
+
         if (!shouldDrawCirclesAndHighlightSquares(clickState_, dragState_)) return;
 
-        drawCaptureCircles(clickState_.pSelectedPiece, m_board.getAllCurrentlyAvailableMoves());
+        drawCaptureOrMoveCircles(clickState_.pSelectedPiece, m_board.getAllCurrentlyAvailableMoves());
         highlightHoveredSquare(clickState_.pSelectedPiece, clickState_.mousePos, m_board.getAllCurrentlyAvailableMoves());
     }
 
@@ -79,7 +81,6 @@ namespace ui {
 
     void UIManager::drawAdditionalUIComponents() 
     {
-        highlightLastMove();
         drawPieces();
     }
 
@@ -100,12 +101,15 @@ namespace ui {
         m_moveSelectionPanel.drawMoveSelectionPanel(m_moveTreeManager.getIterator());
     }
 
-    void UIManager::drawArrowComponents(ArrowsInfo& arrowsInfo_) {
+    void UIManager::drawArrowComponents(ArrowsInfo& arrowsInfo_) 
+    {
         drawAllArrows(arrowsInfo_.arrows, arrowsInfo_.currArrow);
     }
 
-    void UIManager::drawEndGameStates() {
-        if (m_board.areThereNoMovesAvailableAtCurrentPosition()) {
+    void UIManager::drawEndGameStates() 
+    {
+        if (m_board.areThereNoMovesAvailableAtCurrentPosition()) 
+        {
             drawEndResults(m_board.isKingChecked());
         }
     }
@@ -214,8 +218,8 @@ namespace ui {
             }
         }
     }
-
-    void UIManager::drawCaptureCircles(
+        
+    void UIManager::drawCaptureOrMoveCircles(
         const shared_ptr<Piece>& pSelectedPiece_,
         const vector<Move>& possibleMoves_)
     {

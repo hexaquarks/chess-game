@@ -105,7 +105,7 @@ namespace ui {
             void drawPieces();
             void drawMenuBar();
             void drawSidePanel();
-            void drawCaptureCircles(const std::shared_ptr<Piece>&, const vector<Move>&);
+            void drawCaptureOrMoveCircles(const std::shared_ptr<Piece>&, const vector<Move>&);
             void drawDraggedPiece(const std::shared_ptr<Piece>&, const coor2d&);
             void drawTransitioningPiece(PieceTransition&);
             void drawAllArrows(std::vector<Arrow>&, const Arrow&);
