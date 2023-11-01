@@ -1,6 +1,7 @@
 #pragma once
 
 #include "UIConstants.hpp"
+#include "Button.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <string>
@@ -12,12 +13,17 @@ class Board;
 class MoveTreeManager; 
 enum class MenuButtonType;
 
-class MenuButton
+namespace ui
+{
+typedef std::function<void()> Callback;
+
+class MenuButton : public Button
 {
 public:
-    MenuButton(const std::string&, size_t, bool isRotatable = false);
+    MenuButton(const std::string&, size_t, const Callback& callback_, bool isRotatable = false);
     MenuButton() = default;
-    
+    ~MenuButton() = default;
+
     sf::RectangleShape getRectangle() const { return m_rectangle; }
     sf::Sprite getSprite() const { return m_sprite; }
     sf::Text getText() const { return m_text; }
@@ -27,19 +33,17 @@ public:
 
     void setSpriteTexture(sf::Texture& texture) { m_sprite.setTexture(texture); }
     
-    void drawMenuButton(sf::RenderWindow&) const;
     void doColorTransition();
-    void doMouseClick(Board&, MoveTreeManager&);
-    bool isMouseHovered(coor2d&) const;
+    bool isMouseInBounds(coor2d&) const;
     bool isBoardReset() const;
 
 private:
     MenuButtonType m_buttonType;
-    sf::Sprite m_sprite;
-    sf::RectangleShape m_rectangle;
-    sf::Text m_text;
-    std::string m_string;
     bool m_isRotatable;
     bool m_isColorTransitioning = false;
     int m_transitionColorIndex = 0;
 };
+
+void rotateIcon(sf::Sprite& sprite_);
+}
+

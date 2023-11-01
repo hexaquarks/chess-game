@@ -2,8 +2,7 @@
 
 #include "Component.hpp"
 
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics.hpp>
 
 #include <vector>
 #include <string>
@@ -11,12 +10,12 @@
 #include <functional>
 
 
-namespace UI
+namespace ui
 {
     class Button : public Component
     {
         public:
-            typedef std::function<void()>		Callback;
+            typedef std::function<void()> Callback;
 
             enum Type
             {
@@ -26,27 +25,24 @@ namespace UI
                 ButtonCount
             };
 
-            Button(Callback callBack_, sf::Sprite sprite_, sf::Text text_);
+            explicit Button(const Callback& callback_);
+            ~Button() override;
 
-            void setCallback(Callback callback_);
+            void setCallback(const Callback& callback_);
             void setText(const std::string& text_);
-            void setToggle(bool flag_);
 
-            virtual bool isSelectable() const;
-            virtual void select();
-            virtual void deselect();
+            virtual bool isMouseInBounds() const override;
+            virtual void doMouseClick() const;
 
-            virtual void activate();
-            virtual void deactivate();
-
-        private:
             virtual void draw(sf::RenderTarget& target_, sf::RenderStates states_) const;
-            void changeTexture(Type buttonType_);
 
-        private:
-            Callback				m_callback;
+        protected:
+            sf::RectangleShape	    m_rectangle;
             sf::Sprite				m_sprite;
             sf::Text				m_text;
-            bool					m_isToggle;
+
+        private:
+            void changeTexture(Type buttonType_);
+            Callback				m_callback;
     };
 }

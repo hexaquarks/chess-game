@@ -133,8 +133,15 @@ namespace ui {
     void UIManager::initializeMenuBar()
     {
         const vector<string> menuLabels{"Menu", "Reset", "Flip"};
-
-        for (size_t i = 0; i < menuLabels.size(); ++i) m_menuBar.push_back({menuLabels[i], i});
+        const vector<Callback> callbacks{
+            [](){ },
+            [this](){ m_board.reset(); m_moveTreeManager.reset(); },
+            [this](){ m_board.flipBoard(); }
+        };
+    
+        for (size_t i = 0; i < menuLabels.size(); ++i) {
+            m_menuBar.push_back({menuLabels[i], i, callbacks[i]});
+        }
     }
 
     void UIManager::drawMenuBar()
@@ -150,7 +157,7 @@ namespace ui {
 
             if (option.getIsColorTransitioning()) option.doColorTransition();
 
-            option.drawMenuButton(m_window);
+            option.draw(m_window, sf::RenderStates());
         }
     }
 

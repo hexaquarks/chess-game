@@ -15,6 +15,7 @@
 #include "../Logic/Pieces/Queen.hpp"
 #include "../Logic/Pieces/Piece.hpp"
 #include "UIConstants.hpp"
+#include "Button.hpp"
 
 #include <SFML/Graphics.hpp>
 

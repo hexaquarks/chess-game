@@ -42,16 +42,15 @@ namespace
         text_.setOrigin(ui::g_BUTTON_SIZE/2 - ui::g_BUTTON_POS/3, ui::g_BUTTON_SIZE/1.75);
         text_.setPosition(ui::g_BUTTON_POS*i + ui::g_BUTTON_POS/3, ui::g_MENUBAR_HEIGHT);
     }
-
-    void rotateIcon(sf::Sprite& sprite_)
-    {
-        sprite_.setRotation(sprite_.getRotation() + 180);
-    }
 }
 
-MenuButton::MenuButton(const std::string& name_, size_t index_, bool isRotatable_)
-: m_buttonType(static_cast<MenuButtonType>(index_)), 
-  m_isRotatable(isRotatable_)
+namespace ui
+{
+
+MenuButton::MenuButton(const std::string& name_, size_t index_, const Callback& callback_, bool isRotatable_)
+: Button(callback_)
+, m_buttonType(static_cast<MenuButtonType>(index_))
+, m_isRotatable(isRotatable_)
 {
     auto font = RessourceManager::getFont("Arial.ttf");
     m_text.setString(name_);
@@ -61,16 +60,10 @@ MenuButton::MenuButton(const std::string& name_, size_t index_, bool isRotatable
     handleRectangle(index_, m_rectangle);
     handleSprite(index_, m_sprite);
     handleText(index_, m_text);
+    
 }
 
-void MenuButton::drawMenuButton(sf::RenderWindow& window_) const
-{
-    window_.draw(m_rectangle);
-    window_.draw(m_sprite);
-    window_.draw(m_text);
-}
-
-bool MenuButton::isMouseHovered(coor2d& mousePos_) const
+bool MenuButton::isMouseInBounds(coor2d& mousePos_) const
 {
     float xi = m_rectangle.getGlobalBounds().left;
     float xf = xi + m_rectangle.getGlobalBounds().width;
@@ -94,27 +87,13 @@ void MenuButton::doColorTransition()
     }
 }
 
-void MenuButton::doMouseClick(Board& game_, MoveTreeManager& moveList_)
-{
-    switch (m_buttonType)
-    {
-        case MenuButtonType::UNFOLD_OPTIONS:
-            rotateIcon(m_sprite);
-            break;
-        case MenuButtonType::RESET_BOARD:
-            game_.reset();
-            moveList_.reset();
-            break;
-        case MenuButtonType::FLIP_BOARD:
-            game_.flipBoard();
-            m_isColorTransitioning = true;
-            break;
-    }
-    // make clicking shadow flashing animation
-    m_isColorTransitioning = true;
-}
-
 bool MenuButton::isBoardReset() const
 {
     return m_buttonType == MenuButtonType::RESET_BOARD;
+}
+
+void rotateIcon(sf::Sprite& sprite_)
+{
+    sprite_.setRotation(sprite_.getRotation() + 180);
+}
 }

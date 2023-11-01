@@ -196,8 +196,8 @@ namespace game
         
         for (auto& menuButton: m_uiManager.getMenuBar()) 
         {
-            if (!menuButton.isMouseHovered(clickState_.mousePos)) continue;
-            menuButton.doMouseClick(m_board, m_moveTreeManager);
+            if (!menuButton.isMouseInBounds(clickState_.mousePos)) continue;
+            menuButton.doMouseClick();
             if (!menuButton.isBoardReset()) continue;
             
             clickState_.pSelectedPiece.reset();
