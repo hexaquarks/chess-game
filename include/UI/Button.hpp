@@ -26,13 +26,13 @@ namespace ui
             };
 
             explicit Button(const Callback& callback_);
-            ~Button() override;
+            virtual ~Button() = default;
 
             void setCallback(const Callback& callback_);
             void setText(const std::string& text_);
 
-            virtual bool isMouseInBounds() const override;
-            virtual void doMouseClick() const;
+            virtual bool isMouseInBounds(coor2d& mousePos_) const override = 0;
+            virtual void doMouseClick() const override;
 
             virtual void draw(sf::RenderTarget& target_, sf::RenderStates states_) const;
 

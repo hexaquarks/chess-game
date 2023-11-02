@@ -6,6 +6,8 @@
 
 #include <memory>
 
+typedef std::pair<int, int> coor2d;
+
 namespace sf { class Event; }
 
 namespace ui
@@ -15,9 +17,9 @@ namespace ui
     {
         public:
             Component();
-            virtual ~Component();
+            virtual ~Component() = default;
 
-            virtual bool isMouseInBounds() const; 
+            virtual bool isMouseInBounds(coor2d& mousePos_) const = 0; 
             virtual void doMouseClick() const;
     };
 }

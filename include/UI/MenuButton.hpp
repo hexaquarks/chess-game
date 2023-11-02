@@ -6,8 +6,6 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
-typedef std::pair<int, int> coor2d;
-
 // foward declarations
 class Board; 
 class MoveTreeManager; 
@@ -22,7 +20,7 @@ class MenuButton : public Button
 public:
     MenuButton(const std::string&, size_t, const Callback& callback_, bool isRotatable = false);
     MenuButton() = default;
-    ~MenuButton() = default;
+    ~MenuButton() override = default;
 
     sf::RectangleShape getRectangle() const { return m_rectangle; }
     sf::Sprite getSprite() const { return m_sprite; }
@@ -34,7 +32,7 @@ public:
     void setSpriteTexture(sf::Texture& texture) { m_sprite.setTexture(texture); }
     
     void doColorTransition();
-    bool isMouseInBounds(coor2d&) const;
+    bool isMouseInBounds(coor2d&) const override;
     bool isBoardReset() const;
 
 private:

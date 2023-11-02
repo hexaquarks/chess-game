@@ -5,8 +5,4 @@ namespace ui
     Component::Component()
     {
     }
-
-    Component::~Component()
-    {
-    }
 }
