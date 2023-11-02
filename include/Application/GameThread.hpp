@@ -2,7 +2,7 @@
 
 #include "../UI/UIManager.hpp"
 #include "../Ressources/RessourceManager.hpp"
-#include "../UI/MenuButton.hpp"
+#include "../UI/Button.hpp"
 #include "../Logic/Board.hpp"
 #include "../Utilities/Arrow.hpp"
 #include "../Logic/MoveTree.hpp"

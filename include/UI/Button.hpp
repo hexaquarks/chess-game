@@ -9,13 +9,13 @@
 #include <memory>
 #include <functional>
 
-
 namespace ui
 {
+    typedef std::function<void()> Callback;
+
     class Button : public Component
     {
         public:
-            typedef std::function<void()> Callback;
 
             enum Type
             {
@@ -25,11 +25,18 @@ namespace ui
                 ButtonCount
             };
 
-            explicit Button(const Callback& callback_);
+            explicit Button(const std::string& name_, size_t index_, const Callback& callback_);
+            explicit Button() = default;
             virtual ~Button() = default;
 
             void setCallback(const Callback& callback_);
             void setText(const std::string& text_);
+
+            sf::RectangleShape getRectangle() const { return m_rectangle; }
+            sf::Sprite getSprite() const { return m_sprite; }
+            sf::Text getText() const { return m_text; }
+
+            void setSpriteTexture(sf::Texture& texture_);
 
             virtual bool isMouseInBounds(coor2d& mousePos_) const override;
             virtual void doMouseClick() const override;
@@ -43,6 +50,8 @@ namespace ui
 
         private:
             void changeTexture(Type buttonType_);
+            void rotateIcon();
+
             Callback				m_callback;
     };
 }

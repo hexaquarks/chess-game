@@ -151,7 +151,7 @@ namespace ui {
         };
     
         for (size_t i = 0; i < menuLabels.size(); ++i) {
-            m_menuBar.push_back({menuLabels[i], i, callbacks[i]});
+            m_menuBar.push_back(Button{menuLabels[i], i, callbacks[i]});
         }
     }
 
@@ -162,12 +162,10 @@ namespace ui {
         for (size_t i = 0; i < iconFiles.size(); ++i)
         {
             auto texture = RessourceManager::getTexture(iconFiles[i]);
-            MenuButton& option = m_menuBar[i];
-            option.setSpriteTexture(*texture);
+            Button& buttonOption = m_menuBar[i];
+            buttonOption.setSpriteTexture(*texture);
 
-            if (option.getIsColorTransitioning()) option.doColorTransition();
-
-            option.draw(m_window, sf::RenderStates());
+            buttonOption.draw(m_window, sf::RenderStates());
         }
     }
 

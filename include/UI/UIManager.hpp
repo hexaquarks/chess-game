@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Ressources/RessourceManager.hpp"
-#include "MenuButton.hpp"
+#include "Button.hpp"
 #include "../Logic/Board.hpp"
 #include "MoveSelectionPanel.hpp"
 #include "../Utilities/PieceTransition.hpp"
@@ -67,7 +67,7 @@ namespace ui {
 
             // TODO architecture issue here. Should return a const ref ideally.
             MoveSelectionPanel& getMoveSelectionPanel() { return m_moveSelectionPanel; }
-            std::vector<MenuButton>& getMenuBar() { return m_menuBar; }
+            std::vector<Button>& getMenuBar() { return m_menuBar; }
 
             // A non-const ref is kind of necessary here. I want to delegate window
             // to this class, but I also want to keep window polling events
@@ -82,7 +82,7 @@ namespace ui {
                 "Chess Game", sf::Style::Titlebar | sf::Style::Close
             };
             Board& m_board;
-            std::vector<MenuButton> m_menuBar;
+            std::vector<Button> m_menuBar;
             MoveTreeManager& m_moveTreeManager;
             SidePanel m_sidePanel;
             MoveSelectionPanel m_moveSelectionPanel;

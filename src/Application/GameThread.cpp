@@ -1,5 +1,5 @@
 #include "../../include/Application/GameThread.hpp"
-#include "../../include/UI/MenuButton.hpp"
+#include "../../include/UI/Button.hpp"
 #include "../../include/Logic/Move.hpp"
 #include "../../include/Ressources/AudioManager.hpp"
 #include "../../include/UI/SidePanel.hpp"
