@@ -5,4 +5,12 @@ namespace ui
     Component::Component()
     {
     }
+
+    Component::~Component()
+    {
+    }
+
+    void Component::doMouseClick() const 
+    {
+    }
 }

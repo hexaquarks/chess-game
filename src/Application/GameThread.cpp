@@ -37,11 +37,6 @@ namespace game
     // =================================================
     void GameThread::startGame()
     {
-        // Parameters to handle a piece being dragged
-        ui::DragState dragState;
-        ui::ClickState clickState;
-        ui::ArrowsInfo arrowsInfo;
-
         m_board.updateAllCurrentlyAvailableMoves();
         
         // Load all sounds
@@ -52,7 +47,7 @@ namespace game
         while (m_uiManager.getWindow().isOpen())
         {
             m_uiManager.clearWindow();
-
+ 
             // We use a while loop for the pending events in case there were multiple events occured
             while (m_uiManager.getWindow().pollEvent(event))
             {
@@ -61,20 +56,20 @@ namespace game
                 {
                     if (event.mouseButton.button == Mouse::Left)
                     {
-                        if (!handleMouseButtonPressedLeft(event, clickState, dragState)) continue;
+                        if (!handleMouseButtonPressedLeft(event)) continue;
                     }
                     if (event.mouseButton.button == Mouse::Right)
                     {
-                        if (!handleMouseButtonPressedRight(event, clickState, dragState, arrowsInfo)) continue;
+                        if (!handleMouseButtonPressedRight(event)) continue;
                     }
                 }
 
-                const bool isAPieceHandled = (dragState.pieceIsMoving || clickState.pieceIsClicked || clickState.isRightClicking);
+                const bool isAPieceHandled = (m_dragState.pieceIsMoving || m_clickState.pieceIsClicked || m_clickState.isRightClicking);
 
                 // Dragging a piece around
                 if (event.type == Event::MouseMoved && isAPieceHandled)
                 {
-                    if (!handleMouseMoved(clickState, arrowsInfo)) continue;
+                    if (!handleMouseMoved()) continue;
                 }
 
                 // Mouse button released
@@ -82,25 +77,21 @@ namespace game
                 {
                     if (event.mouseButton.button == Mouse::Left)
                     {    
-                        if (!handleMouseButtonReleasedLeft(clickState, dragState, arrowsInfo)) continue;
+                        if (!handleMouseButtonReleasedLeft()) continue;
                     }
                     if (event.mouseButton.button == Mouse::Right)
                     {
-                        if (!handleMouseButtonReleasedRight(clickState, dragState, arrowsInfo)) continue;;
+                        if (!handleMouseButtonReleasedRight()) continue;;
                     }
                 }
 
                 if (event.type == Event::KeyPressed)
                 {
-                    handleKeyPressed(event, arrowsInfo.arrows);
+                    handleKeyPressed(event, m_arrowsInfo.arrows);
                 }
             }
             
-            m_uiManager.draw(
-                clickState, 
-                dragState, 
-                arrowsInfo);
-            
+            m_uiManager.draw();
             m_uiManager.display();
         }
     }
@@ -108,189 +99,164 @@ namespace game
     // =================================================
     // Mouse button handles
     // =================================================
-    bool GameThread::handleMouseButtonPressedLeft(
-        Event& event_, 
-        ui::ClickState& clickState_, 
-        ui::DragState& dragState_)
+    bool GameThread::handleMouseButtonPressedLeft(Event& event_)
     {
-        clickState_.mousePos = {event_.mouseButton.x, event_.mouseButton.y};
+        m_clickState.mousePos = {event_.mouseButton.x, event_.mouseButton.y};
 
         // Allow user to make moves only if they're at the current live position,
         // and if the click is on the chess board
-        int rank = ui::getRank(clickState_.mousePos, m_board.isFlipped());
-        if (rank < 0 || clickState_.mousePos.first >= ui::g_PANEL_SIZE) return false;
+        int rank = ui::getRank(m_clickState.mousePos, m_board.isFlipped());
+        if (rank < 0 || m_clickState.mousePos.first >= ui::g_PANEL_SIZE) return false;
 
         // Do not register click if Moveselection panel is activated
         // and the mouse is not within the panel's bounds
-        if (m_uiManager.ignoreInputWhenSelectionPanelIsActive(clickState_.mousePos)) return false;
+        if (m_uiManager.ignoreInputWhenSelectionPanelIsActive(m_clickState.mousePos)) return false;
 
-        int file = ui::getFile(clickState_.mousePos, m_board.isFlipped());
+        int file = ui::getFile(m_clickState.mousePos, m_board.isFlipped());
         auto& pPieceAtCurrentMousePos = m_board.getBoardTile(file, rank);
 
         // If piece is not null and has the right color
         if (pPieceAtCurrentMousePos && pPieceAtCurrentMousePos->getTeam() == m_board.getTurn())
         {
             // Unselect clicked piece
-            if (pPieceAtCurrentMousePos == clickState_.pSelectedPiece)
+            if (pPieceAtCurrentMousePos == m_clickState.pSelectedPiece)
             {
-                clickState_.pSelectedPiece.reset();
-                clickState_.pieceIsClicked = false;
+                m_clickState.pSelectedPiece.reset();
+                m_clickState.pieceIsClicked = false;
                 return false;
             }
 
-            clickState_.pSelectedPiece = pPieceAtCurrentMousePos;
-            clickState_.pieceIsClicked = false;
+            m_clickState.pSelectedPiece = pPieceAtCurrentMousePos;
+            m_clickState.pieceIsClicked = false;
 
-            dragState_.pieceIsMoving = true;
-            dragState_.lastFile = ui::getFile(clickState_.mousePos, m_board.isFlipped());
-            dragState_.lastRank = rank;
+            m_dragState.pieceIsMoving = true;
+            m_dragState.lastFile = ui::getFile(m_clickState.mousePos, m_board.isFlipped());
+            m_dragState.lastRank = rank;
 
             // Set the tile on the board where the piece is selected to null
-            m_board.resetBoardTile(dragState_.lastFile, dragState_.lastRank, false);
+            m_board.resetBoardTile(m_dragState.lastFile, m_dragState.lastRank, false);
         }
 
         return true;
     }
 
-    bool GameThread::handleMouseButtonPressedRight(
-        Event& event_, 
-        ui::ClickState& clickState_, 
-        ui::DragState& dragState_, 
-        ui::ArrowsInfo& arrowsInfo_)
+    bool GameThread::handleMouseButtonPressedRight(Event& event_)
     {
-        if (!dragState_.pieceIsMoving)
+        if (!m_dragState.pieceIsMoving)
         {
-            clickState_.rightClickAnchor = {event_.mouseButton.x, event_.mouseButton.y};
-            clickState_.isRightClicking = true;
+            m_clickState.rightClickAnchor = {event_.mouseButton.x, event_.mouseButton.y};
+            m_clickState.isRightClicking = true;
 
-            arrowsInfo_.currArrow.setOrigin(clickState_.rightClickAnchor);
-            arrowsInfo_.currArrow.setDestination(clickState_.rightClickAnchor);
+            m_arrowsInfo.currArrow.setOrigin(m_clickState.rightClickAnchor);
+            m_arrowsInfo.currArrow.setDestination(m_clickState.rightClickAnchor);
         }
 
         return true;
     }
 
-    bool GameThread::handleMouseMoved(
-        ui::ClickState& clickState_, 
-        ui::ArrowsInfo& arrowsInfo_)
+    bool GameThread::handleMouseMoved()
     {
         // Update the position of the piece that is being moved
         Vector2i mousePosition = Mouse::getPosition(m_uiManager.getWindow());
-        clickState_.mousePos = {mousePosition.x, mousePosition.y};
+        m_clickState.mousePos = {mousePosition.x, mousePosition.y};
 
-        if (clickState_.isRightClicking)
+        if (m_clickState.isRightClicking)
         {
-            arrowsInfo_.currArrow.setDestination(clickState_.mousePos);
-            arrowsInfo_.currArrow.updateArrow(); // Update the type and rotation
+            m_arrowsInfo.currArrow.setDestination(m_clickState.mousePos);
+            m_arrowsInfo.currArrow.updateArrow(); // Update the type and rotation
         }
 
         return true;
     }
 
-    void GameThread::handleMouseButtonReleasedOnMenuBar(
-        ui::ClickState& clickState_, 
-        ui::DragState& dragState_, 
-        ui::ArrowsInfo& arrowsInfo_)
+    void GameThread::handleMouseButtonReleasedOnMenuBar()
     {
-        if (clickState_.mousePos.second >= ui::g_MENUBAR_HEIGHT) return;
+        if (m_clickState.mousePos.second >= ui::g_MENUBAR_HEIGHT) return;
         
         for (auto& menuButton: m_uiManager.getMenuBar()) 
         {
-            if (!menuButton.isMouseInBounds(clickState_.mousePos)) continue;
+            if (!menuButton.isMouseInBounds(m_clickState.mousePos)) continue;
             menuButton.doMouseClick();
-            if (!menuButton.isBoardReset()) continue;
-            
-            clickState_.pSelectedPiece.reset();
-            clickState_.mousePos = {0, 0};
-
-            arrowsInfo_.arrows.clear();
-            m_board.updateAllCurrentlyAvailableMoves();
         }
     }
 
-    bool GameThread::handleMouseButtonReleasedLeft(
-        ui::ClickState& clickState_, 
-        ui::DragState& dragState_, 
-        ui::ArrowsInfo& arrowsInfo_)
+    bool GameThread::handleMouseButtonReleasedLeft()
     {
-        handleMouseButtonReleasedOnMenuBar(clickState_, dragState_, arrowsInfo_);
+        handleMouseButtonReleasedOnMenuBar();
 
         // Handle Side Panel Move Box buttons click
-        m_uiManager.handleSidePanelMoveBoxClick(clickState_.mousePos);
+        m_uiManager.handleSidePanelMoveBoxClick(m_clickState.mousePos);
         
         // ^^^ Possible bug here when moveboxe and moveselection panel overlap
 
-        if (!clickState_.pSelectedPiece) return false;
+        if (!m_clickState.pSelectedPiece) return false;
 
         // If clicked and mouse remained on the same square
-        int file = ui::getFile(clickState_.mousePos, m_board.isFlipped());
-        int rank = ui::getRank(clickState_.mousePos, m_board.isFlipped());
-        if (file == clickState_.pSelectedPiece->getFile() && rank == clickState_.pSelectedPiece->getRank())
+        int file = ui::getFile(m_clickState.mousePos, m_board.isFlipped());
+        int rank = ui::getRank(m_clickState.mousePos, m_board.isFlipped());
+        if (file == m_clickState.pSelectedPiece->getFile() && rank == m_clickState.pSelectedPiece->getRank())
         {
-            if (!clickState_.pieceIsClicked)
+            if (!m_clickState.pieceIsClicked)
             {
                 // Put the piece back to it's square; it's not moving
-                m_board.setBoardTile(dragState_.lastFile, dragState_.lastRank, clickState_.pSelectedPiece, false);
-                dragState_.pieceIsMoving = false;
+                m_board.setBoardTile(m_dragState.lastFile, m_dragState.lastRank, m_clickState.pSelectedPiece, false);
+                m_dragState.pieceIsMoving = false;
             }
-            clickState_.pieceIsClicked = !clickState_.pieceIsClicked;
+            m_clickState.pieceIsClicked = !m_clickState.pieceIsClicked;
             return false;
         }
 
         // Try to match moves
-        std::optional<Move> pSelectedMoveOpt = m_board.findSelectedMove(clickState_.pSelectedPiece, file, rank);
+        std::optional<Move> pSelectedMoveOpt = m_board.findSelectedMove(m_clickState.pSelectedPiece, file, rank);
 
         // If move is not allowed, place piece back, else apply the move
         if (!pSelectedMoveOpt.has_value())
         {
-            m_board.setBoardTile(dragState_.lastFile, dragState_.lastRank, clickState_.pSelectedPiece, false); // Cancel the move
+            m_board.setBoardTile(m_dragState.lastFile, m_dragState.lastRank, m_clickState.pSelectedPiece, false); // Cancel the move
         }
         else
         {
             // auto pMove = m_board.applyMoveOnBoard(
             //     pSelectedMoveOpt.value().getMoveType(), 
             //     std::make_pair(file, rank), 
-            //     std::make_pair(dragState_.lastFile, dragState_.lastRank),
-            //     clickState_.pSelectedPiece, 
-            //     arrowsInfo_.arrows);
+            //     std::make_pair(m_dragState.lastFile, m_dragState.lastRank),
+            //     m_clickState.pSelectedPiece, 
+            //     m_arrowsInfo.arrows);
             const auto pMove = std::make_shared<Move>(pSelectedMoveOpt.value());
-            m_moveTreeManager.addMove(pMove, arrowsInfo_.arrows);
-            m_board.updateBoardInfosAfterNewMove(clickState_.pSelectedPiece, pMove);
-            arrowsInfo_.arrows.clear();
+            m_moveTreeManager.addMove(pMove, m_arrowsInfo.arrows);
+            m_board.updateBoardInfosAfterNewMove(m_clickState.pSelectedPiece, pMove);
+            m_arrowsInfo.arrows.clear();
 
             playSoundsAfterNewMove(pMove->getMoveType());
         }
 
-        m_uiManager.resetUserInputStatesAfterNewMove(clickState_, dragState_);
+        m_uiManager.resetUserInputStatesAfterNewMove(m_clickState, m_dragState);
 
         return true;
     }
 
-    bool GameThread::handleMouseButtonReleasedRight(
-        ui::ClickState& clickState_, 
-        ui::DragState& dragState_, 
-        ui::ArrowsInfo& arrowsInfo_)
+    bool GameThread::handleMouseButtonReleasedRight()
     { 
-        if (clickState_.pSelectedPiece && dragState_.pieceIsMoving)
+        if (m_clickState.pSelectedPiece && m_dragState.pieceIsMoving)
         {
             // Reset the piece back
-            m_board.setBoardTile(dragState_.lastFile, dragState_.lastRank, clickState_.pSelectedPiece, false);
-            clickState_.pSelectedPiece.reset();
-            dragState_.pieceIsMoving = false;
+            m_board.setBoardTile(m_dragState.lastFile, m_dragState.lastRank, m_clickState.pSelectedPiece, false);
+            m_clickState.pSelectedPiece.reset();
+            m_dragState.pieceIsMoving = false;
         }
-        else if (clickState_.isRightClicking)
+        else if (m_clickState.isRightClicking)
         {
             // add arrow to arrow list to be drawn
-            if (arrowsInfo_.currArrow.isDrawable())
+            if (m_arrowsInfo.currArrow.isDrawable())
             {
-                if (!arrowsInfo_.currArrow.removeArrow(arrowsInfo_.arrows)) 
+                if (!m_arrowsInfo.currArrow.removeArrow(m_arrowsInfo.arrows)) 
                 {
-                    arrowsInfo_.arrows.push_back(arrowsInfo_.currArrow);
+                    m_arrowsInfo.arrows.push_back(m_arrowsInfo.currArrow);
                 }
             }
-            clickState_.isRightClicking = false;
-            clickState_.rightClickAnchor = {0, 0};
-            arrowsInfo_.currArrow.resetParameters();
+            m_clickState.isRightClicking = false;
+            m_clickState.rightClickAnchor = {0, 0};
+            m_arrowsInfo.currArrow.resetParameters();
         }
 
         return true;

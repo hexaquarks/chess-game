@@ -8,12 +8,18 @@ class MoveTreeManager;
 namespace ui {
     UIManager::UIManager(
     Board& board_, 
-    MoveTreeManager& moveList_
+    MoveTreeManager& moveList_,
+    ClickState& clickState_, 
+    DragState& dragState_, 
+    ArrowsInfo& arrowsInfo_
     ) :
         m_board(board_),
         m_moveTreeManager(moveList_),
         m_sidePanel(m_window, moveList_),
-        m_moveSelectionPanel(m_window, m_sidePanel)
+        m_moveSelectionPanel(m_window, m_sidePanel),
+        m_clickState(clickState_),
+        m_dragState(dragState_),
+        m_arrowsInfo(arrowsInfo_)
     {
         m_window.setFramerateLimit(60);
 
@@ -30,11 +36,8 @@ namespace ui {
         initializeMenuBar();
     };
 
-    void UIManager::draw(
-        ClickState& clickState_, 
-        DragState& dragState_, 
-        ArrowsInfo& arrowsInfo_
-    ) {
+    void UIManager::draw() 
+    {
         // ================================================
         // Note: The function order call here is critical.
         //       Altering it could cause visual inconsistencies.
@@ -44,10 +47,10 @@ namespace ui {
         // ================================================
         drawBasicUIComponents();
         drawSpecialBoardStates();
-        drawInteractionFeatures(clickState_, dragState_);
+        drawInteractionFeatures();
         drawAdditionalUIComponents();
-        drawDynamicUIComponents(clickState_, dragState_);
-        drawArrowComponents(arrowsInfo_);
+        drawDynamicUIComponents();
+        drawArrowComponents();
         drawEndGameStates();
     }
 
@@ -63,20 +66,20 @@ namespace ui {
         if (m_board.isKingChecked()) drawKingCheckCircle();
     }
 
-    void UIManager::drawInteractionFeatures(ClickState& clickState_, DragState& dragState_) 
+    void UIManager::drawInteractionFeatures() 
     {
         highlightLastMove();
 
-        if (!shouldDrawCirclesAndHighlightSquares(clickState_, dragState_)) return;
+        if (!shouldDrawCirclesAndHighlightSquares()) return;
 
-        drawCaptureOrMoveCircles(clickState_.pSelectedPiece, m_board.getAllCurrentlyAvailableMoves());
-        highlightHoveredSquare(clickState_.pSelectedPiece, clickState_.mousePos, m_board.getAllCurrentlyAvailableMoves());
+        drawCaptureOrMoveCircles(m_clickState.pSelectedPiece, m_board.getAllCurrentlyAvailableMoves());
+        highlightHoveredSquare(m_clickState.pSelectedPiece, m_clickState.mousePos, m_board.getAllCurrentlyAvailableMoves());
     }
 
-    bool UIManager::shouldDrawCirclesAndHighlightSquares(ClickState& clickState_, DragState& dragState_) 
+    bool UIManager::shouldDrawCirclesAndHighlightSquares() 
     {
-        return (dragState_.pieceIsMoving || clickState_.pieceIsClicked) && 
-               clickState_.pSelectedPiece;
+        return (m_dragState.pieceIsMoving || m_clickState.pieceIsClicked) && 
+               m_clickState.pSelectedPiece;
     }
 
     void UIManager::drawAdditionalUIComponents() 
@@ -84,10 +87,10 @@ namespace ui {
         drawPieces();
     }
 
-    void UIManager::drawDynamicUIComponents(ClickState& clickState_, DragState& dragState_) 
+    void UIManager::drawDynamicUIComponents() 
     {
-        if (dragState_.pieceIsMoving) {
-            drawDraggedPiece(clickState_.pSelectedPiece, clickState_.mousePos);
+        if (m_dragState.pieceIsMoving) {
+            drawDraggedPiece(m_clickState.pSelectedPiece, m_clickState.mousePos);
         }
         if (m_moveTreeManager.getTransitioningPiece().getIsTransitioning()) {
             drawTransitioningPiece(m_moveTreeManager.getTransitioningPiece());
@@ -101,9 +104,9 @@ namespace ui {
         m_moveSelectionPanel.drawMoveSelectionPanel(m_moveTreeManager.getIterator());
     }
 
-    void UIManager::drawArrowComponents(ArrowsInfo& arrowsInfo_) 
+    void UIManager::drawArrowComponents() 
     {
-        drawAllArrows(arrowsInfo_.arrows, arrowsInfo_.currArrow);
+        drawAllArrows(m_arrowsInfo.arrows, m_arrowsInfo.currArrow);
     }
 
     void UIManager::drawEndGameStates() 
@@ -134,8 +137,16 @@ namespace ui {
     {
         const vector<string> menuLabels{"Menu", "Reset", "Flip"};
         const vector<Callback> callbacks{
-            [](){ },
-            [this](){ m_board.reset(); m_moveTreeManager.reset(); },
+            [](){},
+            [this](){ 
+                m_board.reset(); 
+                m_moveTreeManager.reset(); 
+                m_board.updateAllCurrentlyAvailableMoves();
+
+                m_clickState.pSelectedPiece.reset();
+                m_clickState.mousePos = {0, 0};
+                m_arrowsInfo.arrows.clear();
+            },
             [this](){ m_board.flipBoard(); }
         };
     
@@ -146,10 +157,9 @@ namespace ui {
 
     void UIManager::drawMenuBar()
     {
-        constexpr int menuOptionsCount = 3;
         const std::vector<std::string> iconFiles{"dropDownWhite.png", "resetWhite.png", "flipWhite.png"};
 
-        for (size_t i = 0; i < menuOptionsCount; ++i)
+        for (size_t i = 0; i < iconFiles.size(); ++i)
         {
             auto texture = RessourceManager::getTexture(iconFiles[i]);
             MenuButton& option = m_menuBar[i];

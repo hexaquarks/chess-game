@@ -53,8 +53,10 @@ namespace ui {
     
     class UIManager {
         public:
-            UIManager(Board&, MoveTreeManager&);
-            void draw(ClickState&, DragState&, ArrowsInfo&);
+            UIManager(Board&, MoveTreeManager&, ClickState&, DragState&, ArrowsInfo&);
+            UIManager() = default;
+            ~UIManager() = default;
+            void draw();
 
             void display() { m_window.display(); }
             void clearWindow() { m_window.clear({23, 23, 23}); }
@@ -85,21 +87,26 @@ namespace ui {
             SidePanel m_sidePanel;
             MoveSelectionPanel m_moveSelectionPanel;
 
+            // Maybe UIManager should own this info?
+            ClickState& m_clickState;
+            DragState& m_dragState;
+            ArrowsInfo& m_arrowsInfo;
+
             void initializeMenuBar();
 
             // TODO: Make Draw class
             // Main driver draw functions
             void drawBasicUIComponents();
             void drawSpecialBoardStates();
-            void drawInteractionFeatures(ui::ClickState& clickState_, ui::DragState& dragState_);
+            void drawInteractionFeatures();
             void drawAdditionalUIComponents();
-            void drawDynamicUIComponents(ui::ClickState& clickState_, ui::DragState& dragState_);
-            void drawArrowComponents(ui::ArrowsInfo& arrowsInfo_);
+            void drawDynamicUIComponents();
+            void drawArrowComponents();
             void drawEndGameStates();
             void drawMoveSelectionPanel();
 
             // Draw util functions
-            bool shouldDrawCirclesAndHighlightSquares(ui::ClickState& clickState_, ui::DragState& dragState_);
+            bool shouldDrawCirclesAndHighlightSquares();
             bool needToShowMoveSelectionPanel() const;
 
             // Draw individual components

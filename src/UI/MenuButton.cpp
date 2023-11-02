@@ -47,10 +47,9 @@ namespace
 namespace ui
 {
 
-MenuButton::MenuButton(const std::string& name_, size_t index_, const Callback& callback_, bool isRotatable_)
+MenuButton::MenuButton(const std::string& name_, size_t index_, const Callback& callback_)
 : Button(callback_)
 , m_buttonType(static_cast<MenuButtonType>(index_))
-, m_isRotatable(isRotatable_)
 {
     auto font = RessourceManager::getFont("Arial.ttf");
     m_text.setString(name_);
@@ -61,13 +60,6 @@ MenuButton::MenuButton(const std::string& name_, size_t index_, const Callback& 
     handleSprite(index_, m_sprite);
     handleText(index_, m_text);
     
-}
-
-bool MenuButton::isMouseInBounds(coor2d& mousePos_) const
-{
-    float xi = m_rectangle.getGlobalBounds().left;
-    float xf = xi + m_rectangle.getGlobalBounds().width;
-    return mousePos_.first >= xi && mousePos_.first < xf;
 }
 
 void MenuButton::doColorTransition()

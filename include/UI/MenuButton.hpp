@@ -18,7 +18,7 @@ typedef std::function<void()> Callback;
 class MenuButton : public Button
 {
 public:
-    MenuButton(const std::string&, size_t, const Callback& callback_, bool isRotatable = false);
+    MenuButton(const std::string&, size_t, const Callback& callback_);
     MenuButton() = default;
     ~MenuButton() override = default;
 
@@ -32,12 +32,10 @@ public:
     void setSpriteTexture(sf::Texture& texture) { m_sprite.setTexture(texture); }
     
     void doColorTransition();
-    bool isMouseInBounds(coor2d&) const override;
     bool isBoardReset() const;
 
 private:
     MenuButtonType m_buttonType;
-    bool m_isRotatable;
     bool m_isColorTransitioning = false;
     int m_transitionColorIndex = 0;
 };

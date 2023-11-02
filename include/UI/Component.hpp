@@ -17,7 +17,7 @@ namespace ui
     {
         public:
             Component();
-            virtual ~Component() = default;
+            virtual ~Component();
 
             virtual bool isMouseInBounds(coor2d& mousePos_) const = 0; 
             virtual void doMouseClick() const;

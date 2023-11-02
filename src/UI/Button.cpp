@@ -36,6 +36,13 @@ namespace ui
         m_sprite.setTextureRect(textureRect);
     }
 
+    bool Button::isMouseInBounds(coor2d& mousePos_) const
+    {
+        float xi = m_rectangle.getGlobalBounds().left;
+        float xf = xi + m_rectangle.getGlobalBounds().width;
+        return mousePos_.first >= xi && mousePos_.first < xf;
+    }
+
     void Button::doMouseClick() const
     {
         m_callback();

@@ -34,19 +34,25 @@ namespace game
         Board m_board;
         MoveTreeManager m_moveTreeManager{m_board};
         MoveTree::Iterator& m_treeIterator = m_moveTreeManager.getIterator();
-        ui::UIManager m_uiManager{m_board, m_moveTreeManager};
+
+        // Parameters to handle a piece being dragged
+        ui::ClickState m_clickState;
+        ui::DragState m_dragState;
+        ui::ArrowsInfo m_arrowsInfo;
+
+        ui::UIManager m_uiManager{m_board, m_moveTreeManager, m_clickState, m_dragState, m_arrowsInfo};
 
         shared_ptr<Move> getCurrMoveTreeIteratorMove();
 
         /* Event handles */
-        bool handleMouseButtonPressedLeft(Event&, ui::ClickState& clickState, ui::DragState&);
-        bool handleMouseButtonPressedRight(Event&, ui::ClickState& clickState, ui::DragState&, ui::ArrowsInfo&);
-        bool handleMouseMoved(ui::ClickState&, ui::ArrowsInfo&);
-        bool handleMouseButtonReleasedLeft(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&);
-        bool handleMouseButtonReleasedRight(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&);
+        bool handleMouseButtonPressedLeft(Event&);
+        bool handleMouseButtonPressedRight(Event&);
+        bool handleMouseMoved();
+        bool handleMouseButtonReleasedLeft();
+        bool handleMouseButtonReleasedRight();
         void handleKeyPressed(const Event&, vector<Arrow>&);
 
-        void handleMouseButtonReleasedOnMenuBar(ui::ClickState&, ui::DragState&, ui::ArrowsInfo&);
+        void handleMouseButtonReleasedOnMenuBar();
 
         void handleKeyPressLeft(vector<Arrow>& arrowList_);
         void handleKeyPressRight(vector<Arrow>& arrowList_);

@@ -31,7 +31,7 @@ namespace ui
             void setCallback(const Callback& callback_);
             void setText(const std::string& text_);
 
-            virtual bool isMouseInBounds(coor2d& mousePos_) const override = 0;
+            virtual bool isMouseInBounds(coor2d& mousePos_) const override;
             virtual void doMouseClick() const override;
 
             virtual void draw(sf::RenderTarget& target_, sf::RenderStates states_) const;
