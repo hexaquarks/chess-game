@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Ressources/RessourceManager.hpp"
-#include "MenuButton.hpp"
+#include "Button.hpp"
 #include "../Logic/Board.hpp"
 #include "MoveSelectionPanel.hpp"
 #include "../Utilities/PieceTransition.hpp"
@@ -15,6 +15,7 @@
 #include "../Logic/Pieces/Queen.hpp"
 #include "../Logic/Pieces/Piece.hpp"
 #include "UIConstants.hpp"
+#include "Button.hpp"
 
 #include <SFML/Graphics.hpp>
 
@@ -52,8 +53,10 @@ namespace ui {
     
     class UIManager {
         public:
-            UIManager(Board&, MoveTreeManager&);
-            void draw(ClickState&, DragState&, ArrowsInfo&);
+            UIManager(Board&, MoveTreeManager&, ClickState&, DragState&, ArrowsInfo&);
+            UIManager() = default;
+            ~UIManager() = default;
+            void draw();
 
             void display() { m_window.display(); }
             void clearWindow() { m_window.clear({23, 23, 23}); }
@@ -64,7 +67,7 @@ namespace ui {
 
             // TODO architecture issue here. Should return a const ref ideally.
             MoveSelectionPanel& getMoveSelectionPanel() { return m_moveSelectionPanel; }
-            std::vector<MenuButton>& getMenuBar() { return m_menuBar; }
+            std::vector<Button>& getMenuBar() { return m_menuBar; }
 
             // A non-const ref is kind of necessary here. I want to delegate window
             // to this class, but I also want to keep window polling events
@@ -79,10 +82,15 @@ namespace ui {
                 "Chess Game", sf::Style::Titlebar | sf::Style::Close
             };
             Board& m_board;
-            std::vector<MenuButton> m_menuBar;
+            std::vector<Button> m_menuBar;
             MoveTreeManager& m_moveTreeManager;
             SidePanel m_sidePanel;
             MoveSelectionPanel m_moveSelectionPanel;
+
+            // Maybe UIManager should own this info?
+            ClickState& m_clickState;
+            DragState& m_dragState;
+            ArrowsInfo& m_arrowsInfo;
 
             void initializeMenuBar();
 
@@ -90,15 +98,15 @@ namespace ui {
             // Main driver draw functions
             void drawBasicUIComponents();
             void drawSpecialBoardStates();
-            void drawInteractionFeatures(ui::ClickState& clickState_, ui::DragState& dragState_);
+            void drawInteractionFeatures();
             void drawAdditionalUIComponents();
-            void drawDynamicUIComponents(ui::ClickState& clickState_, ui::DragState& dragState_);
-            void drawArrowComponents(ui::ArrowsInfo& arrowsInfo_);
+            void drawDynamicUIComponents();
+            void drawArrowComponents();
             void drawEndGameStates();
             void drawMoveSelectionPanel();
 
             // Draw util functions
-            bool shouldDrawCirclesAndHighlightSquares(ui::ClickState& clickState_, ui::DragState& dragState_);
+            bool shouldDrawCirclesAndHighlightSquares();
             bool needToShowMoveSelectionPanel() const;
 
             // Draw individual components
